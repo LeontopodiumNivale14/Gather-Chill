@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Lumina.Data.Parsing.Uld.UldRoot;
 using ECommons.Logging;
+using static Lumina.Data.Parsing.Uld.NodeData;
 
 namespace GatherChill.Ui
 {
@@ -44,7 +45,7 @@ namespace GatherChill.Ui
         }
 
         private static int gatheringType = 0;
-        private static int GatheringSlot = 0;
+        private static uint GatheringSlot = 0;
         private static string itemName = string.Empty;
 
         /// <summary>
@@ -59,19 +60,28 @@ namespace GatherChill.Ui
                 ImGui.Text($"Type: {entry.Value.Name}");
                 ImGui.SameLine();
                 ImGui.Image(entry.Value.MainIcon.GetWrapOrEmpty().ImGuiHandle, new Vector2(20, 20));
+                string textNodes = string.Empty;
+
+                int dictKey = entry.Key.ToInt();
             }
 
-            if (ImGui.SliderInt("Items", ref GatheringSlot, 0, 1205))
+            int tempSlot = (int)Math.Clamp(GatheringSlot, 0, 1205);
+
+            if (ImGui.SliderInt("Items", ref tempSlot, 0, 1205))
             {
-                if (!GatheringPointBaseDict.ContainsKey(GatheringSlot))
+                uint newSlot = (uint)tempSlot;
+
+                if (!GatheringPointBaseDict.ContainsKey(newSlot))
                 {
                     // Snap to closest key
-                    int closestKey = GatheringPointBaseDict.Keys
-                        .OrderBy(k => Math.Abs(k - GatheringSlot))
+                    uint closestKey = GatheringPointBaseDict.Keys
+                        .OrderBy(k => Math.Abs((int)k - tempSlot))
                         .First();
 
-                    GatheringSlot = closestKey;
+                    newSlot = closestKey;
                 }
+
+                GatheringSlot = newSlot;
             }
 
             ImGui.Text($"Gathering Slot: {GatheringSlot}");
@@ -90,6 +100,70 @@ namespace GatherChill.Ui
                         var itemName = Svc.Data.GetExcelSheet<Item>().GetRow(item).Name.ToString();
                         ImGui.Text($"Item: {item} | Name: {itemName}");
                     }
+                    string GatheringNodes = string.Empty;
+                    for (int i = 0; i < entry.Value.NodeIds.Count; i++)
+                    {
+                        var nodeId = entry.Value.NodeIds.ElementAt(i);
+                        GatheringNodes += $"{nodeId}, ";
+                    }
+                    ImGui.Text(GatheringNodes);
+                }
+            }
+
+            GatherItemSearch();
+        }
+
+        private static bool openSearchPopup = false;
+        private static string searchInput = "";
+        private static List<KeyValuePair<uint, string>> filteredItems = new();
+
+        private static void GatherItemSearch()
+        {
+            if (ImGui.Button("Open Search###GatheringItemSearch"))
+            {
+                openSearchPopup = true;
+                ImGui.OpenPopup("Gathering Item Search");
+            }
+
+            if (openSearchPopup)
+            {
+                ImGui.SetNextWindowSize(new System.Numerics.Vector2(300, 300), ImGuiCond.Once);
+
+                if (ImGui.BeginPopupModal("Gathering Item Search", ref openSearchPopup, ImGuiWindowFlags.AlwaysAutoResize))
+                {
+                    // Search bar
+                    ImGui.InputText("Search", ref searchInput, 100);
+
+                    // Filter dictionary based on value (name)
+                    filteredItems = GatheringItems
+                        .Where(kv => string.IsNullOrEmpty(searchInput) || kv.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    ImGui.Separator();
+
+                    // Display filtered results
+                    foreach (var kv in filteredItems)
+                    {
+                        string label = $"{kv.Value} (ID: {kv.Key})";
+                        if (ImGui.Selectable(label))
+                        {
+                            // Handle selection
+                            Console.WriteLine($"Selected: {kv.Value} ({kv.Key})");
+                            if (!C.GatheringList.Any(x => x.ItemName == kv.Value))
+                            {
+                                C.GatheringList.Add(new Config.GatheringConfig()
+                                {
+                                    GatheringAmount = 1,
+                                    ItemId = kv.Key,
+                                    ItemName = kv.Value
+                                });
+                            }
+                            openSearchPopup = false;
+                            ImGui.CloseCurrentPopup();
+                        }
+                    }
+
+                    ImGui.EndPopup();
                 }
             }
         }

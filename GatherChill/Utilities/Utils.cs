@@ -56,10 +56,25 @@ public static unsafe class Utils
         return Player.Available
                && Player.Object.CastActionId == 0
                && !IsOccupied()
-               && !Svc.Condition[ConditionFlag.Jumping]
-               && !Svc.Condition[ConditionFlag.Jumping61]
+               && !Player.IsJumping
                && Player.Object.IsTargetable
                && !Player.IsAnimationLocked;
+    }
+
+    public static unsafe bool HasStatusId(params uint[] statusIDs)
+    {
+        var statusID = Svc.ClientState.LocalPlayer!.StatusList
+            .Select(se => se.StatusId)
+            .ToList().Intersect(statusIDs)
+            .FirstOrDefault();
+
+        return statusID != default;
+    }
+
+    public static int GetGp()
+    {
+        var gp = Svc.ClientState.LocalPlayer?.CurrentGp ?? 0;
+        return (int)gp;
     }
 
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
@@ -69,6 +84,8 @@ public static unsafe class Utils
     => includeHq ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true)
     + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
     : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
+
+    public static Vector3 NavDestination = Vector3.Zero;
 
     #endregion
 
@@ -128,6 +145,8 @@ public static unsafe class Utils
         var GathTypeSheets = Svc.Data.GetExcelSheet<GatheringType>();
         var GatheringPointBaseSheets = Svc.Data.GetExcelSheet<GatheringPointBase>();
         var GatheringItemSheet = Svc.Data.GetExcelSheet<GatheringItem>();
+        var ItemSheet = Svc.Data.GetExcelSheet<Item>();
+        var EventSheet = Svc.Data.GetExcelSheet<EventItem>();
 
         foreach (var entry in GathTypeSheets)
         {
@@ -163,7 +182,7 @@ public static unsafe class Utils
 
         foreach (var entry in GatheringPointBaseSheets)
         {
-            var key = entry.RowId.ToInt();
+            var key = entry.RowId;
             var gatheringType = entry.GatheringType.RowId.ToInt();
             var level = entry.GatheringLevel;
             if (level == 0 || gatheringType is (4 or 5))
@@ -183,15 +202,112 @@ public static unsafe class Utils
 
             if (!GatheringPointBaseDict.ContainsKey(key))
             {
-                GatheringPointBaseDict[key] = new GatheringPointBaseInformation
+                GatheringPointBaseDict[key] = new GPBaseInformation
                 {
                     GatheringType = gatheringType,
                     GatheringLevel = level,
-                    Items = items
+                    Items = items,
                 };
             }
+
+            foreach (var data in GatheringNodeInfoList)
+            {
+                if (data.NodeSet == key)
+                {
+                    GatheringPointBaseDict[key].NodeIds.Add(data.NodeId);
+                }
+            }
+        }
+
+        foreach (var item in GatheringItemSheet)
+        {
+            var itemId = item.Item.RowId;
+            if (itemId == 0 || EventSheet.HasRow(itemId))
+                continue;
+
+            string itemName = ItemSheet.GetRow(itemId).Name.ToString();
+
+            if (!GatheringItems.ContainsKey(itemId))
+            {
+                GatheringItems.Add(itemId, itemName);
+            }
+
         }
     }
+
+    #endregion
+
+    #region ActionUsage
+
+    public static bool BoonIncrease1Bool(int boonChance)
+    {
+        return C.AbilityConfigDict["BoonIncrease1"].Enable
+            && boonChance < 100
+            && !HasStatusId(GathActionDict["BoonIncrease1"].StatusId)
+            && GetGp() >= GathActionDict["BoonIncrease1"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["BoonIncrease1"].MinimumGP;
+    }
+
+    public static bool BoonIncrease2Bool(int boonChance)
+    {
+        return C.AbilityConfigDict["BoonIncrease2"].Enable
+            && boonChance < 100
+            && !HasStatusId(GathActionDict["BoonIncrease2"].StatusId)
+            && GetGp() >= GathActionDict["BoonIncrease2"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["BoonIncrease2"].MinimumGP;
+    }
+
+    public static bool TidingsBool()
+    {
+        return C.AbilityConfigDict["Tidings"].Enable
+            && !HasStatusId(GathActionDict["Tidings"].StatusId)
+            && GetGp() >= GathActionDict["Tidings"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["Tidings"].MinimumGP;
+    }
+
+    public static bool Yield1Bool()
+    {
+        return C.AbilityConfigDict["Yield1"].Enable
+            && !HasStatusId(GathActionDict["Yield1"].StatusId)
+            && GetGp() >= GathActionDict["Yield1"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["Yield1"].MinimumGP;
+    }
+
+    public static bool Yield2Bool()
+    {
+        return C.AbilityConfigDict["Yield2"].Enable
+            && !HasStatusId(GathActionDict["Yield2"].StatusId)
+            && GetGp() >= GathActionDict["Yield2"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["Yield2"].MinimumGP;
+    }
+
+    public static bool IntegrityBool(bool durMissing)
+    {
+        return C.AbilityConfigDict["IntegrityIncrease"].Enable
+            && durMissing
+            && GetGp() >= GathActionDict["IntegrityIncrease"].RequiredGp
+            && GetGp() >= C.AbilityConfigDict["IntegrityIncrease"].MinimumGP;
+    }
+
+    public static bool BonusIntegrityBool(bool durMissing)
+    {
+        return HasStatusId(GathActionDict["BonusIntegrityChance"].StatusId)
+            && durMissing;
+    }
+
+    #endregion
+
+    #region Useful Functions
+
+    public static Vector3 RoundVector3(Vector3 v, int decimals)
+    {
+        return new Vector3(
+            (float)Math.Round(v.X, decimals),
+            (float)Math.Round(v.Y, decimals),
+            (float)Math.Round(v.Z, decimals)
+        );
+    }
+
 
     #endregion
 
