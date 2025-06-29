@@ -11,8 +11,10 @@
     <TargetFramework>net9.0-windows7.0</TargetFramework>
 	<NoWarn>CS8618; CS8625; CS8629; </NoWarn>
   </PropertyGroup>
-	
+
   <ItemGroup>
-      <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+    <PackageReference Include="ECommons" Version="3.0.0.1" />
   </ItemGroup>
+  
+  
 </Project>

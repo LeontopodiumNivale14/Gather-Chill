@@ -151,7 +151,7 @@ namespace GatherChill.Ui
                             Console.WriteLine($"Selected: {kv.Value} ({kv.Key})");
                             if (!C.GatheringList.Any(x => x.ItemName == kv.Value))
                             {
-                                C.GatheringList.Add(new Config.GatheringConfig()
+                                C.GatheringList.Add(new GatheringConfig()
                                 {
                                     GatheringAmount = 1,
                                     ItemId = kv.Key,

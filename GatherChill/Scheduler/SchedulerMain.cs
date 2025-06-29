@@ -6,6 +6,7 @@ using ECommons.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
+using Dalamud.Game.ClientState.Conditions;
 
 #nullable disable
 namespace GatherChill.Scheduler
@@ -21,6 +22,7 @@ namespace GatherChill.Scheduler
         internal static bool EnablePlugin()
         {
             EnableTicking = true;
+            NavDestination = Vector3.Zero;
             return true;
         }
         internal static bool DisablePlugin()
@@ -33,6 +35,7 @@ namespace GatherChill.Scheduler
             NodeSet = 0;
             GatheredItem = 0;
             NodeIdIndex = 0;
+            NavDestination = Vector3.Zero;
 
             return true;
         }
@@ -97,7 +100,8 @@ namespace GatherChill.Scheduler
                                     // You're within loading range of this node, now checking to see if the node is even available to begin with
                                     PluginDebug("You're close enough to the node, checking to see if that's valid");
                                     var validNode = Svc.Objects
-                                                        .Where(n => n.DataId == firstListing.NodeId && n.IsTargetable)
+                                                        .Where(n => n.IsTargetable)
+                                                        .Where(n => n.DataId == firstListing.NodeId)
                                                         .FirstOrDefault();
 
                                     if (validNode != null)
@@ -110,7 +114,7 @@ namespace GatherChill.Scheduler
 
                                         PluginDebug("Node is valid, checking to see what the distance is");
                                         // A node was found that was both targetable AND in range. Perfect ~
-                                        if (Player.DistanceTo(LandZone) > 40)
+                                        if (Player.DistanceTo(LandZone) > 40 || Svc.Condition[ConditionFlag.InFlight])
                                         {
                                             P.taskManager.Enqueue(() => PluginDebug("Distance to node is greater than 40, flying to node"));
                                             TaskMount_Fly.Enqueue(LandZone, true, 1);

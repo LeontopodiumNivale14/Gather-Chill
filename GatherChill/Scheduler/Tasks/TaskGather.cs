@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using ECommons.Automation;
 using ECommons.GameHelpers;
+using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -45,6 +46,8 @@ namespace GatherChill.Scheduler.Tasks
             uint IntegInc = 0;
             uint BonusInteg = 0;
 
+            GatheringConfig? itemEntry = null;
+
             if (GetClassJobId() == 17)
             {
                 Boon1 = GathActionDict["BoonIncrease1"].BtnActionId;
@@ -71,102 +74,120 @@ namespace GatherChill.Scheduler.Tasks
                 return true;
             }
 
+            bool foundItem = false;
+
             if (TryGetAddonMaster<Gathering>("Gathering", out var m) && m.IsAddonReady)
             {
-                bool foundItem = false;
                 if (!Svc.Condition[ConditionFlag.Gathering42])
                 {
                     foreach (var g in m.GatheredItems)
                     {
-                        foreach (var entry in C.GatheringList)
+                        itemEntry = C.GatheringList.Where(x => x.ItemId == g.ItemID)
+                                                                    .Where(x => GetItemCount((int)x.ItemId) < x.GatheringAmount)
+                                                                    .FirstOrDefault();
+                        
+                        if (itemEntry != null)
                         {
-                            if (GetItemCount((int)entry.ItemId) < entry.GatheringAmount && g.ItemID == entry.ItemId)
-                            {
-                                GatherItemId = entry.ItemId;
-                                foundItem = true;
-                                break;
-                            }
-                        }
-
-                        if (g.ItemID == GatherItemId)
-                        {
+                            foundItem = true;
                             int boonChance = g.BoonChance;
                             bool missingDur = m.CurrentIntegrity < m.TotalIntegrity;
+                            bool useAction = false;
 
-                            if (foundItem)
+                            if (BoonIncrease2Bool(boonChance) && !missingDur)
                             {
-                                if (BoonIncrease2Bool(boonChance) && !missingDur)
+                                useAction = true;
+                                if (EzThrottler.Throttle("Boon2 Action Usage"))
                                 {
-                                    if (EzThrottler.Throttle("Boon2 Action Usage"))
-                                    {
-                                        PluginDebug("Activating Boon% 2");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, Boon2);
-                                    }
+                                    PluginDebug("Activating Boon% 2");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, Boon2);
                                 }
-                                else if (BoonIncrease1Bool(boonChance) && !missingDur)
+                            }
+                            else if (BoonIncrease1Bool(boonChance) && !missingDur)
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Boon1 Action Usage"))
                                 {
-                                    if (EzThrottler.Throttle("Boon1 Action Usage"))
-                                    {
-                                        PluginDebug("Activating Boon% 1");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, Boon1);
-                                    }
+                                    PluginDebug("Activating Boon% 1");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, Boon1);
                                 }
-                                else if (TidingsBool())
+                            }
+                            else if (TidingsBool())
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Tidings Action Usage") && !missingDur)
                                 {
-                                    if (EzThrottler.Throttle("Tidings Action Usage") && !missingDur)
-                                    {
-                                        PluginDebug("Activating Bonus Item from Tidings");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, Tidings);
-                                    }
+                                    PluginDebug("Activating Bonus Item from Tidings");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, Tidings);
                                 }
-                                else if (Yield2Bool())
+                            }
+                            else if (Yield2Bool())
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Using Yield2 Action Usage") && !missingDur)
                                 {
-                                    if (EzThrottler.Throttle("Using Yield2 Action Usage") && !missingDur)
-                                    {
-                                        PluginDebug("Activating Kings Yield II [or equivelent]");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, Yield2);
-                                    }
+                                    PluginDebug("Activating Kings Yield II [or equivelent]");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, Yield2);
+                                }
 
-                                }
-                                else if (Yield1Bool())
+                            }
+                            else if (Yield1Bool())
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Using Yield1 Action Usage") && !missingDur)
                                 {
-                                    if (EzThrottler.Throttle("Using Yield1 Action Usage") && !missingDur)
-                                    {
-                                        PluginDebug("Activating Kings Yield II [or equivelent]");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, Yield1);
-                                    }
+                                    PluginDebug("Activating Kings Yield II [or equivelent]");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, Yield1);
                                 }
-                                else if (BonusIntegrityBool(missingDur))
+                            }
+                            else if (BonusIntegrityBool(missingDur))
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Using Bonus Intregrity Usage"))
                                 {
-                                    if (EzThrottler.Throttle("Using Bonus Intregrity Usage"))
-                                    {
-                                        PluginDebug("Activating Bonus Yield Button");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, BonusInteg);
-                                    }
+                                    PluginDebug("Activating Bonus Yield Button");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, BonusInteg);
                                 }
-                                else if (IntegrityBool(missingDur))
+                            }
+                            else if (IntegrityBool(missingDur))
+                            {
+                                useAction = true;
+                                if (EzThrottler.Throttle("Missing Dur, using action"))
                                 {
-                                    if (EzThrottler.Throttle("Missing Dur, using action"))
-                                    {
-                                        PluginDebug("Activing Integrity Increase Button [Hoping for bonus Integ]");
-                                        ActionManager.Instance()->UseAction(ActionType.Action, IntegInc);
-                                    }
+                                    PluginDebug("Activing Integrity Increase Button [Hoping for bonus Integ]");
+                                    ActionManager.Instance()->UseAction(ActionType.Action, IntegInc);
                                 }
-                                else if (EzThrottler.Throttle("Gathering" + g.ItemID))
+                            }
+
+                            if (!useAction)
+                            {
+                                PluginDebug("Should be gathering an item...");
+                                if (EzThrottler.Throttle("Gathering" + g.ItemID, 100))
                                 {
                                     PluginDebug($"Gathering {g.ItemID}");
                                     g.Gather();
                                 }
                             }
+
+                            else if (EzThrottler.Throttle("Gathering" + g.ItemID, 100))
+                            {
+                                PluginDebug($"Gathering {g.ItemID}");
+                                g.Gather();
+                            }
                         }
                     }
 
-                    if (!foundItem)
+                    if (foundItem)
                     {
+                        return false;
+                    }
+                    else
+                    {
+                        PluginLog.Debug("No items were found at this node, and you still have durability left. Leaving the node");
                         return true;
                     }
                 }
             }
+
             return false;
         }
 

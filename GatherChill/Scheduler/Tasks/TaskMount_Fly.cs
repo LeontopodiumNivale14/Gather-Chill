@@ -43,6 +43,7 @@ namespace GatherChill.Scheduler.Tasks
                 P.navmesh.SetAlignCamera(false);
                 P.navmesh.PathfindAndMoveTo(destination, true);
                 NavDestination = destination;
+                PluginDebug("Setting the destination + flying to destination");
             }
 
             if (P.navmesh.PathfindInProgress() || P.navmesh.IsRunning() || PlayerHandlers.IsMoving()) return false;

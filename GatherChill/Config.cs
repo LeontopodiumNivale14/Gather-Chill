@@ -8,13 +8,6 @@ public class Config : IEzConfig
     [JsonIgnore]
     public const int CurrentConfigVersion = 1;
 
-    public class GatheringConfig
-    {
-        public int GatheringAmount { get; set; } = 0;
-        public uint ItemId { get; set; } = 0;
-        public string ItemName { get; set; } = string.Empty;
-    }
-
     public List<GatheringConfig> GatheringList = new();
 
     public class AbilityConfig

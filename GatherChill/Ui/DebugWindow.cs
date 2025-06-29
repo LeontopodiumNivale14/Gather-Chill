@@ -1,10 +1,14 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Tasks;
+using GatherChill.Utilities;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
 namespace GatherChill.Ui;
@@ -14,7 +18,7 @@ internal class DebugWindow : Window
     public DebugWindow() :
         base($"Gather & Chill Debug {P.GetType().Assembly.GetName().Version} ###GatherChillDebug")
     {
-        Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse;
+        Flags = ImGuiWindowFlags.NoCollapse;
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(100, 100),
@@ -53,6 +57,11 @@ internal class DebugWindow : Window
                 ConfigSettings();
                 ImGui.EndTabItem();
             }
+            if (ImGui.BeginTabItem("Main Items"))
+            {
+                ItemTable();
+                ImGui.EndTabItem();
+            }
 
             ImGui.EndTabBar();
         }
@@ -62,10 +71,47 @@ internal class DebugWindow : Window
 
     private Vector3 PlayerPos = Vector3.Zero;
     private int gatheringType = 0;
+    private int maxDistance = 0;
+    private int nodeSet = 0;
+    private int NodeId = 0;
 
     public void GatheringTest()
     {
+        ImGui.SetNextItemWidth(100);
         ImGui.SliderInt("##GatheringType", ref gatheringType, 0, 5);
+        ImGui.SameLine();
+        ImGui.Text("Gathering Type");
+
+        ImGui.SetNextItemWidth(100);
+        ImGui.InputInt("###MaxDistance", ref maxDistance);
+        ImGui.SameLine();
+        ImGui.Text("Max Distance");
+
+        ImGui.SetNextItemWidth(100);
+        ImGui.InputInt("###NodeSet", ref nodeSet);
+        ImGui.SameLine();
+        ImGui.Text("Node Set");
+
+        ImGui.SetNextItemWidth(100);
+        ImGui.InputInt("###NodeFinderId", ref NodeId);
+        ImGui.SameLine();
+        ImGui.Text("Node Id Search");
+        
+        if (ImGui.Button("Set to current node"))
+        {
+            if (Svc.Targets.Target != null)
+            {
+                NodeId = Svc.Targets.Target.DataId.ToInt();
+            }
+        }
+
+        ImGui.SameLine();
+
+        if (ImGui.Button("Clear Target Node"))
+        {
+            NodeId = 0;
+        }
+
 
         ImGui.Text("Statuses");
         ImGui.Text($"Gathering [Normal]: {Svc.Condition[ConditionFlag.Gathering]}");
@@ -92,18 +138,42 @@ internal class DebugWindow : Window
                     MathF.Round(x.Position.Z, 2)
                     );
 
+                if (maxDistance != 0)
+                {
+                    if (Player.DistanceTo(rounded) > maxDistance)
+                        continue;
+                }
+
+                if (NodeId != 0)
+                {
+                    if (x.DataId != NodeId)
+                        continue;
+                }
+
+                if (ImGui.Button($"Set Target## {x.Position}"))
+                {
+                    IGameObject? GameObject = null;
+                    Utils.TryGetObjectByDataId(x.DataId, out GameObject);
+
+                    Utils.TargetgameObject(GameObject);
+                }
+
+                ImGui.SameLine();
+
+
                 if (ImGui.Button("Copy##" + x.Position))
                 {
                     string clipBoardText = string.Empty;
 
-                    clipBoardText += "new GathNodeInfo\n";
-                    clipBoardText += "{\n";
-                    clipBoardText += $"    ZoneId = {Svc.ClientState.TerritoryType},\n";
-                    clipBoardText += $"    NodeId = {x.DataId},\n";
-                    clipBoardText += $"    Position = new Vector3 ({rounded.X}f, {rounded.Y}f, {rounded.Z}f),\n";
-                    clipBoardText += $"    LandZone = new Vector3 ({PlayerPos.X}f, {PlayerPos.Y}f, {PlayerPos.Z}f),\n";
-                    clipBoardText += $"    GatheringType = {gatheringType},\n";
-                    clipBoardText += "},\n";
+                    clipBoardText += $"new GathNodeInfo\n" +
+                                      "{\n" +
+                                     $"    ZoneId = {Svc.ClientState.TerritoryType},\n" +
+                                     $"    NodeId = {x.DataId},\n" +
+                                     $"    Position = new Vector3 ({rounded.X}f, {rounded.Y}f, {rounded.Z}f),\n" +
+                                     $"    LandZone = new Vector3 ({PlayerPos.X}f, {PlayerPos.Y}f, {PlayerPos.Z}f),\n" +
+                                     $"    GatheringType = {gatheringType},\n" +
+                                     $"    NodeSet = {nodeSet}\n" +
+                                      "},\n";
                     ImGui.SetClipboardText(clipBoardText);
                 }
                 ImGui.SameLine();
@@ -199,7 +269,6 @@ internal class DebugWindow : Window
 
         using (ImRaii.Disabled(isRunning))
         {
-            ImGui.SameLine();
             if (ImGui.Button("Start###DebugStart"))
             {
                 SchedulerMain.EnablePlugin();
@@ -231,6 +300,8 @@ internal class DebugWindow : Window
 
         ImGui.SetNextItemWidth(150);
         ImGui.InputInt("TargetId", ref targetId);
+
+        GatherItemSearch();
 
         if (ImGui.BeginTable("###GatherTableListing", 5, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
         {
@@ -288,6 +359,61 @@ internal class DebugWindow : Window
         }
     }
 
+    private static bool openSearchPopup = false;
+    private static string searchInput = "";
+    private static List<KeyValuePair<uint, string>> filteredItems = new();
+
+    private static void GatherItemSearch()
+    {
+        if (ImGui.Button("Open Search###GatheringItemSearch"))
+        {
+            ImGui.OpenPopup("Gathering Item Search");
+        }
+
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(300, 300), ImGuiCond.Once);
+
+        if (ImGui.BeginPopup("Gathering Item Search"))
+        {
+            // Search bar
+            ImGui.InputText("Search", ref searchInput, 100);
+
+            // Filter dictionary based on value (name)
+            filteredItems = GatheringItems
+                .Where(kv => string.IsNullOrEmpty(searchInput) || kv.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            ImGui.Separator();
+
+            // Limit list display to 10 items’ worth of height
+            float itemHeight = ImGui.GetTextLineHeightWithSpacing();
+            float listHeight = itemHeight * 10;
+
+            ImGui.BeginChild("##itemList", new System.Numerics.Vector2(0, listHeight), true);
+
+            foreach (var kv in filteredItems)
+            {
+                string label = $"{kv.Value} (ID: {kv.Key})";
+                if (ImGui.Selectable(label))
+                {
+                    Console.WriteLine($"Selected: {kv.Value} ({kv.Key})");
+                    if (!C.GatheringList.Any(x => x.ItemName == kv.Value))
+                    {
+                        C.GatheringList.Add(new GatheringConfig()
+                        {
+                            GatheringAmount = 1,
+                            ItemId = kv.Key,
+                            ItemName = kv.Value
+                        });
+                    }
+                    ImGui.CloseCurrentPopup();
+                }
+            }
+
+            ImGui.EndChild();
+            ImGui.EndPopup();
+        }
+    }
+
     private void ConfigSettings()
     {
         void ConfigurationSettings(string configName)
@@ -332,6 +458,141 @@ internal class DebugWindow : Window
         ConfigurationSettings("Yield1");
         ConfigurationSettings("Yield2");
         ConfigurationSettings("IntegrityIncrease");
+    }
+
+    string itemSearch = "";
+    string nodeSearch = "";
+
+    private void ItemTable()
+    {
+        var GatherItemSheet = Svc.Data.GetExcelSheet<GatheringItem>();
+        var EventItems = Svc.Data.GetExcelSheet<EventItem>();
+        var ItemSheet = Svc.Data.GetExcelSheet<Item>();
+
+        ImGui.SetNextItemWidth(200);
+        if (ImGui.InputText("###MainItemSearch", ref itemSearch, 200))
+        {
+            itemSearch = itemSearch.Trim();
+        }
+        ImGui.SameLine();
+        ImGui.Text("Item Search");
+
+        ImGui.SetNextItemWidth(200);
+        if (ImGui.InputText("###MainNodeSearch", ref nodeSearch, 200))
+        {
+            nodeSearch = nodeSearch.Trim();
+        }
+        ImGui.SameLine();
+        ImGui.Text("Node Search");
+
+
+        if (ImGui.BeginTable("###DebugNormalNodeItems", 5, ImGuiTableFlags.Resizable | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
+        {
+            ImGui.TableSetupColumn("SetId");
+            ImGui.TableSetupColumn("Level");
+            ImGui.TableSetupColumn("Items");
+            ImGui.TableSetupColumn("NodeIds");
+            ImGui.TableSetupColumn("Leve?");
+
+            ImGui.TableHeadersRow();
+
+            foreach (var entry in GatheringPointBaseDict)
+            {
+                var setId = entry.Key;
+                var nodeLevel = entry.Value.GatheringLevel;
+                List<string> gatheringItems = new();
+                bool leveItem = false;
+                foreach (var item in entry.Value.Items)
+                {
+                    if (ItemSheet.TryGetRow(item, out var GatherItem))
+                    {
+                        gatheringItems.Add($"{GatherItem.Name}");
+                    }
+                    else if (EventItems.TryGetRow(item, out var EventItem))
+                    {
+                        leveItem = true;
+                        gatheringItems.Add($"{EventItem.Name}");
+                    }
+                }
+                List<string> allNodes = new();
+                foreach (var item in entry.Value.NodeIds)
+                {
+                    allNodes.Add($"{item}");
+                }
+
+                if (!string.IsNullOrEmpty(itemSearch) && !gatheringItems.Any(item => item.Contains(itemSearch, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+                if (!string.IsNullOrEmpty(nodeSearch) && !allNodes.Any(node => node.Contains(nodeSearch, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                ImGui.TableNextRow();
+
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text($"{setId}");
+
+                ImGui.TableNextColumn();
+                ImGui.Text($"{nodeLevel}");
+
+                ImGui.TableNextColumn();
+                if (gatheringItems.Count > 0)
+                {
+                    string allItems = string.Join(", ", gatheringItems);
+                    ImGui.Text($"{allItems}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        foreach (var item in gatheringItems)
+                        {
+                            ImGui.Text($"{item}");
+                        }
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                ImGui.TableNextColumn();
+                if (allNodes.Count > 0)
+                {
+                    string nodeList = string.Join(", ", allNodes);
+                    ImGui.Text($"{nodeList}");
+                }
+
+                ImGui.TableNextColumn();
+                FancyCheckmark(leveItem);
+            }
+
+            ImGui.EndTable();
+        }
+    }
+
+    public static void FancyCheckmark(bool enabled)
+    {
+        float columnWidth = ImGui.GetColumnWidth();  // Get column width
+        float rowHeight = ImGui.GetTextLineHeightWithSpacing();  // Get row height
+
+        Vector2 iconSize = ImGui.CalcTextSize($"{FontAwesome.Cross}"); // Get icon size
+        float iconWidth = iconSize.X;
+        float iconHeight = iconSize.Y;
+
+        float cursorX = ImGui.GetCursorPosX() + (columnWidth - iconWidth) * 0.5f;
+        float cursorY = ImGui.GetCursorPosY() + (rowHeight - iconHeight) * 0.5f;
+
+        cursorX = Math.Max(cursorX, ImGui.GetCursorPosX()); // Prevent negative padding
+        cursorY = Math.Max(cursorY, ImGui.GetCursorPosY());
+
+        ImGui.SetCursorPos(new Vector2(cursorX, cursorY));
+
+        if (!enabled)
+        {
+            FontAwesome.Print(ImGuiColors.DalamudRed, FontAwesome.Cross);
+        }
+        else if (enabled)
+        {
+            FontAwesome.Print(ImGuiColors.HealerGreen, FontAwesome.Check);
+        }
     }
 
     #endregion
