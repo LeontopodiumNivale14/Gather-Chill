@@ -18,7 +18,7 @@ internal class DebugWindow : Window
     public DebugWindow() :
         base($"Gather & Chill Debug {P.GetType().Assembly.GetName().Version} ###GatherChillDebug")
     {
-        Flags = ImGuiWindowFlags.NoCollapse;
+        Flags = ImGuiWindowFlags.None;
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(100, 100),
@@ -60,6 +60,16 @@ internal class DebugWindow : Window
             if (ImGui.BeginTabItem("Main Items"))
             {
                 ItemTable();
+                ImGui.EndTabItem();
+            }
+            if (ImGui.BeginTabItem("New Stuff"))
+            {
+                DebugTabs.GatheringYamlTest.Draw();
+                ImGui.EndTabItem();
+            }
+            if (ImGui.BeginTabItem("Route Editor"))
+            {
+                DebugTabs.RouteViewer.Draw();
                 ImGui.EndTabItem();
             }
 

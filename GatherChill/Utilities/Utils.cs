@@ -235,6 +235,85 @@ public static unsafe class Utils
         }
     }
 
+    public class RouteInfo
+    {
+        public uint TerritoryId { get; set; }
+        public string TerritoryName { get; set; }
+        public uint ExVersion { get; set; }
+        public string ExName { get; set; }
+        public HashSet<uint> NodeIds { get; set; }
+    }
+
+    /// <summary>
+    /// Temporary storage so I can create the files for this
+    /// <br></br> <b> Key: </b> Route/Nodeset [uint]
+    /// <br></br> <b> Value: </b> 
+    /// <br></br> -> <b> TerritoryId</b> [int]
+    /// <br></br> -> <b> Territory Name</b> [string]
+    /// <br></br> -> <b> ExVersion </b> [uint]
+    /// <br></br> -> <b> ExName </b> [string]
+    /// </summary>
+    public static Dictionary<uint, RouteInfo> SheetInfo = new Dictionary<uint, RouteInfo>();
+
+    public static void CreateYamlFiles()
+    {
+        var GathTypeSheets = Svc.Data.GetExcelSheet<GatheringType>();
+        var GatheringPoint = Svc.Data.GetExcelSheet<GatheringPoint>();
+        var GatheringPointBaseSheets = Svc.Data.GetExcelSheet<GatheringPointBase>();
+        var ExportedGatheringPoints = Svc.Data.GetExcelSheet<ExportedGatheringPoint>();
+
+        var ZoneInfo = Svc.Data.GetExcelSheet<TerritoryType>();
+        var ExVersion = Svc.Data.GetExcelSheet<ExVersion>();
+        var PlaceName = Svc.Data.GetExcelSheet<PlaceName>();
+
+        SheetInfo.Clear();
+
+        foreach (var node in GatheringPoint)
+        {
+            try
+            {
+                PluginLog.Information($"Checking Log: {node.RowId}");
+
+                var nodeId = node.RowId;
+                var nodeSet = node.GatheringPointBase.RowId;
+                var zoneId = node.TerritoryType.Value.RowId;
+                string zoneName = "unknown";
+                uint expansion = 0;
+                var expansionName = "A Realm Reborn";
+
+                var zoneRow = ZoneInfo.GetRow(zoneId);
+                expansion = zoneRow.ExVersion.Value.RowId;
+                expansionName = ExVersion.GetRow(expansion).Name.ToString();
+
+                if (zoneRow.PlaceName.Value.RowId != 0)
+                {
+                    zoneName = PlaceName.GetRow(zoneRow.PlaceNameZone.Value.RowId).Name.ToString();
+                }
+
+                if (SheetInfo.TryGetValue(nodeSet, out var entry))
+                {
+                    entry.NodeIds.Add(nodeId);
+                }
+
+                if (!SheetInfo.ContainsKey(nodeSet))
+                {
+                    SheetInfo.Add(nodeSet, new RouteInfo()
+                    {
+                        ExName = expansionName,
+                        ExVersion = expansion,
+                        TerritoryId = zoneId,
+                        TerritoryName = zoneName,
+                        NodeIds = new HashSet<uint> { nodeId },
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error($"Can't access row: {node.RowId}: {ex}");
+            }
+        }
+    }
+
     #endregion
 
     #region ActionUsage

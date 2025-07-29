@@ -1,9 +1,12 @@
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
-using GatherChill.Scheduler;
-using GatherChill.Ui;
+using ECommons.Logging;
+using GatherChill.ConfigYaml;
 using GatherChill.IPC;
+using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
+using GatherChill.Ui;
+using SQLitePCL;
 
 namespace GatherChill;
 
@@ -13,6 +16,35 @@ public sealed class GatherChill : IDalamudPlugin
     internal static GatherChill P = null!;
     public static Config C => P.config;
     private Config config;
+
+    private static T LoadConfig<T>() where T : IYamlConfig, new()
+    {
+        var path = typeof(T).GetProperty("ConfigPath")!.GetValue(null)!.ToString()!;
+        var config = YamlConfig.Load<T>(path);
+
+        if (config == null)
+        {
+            PluginLog.Warning($"[{typeof(T).Name}] Config was null. Creating new default.");
+            config = new T();
+            YamlConfig.Save(config, path);
+        }
+
+        PluginLog.Information($"[{typeof(T).Name}] Loaded from {path}");
+        return config;
+    }
+    private static T LoadEmbeddedConfig<T>(string resourceName) where T : IYamlConfig, new()
+    {
+        var config = YamlConfig.LoadFromResource<T>(resourceName);
+
+        if (config == null)
+        {
+            PluginLog.Warning($"[{typeof(T).Name}] Embedded config was null. Returning new default.");
+            config = new T();
+        }
+
+        PluginLog.Information($"[{typeof(T).Name}] Loaded from embedded resource: {resourceName}");
+        return config;
+    }
 
     // Window's that I use, base window to the settings... need these to actually show shit 
     internal WindowSystem windowSystem;
@@ -69,6 +101,8 @@ public sealed class GatherChill : IDalamudPlugin
         Svc.Framework.Update += Tick;
 
         UpdateDictionaries();
+
+        Batteries_V2.Init();
     }
 
     private void Tick(object _)
