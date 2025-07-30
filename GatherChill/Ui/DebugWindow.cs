@@ -27,7 +27,7 @@ internal class DebugWindow : Window
         P.windowSystem.AddWindow(this);
     }
 
-    public void Dispose() { }
+    public void Dispose() { P.windowSystem.RemoveWindow(this); }
 
     // variables that hold the "ref"s for ImGui
 
@@ -62,14 +62,9 @@ internal class DebugWindow : Window
                 ItemTable();
                 ImGui.EndTabItem();
             }
-            if (ImGui.BeginTabItem("New Stuff"))
-            {
-                DebugTabs.GatheringYamlTest.Draw();
-                ImGui.EndTabItem();
-            }
             if (ImGui.BeginTabItem("Route Editor"))
             {
-                DebugTabs.RouteViewer.Draw();
+                DebugTabs.RouteEditor.Draw();
                 ImGui.EndTabItem();
             }
 
@@ -127,7 +122,7 @@ internal class DebugWindow : Window
         ImGui.Text($"Gathering [Normal]: {Svc.Condition[ConditionFlag.Gathering]}");
         ImGuiEx.HelpMarker("Interacting with Gathering Node", sameLine: true);
 
-        ImGui.Text($"Gathering [Gathering42] {Svc.Condition[ConditionFlag.Gathering42]}");
+        ImGui.Text($"Gathering [Gathering42] {Svc.Condition[ConditionFlag.ExecutingGatheringAction]}");
         ImGuiEx.HelpMarker("Interacting with Gathering Node/Using Buffs", sameLine: true);
 
         PlayerPos = Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero;

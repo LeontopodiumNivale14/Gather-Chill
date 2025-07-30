@@ -1,13 +1,5 @@
-﻿using Dalamud.Game.ClientState.Statuses;
-using Dalamud.Interface.Textures;
-using Dalamud.Interface.Textures.TextureWraps;
-using ECommons;
-using ECommons.ExcelServices;
-using System;
+﻿using Dalamud.Interface.Textures;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GatherChill.Utilities;
 
@@ -137,6 +129,17 @@ public static unsafe class Data
 
     #region Gathering Node Information
 
+    public class RouteEntry
+    {
+        public uint RouteNumber { get; set; }
+        public string Expansion { get; set; }     // ExName
+        public string Area { get; set; }          // TerritoryName
+        public uint AreaId { get; set; }
+        public HashSet<uint> ListNodeIds { get; set; } = new();
+        public List<GathNodeInfo> GatherPoints { get; set; } = new();
+    }
+
+
     public class GatheringConfig
     {
         public int GatheringAmount { get; set; } = 0;
@@ -162,6 +165,9 @@ public static unsafe class Data
     }
     public static Dictionary<uint, GPBaseInformation> GatheringPointBaseDict = new();
 
+    /// <summary>
+    /// Used across everything, keeps the information for nodes
+    /// </summary>
     public class GathNodeInfo
     {
         public Vector3 Position { get; set; }
@@ -170,6 +176,12 @@ public static unsafe class Data
         public int GatheringType { get; set; }
         public int ZoneId { get; set; }
         public uint NodeSet { get; set; }
+
+        public bool UseRadialPositioning { get; set; } = false;
+        public float InnerRadius { get; set; } = 0.0f;
+        public float OuterRadius { get; set; } = 5.0f;
+        public float StartAngle { get; set; } = 0.0f;
+        public float EndAngle { get; set; } = 360.0f;
     }
 
     public static List<GathNodeInfo> GatheringNodeInfoList = new()

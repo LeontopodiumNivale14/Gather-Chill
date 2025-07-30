@@ -27,7 +27,7 @@ internal class SettingsWindow : Window
         AllowPinning = false;
     }
 
-    public void Dispose() { }
+    public void Dispose() { P.windowSystem.RemoveWindow(this); }
 
     public override void Draw()
     {

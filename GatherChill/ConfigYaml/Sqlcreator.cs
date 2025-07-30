@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
+using System.IO;
 
 namespace GatherChill.ConfigYaml
 {
@@ -40,7 +42,7 @@ namespace GatherChill.ConfigYaml
             }
         }
 
-        public static void SaveToDatabase(RouteConfig config, SqliteConnection conn)
+        public static void SaveToDatabase(RouteEntry config, SqliteConnection conn)
         {
             // Save route info
             using (var cmd = conn.CreateCommand())
@@ -109,5 +111,54 @@ namespace GatherChill.ConfigYaml
                 insert.ExecuteNonQuery();
             }
         }
+
+        public static void UpdateDatabaseSchema(SqliteConnection conn)
+        {
+            try
+            {
+                using var cmd = conn.CreateCommand();
+
+                // Check if columns already exist before adding them
+                cmd.CommandText = "PRAGMA table_info(GatherPoints);";
+                using var reader = cmd.ExecuteReader();
+                var existingColumns = new List<string>();
+                while (reader.Read())
+                {
+                    existingColumns.Add(reader.GetString(1)); // Column name is at index 1
+                }
+                reader.Close();
+
+                // Add columns if they don't exist
+                var columnsToAdd = new[]
+                {
+            ("UseRadialPositioning", "INTEGER DEFAULT 0"),
+            ("InnerRadius", "REAL DEFAULT 0.0"),
+            ("OuterRadius", "REAL DEFAULT 5.0"),
+            ("StartAngle", "REAL DEFAULT 0.0"),
+            ("EndAngle", "REAL DEFAULT 360.0")
+        };
+
+                foreach (var (columnName, columnDef) in columnsToAdd)
+                {
+                    if (!existingColumns.Contains(columnName))
+                    {
+                        using var alterCmd = conn.CreateCommand();
+                        alterCmd.CommandText = $"ALTER TABLE GatherPoints ADD COLUMN {columnName} {columnDef};";
+                        alterCmd.ExecuteNonQuery();
+                        Console.WriteLine($"Added column: {columnName}");
+                    }
+                }
+
+                Console.WriteLine("Database schema updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating schema: {ex.Message}");
+            }
+        }
+
+        public static string SqlitePath => Path.Combine(
+                                           Svc.PluginInterface.ConfigDirectory.FullName,
+                                           "Routes.sqlite");
     }
 }

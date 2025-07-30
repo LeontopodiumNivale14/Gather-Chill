@@ -51,6 +51,7 @@ public sealed class GatherChill : IDalamudPlugin
     internal MainWindow mainWindow;
     internal SettingsWindow settingWindow;
     internal DebugWindow debugWindow;
+    internal PopupDebugWindow popupDebugWindow;
 
     // Taskmanager from Ecommons
     internal TaskManager taskManager;
@@ -83,6 +84,7 @@ public sealed class GatherChill : IDalamudPlugin
         mainWindow = new();
         settingWindow = new();
         debugWindow = new();
+        popupDebugWindow = new();
 
         taskManager = new(new(abortOnTimeout: true, timeLimitMS: 20000, showDebug: true));
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;

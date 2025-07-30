@@ -42,6 +42,7 @@ namespace GatherChill.Ui
 
         public void Dispose()
         {
+            P.windowSystem.RemoveWindow(this);
         }
 
         private static int gatheringType = 0;

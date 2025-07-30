@@ -31,12 +31,12 @@
       },
       "SQLitePCLRaw.bundle_e_sqlite3": {
         "type": "Direct",
-        "requested": "[2.1.11, )",
-        "resolved": "2.1.11",
-        "contentHash": "DC4nA7yWnf4UZdgJDF+9Mus4/cb0Y3Sfgi3gDnAoKNAIBwzkskNAbNbyu+u4atT0ruVlZNJfwZmwiEwE5oz9LQ==",
+        "requested": "[3.0.0, )",
+        "resolved": "3.0.0",
+        "contentHash": "fve56V3V/IBJT34ak0pFiJTAl/djHeQNd7/s7e1BlvpAnQT51uu7gk+2kFLe3UEVkCm3nfvODujRDjz5qsNE7A==",
         "dependencies": {
-          "SQLitePCLRaw.lib.e_sqlite3": "2.1.11",
-          "SQLitePCLRaw.provider.e_sqlite3": "2.1.11"
+          "SQLitePCLRaw.config.e_sqlite3": "3.0.0",
+          "SQLitePCLRaw.lib.e_sqlite3": "3.50.3"
         }
       },
       "YamlDotNet": {
@@ -45,31 +45,39 @@
         "resolved": "16.3.0",
         "contentHash": "SgMOdxbz8X65z8hraIs6hOEdnkH6hESTAIUa7viEngHOYaH+6q5XJmwr1+yb9vJpNQ19hCQY69xbFsLtXpobQA=="
       },
+      "SQLitePCLRaw.config.e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "3.0.0",
+        "contentHash": "hfbVNSnATZzAAH1Lncl1y692zt+O4Dq/gEV1uDIHUnkodFxuyTagQLSvqQHpbwhvTpeXlVTZNos/5Jf/HbVToQ==",
+        "dependencies": {
+          "SQLitePCLRaw.provider.e_sqlite3": "3.0.0"
+        }
+      },
       "SQLitePCLRaw.core": {
         "type": "Transitive",
-        "resolved": "2.1.11",
-        "contentHash": "PK0GLFkfhZzLQeR3PJf71FmhtHox+U3vcY6ZtswoMjrefkB9k6ErNJEnwXqc5KgXDSjige2XXrezqS39gkpQKA==",
+        "resolved": "3.0.0",
+        "contentHash": "tnVrkfPiCpHRWPahEI+tRd8jcqyoaJUi5V93x68EM0h2+QDDL4SvSk2maEkjV/mYj5vATLzcXV91QmcfHZGOMw==",
         "dependencies": {
-          "System.Memory": "4.5.3"
+          "System.Memory": "4.6.3"
         }
       },
       "SQLitePCLRaw.lib.e_sqlite3": {
         "type": "Transitive",
-        "resolved": "2.1.11",
-        "contentHash": "Ev2ytaXiOlWZ4b3R67GZBsemTINslLD1DCJr2xiacpn4tbapu0Q4dHEzSvZSMnVWeE5nlObU3VZN2p81q3XOYQ=="
+        "resolved": "3.50.3",
+        "contentHash": "tVyhqQ8wxgedWiiPFChyZhE8I3PkOM/AE1azsj1qsdYUws13ONBFyi3aDxju4tD2kzedB2q5+50WrTyY0h2gMQ=="
       },
       "SQLitePCLRaw.provider.e_sqlite3": {
         "type": "Transitive",
-        "resolved": "2.1.11",
-        "contentHash": "Y/0ZkR+r0Cg3DQFuCl1RBnv/tmxpIZRU3HUvelPw6MVaKHwYYR8YNvgs0vuNuXCMvlyJ+Fh88U1D4tah1tt6qw==",
+        "resolved": "3.0.0",
+        "contentHash": "/+tYEcxy6X7az6+bwOxphSp63vRIZyL3ag8Dx0dqWz7Xq3XfTsB/rgIZ/2YwDCH8krln4CjSJ03D2WnOgkQMSw==",
         "dependencies": {
-          "SQLitePCLRaw.core": "2.1.11"
+          "SQLitePCLRaw.core": "3.0.0"
         }
       },
       "System.Memory": {
         "type": "Transitive",
-        "resolved": "4.5.3",
-        "contentHash": "3oDzvc/zzetpTKWMShs1AADwZjQ/36HnsufHRPcOjyRAAMLDlu2iD33MBI2opxnezcVUtXyqDXXjoFMOU9c7SA=="
+        "resolved": "4.6.3",
+        "contentHash": "qdcDOgnFZY40+Q9876JUHnlHu7bosOHX8XISRoH94fwk6hgaeQGSgfZd8srWRZNt5bV9ZW2TljcegDNxsf+96A=="
       },
       "ecommons": {
         "type": "Project"

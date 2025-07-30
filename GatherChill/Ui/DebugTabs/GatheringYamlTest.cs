@@ -29,7 +29,7 @@ namespace GatherChill.Ui.DebugTabs
             {
                 foreach (var entry in Utils.SheetInfo)
                 {
-                    var config = new RouteConfig
+                    var config = new RouteEntry
                     {
                         RouteNumber = entry.Key,
                         Expansion = entry.Value.ExName,
@@ -37,8 +37,6 @@ namespace GatherChill.Ui.DebugTabs
                         AreaId = entry.Value.TerritoryId,
                         ListNodeIds = entry.Value.NodeIds,
                     };
-
-                    config.Save();
                 }
             }
 
@@ -59,7 +57,7 @@ namespace GatherChill.Ui.DebugTabs
 
                 foreach (var file in yamlFiles)
                 {
-                    var config = YamlConfig.Load<RouteConfig>(file);
+                    var config = YamlConfig.Load<RouteEntry>(file);
                     Sqlcreator.SaveToDatabase(config, conn);
                 }
 
