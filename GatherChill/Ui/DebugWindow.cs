@@ -67,6 +67,11 @@ internal class DebugWindow : Window
                 DebugTabs.RouteEditor.Draw();
                 ImGui.EndTabItem();
             }
+            if (ImGui.BeginTabItem("Picto Settings"))
+            {
+                DebugTabs.PictoEditor.Draw();
+                ImGui.EndTabItem();
+            }
 
             ImGui.EndTabBar();
         }

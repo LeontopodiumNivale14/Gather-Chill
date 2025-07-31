@@ -1,7 +1,9 @@
-﻿using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.Textures;
+using Dalamud.Interface.Utility.Raii;
 using GatherChill.ConfigYaml;
 using GatherChill.Utilities;
 using Microsoft.Data.Sqlite;
+using Pictomancy;
 using System.Collections.Generic;
 using static GatherChill.Utilities.GatheringHelper;
 
@@ -50,6 +52,14 @@ namespace GatherChill.Ui.DebugTabs
         // UI state
         private static int selectedNodeIndex = -1;
         private static int selectedGatherPointIndex = -1;
+
+        private static int editableGatheringType = 0;
+        private static int currentGatheringType = 0;
+
+        // Picto Stuff
+        private static bool Picto_ShowTarget = true;
+        private static bool Picto_ShowRadius = true;
+
 
         public class RouteRepository
         {
@@ -328,11 +338,10 @@ namespace GatherChill.Ui.DebugTabs
             }
         }
 
-
         private static void LoadRouteForEdit(SqliteConnection conn, int routeNumber)
         {
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT Expansion, Area, AreaId FROM Routes WHERE RouteNumber = @num;";
+            cmd.CommandText = "SELECT Expansion, Area, AreaId, COALESCE(GatheringType, 0) as GatheringType FROM Routes WHERE RouteNumber = @num;";
             cmd.Parameters.AddWithValue("@num", routeNumber);
 
             using var reader = cmd.ExecuteReader();
@@ -342,11 +351,13 @@ namespace GatherChill.Ui.DebugTabs
                 currentExpansion = reader.GetString(0);
                 currentArea = reader.GetString(1);
                 currentAreaId = reader.GetInt32(2);
+                currentGatheringType = reader.GetInt32(3);
 
                 // Set editable values (for editing)
                 editableExpansion = currentExpansion;
                 editableArea = currentArea;
                 editableAreaId = currentAreaId;
+                editableGatheringType = currentGatheringType;
 
                 loadedRouteData = true;
             }
@@ -367,7 +378,7 @@ namespace GatherChill.Ui.DebugTabs
                 }
             }
 
-            // Load GatherPoints with new radial fields
+            // Load GatherPoints with new radial fields (no longer loading GatheringType)
             currentGatherPoints.Clear();
             editableGatherPoints.Clear();
             using (var gatherCmd = conn.CreateCommand())
@@ -375,7 +386,7 @@ namespace GatherChill.Ui.DebugTabs
                 gatherCmd.CommandText = @"
             SELECT NodeId, PositionX, PositionY, PositionZ,
                    LandZoneX, LandZoneY, LandZoneZ,
-                   GatheringType, ZoneId, NodeSet,
+                   ZoneId, NodeSet,
                    COALESCE(UseRadialPositioning, 0) as UseRadialPositioning,
                    COALESCE(InnerRadius, 0.0) as InnerRadius,
                    COALESCE(OuterRadius, 5.0) as OuterRadius,
@@ -401,15 +412,15 @@ namespace GatherChill.Ui.DebugTabs
                             gatherReader.GetFloat(5),
                             gatherReader.GetFloat(6)
                         ),
-                        GatheringType = gatherReader.GetInt32(7),
-                        ZoneId = gatherReader.GetInt32(8),
-                        NodeSet = (uint)gatherReader.GetInt32(9),
+                        GatheringType = currentGatheringType, // Set from route level
+                        ZoneId = gatherReader.GetInt32(7),
+                        NodeSet = (uint)gatherReader.GetInt32(8),
                         // New radial fields
-                        UseRadialPositioning = gatherReader.GetInt32(10) != 0,
-                        InnerRadius = gatherReader.GetFloat(11),
-                        OuterRadius = gatherReader.GetFloat(12),
-                        StartAngle = gatherReader.GetFloat(13),
-                        EndAngle = gatherReader.GetFloat(14)
+                        UseRadialPositioning = gatherReader.GetInt32(9) != 0,
+                        InnerRadius = gatherReader.GetFloat(10),
+                        OuterRadius = gatherReader.GetFloat(11),
+                        StartAngle = gatherReader.GetFloat(12),
+                        EndAngle = gatherReader.GetFloat(13)
                     };
                     currentGatherPoints.Add(gatherPoint);
                     editableGatherPoints.Add(new GatheringHelper.GathNodeInfo
@@ -417,7 +428,7 @@ namespace GatherChill.Ui.DebugTabs
                         NodeId = gatherPoint.NodeId,
                         Position = gatherPoint.Position,
                         LandZone = gatherPoint.LandZone,
-                        GatheringType = gatherPoint.GatheringType,
+                        GatheringType = currentGatheringType,
                         ZoneId = gatherPoint.ZoneId,
                         NodeSet = gatherPoint.NodeSet,
                         UseRadialPositioning = gatherPoint.UseRadialPositioning,
@@ -555,15 +566,16 @@ namespace GatherChill.Ui.DebugTabs
 
             try
             {
-                // Update Routes table
+                // Update Routes table with GatheringType
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                UPDATE Routes SET Expansion = @exp, Area = @area, AreaId = @areaId
+                UPDATE Routes SET Expansion = @exp, Area = @area, AreaId = @areaId, GatheringType = @gatheringType
                 WHERE RouteNumber = @num;";
                     cmd.Parameters.AddWithValue("@exp", editableExpansion);
                     cmd.Parameters.AddWithValue("@area", editableArea);
                     cmd.Parameters.AddWithValue("@areaId", editableAreaId);
+                    cmd.Parameters.AddWithValue("@gatheringType", editableGatheringType);
                     cmd.Parameters.AddWithValue("@num", routeNumber);
                     cmd.ExecuteNonQuery();
                 }
@@ -584,7 +596,7 @@ namespace GatherChill.Ui.DebugTabs
                     insertCmd.ExecuteNonQuery();
                 }
 
-                // Update GatherPoints with new radial fields
+                // Update GatherPoints (no longer saving GatheringType per point)
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "DELETE FROM GatherPoints WHERE RouteNumber = @num;";
@@ -597,11 +609,11 @@ namespace GatherChill.Ui.DebugTabs
                     insertCmd.CommandText = @"
                 INSERT INTO GatherPoints (
                     RouteNumber, NodeId, PositionX, PositionY, PositionZ,
-                    LandZoneX, LandZoneY, LandZoneZ, GatheringType, ZoneId, NodeSet,
+                    LandZoneX, LandZoneY, LandZoneZ, ZoneId, NodeSet,
                     UseRadialPositioning, InnerRadius, OuterRadius, StartAngle, EndAngle)
                 VALUES (
                     @routeNum, @nodeId, @posX, @posY, @posZ,
-                    @lzX, @lzY, @lzZ, @gType, @zoneId, @nodeSet,
+                    @lzX, @lzY, @lzZ, @zoneId, @nodeSet,
                     @useRadial, @innerRadius, @outerRadius, @startAngle, @endAngle);";
 
                     insertCmd.Parameters.AddWithValue("@routeNum", routeNumber);
@@ -612,7 +624,6 @@ namespace GatherChill.Ui.DebugTabs
                     insertCmd.Parameters.AddWithValue("@lzX", gp.LandZone.X);
                     insertCmd.Parameters.AddWithValue("@lzY", gp.LandZone.Y);
                     insertCmd.Parameters.AddWithValue("@lzZ", gp.LandZone.Z);
-                    insertCmd.Parameters.AddWithValue("@gType", gp.GatheringType);
                     insertCmd.Parameters.AddWithValue("@zoneId", gp.ZoneId);
                     insertCmd.Parameters.AddWithValue("@nodeSet", gp.NodeSet);
                     insertCmd.Parameters.AddWithValue("@useRadial", gp.UseRadialPositioning ? 1 : 0);
@@ -629,6 +640,7 @@ namespace GatherChill.Ui.DebugTabs
                 currentExpansion = editableExpansion;
                 currentArea = editableArea;
                 currentAreaId = editableAreaId;
+                currentGatheringType = editableGatheringType;
                 currentNodeIds.Clear();
                 currentNodeIds.AddRange(editableNodeIds);
                 currentGatherPoints.Clear();
@@ -639,7 +651,7 @@ namespace GatherChill.Ui.DebugTabs
                         NodeId = gp.NodeId,
                         Position = gp.Position,
                         LandZone = gp.LandZone,
-                        GatheringType = gp.GatheringType,
+                        GatheringType = currentGatheringType,
                         ZoneId = gp.ZoneId,
                         NodeSet = gp.NodeSet,
                         UseRadialPositioning = gp.UseRadialPositioning,
@@ -728,6 +740,10 @@ namespace GatherChill.Ui.DebugTabs
             if (selectedRouteNumber != -1)
             {
                 ImGui.SameLine();
+
+                // Calculate proper window size for the editor
+                var availableSpace = ImGui.GetContentRegionAvail();
+
                 if (ImGui.BeginChild("##Route Editor", new Vector2(0, 0), true))
                 {
                     // Just a text to show which route is currently selected
@@ -742,517 +758,628 @@ namespace GatherChill.Ui.DebugTabs
                     ImGui.Text($"Expansion: {currentExpansion}");
                     ImGui.Text($"Zone Name: {currentArea}");
                     ImGui.Text($"Area ID: {currentAreaId}");
+                    ImGui.AlignTextToFramePadding();
+                    ImGui.Text($"Gathering Type: {currentGatheringType}");
+
+                    // Icon Stuff here
+                    ISharedImmediateTexture? icon = GatheringNodeDict[(uint)currentGatheringType].ShinyIcon;
+                    Vector2 size = new Vector2(25, 25);
+                    float zoomFactor = 0.25f; // 25% zoom-in
+                    float cropAmount = zoomFactor / 2; // Crop equally from all sides
+
+                    Vector2 uv0 = new Vector2(cropAmount, cropAmount);
+                    Vector2 uv1 = new Vector2(1 - cropAmount, 1 - cropAmount);
+
+                    ImGui.SameLine();
+                    ImGui.Image(icon.GetWrapOrEmpty().ImGuiHandle, size);
                     ImGui.Text($"Node IDs: {string.Join(", ", currentNodeIds)}");
                     ImGui.Text($"Gather Points: {currentGatherPoints.Count} entries");
                     ImGui.Separator();
 
+                    // Calculate space for tabs and save button
+                    var tabAreaHeight = ImGui.GetContentRegionAvail().Y - 40; // Leave space for save button
+
                     // Tabbed interface for editing different aspects
-                    if (ImGui.BeginTabBar("EditTabs"))
+                    if (ImGui.BeginChild("##TabArea", new Vector2(0, tabAreaHeight), false))
                     {
-                        // Basic Info Tab
-                        if (ImGui.BeginTabItem("Basic Info"))
+                        if (ImGui.BeginTabBar("EditTabs"))
                         {
-                            ImGui.Text($"Editing Route #{selectedRouteNumber}");
-
-                            // Expansion dropdown
-                            if (ImGui.BeginCombo("Expansion##Edit", editableExpansion))
+                            // Basic Info Tab
+                            if (ImGui.BeginTabItem("Basic Info"))
                             {
-                                foreach (var exp in expansions)
+                                ImGui.Text($"Editing Route #{selectedRouteNumber}");
+
+                                // Expansion dropdown
+                                if (ImGui.BeginCombo("Expansion##Edit", editableExpansion))
                                 {
-                                    if (ImGui.Selectable(exp, exp == editableExpansion))
-                                        editableExpansion = exp;
+                                    foreach (var exp in expansions)
+                                    {
+                                        if (ImGui.Selectable(exp, exp == editableExpansion))
+                                            editableExpansion = exp;
+                                    }
+                                    ImGui.EndCombo();
                                 }
-                                ImGui.EndCombo();
+
+                                // Editable Area text box
+                                ImGui.InputText("Zone Name", ref editableArea, 100);
+                                ImGui.InputInt("Area ID", ref editableAreaId);
+
+                                // NEW: Gathering Type input
+                                ImGui.SliderInt("Gathering Type", ref editableGatheringType, 0, 5);
+
+                                ImGui.EndTabItem();
                             }
 
-                            // Editable Area text box
-                            ImGui.InputText("Zone Name", ref editableArea, 100);
-                            ImGui.InputInt("Area ID", ref editableAreaId);
+                            // Route Node IDs Tab
+                            if (ImGui.BeginTabItem("Node IDs"))
+                            {
+                                ImGui.Text($"Route Node IDs ({editableNodeIds.Count} entries)");
 
-                            ImGui.EndTabItem();
+                                // List of current node IDs
+                                if (ImGui.BeginChild("##NodeIdsList", new Vector2(0, 200), true))
+                                {
+                                    for (int i = 0; i < editableNodeIds.Count; i++)
+                                    {
+                                        bool selected = (i == selectedNodeIndex);
+                                        if (ImGui.Selectable($"Node ID: {editableNodeIds[i]}", selected))
+                                        {
+                                            selectedNodeIndex = i;
+                                        }
+                                    }
+                                    ImGui.EndChild();
+                                }
+
+                                // Add new node ID
+                                ImGui.Separator();
+                                ImGui.Text("Add New Node ID:");
+                                int newNodeIdInt = (int)newNodeId;
+                                ImGui.InputInt("New Node ID", ref newNodeIdInt);
+                                newNodeId = (uint)Math.Max(0, newNodeIdInt);
+                                if (ImGui.Button("Add Node ID"))
+                                {
+                                    if (newNodeId > 0 && !editableNodeIds.Contains(newNodeId))
+                                    {
+                                        editableNodeIds.Add(newNodeId);
+                                        editableNodeIds.Sort();
+                                        newNodeId = 0;
+                                    }
+                                }
+
+                                // Remove selected node ID
+                                ImGui.SameLine();
+                                if (ImGui.Button("Remove Selected") && selectedNodeIndex >= 0 && selectedNodeIndex < editableNodeIds.Count)
+                                {
+                                    editableNodeIds.RemoveAt(selectedNodeIndex);
+                                    selectedNodeIndex = -1;
+                                }
+
+                                ImGui.EndTabItem();
+                            }
+
+                            // Gather Points Tab with improved layout
+                            if (ImGui.BeginTabItem("Gather Points"))
+                            {
+                                ImGui.Text($"Gather Points ({editableGatherPoints.Count} entries)");
+
+                                // Limit list to 5 items max, make it scrollable
+                                float itemHeight = ImGui.GetTextLineHeightWithSpacing();
+                                float maxListHeight = itemHeight * 5 + ImGui.GetStyle().FramePadding.Y * 2;
+
+                                if (ImGui.BeginChild("##GatherPointsList", new Vector2(0, maxListHeight), true))
+                                {
+                                    for (int i = 0; i < editableGatherPoints.Count; i++)
+                                    {
+                                        var gp = editableGatherPoints[i];
+                                        bool selected = (i == selectedGatherPointIndex);
+                                        string displayText = gp.UseRadialPositioning
+                                            ? $"Node {gp.NodeId} - Zone {gp.ZoneId} [RADIAL: {gp.InnerRadius:F1}-{gp.OuterRadius:F1}]"
+                                            : $"Node {gp.NodeId} - Zone {gp.ZoneId} [FIXED]";
+
+                                        if (ImGui.Selectable(displayText, selected))
+                                        {
+                                            selectedGatherPointIndex = i;
+                                        }
+                                    }
+                                    ImGui.EndChild();
+                                }
+
+                                // bools to be used across both
+                                bool currentlyTargeting = Svc.Targets.Target != null;
+
+                                ImGui.Separator();
+
+                                // Calculate remaining space for sub-tabs
+                                var remainingTabSpace = ImGui.GetContentRegionAvail().Y;
+
+                                // Sub-tabs for Edit and Add
+                                if (ImGui.BeginChild("##GatherPointSubTabArea", new Vector2(0, remainingTabSpace), false))
+                                {
+                                    if (ImGui.BeginTabBar("GatherPointSubTabs"))
+                                    {
+                                        // Edit tab - only show if a gather point is selected
+                                        bool hasSelection = selectedGatherPointIndex >= 0 && selectedGatherPointIndex < editableGatherPoints.Count;
+
+                                        if (hasSelection && ImGui.BeginTabItem($"Edit Selected (Node {editableGatherPoints[selectedGatherPointIndex].NodeId})"))
+                                        {
+                                            // Calculate remaining space for the editor
+                                            var editSpace = ImGui.GetContentRegionAvail();
+
+                                            if (ImGui.BeginChild("##EditSelectedGatherPoint", new Vector2(0, editSpace.Y - 30), true))
+                                            {
+                                                var gp = editableGatherPoints[selectedGatherPointIndex];
+
+                                                ImGui.Text("Picto Settings");
+                                                ImGui.Checkbox("Show Target Info", ref Picto_ShowTarget);
+                                                ImGui.SameLine();
+                                                ImGui.Checkbox("Show Fan", ref Picto_ShowRadius);
+
+                                                if (Picto_ShowTarget && gp.Position != Vector3.Zero)
+                                                {
+                                                    using (var drawList = PictoService.Draw())
+                                                    {
+                                                        Vector3 position = gp.Position;
+                                                        float innerRadius = gp.InnerRadius;
+                                                        float outerRadius = gp.OuterRadius;
+                                                        float minAngle = GatheringHelper.RadialPositioning.GetStartAngleRadians(gp.StartAngle);
+                                                        float maxAngle = GatheringHelper.RadialPositioning.GetStartAngleRadians(gp.EndAngle);
+
+                                                        float dotRadius = C.DotRadius;
+                                                        uint dotColor = C.PictoWPColor;
+                                                        uint fanColor = C.PictoCircleColor;
+
+                                                        drawList.AddDot(position, dotRadius, dotColor);
+                                                        if (Picto_ShowRadius)
+                                                        {
+                                                            drawList.AddFanFilled(position, innerRadius, outerRadius, minAngle, maxAngle, fanColor);
+                                                        }
+                                                    }
+                                                }
+
+                                                int nodeIdInt = (int)gp.NodeId;
+                                                ImGui.SetNextItemWidth(200);
+                                                ImGui.InputInt("Node ID", ref nodeIdInt);
+                                                gp.NodeId = (uint)Math.Max(0, nodeIdInt);
+                                                ImGui.SameLine();
+                                                using (ImRaii.Disabled(!currentlyTargeting))
+                                                {
+                                                    if (ImGui.Button("Current Target"))
+                                                    {
+                                                        gp.NodeId = Svc.Targets.Target.DataId;
+                                                    }
+                                                }
+
+                                                int zoneId = gp.ZoneId;
+                                                ImGui.SetNextItemWidth(200);
+                                                ImGui.InputInt("Zone ID", ref zoneId);
+                                                gp.ZoneId = zoneId;
+
+                                                ImGui.Separator();
+                                                // Radial positioning toggle
+                                                bool useRadial = gp.UseRadialPositioning;
+                                                if (ImGui.Checkbox("Use Radial Positioning", ref useRadial))
+                                                {
+                                                    gp.UseRadialPositioning = useRadial;
+                                                }
+
+                                                if (gp.UseRadialPositioning)
+                                                {
+                                                    // Radial positioning with nested tabs
+                                                    ImGui.Text("Radial Area Editing");
+                                                    var pos = gp.Position;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Target Position", ref pos);
+                                                    gp.Position = pos;
+                                                    ImGui.SameLine();
+                                                    using (ImRaii.Disabled(!currentlyTargeting))
+                                                    {
+                                                        if (ImGui.Button("Target's POS"))
+                                                        {
+                                                            gp.Position = Svc.Targets.Target.Position;
+                                                        }
+                                                    }
+
+                                                    ImGui.Separator();
+
+                                                    // Nested tabs for Basic and Advanced radial settings
+                                                    if (ImGui.BeginTabBar("RadialSettingsTabs"))
+                                                    {
+                                                        if (ImGui.BeginTabItem("Basic"))
+                                                        {
+                                                            ImGui.Text("Radial Settings:");
+
+                                                            float innerRadius = gp.InnerRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Inner Radius", ref innerRadius, 0.0f, 5.0f, "%.1f");
+                                                            gp.InnerRadius = innerRadius;
+
+                                                            float outerRadius = gp.OuterRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Outer Radius", ref outerRadius, gp.InnerRadius + 0.1f, 5.0f, "%.1f");
+                                                            gp.OuterRadius = Math.Max(outerRadius, gp.InnerRadius + 0.1f);
+
+                                                            float startAngle = gp.StartAngle;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Start Angle", ref startAngle, 0.0f, 360.0f, "%.0f°");
+                                                            gp.StartAngle = startAngle;
+
+                                                            float endAngle = gp.EndAngle;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("End Angle", ref endAngle, 0.0f, 360.0f, "%.0f°");
+                                                            gp.EndAngle = endAngle;
+
+                                                            // Preview button
+                                                            if (ImGui.Button("Generate Preview Point"))
+                                                            {
+                                                                var previewPoint = RadialPositioning.GetRandomPointInFan(
+                                                                    gp.Position, gp.InnerRadius, gp.OuterRadius, gp.StartAngle, gp.EndAngle);
+                                                                ImGui.SetTooltip($"Preview point: X={previewPoint.X:N2}, Y={previewPoint.Y:N2}, Z={previewPoint.Z:N2}");
+                                                            }
+
+                                                            ImGui.EndTabItem();
+                                                        }
+
+                                                        if (ImGui.BeginTabItem("Advanced"))
+                                                        {
+                                                            ImGui.Text("For Pictomancy (Radian Values):");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Start Angle: {RadialPositioning.GetStartAngleRadians(gp.StartAngle):N2} radians");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"End Angle: {RadialPositioning.GetEndAngleRadians(gp.EndAngle):N2} radians");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Fan Width: {RadialPositioning.GetFanWidthRadians(gp.StartAngle, gp.EndAngle):N2} radians");
+
+                                                            ImGui.Separator();
+                                                            ImGui.Text("Copy Values:");
+
+                                                            // Copy buttons for easy use
+                                                            if (ImGui.Button("Copy Start Angle (Radians)"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetStartAngleRadians(gp.StartAngle).ToString("N3"));
+                                                            }
+                                                            ImGui.SameLine();
+                                                            if (ImGui.Button("Copy End Angle (Radians)"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetEndAngleRadians(gp.EndAngle).ToString("N3"));
+                                                            }
+                                                            ImGui.SameLine();
+                                                            if (ImGui.Button("Copy Fan Width (Radians)"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetFanWidthRadians(gp.StartAngle, gp.EndAngle).ToString("N3"));
+                                                            }
+
+                                                            ImGui.Separator();
+                                                            ImGui.Text("Direct Radian Input:");
+
+                                                            float innerRadius = gp.InnerRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Inner Radius", ref innerRadius, 0.0f, 5.0f, "%.1f");
+                                                            gp.InnerRadius = innerRadius;
+
+                                                            float outerRadius = gp.OuterRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Outer Radius", ref outerRadius, gp.InnerRadius + 0.1f, 5.0f, "%.1f");
+                                                            gp.OuterRadius = Math.Max(outerRadius, gp.InnerRadius + 0.1f);
+
+                                                            float startAngleRad = RadialPositioning.DegreesToRadians(gp.StartAngle);
+                                                            ImGui.SetNextItemWidth(200);
+                                                            if (ImGui.SliderFloat("Start Angle (Radians)", ref startAngleRad, 0.0f, 6.28f, "%.3f"))
+                                                            {
+                                                                gp.StartAngle = RadialPositioning.RadiansToDegrees(startAngleRad);
+                                                            }
+
+                                                            float endAngleRad = RadialPositioning.DegreesToRadians(gp.EndAngle);
+                                                            ImGui.SetNextItemWidth(200);
+                                                            if (ImGui.SliderFloat("End Angle (Radians)", ref endAngleRad, 0.0f, 6.28f, "%.3f"))
+                                                            {
+                                                                gp.EndAngle = RadialPositioning.RadiansToDegrees(endAngleRad);
+                                                            }
+
+                                                            ImGui.EndTabItem();
+                                                        }
+
+                                                        ImGui.EndTabBar();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // Fixed positioning controls
+                                                    ImGui.Text("Fixed Position:");
+                                                    var pos = gp.Position;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Target Position", ref pos);
+                                                    gp.Position = pos;
+                                                    ImGui.SameLine();
+                                                    using (ImRaii.Disabled(!currentlyTargeting))
+                                                    {
+                                                        if (ImGui.Button("Target's POS"))
+                                                        {
+                                                            gp.Position = Svc.Targets.Target.Position;
+                                                        }
+                                                    }
+
+                                                    // Common fields (always shown) - removed Gathering Type
+                                                    var landZone = gp.LandZone;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Land Zone", ref landZone);
+                                                    gp.LandZone = landZone;
+                                                    ImGui.SameLine();
+                                                    if (ImGui.Button("CurrentPOS"))
+                                                    {
+                                                        gp.LandZone = Svc.ClientState.LocalPlayer.Position;
+                                                    }
+                                                }
+
+                                                // Set the gathering type from route level
+                                                gp.GatheringType = editableGatheringType;
+                                                editableGatherPoints[selectedGatherPointIndex] = gp;
+
+                                                ImGui.EndChild(); // End EditSelectedGatherPoint child
+                                            }
+
+                                            // Remove button at the bottom of edit tab
+                                            if (ImGui.Button("Remove This Gather Point"))
+                                            {
+                                                editableGatherPoints.RemoveAt(selectedGatherPointIndex);
+                                                selectedGatherPointIndex = -1;
+                                            }
+
+                                            ImGui.EndTabItem();
+                                        }
+
+                                        // Add New Gather Point Tab
+                                        if (ImGui.BeginTabItem("Add New"))
+                                        {
+                                            // Calculate remaining space for the add form
+                                            var addSpace = ImGui.GetContentRegionAvail();
+
+                                            if (ImGui.BeginChild("##AddNewGatherPoint", new Vector2(0, addSpace.Y - 30), true))
+                                            {
+
+                                                ImGui.Text("Picto Settings");
+                                                ImGui.Checkbox("Show Target Info", ref Picto_ShowTarget);
+                                                ImGui.SameLine();
+                                                ImGui.Checkbox("Show Fan", ref Picto_ShowRadius);
+
+                                                if (Picto_ShowTarget && newGatherPoint.Position != Vector3.Zero)
+                                                {
+                                                    using (var drawList = PictoService.Draw())
+                                                    {
+                                                        Vector3 position = newGatherPoint.Position;
+                                                        float innerRadius = newGatherPoint.InnerRadius;
+                                                        float outerRadius = newGatherPoint.OuterRadius;
+                                                        float minAngle = GatheringHelper.RadialPositioning.GetStartAngleRadians(newGatherPoint.StartAngle);
+                                                        float maxAngle = GatheringHelper.RadialPositioning.GetStartAngleRadians(newGatherPoint.EndAngle);
+
+                                                        float dotRadius = C.DotRadius;
+                                                        uint dotColor = C.PictoWPColor;
+                                                        uint fanColor = C.PictoCircleColor;
+
+                                                        drawList.AddDot(position, dotRadius, dotColor);
+                                                        if (Picto_ShowRadius)
+                                                        {
+                                                            drawList.AddFanFilled(position, innerRadius, outerRadius, minAngle, maxAngle, fanColor);
+                                                        }
+                                                    }
+                                                }
+
+                                                // Node Id
+                                                int newNodeIdGPInt = (int)newGatherPoint.NodeId;
+                                                ImGui.SetNextItemWidth(200);
+                                                ImGui.InputInt("Node ID", ref newNodeIdGPInt);
+                                                newGatherPoint.NodeId = (uint)Math.Max(0, newNodeIdGPInt);
+                                                ImGui.SameLine();
+                                                using (ImRaii.Disabled(!currentlyTargeting))
+                                                {
+                                                    if (ImGui.Button("Current Target"))
+                                                    {
+                                                        newGatherPoint.NodeId = Svc.Targets.Target.DataId;
+                                                    }
+                                                }
+
+                                                // Zone Id
+                                                int newZoneId = newGatherPoint.ZoneId;
+                                                ImGui.SetNextItemWidth(200);
+                                                ImGui.InputInt("Zone ID", ref newZoneId);
+                                                newGatherPoint.ZoneId = newZoneId;
+                                                ImGui.SameLine();
+                                                if (ImGui.Button("Current Zone"))
+                                                {
+                                                    newGatherPoint.ZoneId = (int)Utils.CurrentTerritory();
+                                                }
+
+                                                ImGui.Separator();
+
+                                                // Radial positioning toggle for new gather point
+                                                bool newUseRadial = newGatherPoint.UseRadialPositioning;
+                                                if (ImGui.Checkbox("Use Radial Positioning", ref newUseRadial))
+                                                {
+                                                    newGatherPoint.UseRadialPositioning = newUseRadial;
+                                                }
+
+                                                if (newGatherPoint.UseRadialPositioning)
+                                                {
+                                                    ImGui.Text("Radial Area Editing");
+                                                    var newPos = newGatherPoint.Position;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Target's Position", ref newPos);
+                                                    newGatherPoint.Position = newPos;
+                                                    ImGui.SameLine();
+                                                    using (ImRaii.Disabled(!currentlyTargeting))
+                                                    {
+                                                        if (ImGui.Button("Target POS"))
+                                                        {
+                                                            newGatherPoint.Position = Svc.Targets.Target.Position;
+                                                        }
+                                                    }
+
+                                                    ImGui.Separator();
+
+                                                    // Nested tabs for Basic and Advanced radial settings (Add New version)
+                                                    if (ImGui.BeginTabBar("NewRadialSettingsTabs"))
+                                                    {
+                                                        if (ImGui.BeginTabItem("Basic"))
+                                                        {
+                                                            ImGui.Text("Radial Settings:");
+
+                                                            float newInnerRadius = newGatherPoint.InnerRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Inner Radius", ref newInnerRadius, 0.0f, 5.0f, "%.1f");
+                                                            newGatherPoint.InnerRadius = newInnerRadius;
+
+                                                            float newOuterRadius = newGatherPoint.OuterRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Outer Radius", ref newOuterRadius, newGatherPoint.InnerRadius + 0.1f, 5.0f, "%.1f");
+                                                            newGatherPoint.OuterRadius = Math.Max(newOuterRadius, newGatherPoint.InnerRadius + 0.1f);
+
+                                                            float newStartAngle = newGatherPoint.StartAngle;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Start Angle", ref newStartAngle, 0.0f, 360.0f, "%.0f°");
+                                                            newGatherPoint.StartAngle = newStartAngle;
+
+                                                            float newEndAngle = newGatherPoint.EndAngle;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("End Angle", ref newEndAngle, 0.0f, 360.0f, "%.0f°");
+                                                            newGatherPoint.EndAngle = newEndAngle;
+
+                                                            // Preview button for new gather point
+                                                            if (ImGui.Button("Generate Preview Point"))
+                                                            {
+                                                                var previewPoint = RadialPositioning.GetRandomPointInFan(
+                                                                    newGatherPoint.Position, newGatherPoint.InnerRadius, newGatherPoint.OuterRadius,
+                                                                    newGatherPoint.StartAngle, newGatherPoint.EndAngle);
+                                                                ImGui.SetTooltip($"Preview point: X={previewPoint.X:F2}, Y={previewPoint.Y:F2}, Z={previewPoint.Z:F2}");
+                                                            }
+
+                                                            ImGui.EndTabItem();
+                                                        }
+
+                                                        if (ImGui.BeginTabItem("Advanced"))
+                                                        {
+                                                            ImGui.Text("For Pictomancy (Radian Values):");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Start Angle: {RadialPositioning.GetStartAngleRadians(newGatherPoint.StartAngle):N3} radians");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"End Angle: {RadialPositioning.GetEndAngleRadians(newGatherPoint.EndAngle):N3} radians");
+                                                            ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Fan Width: {RadialPositioning.GetFanWidthRadians(newGatherPoint.StartAngle, newGatherPoint.EndAngle):N3} radians");
+
+                                                            ImGui.Separator();
+                                                            ImGui.Text("Copy Values:");
+
+                                                            // Copy buttons for new gather point
+                                                            if (ImGui.Button("Copy Start Angle (Radians)##New"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetStartAngleRadians(newGatherPoint.StartAngle).ToString("N3"));
+                                                            }
+                                                            ImGui.SameLine();
+                                                            if (ImGui.Button("Copy End Angle (Radians)##New"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetEndAngleRadians(newGatherPoint.EndAngle).ToString("N3"));
+                                                            }
+                                                            ImGui.SameLine();
+                                                            if (ImGui.Button("Copy Fan Width (Radians)##New"))
+                                                            {
+                                                                ImGui.SetClipboardText(RadialPositioning.GetFanWidthRadians(newGatherPoint.StartAngle, newGatherPoint.EndAngle).ToString("N3"));
+                                                            }
+
+                                                            ImGui.Separator();
+                                                            ImGui.Text("Direct Radian Input:");
+
+                                                            float newInnerRadius = newGatherPoint.InnerRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Inner Radius", ref newInnerRadius, 0.0f, 5.0f, "%.1f");
+                                                            newGatherPoint.InnerRadius = newInnerRadius;
+
+                                                            float newOuterRadius = newGatherPoint.OuterRadius;
+                                                            ImGui.SetNextItemWidth(200);
+                                                            ImGui.SliderFloat("Outer Radius", ref newOuterRadius, newGatherPoint.InnerRadius + 0.1f, 5.0f, "%.1f");
+                                                            newGatherPoint.OuterRadius = Math.Max(newOuterRadius, newGatherPoint.InnerRadius + 0.1f);
+                                                            float newStartAngleRad = RadialPositioning.DegreesToRadians(newGatherPoint.StartAngle);
+                                                            ImGui.SetNextItemWidth(200);
+                                                            if (ImGui.SliderFloat("Start Angle (Radians)##New", ref newStartAngleRad, 0.0f, 6.28f, "%.3f"))
+                                                            {
+                                                                newGatherPoint.StartAngle = RadialPositioning.RadiansToDegrees(newStartAngleRad);
+                                                            }
+
+                                                            float newEndAngleRad = RadialPositioning.DegreesToRadians(newGatherPoint.EndAngle);
+                                                            ImGui.SetNextItemWidth(200);
+                                                            if (ImGui.SliderFloat("End Angle (Radians)##New", ref newEndAngleRad, 0.0f, 6.28f, "%.3f"))
+                                                            {
+                                                                newGatherPoint.EndAngle = RadialPositioning.RadiansToDegrees(newEndAngleRad);
+                                                            }
+
+                                                            ImGui.EndTabItem();
+                                                        }
+
+                                                        ImGui.EndTabBar();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    ImGui.Text("Set Positioning");
+                                                    var newPos = newGatherPoint.Position;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Target Position", ref newPos);
+                                                    newGatherPoint.Position = newPos;
+                                                    ImGui.SameLine();
+                                                    if (ImGui.Button("Set to Target's POS"))
+                                                    {
+                                                        newGatherPoint.Position = Svc.Targets.Target.Position;
+                                                    }
+
+                                                    // Landing Zone, used if not on radial landing
+                                                    var newLandZone = newGatherPoint.LandZone;
+                                                    ImGui.SetNextItemWidth(200);
+                                                    ImGui.InputFloat3("Land Zone", ref newLandZone);
+                                                    newGatherPoint.LandZone = newLandZone;
+                                                    ImGui.SameLine();
+                                                    if (ImGui.Button("CurrentPOS"))
+                                                    {
+                                                        newGatherPoint.LandZone = Svc.ClientState.LocalPlayer.Position;
+                                                    }
+                                                }
+
+                                                ImGui.EndChild(); // End AddNewGatherPoint child
+                                            }
+
+                                            // Add button at the bottom of add tab
+                                            if (ImGui.Button("Add Gather Point"))
+                                            {
+                                                if (newGatherPoint.NodeId > 0)
+                                                {
+                                                    // Set gathering type from route level
+                                                    newGatherPoint.GatheringType = editableGatheringType;
+
+                                                    editableGatherPoints.Add(new GatheringHelper.GathNodeInfo
+                                                    {
+                                                        NodeId = newGatherPoint.NodeId,
+                                                        Position = newGatherPoint.Position,
+                                                        LandZone = newGatherPoint.LandZone,
+                                                        GatheringType = editableGatheringType,
+                                                        ZoneId = newGatherPoint.ZoneId,
+                                                        NodeSet = newGatherPoint.NodeSet,
+                                                        UseRadialPositioning = newGatherPoint.UseRadialPositioning,
+                                                        InnerRadius = newGatherPoint.InnerRadius,
+                                                        OuterRadius = newGatherPoint.OuterRadius,
+                                                        StartAngle = newGatherPoint.StartAngle,
+                                                        EndAngle = newGatherPoint.EndAngle
+                                                    });
+                                                    newGatherPoint = new GatheringHelper.GathNodeInfo(); // Reset with default values
+                                                }
+                                            }
+
+                                            ImGui.EndTabItem();
+                                        }
+
+                                        ImGui.EndTabBar(); // End GatherPointSubTabs
+                                    }
+                                    ImGui.EndChild(); // End GatherPointSubTabArea
+                                }
+
+                                ImGui.EndTabItem(); // End Gather Points main tab
+                            }
+
+                            ImGui.EndTabBar(); // End EditTabs
                         }
-
-                        // Route Node IDs Tab
-                        if (ImGui.BeginTabItem("Node IDs"))
-                        {
-                            ImGui.Text($"Route Node IDs ({editableNodeIds.Count} entries)");
-
-                            // List of current node IDs
-                            if (ImGui.BeginChild("##NodeIdsList", new Vector2(0, 200), true))
-                            {
-                                for (int i = 0; i < editableNodeIds.Count; i++)
-                                {
-                                    bool selected = (i == selectedNodeIndex);
-                                    if (ImGui.Selectable($"Node ID: {editableNodeIds[i]}", selected))
-                                    {
-                                        selectedNodeIndex = i;
-                                    }
-                                }
-                                ImGui.EndChild();
-                            }
-
-                            // Add new node ID
-                            ImGui.Separator();
-                            ImGui.Text("Add New Node ID:");
-                            int newNodeIdInt = (int)newNodeId;
-                            ImGui.InputInt("New Node ID", ref newNodeIdInt);
-                            newNodeId = (uint)Math.Max(0, newNodeIdInt);
-                            if (ImGui.Button("Add Node ID"))
-                            {
-                                if (newNodeId > 0 && !editableNodeIds.Contains(newNodeId))
-                                {
-                                    editableNodeIds.Add(newNodeId);
-                                    editableNodeIds.Sort();
-                                    newNodeId = 0;
-                                }
-                            }
-
-                            // Remove selected node ID
-                            ImGui.SameLine();
-                            if (ImGui.Button("Remove Selected") && selectedNodeIndex >= 0 && selectedNodeIndex < editableNodeIds.Count)
-                            {
-                                editableNodeIds.RemoveAt(selectedNodeIndex);
-                                selectedNodeIndex = -1;
-                            }
-
-                            ImGui.EndTabItem();
-                        }
-
-                        // Replace your entire Gather Points tab section with this cleaned up version:
-
-                        // Gather Points Tab
-                        if (ImGui.BeginTabItem("Gather Points"))
-                        {
-                            ImGui.Text($"Gather Points ({editableGatherPoints.Count} entries)");
-
-                            // Calculate available space for proper layout
-                            var availableRegion = ImGui.GetContentRegionAvail();
-                            float listHeight = Math.Min(200, availableRegion.Y * 0.3f); // Use max 30% of available space or 200px
-
-                            // List of gather points with radial indicators
-                            if (ImGui.BeginChild("##GatherPointsList", new Vector2(0, listHeight), true))
-                            {
-                                for (int i = 0; i < editableGatherPoints.Count; i++)
-                                {
-                                    var gp = editableGatherPoints[i];
-                                    bool selected = (i == selectedGatherPointIndex);
-                                    string displayText = gp.UseRadialPositioning
-                                        ? $"Node {gp.NodeId} - Type {gp.GatheringType} - Zone {gp.ZoneId} [RADIAL: {gp.InnerRadius:F1}-{gp.OuterRadius:F1}]"
-                                        : $"Node {gp.NodeId} - Type {gp.GatheringType} - Zone {gp.ZoneId} [FIXED]";
-
-                                    if (ImGui.Selectable(displayText, selected))
-                                    {
-                                        selectedGatherPointIndex = i;
-                                    }
-                                }
-                                ImGui.EndChild();
-                            }
-
-                            // bools to be used across both
-                            bool currentlyTargeting = Svc.Targets.Target != null;
-
-                            ImGui.Separator();
-
-                            // Sub-tabs for Edit and Add
-                            if (ImGui.BeginTabBar("GatherPointSubTabs"))
-                            {
-                                // Edit tab - only show if a gather point is selected
-                                bool hasSelection = selectedGatherPointIndex >= 0 && selectedGatherPointIndex < editableGatherPoints.Count;
-
-                                if (hasSelection && ImGui.BeginTabItem($"Edit Selected (Node {editableGatherPoints[selectedGatherPointIndex].NodeId})"))
-                                {
-                                    // Calculate remaining space for the editor
-                                    var remainingSpace = ImGui.GetContentRegionAvail();
-
-                                    if (ImGui.BeginChild("##EditSelectedGatherPoint", new Vector2(0, remainingSpace.Y - 40), true))
-                                    {
-                                        var gp = editableGatherPoints[selectedGatherPointIndex];
-
-                                        int nodeIdInt = (int)gp.NodeId;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Node ID", ref nodeIdInt);
-                                        gp.NodeId = (uint)Math.Max(0, nodeIdInt);
-                                        ImGui.SameLine();
-                                        using (ImRaii.Disabled(!currentlyTargeting))
-                                        {
-                                            if (ImGui.Button("Current Target"))
-                                            {
-                                                gp.NodeId = Svc.Targets.Target.DataId;
-                                            }
-                                        }
-
-                                        // Radial positioning toggle
-                                        bool useRadial = gp.UseRadialPositioning;
-                                        if (ImGui.Checkbox("Use Radial Positioning", ref useRadial))
-                                        {
-                                            gp.UseRadialPositioning = useRadial;
-                                        }
-
-                                        // Common fields (always shown)
-                                        var landZone = gp.LandZone;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputFloat3("Land Zone", ref landZone);
-                                        gp.LandZone = landZone;
-                                        ImGui.SameLine();
-                                        if (ImGui.Button("CurrentPOS"))
-                                        {
-                                            gp.LandZone = Svc.ClientState.LocalPlayer.Position;
-                                        }
-
-                                        int gatheringType = gp.GatheringType;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Gathering Type", ref gatheringType);
-                                        gp.GatheringType = gatheringType;
-
-                                        int zoneId = gp.ZoneId;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Zone ID", ref zoneId);
-                                        gp.ZoneId = zoneId;
-
-                                        ImGui.Separator();
-
-                                        if (gp.UseRadialPositioning)
-                                        {
-                                            // Radial positioning with nested tabs
-                                            ImGui.Text("Center Position (for radial area):");
-                                            var pos = gp.Position;
-                                            ImGui.SetNextItemWidth(200);
-                                            ImGui.InputFloat3("Center Position", ref pos);
-                                            gp.Position = pos;
-                                            ImGui.SameLine();
-                                            using (ImRaii.Disabled(!currentlyTargeting))
-                                            {
-                                                if (ImGui.Button("Target's POS"))
-                                                {
-                                                    gp.Position = Svc.Targets.Target.Position;
-                                                }
-                                            }
-
-                                            ImGui.Separator();
-
-                                            // Nested tabs for Basic and Advanced radial settings
-                                            if (ImGui.BeginTabBar("RadialSettingsTabs"))
-                                            {
-                                                if (ImGui.BeginTabItem("Basic"))
-                                                {
-                                                    ImGui.Text("Radial Settings:");
-
-                                                    float innerRadius = gp.InnerRadius;
-                                                    ImGui.SliderFloat("Inner Radius", ref innerRadius, 0.0f, 50.0f, "%.1f");
-                                                    gp.InnerRadius = innerRadius;
-
-                                                    float outerRadius = gp.OuterRadius;
-                                                    ImGui.SliderFloat("Outer Radius", ref outerRadius, gp.InnerRadius + 0.1f, 50.0f, "%.1f");
-                                                    gp.OuterRadius = Math.Max(outerRadius, gp.InnerRadius + 0.1f);
-
-                                                    float startAngle = gp.StartAngle;
-                                                    ImGui.SliderFloat("Start Angle", ref startAngle, 0.0f, 360.0f, "%.0f°");
-                                                    gp.StartAngle = startAngle;
-
-                                                    float endAngle = gp.EndAngle;
-                                                    ImGui.SliderFloat("End Angle", ref endAngle, 0.0f, 360.0f, "%.0f°");
-                                                    gp.EndAngle = endAngle;
-
-                                                    // Preview button
-                                                    if (ImGui.Button("Generate Preview Point"))
-                                                    {
-                                                        var previewPoint = RadialPositioning.GetRandomPointInFan(
-                                                            gp.Position, gp.InnerRadius, gp.OuterRadius, gp.StartAngle, gp.EndAngle);
-                                                        ImGui.SetTooltip($"Preview point: X={previewPoint.X:N2}, Y={previewPoint.Y:N2}, Z={previewPoint.Z:N2}");
-                                                    }
-
-                                                    ImGui.EndTabItem();
-                                                }
-
-                                                if (ImGui.BeginTabItem("Advanced"))
-                                                {
-                                                    ImGui.Text("For Pictomancy (Radian Values):");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Start Angle: {RadialPositioning.GetStartAngleRadians(gp.StartAngle):N2} radians");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"End Angle: {RadialPositioning.GetEndAngleRadians(gp.EndAngle):N2} radians");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Fan Width: {RadialPositioning.GetFanWidthRadians(gp.StartAngle, gp.EndAngle):N2} radians");
-
-                                                    ImGui.Separator();
-                                                    ImGui.Text("Copy Values:");
-
-                                                    // Copy buttons for easy use
-                                                    if (ImGui.Button("Copy Start Angle (Radians)"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetStartAngleRadians(gp.StartAngle).ToString("N3"));
-                                                    }
-                                                    ImGui.SameLine();
-                                                    if (ImGui.Button("Copy End Angle (Radians)"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetEndAngleRadians(gp.EndAngle).ToString("N3"));
-                                                    }
-                                                    ImGui.SameLine();
-                                                    if (ImGui.Button("Copy Fan Width (Radians)"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetFanWidthRadians(gp.StartAngle, gp.EndAngle).ToString("N3"));
-                                                    }
-
-                                                    ImGui.Separator();
-                                                    ImGui.Text("Direct Radian Input:");
-
-                                                    float startAngleRad = RadialPositioning.DegreesToRadians(gp.StartAngle);
-                                                    if (ImGui.SliderFloat("Start Angle (Radians)", ref startAngleRad, 0.0f, 6.28f, "%.3f"))
-                                                    {
-                                                        gp.StartAngle = RadialPositioning.RadiansToDegrees(startAngleRad);
-                                                    }
-
-                                                    float endAngleRad = RadialPositioning.DegreesToRadians(gp.EndAngle);
-                                                    if (ImGui.SliderFloat("End Angle (Radians)", ref endAngleRad, 0.0f, 6.28f, "%.3f"))
-                                                    {
-                                                        gp.EndAngle = RadialPositioning.RadiansToDegrees(endAngleRad);
-                                                    }
-
-                                                    ImGui.EndTabItem();
-                                                }
-
-                                                ImGui.EndTabBar();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // Fixed positioning controls
-                                            ImGui.Text("Fixed Position:");
-                                            var pos = gp.Position;
-                                            ImGui.SetNextItemWidth(200);
-                                            ImGui.InputFloat3("Position", ref pos);
-                                            gp.Position = pos;
-                                            ImGui.SameLine();
-                                            using (ImRaii.Disabled(!currentlyTargeting))
-                                            {
-                                                if (ImGui.Button("Target's POS"))
-                                                {
-                                                    gp.Position = Svc.Targets.Target.Position;
-                                                }
-                                            }
-                                        }
-
-                                        editableGatherPoints[selectedGatherPointIndex] = gp;
-
-                                        ImGui.EndChild(); // End EditSelectedGatherPoint child
-                                    }
-
-                                    // Remove button at the bottom of edit tab
-                                    if (ImGui.Button("Remove This Gather Point"))
-                                    {
-                                        editableGatherPoints.RemoveAt(selectedGatherPointIndex);
-                                        selectedGatherPointIndex = -1;
-                                    }
-
-                                    ImGui.EndTabItem();
-                                }
-
-                                // Add New Gather Point Tab
-                                if (ImGui.BeginTabItem("Add New"))
-                                {
-                                    // Calculate remaining space for the add form
-                                    var remainingSpace = ImGui.GetContentRegionAvail();
-
-                                    if (ImGui.BeginChild("##AddNewGatherPoint", new Vector2(0, remainingSpace.Y - 40), true))
-                                    {
-                                        int newNodeIdGPInt = (int)newGatherPoint.NodeId;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Node ID", ref newNodeIdGPInt);
-                                        newGatherPoint.NodeId = (uint)Math.Max(0, newNodeIdGPInt);
-                                        ImGui.SameLine();
-                                        using (ImRaii.Disabled(!currentlyTargeting))
-                                        {
-                                            if (ImGui.Button("Current Target"))
-                                            {
-                                                newGatherPoint.NodeId = Svc.Targets.Target.DataId;
-                                            }
-                                        }
-
-                                        // Radial positioning toggle for new gather point
-                                        bool newUseRadial = newGatherPoint.UseRadialPositioning;
-                                        if (ImGui.Checkbox("Use Radial Positioning", ref newUseRadial))
-                                        {
-                                            newGatherPoint.UseRadialPositioning = newUseRadial;
-                                        }
-
-                                        // Common fields (always shown)
-                                        var newLandZone = newGatherPoint.LandZone;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputFloat3("Land Zone", ref newLandZone);
-                                        newGatherPoint.LandZone = newLandZone;
-                                        ImGui.SameLine();
-                                        if (ImGui.Button("CurrentPOS"))
-                                        {
-                                            newGatherPoint.LandZone = Svc.ClientState.LocalPlayer.Position;
-                                        }
-
-                                        int newGatheringType = newGatherPoint.GatheringType;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Gathering Type", ref newGatheringType);
-                                        newGatherPoint.GatheringType = newGatheringType;
-
-                                        int newZoneId = newGatherPoint.ZoneId;
-                                        ImGui.SetNextItemWidth(200);
-                                        ImGui.InputInt("Zone ID", ref newZoneId);
-                                        newGatherPoint.ZoneId = newZoneId;
-                                        ImGui.SameLine();
-                                        if (ImGui.Button("Current Zone"))
-                                        {
-                                            newGatherPoint.ZoneId = (int)Utils.CurrentTerritory();
-                                        }
-
-                                        if (newGatherPoint.UseRadialPositioning)
-                                        {
-                                            var newPos = newGatherPoint.Position;
-                                            ImGui.SetNextItemWidth(200);
-                                            ImGui.InputFloat3("Center Position", ref newPos);
-                                            newGatherPoint.Position = newPos;
-                                            ImGui.SameLine();
-                                            using (ImRaii.Disabled(!currentlyTargeting))
-                                            {
-                                                if (ImGui.Button("Target POS"))
-                                                {
-                                                    newGatherPoint.Position = Svc.Targets.Target.Position;
-                                                }
-                                            }
-
-                                            ImGui.Separator();
-
-                                            // Nested tabs for Basic and Advanced radial settings (Add New version)
-                                            if (ImGui.BeginTabBar("NewRadialSettingsTabs"))
-                                            {
-                                                if (ImGui.BeginTabItem("Basic"))
-                                                {
-                                                    ImGui.Text("Radial Settings:");
-
-                                                    float newInnerRadius = newGatherPoint.InnerRadius;
-                                                    ImGui.SliderFloat("Inner Radius", ref newInnerRadius, 0.0f, 50.0f, "%.1f");
-                                                    newGatherPoint.InnerRadius = newInnerRadius;
-
-                                                    float newOuterRadius = newGatherPoint.OuterRadius;
-                                                    ImGui.SliderFloat("Outer Radius", ref newOuterRadius, newGatherPoint.InnerRadius + 0.1f, 50.0f, "%.1f");
-                                                    newGatherPoint.OuterRadius = Math.Max(newOuterRadius, newGatherPoint.InnerRadius + 0.1f);
-
-                                                    float newStartAngle = newGatherPoint.StartAngle;
-                                                    ImGui.SliderFloat("Start Angle", ref newStartAngle, 0.0f, 360.0f, "%.0f°");
-                                                    newGatherPoint.StartAngle = newStartAngle;
-
-                                                    float newEndAngle = newGatherPoint.EndAngle;
-                                                    ImGui.SliderFloat("End Angle", ref newEndAngle, 0.0f, 360.0f, "%.0f°");
-                                                    newGatherPoint.EndAngle = newEndAngle;
-
-                                                    // Preview button for new gather point
-                                                    if (ImGui.Button("Generate Preview Point"))
-                                                    {
-                                                        var previewPoint = RadialPositioning.GetRandomPointInFan(
-                                                            newGatherPoint.Position, newGatherPoint.InnerRadius, newGatherPoint.OuterRadius,
-                                                            newGatherPoint.StartAngle, newGatherPoint.EndAngle);
-                                                        ImGui.SetTooltip($"Preview point: X={previewPoint.X:F2}, Y={previewPoint.Y:F2}, Z={previewPoint.Z:F2}");
-                                                    }
-
-                                                    ImGui.EndTabItem();
-                                                }
-
-                                                if (ImGui.BeginTabItem("Advanced"))
-                                                {
-                                                    ImGui.Text("For Pictomancy (Radian Values):");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Start Angle: {RadialPositioning.GetStartAngleRadians(newGatherPoint.StartAngle):N3f} radians");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"End Angle: {RadialPositioning.GetEndAngleRadians(newGatherPoint.EndAngle):N3f} radians");
-                                                    ImGui.TextColored(new Vector4(0.7f, 1.0f, 0.7f, 1.0f), $"Fan Width: {RadialPositioning.GetFanWidthRadians(newGatherPoint.StartAngle, newGatherPoint.EndAngle):N3f} radians");
-
-                                                    ImGui.Separator();
-                                                    ImGui.Text("Copy Values:");
-
-                                                    // Copy buttons for new gather point
-                                                    if (ImGui.Button("Copy Start Angle (Radians)##New"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetStartAngleRadians(newGatherPoint.StartAngle).ToString("N3"));
-                                                    }
-                                                    ImGui.SameLine();
-                                                    if (ImGui.Button("Copy End Angle (Radians)##New"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetEndAngleRadians(newGatherPoint.EndAngle).ToString("N3"));
-                                                    }
-                                                    ImGui.SameLine();
-                                                    if (ImGui.Button("Copy Fan Width (Radians)##New"))
-                                                    {
-                                                        ImGui.SetClipboardText(RadialPositioning.GetFanWidthRadians(newGatherPoint.StartAngle, newGatherPoint.EndAngle).ToString("N3"));
-                                                    }
-
-                                                    ImGui.Separator();
-                                                    ImGui.Text("Direct Radian Input:");
-
-                                                    float newStartAngleRad = RadialPositioning.DegreesToRadians(newGatherPoint.StartAngle);
-                                                    if (ImGui.SliderFloat("Start Angle (Radians)##New", ref newStartAngleRad, 0.0f, 6.28f, "%.3f"))
-                                                    {
-                                                        newGatherPoint.StartAngle = RadialPositioning.RadiansToDegrees(newStartAngleRad);
-                                                    }
-
-                                                    float newEndAngleRad = RadialPositioning.DegreesToRadians(newGatherPoint.EndAngle);
-                                                    if (ImGui.SliderFloat("End Angle (Radians)##New", ref newEndAngleRad, 0.0f, 6.28f, "%.3f"))
-                                                    {
-                                                        newGatherPoint.EndAngle = RadialPositioning.RadiansToDegrees(newEndAngleRad);
-                                                    }
-
-                                                    ImGui.EndTabItem();
-                                                }
-
-                                                ImGui.EndTabBar();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            var newPos = newGatherPoint.Position;
-                                            ImGui.SetNextItemWidth(200);
-                                            ImGui.InputFloat3("Position", ref newPos);
-                                            newGatherPoint.Position = newPos;
-                                            ImGui.SameLine();
-                                            if (ImGui.Button("Target POS"))
-                                            {
-                                                newGatherPoint.Position = Svc.Targets.Target.Position;
-                                            }
-                                        }
-
-                                        ImGui.EndChild(); // End AddNewGatherPoint child
-                                    }
-
-                                    // Add button at the bottom of add tab
-                                    if (ImGui.Button("Add Gather Point"))
-                                    {
-                                        if (newGatherPoint.NodeId > 0)
-                                        {
-                                            editableGatherPoints.Add(new GatheringHelper.GathNodeInfo
-                                            {
-                                                NodeId = newGatherPoint.NodeId,
-                                                Position = newGatherPoint.Position,
-                                                LandZone = newGatherPoint.LandZone,
-                                                GatheringType = newGatherPoint.GatheringType,
-                                                ZoneId = newGatherPoint.ZoneId,
-                                                NodeSet = newGatherPoint.NodeSet,
-                                                UseRadialPositioning = newGatherPoint.UseRadialPositioning,
-                                                InnerRadius = newGatherPoint.InnerRadius,
-                                                OuterRadius = newGatherPoint.OuterRadius,
-                                                StartAngle = newGatherPoint.StartAngle,
-                                                EndAngle = newGatherPoint.EndAngle
-                                            });
-                                            newGatherPoint = new GatheringHelper.GathNodeInfo(); // Reset with default values
-                                        }
-                                    }
-
-                                    ImGui.EndTabItem();
-                                }
-
-                                ImGui.EndTabBar(); // End GatherPointSubTabs
-                            }
-
-                            ImGui.EndTabItem(); // End Gather Points main tab
-                        }
-
-                        ImGui.EndTabItem(); // End Gather Points main tab
+                        ImGui.EndChild(); // End TabArea
                     }
 
-                    ImGui.EndTabBar();
-
+                    // Save button at the bottom - now properly positioned
                     ImGui.Separator();
-
-                    // Save button
                     if (ImGui.Button("Save All Changes"))
                     {
                         try

@@ -116,20 +116,19 @@ namespace GatherChill.ConfigYaml
         {
             try
             {
+                // Check and update GatherPoints table
                 using var cmd = conn.CreateCommand();
-
-                // Check if columns already exist before adding them
                 cmd.CommandText = "PRAGMA table_info(GatherPoints);";
                 using var reader = cmd.ExecuteReader();
-                var existingColumns = new List<string>();
+                var existingGatherPointsColumns = new List<string>();
                 while (reader.Read())
                 {
-                    existingColumns.Add(reader.GetString(1)); // Column name is at index 1
+                    existingGatherPointsColumns.Add(reader.GetString(1)); // Column name is at index 1
                 }
                 reader.Close();
 
-                // Add columns if they don't exist
-                var columnsToAdd = new[]
+                // Add columns to GatherPoints if they don't exist
+                var gatherPointsColumnsToAdd = new[]
                 {
             ("UseRadialPositioning", "INTEGER DEFAULT 0"),
             ("InnerRadius", "REAL DEFAULT 0.0"),
@@ -138,14 +137,42 @@ namespace GatherChill.ConfigYaml
             ("EndAngle", "REAL DEFAULT 360.0")
         };
 
-                foreach (var (columnName, columnDef) in columnsToAdd)
+                foreach (var (columnName, columnDef) in gatherPointsColumnsToAdd)
                 {
-                    if (!existingColumns.Contains(columnName))
+                    if (!existingGatherPointsColumns.Contains(columnName))
                     {
                         using var alterCmd = conn.CreateCommand();
                         alterCmd.CommandText = $"ALTER TABLE GatherPoints ADD COLUMN {columnName} {columnDef};";
                         alterCmd.ExecuteNonQuery();
-                        Console.WriteLine($"Added column: {columnName}");
+                        Console.WriteLine($"Added column to GatherPoints: {columnName}");
+                    }
+                }
+
+                // Check and update Routes table
+                using var routesCmd = conn.CreateCommand();
+                routesCmd.CommandText = "PRAGMA table_info(Routes);";
+                using var routesReader = routesCmd.ExecuteReader();
+                var existingRoutesColumns = new List<string>();
+                while (routesReader.Read())
+                {
+                    existingRoutesColumns.Add(routesReader.GetString(1)); // Column name is at index 1
+                }
+                routesReader.Close();
+
+                // Add columns to Routes if they don't exist
+                var routesColumnsToAdd = new[]
+                {
+            ("GatheringType", "INTEGER DEFAULT 0")
+        };
+
+                foreach (var (columnName, columnDef) in routesColumnsToAdd)
+                {
+                    if (!existingRoutesColumns.Contains(columnName))
+                    {
+                        using var alterCmd = conn.CreateCommand();
+                        alterCmd.CommandText = $"ALTER TABLE Routes ADD COLUMN {columnName} {columnDef};";
+                        alterCmd.ExecuteNonQuery();
+                        Console.WriteLine($"Added column to Routes: {columnName}");
                     }
                 }
 
