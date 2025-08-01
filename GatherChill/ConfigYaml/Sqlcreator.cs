@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using GatherChill.Utilities;
+using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.IO;
 
@@ -42,7 +43,7 @@ namespace GatherChill.ConfigYaml
             }
         }
 
-        public static void SaveToDatabase(RouteEntry config, SqliteConnection conn)
+        public static void SaveToDatabase(RouteHelpers.RouteEntry config, SqliteConnection conn)
         {
             // Save route info
             using (var cmd = conn.CreateCommand())
@@ -128,14 +129,16 @@ namespace GatherChill.ConfigYaml
                 reader.Close();
 
                 // Add columns to GatherPoints if they don't exist
+                // Add columns to GatherPoints if they don't exist
                 var gatherPointsColumnsToAdd = new[]
                 {
-            ("UseRadialPositioning", "INTEGER DEFAULT 0"),
-            ("InnerRadius", "REAL DEFAULT 0.0"),
-            ("OuterRadius", "REAL DEFAULT 5.0"),
-            ("StartAngle", "REAL DEFAULT 0.0"),
-            ("EndAngle", "REAL DEFAULT 360.0")
-        };
+                    ("UseRadialPositioning", "INTEGER DEFAULT 0"),
+                    ("InnerRadius", "REAL DEFAULT 0.0"),
+                    ("OuterRadius", "REAL DEFAULT 5.0"),
+                    ("StartAngle", "REAL DEFAULT 0.0"),
+                    ("EndAngle", "REAL DEFAULT 360.0"),
+                    ("RotationOffset", "REAL DEFAULT 0.0")  // Add this line
+                };
 
                 foreach (var (columnName, columnDef) in gatherPointsColumnsToAdd)
                 {
