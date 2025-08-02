@@ -6,7 +6,6 @@ using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
-using Pictomancy;
 using SQLitePCL;
 
 namespace GatherChill;
@@ -14,9 +13,9 @@ namespace GatherChill;
 public sealed class GatherChill : IDalamudPlugin
 {
     public string Name => "GatherChill";
-
-    private static GeneralConfig? Config;
-    public static GeneralConfig C => Config ??= LoadConfig<GeneralConfig>();
+    internal static GatherChill P = null!;
+    public static Config C => P.config;
+    private Config config;
 
     private static T LoadConfig<T>() where T : IYamlConfig, new()
     {
@@ -62,18 +61,18 @@ public sealed class GatherChill : IDalamudPlugin
     internal NavmeshIPC navmesh;
     internal PandoraIPC pandora;
 
-    internal static GatherChill P = null!;
-
     public GatherChill(IDalamudPluginInterface pi)
     {
         P = this;
         ECommonsMain.Init(pi, P, ECommons.Module.DalamudReflector, ECommons.Module.ObjectFunctions);
         new ECommons.Schedulers.TickScheduler(Load);
-        PictoService.Initialize(pi);
     }
 
     public void Load()
     {
+        EzConfig.Migrate<Config>();
+        config = EzConfig.Init<Config>();
+
         //IPC's that are used
         taskManager = new();
         lifestream = new();
@@ -124,7 +123,6 @@ public sealed class GatherChill : IDalamudPlugin
         Safe(() => Svc.Framework.Update -= Tick);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
         ECommonsMain.Dispose();
-        PictoService.Dispose();
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
     }
