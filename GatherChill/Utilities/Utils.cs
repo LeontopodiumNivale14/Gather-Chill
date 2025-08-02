@@ -13,6 +13,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using GatherChill.Utilities.GatheringHelpers;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
@@ -148,38 +149,6 @@ public static unsafe class Utils
         var ItemSheet = Svc.Data.GetExcelSheet<Item>();
         var EventSheet = Svc.Data.GetExcelSheet<EventItem>();
 
-        foreach (var entry in GathTypeSheets)
-        {
-            var key = entry.RowId;
-            var name = entry.Name.ToString();
-            ISharedImmediateTexture? mainIcon = null;
-            ISharedImmediateTexture? offIcon = null;
-            if (entry.IconMain is { } IconMain)
-            {
-                if (Svc.Texture.TryGetFromGameIcon(IconMain, out var icon))
-                {
-                    mainIcon = icon;
-                }
-            }
-            if (entry.IconOff is { } IconOff)
-            {
-                if (Svc.Texture.TryGetFromGameIcon(IconOff, out var icon))
-                {
-                    offIcon = icon;
-                }
-            }
-
-            if (!GatheringNodeDict.ContainsKey(key))
-            {
-                GatheringNodeDict[key] = new GatheringTypes
-                {
-                    Name = name,
-                    MainIcon = mainIcon,
-                    ShinyIcon = offIcon
-                };
-            }
-        }
-
         foreach (var entry in GatheringPointBaseSheets)
         {
             var key = entry.RowId;
@@ -232,6 +201,64 @@ public static unsafe class Utils
                 GatheringItems.Add(itemId, itemName);
             }
 
+        }
+    }
+
+    public static void RouteInfoCreator()
+    {
+        var GatherPointsExported = Svc.Data.GetExcelSheet<ExportedGatheringPoint>(); // Contains: Route [key], the center point, type, and radius
+        var GatherPointBase = Svc.Data.GetExcelSheet<GatheringPointBase>(); // Contains: Route [key], items, type, items [0-7]
+        var GatherPoint = Svc.Data.GetExcelSheet<GatheringPoint>(); // Contains: NodeId [key], Reference to GatherPointBase (which one it belongs to), Territory Type (Leads to... well territory type), and expansion
+        var TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>(); // Contains: Territory ID [Key], Place Name (Specific Area Info) [ID for PlaceName]
+        var PlaceName = Svc.Data.GetExcelSheet<PlaceName>(); // Contains: Id [for placename] -> Name
+        var ExVersion = Svc.Data.GetExcelSheet<ExVersion>(); // Contains: Ex Version [Key] -> Expansion Name
+
+        var GatheringTypes = Svc.Data.GetExcelSheet<GatheringType>(); // Contains: Type [key], Name [Kind], Normal Icon, Shiny Icon
+
+        // First thing first, going to load the icons for storage. This is moreso for astetics and lets me know what kind it is w/ a simple glance.
+        foreach (var entry in GatheringTypes)
+        {
+            var key = entry.RowId;
+            var name = entry.Name.ToString();
+            ISharedImmediateTexture? mainIcon = null;
+            ISharedImmediateTexture? offIcon = null;
+            if (entry.IconMain is { } IconMain)
+            {
+                if (Svc.Texture.TryGetFromGameIcon(IconMain, out var icon))
+                {
+                    mainIcon = icon;
+                }
+            }
+            if (entry.IconOff is { } IconOff)
+            {
+                if (Svc.Texture.TryGetFromGameIcon(IconOff, out var icon))
+                {
+                    offIcon = icon;
+                }
+            }
+
+            if (!GatherClasses.GatheringTypeIcons.ContainsKey(key))
+            {
+                GatherClasses.GatheringTypeIcons[key] = new GatherClasses.GatheringTypes
+                {
+                    Name = name,
+                    MainIcon = mainIcon,
+                    ShinyIcon = offIcon,
+                };
+            }
+        }
+
+        // Next thing, time to load the dictionary. This is moreso for internal reasons/debug purposes. But also a good back reference
+        foreach (var route in GatherPointsExported)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error($"Can't access row: {route.RowId}: {ex}");
+            }
         }
     }
 

@@ -144,15 +144,6 @@ public static unsafe class Data
         public string ItemName { get; set; } = string.Empty;
     }
 
-    public class GatheringTypes
-    {
-        public required string Name { get; set; }
-        public required ISharedImmediateTexture? MainIcon { get; set; }
-        public required ISharedImmediateTexture? ShinyIcon { get; set; }
-    }
-
-    public static Dictionary<uint, GatheringTypes> GatheringNodeDict = new();
-
     public class GPBaseInformation
     {
         public int GatheringType { get; set; }
