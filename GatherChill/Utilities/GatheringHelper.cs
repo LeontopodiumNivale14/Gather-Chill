@@ -8,11 +8,37 @@ namespace GatherChill.Utilities;
 
 internal static class GatheringHelper
 {
+    public class RouteEntry
+    {
+        public uint RouteNumber { get; set; }
+        public string Expansion { get; set; }     // ExName
+        public string Area { get; set; }          // TerritoryName
+        public uint AreaId { get; set; }
+        public HashSet<uint> ListNodeIds { get; set; } = new();
+        public List<GathNodeInfo> GatherPoints { get; set; } = new();
+    }
+
     public class GatheringConfig
     {
         public int GatheringAmount { get; set; } = 0;
         public uint ItemId { get; set; } = 0;
         public string ItemName { get; set; } = string.Empty;
+    }
+
+    public class GathNodeInfo
+    {
+        public Vector3 Position { get; set; }
+        public Vector3 LandZone { get; set; }
+        public uint NodeId { get; set; }
+        public int GatheringType { get; set; }
+        public int ZoneId { get; set; }
+        public uint NodeSet { get; set; }
+
+        public bool UseRadialPositioning { get; set; } = false;
+        public float InnerRadius { get; set; } = 0.0f;
+        public float OuterRadius { get; set; } = 5.0f;
+        public float StartAngle { get; set; } = 0.0f;
+        public float EndAngle { get; set; } = 360.0f;
     }
 
     public static class RadialPositioning
@@ -57,67 +83,34 @@ internal static class GatheringHelper
             return endRad - startRad;
         }
 
-        public static Vector3 GetRandomPointInFan(Vector3 center, float innerRadius, float outerRadius,
-                                                  float startAngle, float endAngle, float rotationOffset = 0.0f)
+        public static Vector3 GetRandomPointInFan(Vector3 centerPoint, float innerRadius, float outerRadius, float startAngle, float endAngle)
         {
-            // Apply rotation offset to both angles
-            float rotatedStartAngle = startAngle + rotationOffset;
-            float rotatedEndAngle = endAngle + rotationOffset;
+            // Convert angles to radians
+            float startRad = startAngle * (float)(Math.PI / 180);
+            float endRad = endAngle * (float)(Math.PI / 180);
 
-            // Normalize angles to 0-360 range
-            rotatedStartAngle = NormalizeAngle(rotatedStartAngle);
-            rotatedEndAngle = NormalizeAngle(rotatedEndAngle);
-
-            Random rand = new Random();
-
-            // Random angle between start and end (handling wrap-around)
-            float randomAngle;
-            if (rotatedEndAngle < rotatedStartAngle) // Wrap around case
+            // Handle angle wrapping (e.g., 350° to 10°)
+            if (endAngle < startAngle)
             {
-                float totalRange = (360 - rotatedStartAngle) + rotatedEndAngle;
-                float randomValue = (float)rand.NextDouble() * totalRange;
-
-                if (randomValue <= (360 - rotatedStartAngle))
-                {
-                    randomAngle = rotatedStartAngle + randomValue;
-                }
-                else
-                {
-                    randomAngle = randomValue - (360 - rotatedStartAngle);
-                }
-            }
-            else
-            {
-                randomAngle = rotatedStartAngle + (float)rand.NextDouble() * (rotatedEndAngle - rotatedStartAngle);
+                endRad += 2 * (float)Math.PI;
             }
 
-            // Random radius
-            float randomRadius = innerRadius + (float)rand.NextDouble() * (outerRadius - innerRadius);
+            // Random angle within the fan
+            float randomAngle = (float)_random.NextDouble() * (endRad - startRad) + startRad;
 
-            // Convert to world coordinates
-            float radians = DegreesToRadians(randomAngle);
+            // Random radius (weighted toward outer edge for even distribution)
+            float radiusSquared = (float)_random.NextDouble() * (outerRadius * outerRadius - innerRadius * innerRadius) + innerRadius * innerRadius;
+            float randomRadius = (float)Math.Sqrt(radiusSquared);
+
+            // Calculate offset from center
+            float offsetX = randomRadius * (float)Math.Cos(randomAngle);
+            float offsetZ = randomRadius * (float)Math.Sin(randomAngle);
+
             return new Vector3(
-                center.X + randomRadius * (float)Math.Cos(radians),
-                center.Y,
-                center.Z + randomRadius * (float)Math.Sin(radians)
+                centerPoint.X + offsetX,
+                centerPoint.Y, // Keep Y the same (ground level)
+                centerPoint.Z + offsetZ
             );
-        }
-
-        public static float NormalizeAngle(float angle)
-        {
-            while (angle < 0) angle += 360;
-            while (angle >= 360) angle -= 360;
-            return angle;
-        }
-
-        public static float GetRotatedStartAngleRadians(float startAngle, float rotationOffset)
-        {
-            return DegreesToRadians(NormalizeAngle(startAngle + rotationOffset));
-        }
-
-        public static float GetRotatedEndAngleRadians(float endAngle, float rotationOffset)
-        {
-            return DegreesToRadians(NormalizeAngle(endAngle + rotationOffset));
         }
     }
 }
