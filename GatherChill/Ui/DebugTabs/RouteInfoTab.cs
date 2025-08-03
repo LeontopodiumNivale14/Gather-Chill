@@ -36,13 +36,13 @@ namespace GatherChill.Ui.DebugTabs
                     var image = GatherClasses.GatheringTypeIcons[entry.Value.GatheringType].MainIcon;
                     ImGui.Image(image.GetWrapOrEmpty().ImGuiHandle, new Vector2(25, 25));
 
-                    // Expansion
+                    // Expansion (these next 2 are problematic... need to look into why later)
                     ImGui.TableNextColumn();
-                    ImGui.Text(entry.Value.ExpansionName);
+                    // ImGui.Text(entry.Value.ExpansionName);
 
                     // Zone
                     ImGui.TableNextColumn();
-                    ImGui.Text(entry.Value.ZoneName);
+                    // ImGui.Text(entry.Value.ZoneName);
 
                     // Column 3 | Map Location
                     ImGui.TableNextColumn();
@@ -89,13 +89,17 @@ namespace GatherChill.Ui.DebugTabs
                     // Column 5 | Items
                     ImGui.TableNextColumn();
                     string itemsText = "No Items";
-                    if (entry.Value.Items.Count > 1)
+                    if (entry.Value.Items?.Count > 1)
                     {
-                        itemsText = string.Join(", ", entry.Value.Items.Values);
+                        var limitedItems = entry.Value.Items.Values.Take(10).Where(v => !string.IsNullOrEmpty(v));
+                        itemsText = string.Join(", ", limitedItems);
+                        if (entry.Value.Items.Count > 10)
+                            itemsText += "...";
                     }
-                    else if (entry.Value.Items.Count > 0)
+                    else if (entry.Value.Items?.Count > 0)
                     {
-                        itemsText = entry.Value.Items.Values.First().Trim();
+                        var firstItem = entry.Value.Items.Values.FirstOrDefault();
+                        itemsText = firstItem?.Trim() ?? "Invalid Item";
                     }
                     ImGui.Text(itemsText);
                     string itemIdList = string.Join(", ", entry.Value.ItemIds.ToArray());
