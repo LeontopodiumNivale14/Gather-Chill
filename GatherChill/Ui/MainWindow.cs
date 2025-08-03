@@ -53,18 +53,6 @@ namespace GatherChill.Ui
         /// </summary>
         public override void Draw()
         {
-            foreach (var entry in GatheringNodeDict)
-            {
-                ImGui.Text($"Number: {entry.Key}");
-                ImGui.SameLine();
-                ImGui.Text($"Type: {entry.Value.Name}");
-                ImGui.SameLine();
-                ImGui.Image(entry.Value.MainIcon.GetWrapOrEmpty().ImGuiHandle, new Vector2(20, 20));
-                string textNodes = string.Empty;
-
-                int dictKey = entry.Key.ToInt();
-            }
-
             int tempSlot = (int)Math.Clamp(GatheringSlot, 0, 1205);
 
             if (ImGui.SliderInt("Items", ref tempSlot, 0, 1205))

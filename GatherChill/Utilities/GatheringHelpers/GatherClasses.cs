@@ -26,16 +26,22 @@ public static class GatherClasses
 
     public class RouteInfo
     {
-        public Vector2 MapCenter { get; set; }
-        public uint MapRadius { get; set; }
-        public uint GatheringType {  get; set; }
-
+        // Important Information first
         public uint ExpansionId { get; set; }
         public uint ExpansionName { get; set; }
-        public uint ZoneId { get; set; }
+        public uint ZoneId { get; set; } = 0;
         public string ZoneName { get; set; } = "???";
+
+        // Map Information
+        public Vector2 MapCenter { get; set; }
+        public uint MapRadius { get; set; }
+        public uint GatheringType { get; set; }
         
+        public HashSet<uint> NodeIds { get; set; }
+        public Dictionary<uint, string> Items { get; set; }
     }
+
+    public static Dictionary<uint, RouteInfo> RouteDatabase = new();
 
     #endregion
 }

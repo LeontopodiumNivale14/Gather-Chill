@@ -68,7 +68,7 @@ public sealed class GatherChill : IDalamudPlugin
         EzCmd.Add("/icegather", OnCommand);
         Svc.Framework.Update += Tick;
 
-        UpdateDictionaries();
+        RouteInfoCreator();
     }
 
     private void Tick(object _)

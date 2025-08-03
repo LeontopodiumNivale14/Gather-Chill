@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.Network.Structures;
 using Dalamud.Interface.Textures;
 using ECommons.Automation.NeoTaskManager;
 using ECommons.DalamudServices.Legacy;
@@ -214,6 +215,9 @@ public static unsafe class Utils
         var ExVersion = Svc.Data.GetExcelSheet<ExVersion>(); // Contains: Ex Version [Key] -> Expansion Name
 
         var GatheringTypes = Svc.Data.GetExcelSheet<GatheringType>(); // Contains: Type [key], Name [Kind], Normal Icon, Shiny Icon
+        var GatheringItems = Svc.Data.GetExcelSheet<GatheringItem>(); // 
+        var ItemSheet = Svc.Data.GetExcelSheet<Item>();
+        var EventItemSheet = Svc.Data.GetExcelSheet<EventItem>();
 
         // First thing first, going to load the icons for storage. This is moreso for astetics and lets me know what kind it is w/ a simple glance.
         foreach (var entry in GatheringTypes)
@@ -253,11 +257,64 @@ public static unsafe class Utils
         {
             try
             {
+                var routeId = route.RowId;
+                Vector2 mapCenter = new Vector2(route.X, route.Y);
+                var gatheringType = route.GatheringType.RowId;
 
+                // Really just here cause there doesn't need to be a route 0 entry. There is no route 0 in Ba-sing-se
+                if (routeId == 0)
+                    continue;
+
+                if (!GatherClasses.RouteDatabase.ContainsKey(routeId))
+                {
+                    GatherClasses.RouteDatabase[routeId] = new GatherClasses.RouteInfo
+                    {
+                        MapCenter = mapCenter,
+                        MapRadius = route.Radius,
+                        GatheringType = gatheringType
+                    };
+                }
             }
             catch (Exception ex)
             {
                 PluginLog.Error($"Can't access row: {route.RowId}: {ex}");
+            }
+        }
+
+        // 3rd. Update the route's items
+        foreach (var routeItems in GatherPointBase)
+        {
+            var routeId = routeItems.RowId;
+            if (GatherClasses.RouteDatabase.ContainsKey(routeId))
+            {
+                Dictionary<uint, string> itemDict = new Dictionary<uint, string>();
+
+                for (var i = 0; i < 8; i++)
+                {
+                    if (routeItems.Item[i].RowId != 0)
+                    {
+                        var gathItemId = routeItems.Item[i].RowId;
+                        // An item is found, so time to check to see what the fuck kind of item it is. 
+                        // This leads to the GatheringItemSheet next so, time to check that. 
+
+                        if (GatheringItems.TryGetRow(gathItemId, out var gathItem))
+                        {
+                            var itemId = gathItem.RowId;
+                            if (ItemSheet.TryGetRow(itemId, out var item))
+                            {
+                                string itemName = item.Name.ToString();
+                                itemDict.Add(itemId, itemName);
+                            }
+                            else if (EventItemSheet.TryGetRow(gathItemId, out var eventitem))
+                            {
+                                string itemName = item.Name.ToString();
+                                itemDict.Add(itemId, itemName);
+                            }
+                        }
+                    }
+                }
+
+                GatherClasses.RouteDatabase[routeId].Items = itemDict;
             }
         }
     }

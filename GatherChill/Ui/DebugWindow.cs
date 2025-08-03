@@ -7,6 +7,7 @@ using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Tasks;
+using GatherChill.Ui.DebugTabs;
 using GatherChill.Utilities;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
@@ -61,6 +62,10 @@ internal class DebugWindow : Window
             {
                 ItemTable();
                 ImGui.EndTabItem();
+            }
+            if (ImGui.BeginTabItem("New Route Table"))
+            {
+                RouteInfoTab.Draw();
             }
 
             ImGui.EndTabBar();
