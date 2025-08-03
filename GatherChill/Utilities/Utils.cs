@@ -288,6 +288,8 @@ public static unsafe class Utils
             if (GatherClasses.RouteDatabase.ContainsKey(routeId))
             {
                 Dictionary<uint, string> itemDict = new Dictionary<uint, string>();
+                HashSet<uint> itemIds = new HashSet<uint>();
+                itemDict.Clear();
 
                 for (var i = 0; i < 8; i++)
                 {
@@ -299,22 +301,50 @@ public static unsafe class Utils
 
                         if (GatheringItems.TryGetRow(gathItemId, out var gathItem))
                         {
-                            var itemId = gathItem.RowId;
+                            var itemId = gathItem.Item.RowId;
+                            itemIds.Add(itemId);
                             if (ItemSheet.TryGetRow(itemId, out var item))
                             {
                                 string itemName = item.Name.ToString();
                                 itemDict.Add(itemId, itemName);
                             }
-                            else if (EventItemSheet.TryGetRow(gathItemId, out var eventitem))
+                            else if (EventItemSheet.TryGetRow(itemId, out var eventitem))
                             {
-                                string itemName = item.Name.ToString();
+                                string itemName = eventitem.Name.ToString();
                                 itemDict.Add(itemId, itemName);
                             }
                         }
                     }
                 }
 
+                GatherClasses.RouteDatabase[routeId].ItemIds = itemIds;
                 GatherClasses.RouteDatabase[routeId].Items = itemDict;
+            }
+        }
+
+        // 4th. Setting Route Numbers to the nodes
+        foreach (var node in GatherPoint)
+        {
+            var nodeId = node.RowId;
+            var routeId = node.GatheringPointBase.RowId;
+            var territoryId = node.TerritoryType.RowId;
+
+            if (GatherClasses.RouteDatabase.TryGetValue(routeId, out var route))
+            {
+                Svc.Log.Debug($"RouteId: {routeId} was found");
+                route.NodeIds.Add(nodeId);
+
+                if (route.ZoneId < 128 && TerritoryType.TryGetRow(territoryId, out var territory))
+                {
+                    var zoneName = territory.Name.ToString();
+                    if (zoneName != null)
+                    {
+                        route.ZoneId = territoryId;
+                        route.ZoneName = zoneName;
+                        route.ExpansionId = territory.ExVersion.RowId;
+                        route.ExpansionName = ExVersion.GetRow(territory.ExVersion.RowId).Name.ToString();
+                    }
+                }
             }
         }
     }

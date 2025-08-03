@@ -28,7 +28,7 @@ public static class GatherClasses
     {
         // Important Information first
         public uint ExpansionId { get; set; }
-        public uint ExpansionName { get; set; }
+        public string ExpansionName { get; set; }
         public uint ZoneId { get; set; } = 0;
         public string ZoneName { get; set; } = "???";
 
@@ -36,9 +36,10 @@ public static class GatherClasses
         public Vector2 MapCenter { get; set; }
         public uint MapRadius { get; set; }
         public uint GatheringType { get; set; }
-        
-        public HashSet<uint> NodeIds { get; set; }
-        public Dictionary<uint, string> Items { get; set; }
+
+        public HashSet<uint> NodeIds { get; set; } = new();
+        public Dictionary<uint, string> Items { get; set; } = new();
+        public HashSet<uint> ItemIds { get; set; } = new();
     }
 
     public static Dictionary<uint, RouteInfo> RouteDatabase = new();
