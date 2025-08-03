@@ -38,11 +38,11 @@ namespace GatherChill.Ui.DebugTabs
 
                     // Expansion (these next 2 are problematic... need to look into why later)
                     ImGui.TableNextColumn();
-                    // ImGui.Text(entry.Value.ExpansionName);
+                    ImGui.Text(entry.Value.ExpansionName);
 
                     // Zone
                     ImGui.TableNextColumn();
-                    // ImGui.Text(entry.Value.ZoneName);
+                    ImGui.Text(entry.Value.ZoneName);
 
                     // Column 3 | Map Location
                     ImGui.TableNextColumn();

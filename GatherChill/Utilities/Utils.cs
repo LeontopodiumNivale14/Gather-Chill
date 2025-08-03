@@ -281,7 +281,16 @@ public static unsafe class Utils
             }
         }
 
-        // 3rd. Update the route's items
+        // Creating the expansion dictionary for personal use/storage (just a quick way vs cross referencing the sheet)
+        foreach (var ex in ExVersion)
+        {
+            uint expansionId = ex.RowId;
+            string expansionName = ex.Name.ToString();
+
+            GatherClasses.ExpansionInfo.Add(expansionId, expansionName);
+        }
+
+        // Update the route's items
         foreach (var routeItems in GatherPointBase)
         {
             var routeId = routeItems.RowId;
@@ -322,7 +331,7 @@ public static unsafe class Utils
             }
         }
 
-        // 4th. Setting Route Numbers to the nodes
+        // Setting Route Numbers to the nodes
         foreach (var node in GatherPoint)
         {
             var nodeId = node.RowId;
@@ -336,13 +345,15 @@ public static unsafe class Utils
 
                 if (route.ZoneId < 128 && TerritoryType.TryGetRow(territoryId, out var territory))
                 {
-                    var zoneName = territory.Name.ToString();
-                    if (zoneName != null)
+                    var placeNameId = territory.PlaceName.RowId;
+                    if (placeNameId != 0)
                     {
+                        string zoneName = PlaceName.GetRow(placeNameId).Name.ToString();
+
                         route.ZoneId = territoryId;
                         route.ZoneName = zoneName;
                         route.ExpansionId = territory.ExVersion.RowId;
-                        route.ExpansionName = ExVersion.GetRow(territory.ExVersion.RowId).Name.ToString();
+                        route.ExpansionName = GatherClasses.ExpansionInfo[territory.ExVersion.RowId];
                     }
                 }
             }

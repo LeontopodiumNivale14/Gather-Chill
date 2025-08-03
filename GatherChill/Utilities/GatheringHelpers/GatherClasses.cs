@@ -27,8 +27,8 @@ public static class GatherClasses
     public class RouteInfo
     {
         // Important Information first
-        public uint ExpansionId { get; set; }
-        public string ExpansionName { get; set; }
+        public uint ExpansionId { get; set; } = 0;
+        public string ExpansionName { get; set; } = "ARR";
         public uint ZoneId { get; set; } = 0;
         public string ZoneName { get; set; } = "???";
 
@@ -45,4 +45,6 @@ public static class GatherClasses
     public static Dictionary<uint, RouteInfo> RouteDatabase = new();
 
     #endregion
+
+    public static Dictionary<uint, string> ExpansionInfo = new();
 }
