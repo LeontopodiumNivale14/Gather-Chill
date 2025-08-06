@@ -22,7 +22,7 @@ public static class GatherClasses
 
     #endregion
 
-    #region Route Information
+    #region Route + Expansion Info
 
     public class RouteInfo
     {
@@ -30,7 +30,7 @@ public static class GatherClasses
         public uint ExpansionId { get; set; } = 0;
         public string ExpansionName { get; set; } = "ARR";
         public uint ZoneId { get; set; } = 0;
-        public string ZoneName { get; set; } = "???";
+        public string ZoneName { get; set; } = "Unknown";
 
         // Map Information
         public Vector2 MapCenter { get; set; }
@@ -42,9 +42,36 @@ public static class GatherClasses
         public HashSet<uint> ItemIds { get; set; } = new();
     }
 
-    public static Dictionary<uint, RouteInfo> RouteDatabase = new();
+    public static Dictionary<uint, RouteInfo> GatheringDatabase = new();
+
+    public static Dictionary<uint, string> ExpansionInfo = new();
 
     #endregion
 
-    public static Dictionary<uint, string> ExpansionInfo = new();
+    #region RouteInfo
+
+    /// <summary>
+    /// <b>NodeId [uint]: </b>Id Attached to the node <br></br>
+    /// <b>NodePosition [Vector3]: </b>Location of the node <br></br>
+    /// <b>LandZone [Vector3]: </b>Guarentee'd land zone, good if not <br></br>
+    /// <b>RadialPositioning [bool]: </b> Bool to use radial positioning or fixed. <br></br>
+    /// <b>Inner/Outer Radius [float]: </b> Setting the radius's for the rings. 
+    /// <b>Start/End Angles [float]</b> The amount <br></br>
+    /// </summary>
+    public class RouteData
+    {
+        public uint NodeId { get; set; } = 0;
+        public Vector3 NodePosition { get; set; } = Vector3.Zero;
+        public Vector3 LandZone { get; set; } = Vector3.Zero;
+        public bool RadialPositioning { get; set; } = false;
+        public float InnerRadius { get; set; } = 1.0f;
+        public float OuterRadius { get; set; } = 3.0f;
+        public float StartAngle { get; set; } = 0.0f;
+        public float EndAngle { get; set; } = 360.0f;
+        public float RotationOffset { get; set; } = 0.0f;
+    }
+
+    public static Dictionary<uint, List<RouteData>> RouteDatabase = new();
+
+    #endregion
 }

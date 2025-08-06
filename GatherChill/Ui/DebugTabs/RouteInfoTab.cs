@@ -1,4 +1,7 @@
-﻿using GatherChill.Utilities.GatheringHelpers;
+﻿using ECommons.Logging;
+using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Yaml;
+using GatherChill.Yaml.ConfigFiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +14,46 @@ namespace GatherChill.Ui.DebugTabs
     {
         public static void Draw()
         {
+            if (ImGui.Button("Create index file"))
+            {
+                // Clear existing data to rebuild fresh
+                GIndex.Expansions.Clear();
+
+                foreach (var entry in GatherClasses.GatheringDatabase)
+                {
+                    var data = entry.Value;
+
+                    var routeInfo = new GatherIndex.RouteInfo
+                    {
+                        MapCenter = data.MapCenter,
+                        MapRadius = data.MapRadius,
+                        GatheringType = data.GatheringType,
+                        NodeIds = data.NodeIds,
+                    };
+
+                    // Use gathering type as route key, or create a more meaningful identifier
+                    var routeKey = entry.Key;
+
+                    GIndex.AddRoute(
+                        expansionName: data.ExpansionName,
+                        expansionId: data.ExpansionId,
+                        zoneName: data.ZoneName,
+                        zoneId: data.ZoneId,
+                        routeKey: routeKey,
+                        routeInfo: routeInfo
+                    );
+                }
+
+                GIndex.Save();
+
+                // Optional: Log how many entries were processed
+                var totalRoutes = GIndex.Expansions.Values
+                    .SelectMany(exp => exp.Zones.Values)
+                    .SelectMany(zone => zone.Routes.Values)
+                    .Count();
+                PluginLog.Information($"Created index with {totalRoutes} routes across {GIndex.Expansions.Count} expansions");
+            }
+
             if (ImGui.BeginTable("New Route Information Table", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
             {
                 ImGui.TableSetupColumn("#");
@@ -23,7 +66,7 @@ namespace GatherChill.Ui.DebugTabs
 
                 ImGui.TableHeadersRow();
 
-                foreach (var entry in GatherClasses.RouteDatabase)
+                foreach (var entry in GatherClasses.GatheringDatabase)
                 {
                     ImGui.TableNextRow();
 

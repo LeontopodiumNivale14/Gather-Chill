@@ -265,9 +265,9 @@ public static unsafe class Utils
                 if (routeId == 0)
                     continue;
 
-                if (!GatherClasses.RouteDatabase.ContainsKey(routeId))
+                if (!GatherClasses.GatheringDatabase.ContainsKey(routeId))
                 {
-                    GatherClasses.RouteDatabase[routeId] = new GatherClasses.RouteInfo
+                    GatherClasses.GatheringDatabase[routeId] = new GatherClasses.RouteInfo
                     {
                         MapCenter = mapCenter,
                         MapRadius = route.Radius,
@@ -294,7 +294,7 @@ public static unsafe class Utils
         foreach (var routeItems in GatherPointBase)
         {
             var routeId = routeItems.RowId;
-            if (GatherClasses.RouteDatabase.ContainsKey(routeId))
+            if (GatherClasses.GatheringDatabase.ContainsKey(routeId))
             {
                 Dictionary<uint, string> itemDict = new Dictionary<uint, string>();
                 HashSet<uint> itemIds = new HashSet<uint>();
@@ -326,8 +326,8 @@ public static unsafe class Utils
                     }
                 }
 
-                GatherClasses.RouteDatabase[routeId].ItemIds = itemIds;
-                GatherClasses.RouteDatabase[routeId].Items = itemDict;
+                GatherClasses.GatheringDatabase[routeId].ItemIds = itemIds;
+                GatherClasses.GatheringDatabase[routeId].Items = itemDict;
             }
         }
 
@@ -338,7 +338,7 @@ public static unsafe class Utils
             var routeId = node.GatheringPointBase.RowId;
             var territoryId = node.TerritoryType.RowId;
 
-            if (GatherClasses.RouteDatabase.TryGetValue(routeId, out var route))
+            if (GatherClasses.GatheringDatabase.TryGetValue(routeId, out var route))
             {
                 Svc.Log.Debug($"RouteId: {routeId} was found");
                 route.NodeIds.Add(nodeId);
