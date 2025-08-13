@@ -1,17 +1,5 @@
-﻿using GatherChill.Scheduler;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Style;
-using Dalamud.Interface.Textures;
-using Dalamud.Interface.Utility.Raii;
-using Lumina.Excel.Sheets;
-using System;
+﻿using Lumina.Excel.Sheets;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Lumina.Data.Parsing.Uld.UldRoot;
-using ECommons.Logging;
-using static Lumina.Data.Parsing.Uld.NodeData;
 
 namespace GatherChill.Ui
 {
@@ -42,6 +30,7 @@ namespace GatherChill.Ui
 
         public void Dispose()
         {
+            P.windowSystem.RemoveWindow(this);
         }
 
         private static int gatheringType = 0;

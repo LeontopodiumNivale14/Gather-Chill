@@ -267,4 +267,112 @@ public static class RouteConfigManager
 
         return routesByZone;
     }
+
+    public static void SaveRouteConfig(RouteConfig config)
+    {
+        string filePath = config.GetDefaultPath();
+        config.Save(filePath);
+        PluginLog.Information($"Saved route config: {Path.GetFileName(filePath)}");
+    }
+
+    public static bool MoveRouteConfig(RouteConfig config, string oldZoneName, uint oldZoneId, string oldExpansionName)
+    {
+        try
+        {
+            // Get old and new paths
+            string oldPath = RouteConfig.GetRoutePath(config.RouteId, oldZoneId, oldZoneName, oldExpansionName);
+            string newPath = config.GetDefaultPath();
+
+            // If paths are the same, no need to move
+            if (oldPath == newPath)
+                return true;
+
+            // Create new directory structure
+            Directory.CreateDirectory(Path.GetDirectoryName(newPath)!);
+
+            // Move the file if old one exists
+            if (File.Exists(oldPath))
+            {
+                File.Move(oldPath, newPath);
+                PluginLog.Information($"Moved route config from {oldPath} to {newPath}");
+
+                // Clean up empty directories
+                CleanupEmptyDirectories(Path.GetDirectoryName(oldPath));
+            }
+            else
+            {
+                // Just save to new location
+                config.Save(newPath);
+                PluginLog.Information($"Saved route config to new location: {newPath}");
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Error($"Failed to move route config: {ex.Message}");
+            return false;
+        }
+    }
+
+    public static void DeleteRouteConfig(RouteConfig config)
+    {
+        try
+        {
+            string filePath = config.GetDefaultPath();
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                PluginLog.Information($"Deleted route config: {Path.GetFileName(filePath)}");
+
+                // Clean up empty directories
+                CleanupEmptyDirectories(Path.GetDirectoryName(filePath));
+            }
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Error($"Failed to delete route config: {ex.Message}");
+        }
+    }
+
+    private static void CleanupEmptyDirectories(string? directoryPath)
+    {
+        if (string.IsNullOrEmpty(directoryPath) || !Directory.Exists(directoryPath))
+            return;
+
+        try
+        {
+            // Don't delete the root Routes directory
+            if (Path.GetFileName(directoryPath).Equals("Routes", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // If directory is empty, delete it and check parent
+            if (!Directory.EnumerateFileSystemEntries(directoryPath).Any())
+            {
+                Directory.Delete(directoryPath);
+                PluginLog.Debug($"Removed empty directory: {directoryPath}");
+
+                // Recursively clean parent directories
+                CleanupEmptyDirectories(Path.GetDirectoryName(directoryPath));
+            }
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Warning($"Failed to cleanup directory {directoryPath}: {ex.Message}");
+        }
+    }
+
+    public static List<(string Display, RouteConfig Config)> GetAllRoutesForSelection()
+    {
+        var routes = new List<(string Display, RouteConfig Config)>();
+        var allConfigs = LoadAllRouteConfigs();
+
+        foreach (var config in allConfigs.OrderBy(c => c.ExpansionName).ThenBy(c => c.ZoneName).ThenBy(c => c.RouteId))
+        {
+            string display = $"[{config.ExpansionName}] {config.ZoneName} - Route {config.RouteId}";
+            routes.Add((display, config));
+        }
+
+        return routes;
+    }
 }
