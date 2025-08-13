@@ -105,6 +105,7 @@ public sealed class GatherChill : IDalamudPlugin
         Svc.Framework.Update += Tick;
 
         RouteInfoCreator();
+        RouteConfigManager.EnsureRouteConfigsExist();
     }
 
     private void Tick(object _)

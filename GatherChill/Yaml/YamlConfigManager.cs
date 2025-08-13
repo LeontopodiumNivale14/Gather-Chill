@@ -37,6 +37,22 @@ public static class YamlConfig
         File.WriteAllText(path, yaml);
     }
 
+    // New method for checking if file exists and loading/creating as needed
+    public static T LoadOrCreate<T>(string path) where T : new()
+    {
+        if (File.Exists(path))
+        {
+            var yaml = File.ReadAllText(path);
+            return Deserializer.Deserialize<T>(yaml) ?? new T();
+        }
+        else
+        {
+            var defaultConfig = new T();
+            Save(defaultConfig, path);
+            return defaultConfig;
+        }
+    }
+
     public static T LoadFromResource<T>(string resourceName) where T : new()
     {
         var assembly = Assembly.GetExecutingAssembly();
