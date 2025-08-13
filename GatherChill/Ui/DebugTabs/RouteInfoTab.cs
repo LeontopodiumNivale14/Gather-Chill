@@ -33,15 +33,6 @@ namespace GatherChill.Ui.DebugTabs
 
                     // Use gathering type as route key, or create a more meaningful identifier
                     var routeKey = entry.Key;
-
-                    GIndex.AddRoute(
-                        expansionName: data.ExpansionName,
-                        expansionId: data.ExpansionId,
-                        zoneName: data.ZoneName,
-                        zoneId: data.ZoneId,
-                        routeKey: routeKey,
-                        routeInfo: routeInfo
-                    );
                 }
 
                 GIndex.Save();
@@ -77,7 +68,7 @@ namespace GatherChill.Ui.DebugTabs
                     // 2nd Column | Type
                     ImGui.TableNextColumn();
                     var image = GatherClasses.GatheringTypeIcons[entry.Value.GatheringType].MainIcon;
-                    ImGui.Image(image.GetWrapOrEmpty().ImGuiHandle, new Vector2(25, 25));
+                    ImGui.Image(image.GetWrapOrEmpty().Handle, new Vector2(25, 25));
 
                     // Expansion (these next 2 are problematic... need to look into why later)
                     ImGui.TableNextColumn();

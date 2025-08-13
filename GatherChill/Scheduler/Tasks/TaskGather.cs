@@ -78,7 +78,7 @@ namespace GatherChill.Scheduler.Tasks
 
             if (TryGetAddonMaster<Gathering>("Gathering", out var m) && m.IsAddonReady)
             {
-                if (!Svc.Condition[ConditionFlag.Gathering42])
+                if (!Svc.Condition[ConditionFlag.ExecutingGatheringAction])
                 {
                     foreach (var g in m.GatheredItems)
                     {

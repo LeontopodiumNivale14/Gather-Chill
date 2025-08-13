@@ -122,7 +122,7 @@ internal class DebugWindow : Window
         ImGui.Text($"Gathering [Normal]: {Svc.Condition[ConditionFlag.Gathering]}");
         ImGuiEx.HelpMarker("Interacting with Gathering Node", sameLine: true);
 
-        ImGui.Text($"Gathering [Gathering42] {Svc.Condition[ConditionFlag.Gathering42]}");
+        ImGui.Text($"Gathering [Gathering42] {Svc.Condition[ConditionFlag.ExecutingGatheringAction]}");
         ImGuiEx.HelpMarker("Interacting with Gathering Node/Using Buffs", sameLine: true);
 
         PlayerPos = Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero;

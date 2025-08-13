@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GatherChill.Yaml.ConfigFiles;
 
-public class RouteStorage : IYamlConfig
+public class RouteStorage
 {
     // Zone identification
     public uint ZoneId { get; set; }
@@ -30,7 +30,5 @@ public class RouteStorage : IYamlConfig
     /// <b>- RotationalOffset</b> <br></br>
     /// </summary>
     public Dictionary<uint, List<GatherClasses.RouteStorage>> Routes { get; set; } = new();
-
-    public static string Configpath => Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, $"{ZoneName}")
 
 }
