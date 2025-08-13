@@ -10,16 +10,27 @@ namespace GatherChill.Yaml.ConfigFiles;
 
 public class RouteStorage : IYamlConfig
 {
-    /// <summary>
-    /// <b>Key: </b>Route Type/ID (uint) <br></br>
-    /// <b>Values: </b>List of RouteData for that route type<br></br>
-    /// </summary>
-    public Dictionary<uint, List<GatherClasses.RouteData>> Routes { get; set; } = new();
-
     // Zone identification
     public uint ZoneId { get; set; }
     public string ZoneName { get; set; } = string.Empty;
     public uint ExpansionId { get; set; }
     public string ExpansionName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <b>Key: </b>Route Type/ID (uint) <br></br>
+    /// <b>Values: </b>List of RouteData for that route type<br></br>
+    /// <b>- NodeId</b> <br></br>
+    /// <b>- NodePosition</b> <br></br>
+    /// <b>- LandZone</b> <br></br>
+    /// <b>- RadialPositioning</b> [bool] <br></br>
+    /// <b>- InnerRadius</b> <br></br>
+    /// <b>- OuterRadius</b> <br></br>
+    /// <b>- StartAngle</b> <br></br>
+    /// <b>- EndAngle</b> <br></br>
+    /// <b>- RotationalOffset</b> <br></br>
+    /// </summary>
+    public Dictionary<uint, List<GatherClasses.RouteStorage>> Routes { get; set; } = new();
+
+    public static string Configpath => Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, $"{ZoneName}")
 
 }

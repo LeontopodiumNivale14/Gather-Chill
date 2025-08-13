@@ -46,6 +46,12 @@ public static class GatherClasses
 
     public static Dictionary<uint, string> ExpansionInfo = new();
 
+    public class RouteStorage
+    {
+        public HashSet<uint> NodeIds { get; set;} = new();
+        public List<RouteData> Routes { get; set;} = new();
+    }
+
     #endregion
 
     #region RouteInfo
