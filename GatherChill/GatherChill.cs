@@ -1,6 +1,7 @@
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
 using ECommons.Logging;
+using GatherChill.GatheringInfo;
 using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
@@ -65,6 +66,9 @@ public sealed class GatherChill : IDalamudPlugin
     internal NavmeshIPC navmesh;
     internal PandoraIPC pandora;
 
+    // General Access of the route data that is stores
+    public static RouteData routeData => new RouteData();
+
     public GatherChill(IDalamudPluginInterface pi)
     {
         P = this;
@@ -108,6 +112,8 @@ public sealed class GatherChill : IDalamudPlugin
 
         RouteInfoCreator();
         RouteConfigManager.EnsureRouteConfigsExist();
+
+        routeData.LoadAllRoutes();
     }
 
     private void Tick(object _)
@@ -150,6 +156,12 @@ public sealed class GatherChill : IDalamudPlugin
         else if (firstArg.ToLower() == "s" || firstArg.ToLower() == "settings")
         {
             settingWindow.IsOpen = true;
+            return;
+        }
+        // Add this new command
+        else if (firstArg.ToLower() == "r" || firstArg.ToLower() == "routes")
+        {
+            routeEditorWindow.IsOpen = true;
             return;
         }
     }

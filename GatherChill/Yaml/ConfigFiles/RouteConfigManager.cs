@@ -9,7 +9,7 @@ using System.Linq;
 namespace GatherChill.Yaml;
 
 // Manager class to handle bulk route operations
-public static class RouteConfigManager
+public class RouteConfigManager
 {
     private static readonly string RoutesDirectory = Path.Combine(
         Svc.PluginInterface.ConfigDirectory.FullName,

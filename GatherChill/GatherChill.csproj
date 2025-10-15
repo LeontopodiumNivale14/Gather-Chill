@@ -13,9 +13,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ECommons" Version="3.0.1.7" />
+    <Compile Remove="GatheringInfo\Heavensword\**" />
+    <EmbeddedResource Remove="GatheringInfo\Heavensword\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ECommons" Version="3.0.1.13" />
     <PackageReference Include="Pictomancy" Version="0.0.1" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="DalamudPackager" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="GatheringInfo\ARealmReborn\" />
+    <Folder Include="GatheringInfo\Stormblood\" />
+    <Folder Include="GatheringInfo\Shadowbringers\" />
+    <Folder Include="GatheringInfo\Dawntrail\" />
   </ItemGroup>
   
   

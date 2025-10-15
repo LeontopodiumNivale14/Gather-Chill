@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GatherChill.Utilities.GatheringHelpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,9 @@ public class RouteConfig : IYamlConfigWithPath
     public HashSet<uint> NodeIds { get; set; } = new();
     public Dictionary<uint, string> Items { get; set; } = new();
     public HashSet<uint> ItemIds { get; set; } = new();
+
+    // New field for detailed node information
+    public List<GatherClasses.RouteData> NodeInfo { get; set; } = new();
 
     public void Save(string path) => YamlConfig.Save(this, path);
 

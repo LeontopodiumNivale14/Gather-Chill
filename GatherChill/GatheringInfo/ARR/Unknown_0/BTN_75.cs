@@ -1,0 +1,79 @@
+using System.Collections.Generic;
+using System.Numerics;
+using GatherChill.GatheringInfo;
+
+namespace GatherChill.Routes.ARR.Unknown_0
+{
+    public class BTN_75 : RouteInfo
+    {
+        public override uint Id => 75;
+        public override uint ExpansionId => 0;
+        public override uint ZoneId => 0;
+        public override uint GatherType => 2;
+        public override Vector2 MapPosition => new Vector2(206.172f, -162.183f);
+        public override int Radius => 16;
+
+        public override HashSet<uint> NodeIds => new()
+        {
+            30288,
+            30289,
+            30290,
+            30291,
+            30292,
+            30293,
+            30294,
+            30295,
+            30296,
+            30297,
+        };
+
+        public override HashSet<uint> ItemIds => new()
+        {
+            2000315,
+        };
+
+        public override List<NodeInfo> Nodes => new()
+        {
+            new NodeInfo
+            {
+                NodeId = 30288,
+            },
+            new NodeInfo
+            {
+                NodeId = 30289,
+            },
+            new NodeInfo
+            {
+                NodeId = 30290,
+            },
+            new NodeInfo
+            {
+                NodeId = 30291,
+            },
+            new NodeInfo
+            {
+                NodeId = 30292,
+            },
+            new NodeInfo
+            {
+                NodeId = 30293,
+            },
+            new NodeInfo
+            {
+                NodeId = 30294,
+            },
+            new NodeInfo
+            {
+                NodeId = 30295,
+            },
+            new NodeInfo
+            {
+                NodeId = 30296,
+            },
+            new NodeInfo
+            {
+                NodeId = 30297,
+            },
+        };
+    }
+}

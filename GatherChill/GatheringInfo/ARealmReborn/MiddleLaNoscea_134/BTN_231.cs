@@ -1,0 +1,34 @@
+using System.Collections.Generic;
+using System.Numerics;
+using GatherChill.GatheringInfo;
+
+namespace GatherChill.Routes.ARealmReborn.MiddleLaNoscea_134
+{
+    public class BTN_231 : RouteInfo
+    {
+        public override uint Id => 231;
+        public override uint ExpansionId => 0;
+        public override uint ZoneId => 134;
+        public override uint GatherType => 2;
+        public override Vector2 MapPosition => new Vector2(-142.193f, -251.299f);
+        public override int Radius => 55;
+
+        public override HashSet<uint> NodeIds => new()
+        {
+            31025,
+        };
+
+        public override HashSet<uint> ItemIds => new()
+        {
+            7592,
+        };
+
+        public override List<NodeInfo> Nodes => new()
+        {
+            new NodeInfo
+            {
+                NodeId = 31025,
+            },
+        };
+    }
+}
