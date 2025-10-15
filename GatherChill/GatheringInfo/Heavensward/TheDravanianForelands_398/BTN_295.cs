@@ -4,58 +4,35 @@ using GatherChill.GatheringInfo;
 
 namespace GatherChill.Routes.Heavensward.TheDravanianForelands_398
 {
-    public class BTN_295 : RouteInfo
-    {
-        public override uint Id => 295;
-        public override uint ExpansionId => 1;
-        public override uint ZoneId => 398;
-        public override uint GatherType => 2;
-        public override Vector2 MapPosition => new Vector2(205.967f, 228.508f);
-        public override int Radius => 168;
+	public class BTN_295 : RouteInfo
+	{
+		public override uint Id => 295;
+		public override uint ExpansionId => 1;
+		public override uint ZoneId => 398;
+		public override uint GatherType => 2;
+		public override Vector2 MapPosition => new Vector2(205.967f, 228.508f);
+		public override int Radius => 168;
 
-        public override HashSet<uint> NodeIds => new()
-        {
-            31376,
-            31377,
-            31378,
-            31379,
-            31380,
-            31381,
-        };
+		public override HashSet<uint> NodeIds => new()
+		{
+			31376,
+			31377,
+			31378,
+			31379,
+			31380,
+			31381,
+		};
 
-        public override HashSet<uint> ItemIds => new()
-        {
-            8,
-            12578,
-            12585,
-        };
+		public override HashSet<uint> ItemIds => new()
+		{
+			8,
+			12578,
+			12585,
+		};
 
-        public override List<NodeInfo> Nodes => new()
-        {
-            new NodeInfo
-            {
-                NodeId = 31376,
-            },
-            new NodeInfo
-            {
-                NodeId = 31377,
-            },
-            new NodeInfo
-            {
-                NodeId = 31378,
-            },
-            new NodeInfo
-            {
-                NodeId = 31379,
-            },
-            new NodeInfo
-            {
-                NodeId = 31380,
-            },
-            new NodeInfo
-            {
-                NodeId = 31381,
-            },
-        };
-    }
+		public override List<NodeInfo> Nodes => new()
+		{
+
+		};
+	}
 }

@@ -4,32 +4,29 @@ using GatherChill.GatheringInfo;
 
 namespace GatherChill.Routes.ARealmReborn.CentralShroud_148
 {
-    public class BTN_233 : RouteInfo
-    {
-        public override uint Id => 233;
-        public override uint ExpansionId => 0;
-        public override uint ZoneId => 148;
-        public override uint GatherType => 3;
-        public override Vector2 MapPosition => new Vector2(-279.203f, -50.2729f);
-        public override int Radius => 44;
+	public class BTN_233 : RouteInfo
+	{
+		public override uint Id => 233;
+		public override uint ExpansionId => 0;
+		public override uint ZoneId => 148;
+		public override uint GatherType => 3;
+		public override Vector2 MapPosition => new Vector2(-279.203f, -50.2729f);
+		public override int Radius => 44;
 
-        public override HashSet<uint> NodeIds => new()
-        {
-            31027,
-        };
+		public override HashSet<uint> NodeIds => new()
+		{
+			31027,
+		};
 
-        public override HashSet<uint> ItemIds => new()
-        {
-            7591,
-            10098,
-        };
+		public override HashSet<uint> ItemIds => new()
+		{
+			7591,
+			10098,
+		};
 
-        public override List<NodeInfo> Nodes => new()
-        {
-            new NodeInfo
-            {
-                NodeId = 31027,
-            },
-        };
-    }
+		public override List<NodeInfo> Nodes => new()
+		{
+
+		};
+	}
 }

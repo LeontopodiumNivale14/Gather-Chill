@@ -249,58 +249,49 @@ namespace GatherChill.Ui.DebugTabs
             sb.AppendLine("{");
 
             // Class declaration
-            sb.AppendLine($"    public class {className} : RouteInfo");
-            sb.AppendLine("    {");
+            sb.AppendLine($"\tpublic class {className} : RouteInfo");
+            sb.AppendLine("\t{");
 
             // Properties
-            sb.AppendLine($"        public override uint Id => {routeId};");
-            sb.AppendLine($"        public override uint ExpansionId => {data.ExpansionId};");
-            sb.AppendLine($"        public override uint ZoneId => {data.ZoneId};");
-            sb.AppendLine($"        public override uint GatherType => {data.GatheringType};");
-            sb.AppendLine($"        public override Vector2 MapPosition => new Vector2({data.MapCenter.X}f, {data.MapCenter.Y}f);");
-            sb.AppendLine($"        public override int Radius => {data.MapRadius};");
+            sb.AppendLine($"\t\tpublic override uint Id => {routeId};");
+            sb.AppendLine($"\t\tpublic override uint ExpansionId => {data.ExpansionId};");
+            sb.AppendLine($"\t\tpublic override uint ZoneId => {data.ZoneId};");
+            sb.AppendLine($"\t\tpublic override uint GatherType => {data.GatheringType};");
+            sb.AppendLine($"\t\tpublic override Vector2 MapPosition => new Vector2({data.MapCenter.X}f, {data.MapCenter.Y}f);");
+            sb.AppendLine($"\t\tpublic override int Radius => {data.MapRadius};");
             sb.AppendLine();
 
             // NodeIds
-            sb.AppendLine("        public override HashSet<uint> NodeIds => new()");
-            sb.AppendLine("        {");
+            sb.AppendLine("\t\tpublic override HashSet<uint> NodeIds => new()");
+            sb.AppendLine("\t\t{");
             foreach (var nodeId in data.NodeIds.OrderBy(x => x))
             {
-                sb.AppendLine($"            {nodeId},");
+                sb.AppendLine($"\t\t\t{nodeId},");
             }
-            sb.AppendLine("        };");
+            sb.AppendLine("\t\t};");
             sb.AppendLine();
 
             // ItemIds
-            sb.AppendLine("        public override HashSet<uint> ItemIds => new()");
-            sb.AppendLine("        {");
+            sb.AppendLine("\t\tpublic override HashSet<uint> ItemIds => new()");
+            sb.AppendLine("\t\t{");
             if (data.ItemIds != null)
             {
                 foreach (var itemId in data.ItemIds.OrderBy(x => x))
                 {
-                    sb.AppendLine($"            {itemId},");
+                    sb.AppendLine($"\t\t\t{itemId},");
                 }
             }
-            sb.AppendLine("        };");
+            sb.AppendLine("\t\t};");
             sb.AppendLine();
 
             // NodeInfo (Nodes)
-            sb.AppendLine("        public override List<NodeInfo> Nodes => new()");
-            sb.AppendLine("        {");
-            if (data.NodeIds != null)
-            {
-                foreach (var nodeInfo in data.NodeIds)
-                {
-                    sb.AppendLine("            new NodeInfo");
-                    sb.AppendLine("            {");
-                    sb.AppendLine($"                NodeId = {nodeInfo},");
-                    sb.AppendLine("            },");
-                }
-            }
-            sb.AppendLine("        };");
+            sb.AppendLine("\t\tpublic override List<NodeInfo> Nodes => new()");
+            sb.AppendLine("\t\t{");
+            sb.AppendLine("");
+            sb.AppendLine("\t\t};");
 
             // Close class and namespace
-            sb.AppendLine("    }");
+            sb.AppendLine("\t}");
             sb.AppendLine("}");
 
             return sb.ToString();

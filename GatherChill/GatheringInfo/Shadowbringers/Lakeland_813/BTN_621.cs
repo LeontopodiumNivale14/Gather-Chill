@@ -4,58 +4,35 @@ using GatherChill.GatheringInfo;
 
 namespace GatherChill.Routes.Shadowbringers.Lakeland_813
 {
-    public class BTN_621 : RouteInfo
-    {
-        public override uint Id => 621;
-        public override uint ExpansionId => 3;
-        public override uint ZoneId => 813;
-        public override uint GatherType => 2;
-        public override Vector2 MapPosition => new Vector2(-452.608f, -562.864f);
-        public override int Radius => 133;
+	public class BTN_621 : RouteInfo
+	{
+		public override uint Id => 621;
+		public override uint ExpansionId => 3;
+		public override uint ZoneId => 813;
+		public override uint GatherType => 2;
+		public override Vector2 MapPosition => new Vector2(-452.608f, -562.864f);
+		public override int Radius => 133;
 
-        public override HashSet<uint> NodeIds => new()
-        {
-            32745,
-            32746,
-            32747,
-            32748,
-            32749,
-            32750,
-        };
+		public override HashSet<uint> NodeIds => new()
+		{
+			32745,
+			32746,
+			32747,
+			32748,
+			32749,
+			32750,
+		};
 
-        public override HashSet<uint> ItemIds => new()
-        {
-            11,
-            27687,
-            27819,
-        };
+		public override HashSet<uint> ItemIds => new()
+		{
+			11,
+			27687,
+			27819,
+		};
 
-        public override List<NodeInfo> Nodes => new()
-        {
-            new NodeInfo
-            {
-                NodeId = 32745,
-            },
-            new NodeInfo
-            {
-                NodeId = 32746,
-            },
-            new NodeInfo
-            {
-                NodeId = 32747,
-            },
-            new NodeInfo
-            {
-                NodeId = 32748,
-            },
-            new NodeInfo
-            {
-                NodeId = 32749,
-            },
-            new NodeInfo
-            {
-                NodeId = 32750,
-            },
-        };
-    }
+		public override List<NodeInfo> Nodes => new()
+		{
+
+		};
+	}
 }

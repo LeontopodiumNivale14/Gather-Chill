@@ -4,32 +4,29 @@ using GatherChill.GatheringInfo;
 
 namespace GatherChill.Routes.Shadowbringers.TheRaktikaGreatwood_817
 {
-    public class BTN_633 : RouteInfo
-    {
-        public override uint Id => 633;
-        public override uint ExpansionId => 3;
-        public override uint ZoneId => 817;
-        public override uint GatherType => 2;
-        public override Vector2 MapPosition => new Vector2(161.974f, 771.01f);
-        public override int Radius => 34;
+	public class BTN_633 : RouteInfo
+	{
+		public override uint Id => 633;
+		public override uint ExpansionId => 3;
+		public override uint ZoneId => 817;
+		public override uint GatherType => 2;
+		public override Vector2 MapPosition => new Vector2(161.974f, 771.01f);
+		public override int Radius => 34;
 
-        public override HashSet<uint> NodeIds => new()
-        {
-            32772,
-        };
+		public override HashSet<uint> NodeIds => new()
+		{
+			32772,
+		};
 
-        public override HashSet<uint> ItemIds => new()
-        {
-            27688,
-            28716,
-        };
+		public override HashSet<uint> ItemIds => new()
+		{
+			27688,
+			28716,
+		};
 
-        public override List<NodeInfo> Nodes => new()
-        {
-            new NodeInfo
-            {
-                NodeId = 32772,
-            },
-        };
-    }
+		public override List<NodeInfo> Nodes => new()
+		{
+
+		};
+	}
 }

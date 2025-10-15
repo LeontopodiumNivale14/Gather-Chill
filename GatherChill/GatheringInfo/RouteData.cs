@@ -23,14 +23,14 @@ public abstract class RouteInfo
 
 public class NodeInfo
 {
-    public uint NodeId { get; set; }
-    public Vector3 NodePosition { get; set; }
+    public uint NodeId { get; set; } = 0;
+    public Vector3 NodePosition { get; set; } = Vector3.Zero;
     public LandingInfo LandingInfo { get; set; }
 }
 
 public class LandingInfo
 {
-    public Vector3 LandZone { get; set; }
+    public Vector3 LandZone { get; set; } = Vector3.Zero;
     public bool UseRadial { get; set; } = true;
     public float InnerRadius { get; set; } = 1.0f;
     public float OuterRadius { get; set; } = 3.0f;

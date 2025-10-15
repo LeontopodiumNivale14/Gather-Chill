@@ -20,6 +20,8 @@ public sealed class GatherChill : IDalamudPlugin
 
     private static GatherIndex? GatherIndexConfig;
     public static GatherIndex GIndex => GatherIndexConfig ??= LoadConfig<GatherIndex>();
+    public static RouteData RD => P.routeData;
+    private RouteData routeData = null!;  // Make this private instance field
 
     private static T LoadConfig<T>() where T : IYamlConfig, new()
     {
@@ -37,20 +39,6 @@ public sealed class GatherChill : IDalamudPlugin
         return config;
     }
 
-    private static T LoadEmbeddedConfig<T>(string resourceName) where T : IYamlConfig, new()
-    {
-        var config = YamlConfig.LoadFromResource<T>(resourceName);
-
-        if (config == null)
-        {
-            PluginLog.Warning($"[{typeof(T).Name}] Embedded config was null. Returning new default.");
-            config = new T();
-        }
-
-        PluginLog.Information($"[{typeof(T).Name}] Loaded from embedded resource: {resourceName}");
-        return config;
-    }
-
     // Window's that I use, base window to the settings... need these to actually show shit 
     internal WindowSystem windowSystem;
     internal MainWindow mainWindow;
@@ -65,9 +53,6 @@ public sealed class GatherChill : IDalamudPlugin
     internal LifestreamIPC lifestream;
     internal NavmeshIPC navmesh;
     internal PandoraIPC pandora;
-
-    // General Access of the route data that is stores
-    public static RouteData routeData => new RouteData();
 
     public GatherChill(IDalamudPluginInterface pi)
     {
@@ -113,7 +98,15 @@ public sealed class GatherChill : IDalamudPlugin
         RouteInfoCreator();
         RouteConfigManager.EnsureRouteConfigsExist();
 
+        routeData = new RouteData();  // lowercase
         routeData.LoadAllRoutes();
+        PluginLog.Information($"Route data loaded: {routeData.GatheringInfo.Count} expansions");
+
+        // Log details
+        foreach (var (expId, zones) in routeData.GatheringInfo)
+        {
+            PluginLog.Information($"  Expansion {expId}: {zones.Count} zones");
+        }
     }
 
     private void Tick(object _)
@@ -134,6 +127,9 @@ public sealed class GatherChill : IDalamudPlugin
         ECommonsMain.Dispose();
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
+
+        Safe(() => routeData?.GatheringInfo.Clear());
+        Safe(() => routeData = null!);
     }
 
     private void OnCommand(string command, string args)

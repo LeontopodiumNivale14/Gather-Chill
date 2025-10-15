@@ -19,7 +19,7 @@ internal class DebugWindow : Window
     public DebugWindow() :
         base($"Gather & Chill Debug {P.GetType().Assembly.GetName().Version} ###GatherChillDebug")
     {
-        Flags = ImGuiWindowFlags.NoCollapse;
+        Flags = ImGuiWindowFlags.None;
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(100, 100),
@@ -28,13 +28,56 @@ internal class DebugWindow : Window
         P.windowSystem.AddWindow(this);
     }
 
-    public void Dispose() { }
+    private string[] DebugTypes =
+    [
+        "Route Editor V2"
+    ];
+    private int selectedDebugIndex = 0;
 
-    // variables that hold the "ref"s for ImGui
+
+    public void Dispose() { P.windowSystem.RemoveWindow(this); }
 
     public override void Draw()
     {
+        float spacing = 10f;
+        float leftPanelWidth = 200f;
+        float rightPanelWidth = ImGui.GetContentRegionAvail().X - leftPanelWidth - spacing;
+        float childHeight = ImGui.GetContentRegionAvail().Y;
+
+        if (ImGui.BeginChild("DebugSelector", new System.Numerics.Vector2(leftPanelWidth, childHeight), true))
+        {
+            for (int i = 0; i < DebugTypes.Length; i++)
+            {
+                bool isSelected = (selectedDebugIndex == i);
+                string label = isSelected ? $"→ {DebugTypes[i]}" : $"   {DebugTypes[i]}";
+
+                if (ImGui.Selectable(label, isSelected))
+                {
+                    selectedDebugIndex = i;
+                }
+            }
+            ImGui.EndChild();
+        }
+
+        ImGui.SameLine(0, spacing);
+
+        if (ImGui.BeginChild("DebugContent", new System.Numerics.Vector2(rightPanelWidth, childHeight), true))
+        {
+            switch (selectedDebugIndex)
+            {
+                // HUD Elements (0-5)
+                case 0: RouteEditorV2.Draw(); break;
+                
+                default: ImGui.Text("Unknown Debug View"); break;
+            }
+        }
+        ImGui.EndChild();
+
+        /*
+
         ImGui.Text($"JobId: {GetClassJobId()}");
+
+
 
         if (ImGui.BeginTabBar("DebugTabBar"))
         {
@@ -71,9 +114,9 @@ internal class DebugWindow : Window
             {
                 RouteEditorV2.Draw();
             }
-
-            ImGui.EndTabBar();
         }
+        ImGui.EndTabBar();
+        */
     }
 
     #region Gathering Testing

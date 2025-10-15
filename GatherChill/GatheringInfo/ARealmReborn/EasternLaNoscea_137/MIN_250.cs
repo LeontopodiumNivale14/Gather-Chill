@@ -4,31 +4,28 @@ using GatherChill.GatheringInfo;
 
 namespace GatherChill.Routes.ARealmReborn.EasternLaNoscea_137
 {
-    public class MIN_250 : RouteInfo
-    {
-        public override uint Id => 250;
-        public override uint ExpansionId => 0;
-        public override uint ZoneId => 137;
-        public override uint GatherType => 1;
-        public override Vector2 MapPosition => new Vector2(-197.083f, 300.964f);
-        public override int Radius => 83;
+	public class MIN_250 : RouteInfo
+	{
+		public override uint Id => 250;
+		public override uint ExpansionId => 0;
+		public override uint ZoneId => 137;
+		public override uint GatherType => 1;
+		public override Vector2 MapPosition => new Vector2(-197.083f, 300.964f);
+		public override int Radius => 83;
 
-        public override HashSet<uint> NodeIds => new()
-        {
-            31058,
-        };
+		public override HashSet<uint> NodeIds => new()
+		{
+			31058,
+		};
 
-        public override HashSet<uint> ItemIds => new()
-        {
-            9519,
-        };
+		public override HashSet<uint> ItemIds => new()
+		{
+			9519,
+		};
 
-        public override List<NodeInfo> Nodes => new()
-        {
-            new NodeInfo
-            {
-                NodeId = 31058,
-            },
-        };
-    }
+		public override List<NodeInfo> Nodes => new()
+		{
+
+		};
+	}
 }
