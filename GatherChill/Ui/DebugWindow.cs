@@ -67,6 +67,10 @@ internal class DebugWindow : Window
             {
                 RouteInfoTab.Draw();
             }
+            if (ImGui.BeginTabItem("Route Editor V2"))
+            {
+                RouteEditorV2.Draw();
+            }
 
             ImGui.EndTabBar();
         }
