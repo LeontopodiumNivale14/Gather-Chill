@@ -30,7 +30,8 @@ internal class DebugWindow : Window
 
     private string[] DebugTypes =
     [
-        "Route Editor V2"
+        "Route Editor V2",
+        "Picto Color Editor",
     ];
     private int selectedDebugIndex = 0;
 
@@ -67,6 +68,7 @@ internal class DebugWindow : Window
             {
                 // HUD Elements (0-5)
                 case 0: RouteEditorV2.Draw(); break;
+                case 1: Ui_PictoEditor.Draw(); break;
                 
                 default: ImGui.Text("Unknown Debug View"); break;
             }
@@ -153,7 +155,7 @@ internal class DebugWindow : Window
         {
             if (Svc.Targets.Target != null)
             {
-                NodeId = Svc.Targets.Target.DataId.ToInt();
+                NodeId = Svc.Targets.Target.BaseId.ToInt();
             }
         }
 
@@ -198,14 +200,14 @@ internal class DebugWindow : Window
 
                 if (NodeId != 0)
                 {
-                    if (x.DataId != NodeId)
+                    if (x.BaseId != NodeId)
                         continue;
                 }
 
                 if (ImGui.Button($"Set Target## {x.Position}"))
                 {
                     IGameObject? GameObject = null;
-                    Utils.TryGetObjectByDataId(x.DataId, out GameObject);
+                    Utils.TryGetObjectByDataId(x.BaseId, out GameObject);
 
                     Utils.TargetgameObject(GameObject);
                 }
@@ -220,7 +222,7 @@ internal class DebugWindow : Window
                     clipBoardText += $"new GathNodeInfo\n" +
                                       "{\n" +
                                      $"    ZoneId = {Svc.ClientState.TerritoryType},\n" +
-                                     $"    NodeId = {x.DataId},\n" +
+                                     $"    NodeId = {x.BaseId},\n" +
                                      $"    Position = new Vector3 ({rounded.X}f, {rounded.Y}f, {rounded.Z}f),\n" +
                                      $"    LandZone = new Vector3 ({PlayerPos.X}f, {PlayerPos.Y}f, {PlayerPos.Z}f),\n" +
                                      $"    GatheringType = {gatheringType},\n" +
@@ -229,7 +231,7 @@ internal class DebugWindow : Window
                     ImGui.SetClipboardText(clipBoardText);
                 }
                 ImGui.SameLine();
-                ImGuiEx.Text($"Gathering Point: {x.DataId} |  Location: {rounded} | Distance: {GetDistanceToPlayer(x):N2} |  Targetable: {x.IsTargetable}");
+                ImGuiEx.Text($"Gathering Point: {x.BaseId} |  Location: {rounded} | Distance: {GetDistanceToPlayer(x):N2} |  Targetable: {x.IsTargetable}");
             }
         }
 
@@ -238,7 +240,7 @@ internal class DebugWindow : Window
             ImGui.Text("Gathering Test");
             ImGui.Text($"Current Integrity: {m.CurrentIntegrity}");
             ImGui.Text($"Total Integrity: {m.TotalIntegrity}");
-            ImGui.Text($"Node ID: {Svc.Targets.Target.DataId}");
+            ImGui.Text($"Node ID: {Svc.Targets.Target.BaseId}");
             ImGui.Text($"Type: {Svc.Targets.Target.ObjectKind}");
 
             foreach (var item in m.GatheredItems)
@@ -339,12 +341,12 @@ internal class DebugWindow : Window
         if (ImGui.Button("Target Node"))
         {
             var target = Svc.Objects.Where(x => x.IsTargetable)
-                                    .Where(x => x.DataId == targetId)
+                                    .Where(x => x.BaseId == targetId)
                                     .FirstOrDefault();
 
             if (target != null)
             {
-                TaskTarget.Enqueue(target.DataId);
+                TaskTarget.Enqueue(target.BaseId);
             }
         }
 

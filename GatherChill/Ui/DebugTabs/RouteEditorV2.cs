@@ -3,7 +3,9 @@ using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using ECommons.Logging;
 using GatherChill.GatheringInfo;
+using GatherChill.Utilities;
 using Lumina.Excel.Sheets;
+using Pictomancy;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -17,7 +19,7 @@ namespace GatherChill.Ui.DebugTabs
         private static uint selectedRouteId = 0;
         private static int selectedNodeIndex = 0;
         private static uint nodeId = 0;
-        private static float maxDistance = 25;
+        private static float maxDistance = 100;
 
         private static readonly Dictionary<uint, string> ExpansionNames = new()
         {
@@ -63,6 +65,11 @@ namespace GatherChill.Ui.DebugTabs
             }
         }
         private static EditableRoute? currentEditableRoute = null;
+
+        private static bool ShowNodes = false;
+        private static bool ShowSelectedNode = false;
+        private static bool ShowLandZone = false;
+        private static bool ShowRadial = false;
 
         public static void Draw()
         {
@@ -332,6 +339,18 @@ namespace GatherChill.Ui.DebugTabs
 
             // Node Editor Section
             ImGui.Text("Node Editor");
+            if (ImGui.Checkbox("View Nodes", ref ShowNodes))
+            {
+                if (ShowNodes)
+                    ShowSelectedNode = false;
+            }
+            ImGui.SameLine();
+            Vector4 nodeColor = C.Picto_NodeColor;
+            if (ImGui.ColorEdit4("###NodeColorEditor", ref nodeColor))
+            {
+                C.Picto_NodeColor = nodeColor;
+                C.Save();
+            }
 
             var textLineHeight = ImGui.GetTextLineHeightWithSpacing();
             var childHeight = textLineHeight * 8 + 20;
@@ -378,14 +397,28 @@ namespace GatherChill.Ui.DebugTabs
                 ImGui.Text("Gathering Node Viewer");
                 if (ImGui.BeginChild("NodeViewer", new Vector2(0, childHeight), true))
                 {
-                    foreach (var x in Svc.Objects
-                        .Where(x => x.ObjectKind == ObjectKind.GatheringPoint && Player.DistanceTo(x.Position) <= maxDistance)
-                        .OrderBy(x => Player.DistanceTo(x.Position))
-                        .ToList())
+                    foreach (var x in Svc.Objects.Where(x => x.ObjectKind == ObjectKind.GatheringPoint && Player.DistanceTo(x.Position) <= maxDistance)
+                                                 .OrderBy(x => Player.DistanceTo(x.Position))
+                                                 .ToList())
                     {
                         if (ImGui.Selectable($"Id: {x.BaseId} | Distance: {Player.DistanceTo(x.Position):N2}"))
                         {
                             nodeId = x.BaseId;
+                        }
+
+                        using (var drawList = PictoService.Draw())
+                        {
+                            if (drawList == null)
+                            {
+                                return;
+                            }
+
+                            if (ShowNodes)
+                            {
+                                PictoService.VfxRenderer.AddCircle($"Node_{x.BaseId}_{x.Position}", x.Position, 3f, C.Picto_NodeColor);
+                                Vector3 offset = new Vector3(x.Position.X, x.Position.Y + 1, x.Position.Z);
+                                drawList.AddText(offset, Utils.ToUintABGR(C.Picto_TextColor), $"{x.BaseId} | X:{x.Position.X:N2} Y:{x.Position.Y:N2} Z:{x.Position.Z:N2}", 5);
+                            }
                         }
                     }
                     ImGui.EndChild();
@@ -453,6 +486,13 @@ namespace GatherChill.Ui.DebugTabs
             if (currentEditableRoute.EditableNodes.Count > 0 && selectedNodeIndex >= 0 && selectedNodeIndex < currentEditableRoute.EditableNodes.Count)
             {
                 ImGui.Text("Selected Node Details");
+                ImGui.Checkbox("Show Radial Positioning", ref ShowRadial);
+                ImGui.Checkbox("Show Landing Zone", ref ShowLandZone);
+                if (ImGui.Checkbox("Show Specific Node", ref ShowSelectedNode))
+                {
+                    if (ShowSelectedNode)
+                        ShowNodes = false;
+                }
                 ImGui.Separator();
 
                 var selectedNode = currentEditableRoute.EditableNodes[selectedNodeIndex];
@@ -537,6 +577,23 @@ namespace GatherChill.Ui.DebugTabs
                         }
 
                         ImGui.Unindent();
+                    }
+
+                    using (var drawList = PictoService.Draw())
+                    {
+                        if (drawList == null)
+                        {
+                            return;
+                        }
+
+                        if (ShowRadial)
+                        {
+                            float offset = Utils.DegreesToRadians(selectedNode.LandingInfo.RotationOffset);
+                            float startAngle = Utils.DegreesToRadians(selectedNode.LandingInfo.StartAngle) + offset;
+                            float endAngle = Utils.DegreesToRadians(selectedNode.LandingInfo.EndAngle) + offset;
+
+                            drawList.AddFanFilled(selectedNode.NodePosition, selectedNode.LandingInfo.InnerRadius, selectedNode.LandingInfo.OuterRadius, startAngle, endAngle, Utils.ToUintABGR(C.Picto_RadialColor));
+                        }
                     }
                 }
                 else
@@ -734,6 +791,20 @@ namespace GatherChill.Ui.DebugTabs
             string sanitized = string.Join("_", name.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries));
             sanitized = sanitized.Replace(" ", "");
             return sanitized;
+        }
+
+        private static void DrawNode()
+        {
+            if (ImGui.Checkbox("Show Node Locations", ref ShowNodes))
+            {
+                if (ShowNodes)
+                    ShowSelectedNode = false;
+            }
+
+            if (ShowNodes)
+            {
+
+            }
         }
     }
 }

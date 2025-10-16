@@ -9,7 +9,7 @@ namespace GatherChill.Scheduler.Tasks
             Svc.Log.Debug($"Targeting {dataId}");
             IGameObject? gameObject = null;
             P.taskManager.Enqueue(() => TryGetObjectByDataId(dataId, out gameObject), "Getting Object");
-            P.taskManager.Enqueue(() => PluginVerbos($"Targeting By ID. Target is: {gameObject?.DataId}"), "Plugin Verbos");
+            P.taskManager.Enqueue(() => PluginVerbos($"Targeting By ID. Target is: {gameObject?.BaseId}"), "Plugin Verbos");
             P.taskManager.Enqueue(() => TargetgameObject(gameObject), "Targeting Object");
         }
     }

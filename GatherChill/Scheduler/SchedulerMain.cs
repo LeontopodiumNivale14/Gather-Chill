@@ -77,7 +77,7 @@ namespace GatherChill.Scheduler
 
                             var goalNode = Svc.Objects
                                                 .Where(s => s.IsTargetable)
-                                                .Where(s => s.DataId == nodeId)
+                                                .Where(s => s.BaseId == nodeId)
                                                 .FirstOrDefault();
 
                             // Checking to see if you're close to the node
@@ -101,7 +101,7 @@ namespace GatherChill.Scheduler
                                     PluginDebug("You're close enough to the node, checking to see if that's valid");
                                     var validNode = Svc.Objects
                                                         .Where(n => n.IsTargetable)
-                                                        .Where(n => n.DataId == firstListing.NodeId)
+                                                        .Where(n => n.BaseId == firstListing.NodeId)
                                                         .FirstOrDefault();
 
                                     if (validNode != null)

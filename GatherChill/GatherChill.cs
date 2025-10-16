@@ -8,6 +8,7 @@ using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
 using GatherChill.Yaml;
 using GatherChill.Yaml.ConfigFiles;
+using Pictomancy;
 
 namespace GatherChill;
 
@@ -59,6 +60,7 @@ public sealed class GatherChill : IDalamudPlugin
         P = this;
         ECommonsMain.Init(pi, P, ECommons.Module.DalamudReflector, ECommons.Module.ObjectFunctions);
         new ECommons.Schedulers.TickScheduler(Load);
+        PictoService.Initialize(pi);
     }
 
     public void Load()
@@ -127,6 +129,7 @@ public sealed class GatherChill : IDalamudPlugin
         ECommonsMain.Dispose();
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
+        PictoService.Dispose();
 
         Safe(() => routeData?.GatheringInfo.Clear());
         Safe(() => routeData = null!);

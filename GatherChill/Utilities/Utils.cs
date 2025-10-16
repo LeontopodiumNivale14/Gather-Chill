@@ -96,23 +96,23 @@ public static unsafe class Utils
     internal static bool? TargetgameObject(IGameObject? gameObject)
     {
         var x = gameObject;
-        if (Svc.Targets.Target != null && Svc.Targets.Target.DataId == x.DataId)
+        if (Svc.Targets.Target != null && Svc.Targets.Target.BaseId == x.BaseId)
             return true;
 
         if (!IsOccupied())
         {
             if (x != null)
             {
-                if (EzThrottler.Throttle($"Throttle Targeting {x.DataId}"))
+                if (EzThrottler.Throttle($"Throttle Targeting {x.BaseId}"))
                 {
                     Svc.Targets.SetTarget(x);
-                    ECommons.Logging.PluginLog.Information($"Setting the target to {x.DataId}");
+                    ECommons.Logging.PluginLog.Information($"Setting the target to {x.BaseId}");
                 }
             }
         }
         return false;
     }
-    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.DataId == dataId)) != null;
+    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.BaseId == dataId)) != null;
     internal static unsafe void InteractWithObject(IGameObject? gameObject)
     {
         try
@@ -433,6 +433,33 @@ public static unsafe class Utils
         );
     }
 
+
+    #endregion
+
+    #region Picto Tools
+
+    public static uint ToUintABGR(Vector4 col)
+    {
+        byte a = (byte)(col.W * 255);
+        byte b = (byte)(col.Z * 255);
+        byte g = (byte)(col.Y * 255);
+        byte r = (byte)(col.X * 255);
+        return (uint)((a << 24) | (b << 16) | (g << 8) | r);
+    }
+
+    public static Vector4 FromUintABGR(uint color)
+    {
+        float a = ((color >> 24) & 0xFF) / 255f;
+        float b = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float r = (color & 0xFF) / 255f;
+        return new Vector4(r, g, b, a);
+    }
+
+    public static float DegreesToRadians(float degrees)
+    {
+        return degrees * (MathF.PI / 180f);
+    }
 
     #endregion
 
