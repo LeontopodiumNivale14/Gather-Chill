@@ -118,9 +118,8 @@ namespace GatherChill.Ui.DebugTabs
                         {
                             DrawRouteList();
                         }
-
-                        ImGui.EndChild();
                     }
+                    ImGui.EndChild();
 
                     // Right side - editor
                     ImGui.TableSetColumnIndex(1);
@@ -139,9 +138,8 @@ namespace GatherChill.Ui.DebugTabs
                         {
                             ImGui.Text("Select a route to edit");
                         }
-
-                        ImGui.EndChild();
                     }
+                    ImGui.EndChild();
 
                     ImGui.EndTable();
                 }
@@ -265,9 +263,8 @@ namespace GatherChill.Ui.DebugTabs
                         ImGui.EndTooltip();
                     }
                 }
-
-                ImGui.EndChild();
             }
+            ImGui.EndChild();
         }
 
         private static void DrawRouteEditor(RouteInfo route)
@@ -389,8 +386,8 @@ namespace GatherChill.Ui.DebugTabs
                     {
                         ImGui.Text("No nodes in route");
                     }
-                    ImGui.EndChild();
                 }
+                ImGui.EndChild();
 
                 // Column 2: Node Viewer (nearby gathering nodes)
                 ImGui.TableSetColumnIndex(1);
@@ -421,8 +418,8 @@ namespace GatherChill.Ui.DebugTabs
                             }
                         }
                     }
-                    ImGui.EndChild();
                 }
+                ImGui.EndChild();
 
                 // Column 3: Action Buttons
                 ImGui.TableSetColumnIndex(2);
@@ -472,9 +469,8 @@ namespace GatherChill.Ui.DebugTabs
                             }
                         }
                     }
-
-                    ImGui.EndChild();
                 }
+                ImGui.EndChild();
 
                 ImGui.EndTable();
             }

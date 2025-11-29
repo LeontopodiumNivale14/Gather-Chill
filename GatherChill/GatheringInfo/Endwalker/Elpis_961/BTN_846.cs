@@ -50,28 +50,28 @@ namespace GatherChill.Routes.Endwalker.Elpis_961
 					RotationOffset = 0f
 				}
 			},
-			new NodeInfo
+            new NodeInfo
+            {
+                NodeId = 34019,
+                NodePosition = new Vector3(-13.48685f, 4.629431f, 208.5452f),
+                LandingInfo = new LandingInfo
+                {
+                    LandZone = new Vector3(-14.482262f, 3.7920487f, 208.21498f),
+                    UseRadial = true,
+                    InnerRadius = 1f,
+                    OuterRadius = 3f,
+                    StartAngle = 0f,
+                    EndAngle = 360f,
+                    RotationOffset = 0f
+                }
+            },
+            new NodeInfo
 			{
 				NodeId = 34019,
 				NodePosition = new Vector3(-65.74567f, -2.738637f, 195.961f),
 				LandingInfo = new LandingInfo
 				{
 					LandZone = new Vector3(-64.37266f, -3.3859138f, 194.19154f),
-					UseRadial = true,
-					InnerRadius = 1f,
-					OuterRadius = 3f,
-					StartAngle = 0f,
-					EndAngle = 360f,
-					RotationOffset = 0f
-				}
-			},
-			new NodeInfo
-			{
-				NodeId = 34019,
-				NodePosition = new Vector3(-65.74567f, -2.738637f, 195.961f),
-				LandingInfo = new LandingInfo
-				{
-					LandZone = new Vector3(-15.277368f, 3.7422287f, 207.66191f),
 					UseRadial = true,
 					InnerRadius = 1f,
 					OuterRadius = 3f,

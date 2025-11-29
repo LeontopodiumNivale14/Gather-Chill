@@ -45,8 +45,11 @@ internal class DebugWindow : Window
         float rightPanelWidth = ImGui.GetContentRegionAvail().X - leftPanelWidth - spacing;
         float childHeight = ImGui.GetContentRegionAvail().Y;
 
-        if (ImGui.BeginChild("DebugSelector", new System.Numerics.Vector2(leftPanelWidth, childHeight), true))
+        using (var DebugSelector = ImRaii.Child("DebugSelector", new Vector2(leftPanelWidth, childHeight), true))
         {
+            if (!DebugSelector.Success)
+                return;
+
             for (int i = 0; i < DebugTypes.Length; i++)
             {
                 bool isSelected = (selectedDebugIndex == i);
@@ -57,23 +60,24 @@ internal class DebugWindow : Window
                     selectedDebugIndex = i;
                 }
             }
-            ImGui.EndChild();
         }
 
         ImGui.SameLine(0, spacing);
 
-        if (ImGui.BeginChild("DebugContent", new System.Numerics.Vector2(rightPanelWidth, childHeight), true))
+        using (var DebugContext = ImRaii.Child("DebugContent", new System.Numerics.Vector2(rightPanelWidth, childHeight), true))
         {
+            if (!DebugContext.Success)
+                return;
+
             switch (selectedDebugIndex)
             {
                 // HUD Elements (0-5)
                 case 0: RouteEditorV2.Draw(); break;
                 case 1: Ui_PictoEditor.Draw(); break;
-                
+
                 default: ImGui.Text("Unknown Debug View"); break;
             }
         }
-        ImGui.EndChild();
 
         /*
 

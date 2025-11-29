@@ -89,7 +89,7 @@ public sealed class GatherChill : IDalamudPlugin
         };
         Svc.PluginInterface.UiBuilder.OpenConfigUi += () =>
         {
-            settingWindow.IsOpen = true;
+            debugWindow.IsOpen = true;
         };
         EzCmd.Add("/gatherchill", OnCommand, """
             Open plugin interface
