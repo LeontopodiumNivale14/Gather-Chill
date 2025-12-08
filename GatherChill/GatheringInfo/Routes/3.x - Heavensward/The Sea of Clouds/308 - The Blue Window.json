@@ -1,0 +1,40 @@
+{
+  "routeId": 308,
+  "territoryId": 401,
+  "zoneName": "The Sea of Clouds",
+  "placeName": "The Blue Window",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31438
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31438,
+          "locations": [
+            {
+              "position": {
+                "x": -97.4555,
+                "y": 13.04193,
+                "z": -548.5487
+              },
+              "minAngle": -105,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

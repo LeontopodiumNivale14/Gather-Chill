@@ -1,0 +1,157 @@
+{
+  "routeId": 181,
+  "territoryId": 154,
+  "zoneName": "North Shroud",
+  "placeName": "Peacegarden",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 5,
+  "nodeIds": [
+    31049,
+    31051,
+    31052,
+    31050
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Censored",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31049,
+          "locations": [
+            {
+              "position": {
+                "x": 232.6686,
+                "y": -2.063462,
+                "z": -13.87066
+              },
+              "minAngle": -10,
+              "maxAngle": 60,
+              "minDistance": 1.7,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 208.5002,
+                "y": -1.21151,
+                "z": -8.481951
+              },
+              "minAngle": -80,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 31051,
+          "locations": [
+            {
+              "position": {
+                "x": 174.384,
+                "y": -0.4081409,
+                "z": 40.32799
+              },
+              "minAngle": -115,
+              "maxAngle": 25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 180.6999,
+                "y": 0.5284532,
+                "z": 43.46334
+              },
+              "minAngle": -310,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 31052,
+          "locations": [
+            {
+              "position": {
+                "x": 239.2585,
+                "y": -10.81729,
+                "z": 85.37144
+              },
+              "minAngle": -135,
+              "maxAngle": -110,
+              "minDistance": 1.9,
+              "maxDistance": 2.9,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 219.6392,
+                "y": -8.915615,
+                "z": 78.84674
+              },
+              "minAngle": -225,
+              "maxAngle": -90,
+              "minDistance": 1.3,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 3,
+      "nodes": [
+        {
+          "nodeId": 31050,
+          "locations": [
+            {
+              "position": {
+                "x": 172.7773,
+                "y": -0.5520306,
+                "z": -24.73335
+              },
+              "minAngle": -50,
+              "maxAngle": 65,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 158.3542,
+                "y": 0.1226652,
+                "z": -17.62734
+              },
+              "minAngle": -155,
+              "maxAngle": -30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

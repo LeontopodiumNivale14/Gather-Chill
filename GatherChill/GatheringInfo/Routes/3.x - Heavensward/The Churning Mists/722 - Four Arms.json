@@ -1,0 +1,154 @@
+{
+  "routeId": 722,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "Four Arms",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33277,
+    33278,
+    33282,
+    33281,
+    33279,
+    33280
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33277,
+          "locations": [
+            {
+              "position": {
+                "x": 161.6943,
+                "y": 50.62311,
+                "z": 306.9095
+              },
+              "minAngle": -25,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33278,
+          "locations": [
+            {
+              "position": {
+                "x": 170.2939,
+                "y": 45.75593,
+                "z": 329.2731
+              },
+              "minAngle": -65,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 1.6,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33282,
+          "locations": [
+            {
+              "position": {
+                "x": 62.08766,
+                "y": 23.86261,
+                "z": 299.0364
+              },
+              "minAngle": -30,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 53.31132,
+                "y": 23.89482,
+                "z": 281.0169
+              },
+              "minAngle": 20,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33281,
+          "locations": [
+            {
+              "position": {
+                "x": 49.55643,
+                "y": 23.85151,
+                "z": 292.7092
+              },
+              "minAngle": 15,
+              "maxAngle": 140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33279,
+          "locations": [
+            {
+              "position": {
+                "x": 175.8129,
+                "y": 26.83172,
+                "z": 224.6219
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33280,
+          "locations": [
+            {
+              "position": {
+                "x": 205.8016,
+                "y": 26.88668,
+                "z": 239.3035
+              },
+              "minAngle": -205,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 200.4305,
+                "y": 26.98112,
+                "z": 221.9892
+              },
+              "minAngle": -65,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

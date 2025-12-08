@@ -1,0 +1,64 @@
+{
+  "routeId": 220,
+  "territoryId": 137,
+  "zoneName": "Eastern La Noscea",
+  "placeName": "Raincatcher Gully",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31008
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31008,
+          "locations": [
+            {
+              "position": {
+                "x": -162.7375,
+                "y": 37.06409,
+                "z": 229.3583
+              },
+              "minAngle": -50,
+              "maxAngle": -25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -254.4292,
+                "y": 42.37767,
+                "z": 319.7733
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -174.5716,
+                "y": 41.37013,
+                "z": 364.5399
+              },
+              "minAngle": 135,
+              "maxAngle": 190,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

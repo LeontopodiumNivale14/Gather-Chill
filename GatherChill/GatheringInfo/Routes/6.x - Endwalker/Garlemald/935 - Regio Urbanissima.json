@@ -1,0 +1,64 @@
+{
+  "routeId": 935,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "Regio Urbanissima",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34433
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34433,
+          "locations": [
+            {
+              "position": {
+                "x": -214.9574,
+                "y": 12.07928,
+                "z": -434.5291
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 2.6,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -168.1372,
+                "y": 11.92413,
+                "z": -480.7224
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -174.0028,
+                "y": 11.9945,
+                "z": -435.036
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 2.2,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

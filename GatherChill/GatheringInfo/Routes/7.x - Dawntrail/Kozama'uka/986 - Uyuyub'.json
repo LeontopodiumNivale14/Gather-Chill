@@ -1,0 +1,176 @@
+{
+  "routeId": 986,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Uyuyub\u0027",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34821,
+    34822,
+    34826,
+    34825,
+    34824,
+    34823
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34821,
+          "locations": [
+            {
+              "position": {
+                "x": -114.9673,
+                "y": 9.311809,
+                "z": -638.1873
+              },
+              "minAngle": -125,
+              "maxAngle": 50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34822,
+          "locations": [
+            {
+              "position": {
+                "x": -139.9428,
+                "y": 17.33419,
+                "z": -662.0339
+              },
+              "minAngle": -175,
+              "maxAngle": 10,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -98.84892,
+                "y": 8.927668,
+                "z": -645.7149
+              },
+              "minAngle": 165,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34826,
+          "locations": [
+            {
+              "position": {
+                "x": 60.64223,
+                "y": 4.514977,
+                "z": -535.9874
+              },
+              "minAngle": 20,
+              "maxAngle": 200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 22.99263,
+                "y": 3.71779,
+                "z": -519.9791
+              },
+              "minAngle": 110,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34825,
+          "locations": [
+            {
+              "position": {
+                "x": 56.54757,
+                "y": 4.987343,
+                "z": -486.204
+              },
+              "minAngle": 40,
+              "maxAngle": 220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34824,
+          "locations": [
+            {
+              "position": {
+                "x": 110.7947,
+                "y": 6.466304,
+                "z": -633.701
+              },
+              "minAngle": 20,
+              "maxAngle": 205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 78.47705,
+                "y": 8.072021,
+                "z": -627.9545
+              },
+              "minAngle": 130,
+              "maxAngle": 290,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34823,
+          "locations": [
+            {
+              "position": {
+                "x": 91.40367,
+                "y": 7.397814,
+                "z": -659.1525
+              },
+              "minAngle": -40,
+              "maxAngle": 145,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

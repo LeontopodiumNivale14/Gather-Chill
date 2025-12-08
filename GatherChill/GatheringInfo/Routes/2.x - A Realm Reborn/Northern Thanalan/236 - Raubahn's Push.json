@@ -1,0 +1,64 @@
+{
+  "routeId": 236,
+  "territoryId": 147,
+  "zoneName": "Northern Thanalan",
+  "placeName": "Raubahn\u0027s Push",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31030
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31030,
+          "locations": [
+            {
+              "position": {
+                "x": -164.2565,
+                "y": 58.96842,
+                "z": -69.03948
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -210.7415,
+                "y": 60.81546,
+                "z": -80.31173
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -249.6374,
+                "y": 62.13107,
+                "z": -49.79575
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "routeId": 784,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "Laxan Loft",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33639,
+    33637,
+    33638
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33639,
+          "locations": [
+            {
+              "position": {
+                "x": 94.35548,
+                "y": 116.0542,
+                "z": -397.1061
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33637,
+          "locations": [
+            {
+              "position": {
+                "x": 122.4135,
+                "y": 110.9894,
+                "z": -451.2209
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33638,
+          "locations": [
+            {
+              "position": {
+                "x": -110.1475,
+                "y": 97.99149,
+                "z": -452.9984
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 2.1,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

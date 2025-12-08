@@ -1,0 +1,166 @@
+{
+  "routeId": 848,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "Reah Tahra",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34034,
+    34035,
+    34032,
+    34033,
+    34031,
+    34030
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34034,
+          "locations": [
+            {
+              "position": {
+                "x": -402.4262,
+                "y": 89.12781,
+                "z": 376.3942
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34035,
+          "locations": [
+            {
+              "position": {
+                "x": -392.9656,
+                "y": 88.91431,
+                "z": 386.2516
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -427.2984,
+                "y": 90.2876,
+                "z": 387.0145
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34032,
+          "locations": [
+            {
+              "position": {
+                "x": -328.5247,
+                "y": 86.46171,
+                "z": 416.8848
+              },
+              "minAngle": -60,
+              "maxAngle": 90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34033,
+          "locations": [
+            {
+              "position": {
+                "x": -318.3269,
+                "y": 85.80447,
+                "z": 419.2493
+              },
+              "minAngle": -150,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -331.2502,
+                "y": 86.94159,
+                "z": 409.91
+              },
+              "minAngle": -310,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34031,
+          "locations": [
+            {
+              "position": {
+                "x": -362.4781,
+                "y": 85.09949,
+                "z": 273.7621
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -352.9302,
+                "y": 86.1927,
+                "z": 279.9735
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34030,
+          "locations": [
+            {
+              "position": {
+                "x": -344.2893,
+                "y": 85.40466,
+                "z": 268.635
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

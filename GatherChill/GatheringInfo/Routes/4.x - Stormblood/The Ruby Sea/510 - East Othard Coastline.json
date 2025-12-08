@@ -1,0 +1,200 @@
+{
+  "routeId": 510,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "East Othard Coastline",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 65,
+  "nodeIds": [
+    32223,
+    32222,
+    32218,
+    32219,
+    32221,
+    32220
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32223,
+          "locations": [
+            {
+              "position": {
+                "x": -741.6174,
+                "y": 6.276045,
+                "z": -639.2435
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -724.2017,
+                "y": 2.514658,
+                "z": -647.5651
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32222,
+          "locations": [
+            {
+              "position": {
+                "x": -719.345,
+                "y": 2.520793,
+                "z": -645.692
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32218,
+          "locations": [
+            {
+              "position": {
+                "x": -664.7355,
+                "y": 15.23751,
+                "z": -801.2688
+              },
+              "minAngle": -60,
+              "maxAngle": 185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32219,
+          "locations": [
+            {
+              "position": {
+                "x": -673.4941,
+                "y": 16.74037,
+                "z": -818.1156
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -677.8458,
+                "y": 15.77772,
+                "z": -809.6718
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -663.3188,
+                "y": 14.57053,
+                "z": -797.132
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32221,
+          "locations": [
+            {
+              "position": {
+                "x": -502.177,
+                "y": 36.7399,
+                "z": -724.8087
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -508.0492,
+                "y": 33.89026,
+                "z": -703.5477
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -490.3923,
+                "y": 36.73062,
+                "z": -685.7646
+              },
+              "minAngle": -40,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32220,
+          "locations": [
+            {
+              "position": {
+                "x": -493.5531,
+                "y": 36.08752,
+                "z": -687.7089
+              },
+              "minAngle": -70,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

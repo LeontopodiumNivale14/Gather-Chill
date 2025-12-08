@@ -1,0 +1,142 @@
+{
+  "routeId": 734,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "Valley of the Fallen Rainbow",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33346,
+    33347,
+    33349,
+    33348,
+    33344,
+    33345
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33346,
+          "locations": [
+            {
+              "position": {
+                "x": 350.1194,
+                "y": 16.37547,
+                "z": -600.8533
+              },
+              "minAngle": -60,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33347,
+          "locations": [
+            {
+              "position": {
+                "x": 342.6569,
+                "y": 17.17065,
+                "z": -594.0968
+              },
+              "minAngle": -95,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33349,
+          "locations": [
+            {
+              "position": {
+                "x": 273.877,
+                "y": 17.58734,
+                "z": -599.9927
+              },
+              "minAngle": -40,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33348,
+          "locations": [
+            {
+              "position": {
+                "x": 263.502,
+                "y": 19.51848,
+                "z": -591.72
+              },
+              "minAngle": -110,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33344,
+          "locations": [
+            {
+              "position": {
+                "x": 425.1703,
+                "y": 50.40763,
+                "z": -526.8005
+              },
+              "minAngle": -260,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33345,
+          "locations": [
+            {
+              "position": {
+                "x": 437.5652,
+                "y": 40.63394,
+                "z": -546.3549
+              },
+              "minAngle": -250,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 412.022,
+                "y": 53.76851,
+                "z": -516.2805
+              },
+              "minAngle": -210,
+              "maxAngle": -140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "routeId": 833,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "Purusa",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33966
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33966,
+          "locations": [
+            {
+              "position": {
+                "x": 542.1649,
+                "y": 8.963387,
+                "z": 173.3215
+              },
+              "minAngle": -30,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 547.9667,
+                "y": 10.12471,
+                "z": 161.0895
+              },
+              "minAngle": -225,
+              "maxAngle": -120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 547.5946,
+                "y": 9.456854,
+                "z": 185.9271
+              },
+              "minAngle": -40,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

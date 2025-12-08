@@ -1,0 +1,112 @@
+{
+  "routeId": 939,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "The Ondo Cups",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34483,
+    34481,
+    34482
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34483,
+          "locations": [
+            {
+              "position": {
+                "x": 639.1468,
+                "y": 395.2906,
+                "z": -65.68106
+              },
+              "minAngle": -120,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 655.9265,
+                "y": 396.6957,
+                "z": -96.07446
+              },
+              "minAngle": -35,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34481,
+          "locations": [
+            {
+              "position": {
+                "x": 554.4633,
+                "y": 416.4892,
+                "z": 146.1701
+              },
+              "minAngle": -230,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 509.4561,
+                "y": 390.8511,
+                "z": 107.7937
+              },
+              "minAngle": -220,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34482,
+          "locations": [
+            {
+              "position": {
+                "x": 748.2558,
+                "y": 411.5643,
+                "z": 107.1952
+              },
+              "minAngle": -320,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 779.1614,
+                "y": 418.6068,
+                "z": 82.00574
+              },
+              "minAngle": -265,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "routeId": 681,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "The Isle of Ken",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32987
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32987,
+          "locations": [
+            {
+              "position": {
+                "x": -836.8798,
+                "y": -34.60226,
+                "z": 624.631
+              },
+              "minAngle": -235,
+              "maxAngle": -160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

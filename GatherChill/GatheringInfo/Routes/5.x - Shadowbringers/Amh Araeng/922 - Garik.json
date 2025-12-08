@@ -1,0 +1,176 @@
+{
+  "routeId": 922,
+  "territoryId": 815,
+  "zoneName": "Amh Araeng",
+  "placeName": "Garik",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34430,
+    34429,
+    34427,
+    34428,
+    34431,
+    34432
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34430,
+          "locations": [
+            {
+              "position": {
+                "x": -449.9385,
+                "y": -1.370689,
+                "z": -409.258
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -445.7757,
+                "y": -0.7637522,
+                "z": -415.8121
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34429,
+          "locations": [
+            {
+              "position": {
+                "x": -451.2528,
+                "y": -1.577711,
+                "z": -414.294
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34427,
+          "locations": [
+            {
+              "position": {
+                "x": -346.0392,
+                "y": 0.6433533,
+                "z": -541.9421
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34428,
+          "locations": [
+            {
+              "position": {
+                "x": -326.9622,
+                "y": 1.097262,
+                "z": -537.5435
+              },
+              "minAngle": 0,
+              "maxAngle": 220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -357.2281,
+                "y": 0.4458784,
+                "z": -513.3207
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34431,
+          "locations": [
+            {
+              "position": {
+                "x": -441.0019,
+                "y": -5.337227,
+                "z": -636.1525
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34432,
+          "locations": [
+            {
+              "position": {
+                "x": -464.1121,
+                "y": -5.420424,
+                "z": -649.8243
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -436.4872,
+                "y": -5.205373,
+                "z": -638.8244
+              },
+              "minAngle": -95,
+              "maxAngle": 85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

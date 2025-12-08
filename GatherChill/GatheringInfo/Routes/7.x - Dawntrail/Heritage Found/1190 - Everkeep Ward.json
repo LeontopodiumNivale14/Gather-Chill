@@ -1,0 +1,64 @@
+{
+  "routeId": 1190,
+  "territoryId": 1191,
+  "zoneName": "Heritage Found",
+  "placeName": "Everkeep Ward",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35239
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35239,
+          "locations": [
+            {
+              "position": {
+                "x": -370.0027,
+                "y": 48.84607,
+                "z": -232.5574
+              },
+              "minAngle": -255,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -390.0664,
+                "y": 48.32532,
+                "z": -234.8821
+              },
+              "minAngle": -65,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -360.6714,
+                "y": 48.43043,
+                "z": -230.6789
+              },
+              "minAngle": -305,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

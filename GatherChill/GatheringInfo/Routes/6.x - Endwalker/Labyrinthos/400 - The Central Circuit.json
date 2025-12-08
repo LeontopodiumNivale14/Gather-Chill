@@ -1,0 +1,64 @@
+{
+  "routeId": 400,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "The Central Circuit",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34360
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34360,
+          "locations": [
+            {
+              "position": {
+                "x": -505.7667,
+                "y": -30.46793,
+                "z": -2.952615
+              },
+              "minAngle": -105,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -528.7167,
+                "y": -27.05937,
+                "z": -7.708698
+              },
+              "minAngle": -320,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -515.692,
+                "y": -29.20288,
+                "z": -2.64785
+              },
+              "minAngle": -15,
+              "maxAngle": 20,
+              "minDistance": 1.3,
+              "maxDistance": 2,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

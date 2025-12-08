@@ -1,0 +1,157 @@
+{
+  "routeId": 208,
+  "territoryId": 155,
+  "zoneName": "Coerthas Central Highlands",
+  "placeName": "Whitebrim",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 5,
+  "nodeIds": [
+    30510,
+    30511,
+    30508,
+    30509
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Censored",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 30510,
+          "locations": [
+            {
+              "position": {
+                "x": 334.4322,
+                "y": 307.1861,
+                "z": -252.2396
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 318.1049,
+                "y": 305.9586,
+                "z": -236.1029
+              },
+              "minAngle": -270,
+              "maxAngle": -155,
+              "minDistance": 1,
+              "maxDistance": 1.8,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 30511,
+          "locations": [
+            {
+              "position": {
+                "x": 347.1616,
+                "y": 316.7778,
+                "z": -231.3722
+              },
+              "minAngle": -45,
+              "maxAngle": 190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 355.554,
+                "y": 321.804,
+                "z": -231.1056
+              },
+              "minAngle": -285,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 30508,
+          "locations": [
+            {
+              "position": {
+                "x": 298.5091,
+                "y": 309.1797,
+                "z": -201.3309
+              },
+              "minAngle": 105,
+              "maxAngle": 220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 291.6585,
+                "y": 305.774,
+                "z": -206.6072
+              },
+              "minAngle": -220,
+              "maxAngle": -30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 3,
+      "nodes": [
+        {
+          "nodeId": 30509,
+          "locations": [
+            {
+              "position": {
+                "x": 325.9026,
+                "y": 306.1053,
+                "z": -278.1509
+              },
+              "minAngle": -350,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 289.1882,
+                "y": 302.4524,
+                "z": -261.3322
+              },
+              "minAngle": -240,
+              "maxAngle": 20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

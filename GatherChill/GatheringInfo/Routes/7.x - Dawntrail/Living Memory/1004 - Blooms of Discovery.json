@@ -1,0 +1,190 @@
+{
+  "routeId": 1004,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "Blooms of Discovery",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34933,
+    34934,
+    34929,
+    34930,
+    34932,
+    34931
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34933,
+          "locations": [
+            {
+              "position": {
+                "x": -354.7989,
+                "y": 34.61375,
+                "z": -195.4473
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34934,
+          "locations": [
+            {
+              "position": {
+                "x": -363.4241,
+                "y": 34.86682,
+                "z": -193.9269
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -326.9073,
+                "y": 35.9638,
+                "z": -157.6817
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -354.7535,
+                "y": 35.11695,
+                "z": -213.5882
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34929,
+          "locations": [
+            {
+              "position": {
+                "x": -155.6573,
+                "y": 38.92036,
+                "z": -242.1233
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34930,
+          "locations": [
+            {
+              "position": {
+                "x": -138.8316,
+                "y": 38.60613,
+                "z": -254.0241
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -145.0065,
+                "y": 38.59009,
+                "z": -232.0134
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -140.4899,
+                "y": 38.55945,
+                "z": -237.2321
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34932,
+          "locations": [
+            {
+              "position": {
+                "x": -161.8549,
+                "y": 38.41213,
+                "z": -99.56963
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -174.5722,
+                "y": 38.63726,
+                "z": -72.28777
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34931,
+          "locations": [
+            {
+              "position": {
+                "x": -165.7465,
+                "y": 38.71204,
+                "z": -81.63591
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

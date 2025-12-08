@@ -1,0 +1,64 @@
+{
+  "routeId": 834,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "Juturna Platform G",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33967
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33967,
+          "locations": [
+            {
+              "position": {
+                "x": 536.5396,
+                "y": -13.68495,
+                "z": 660.2209
+              },
+              "minAngle": -265,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 528.4962,
+                "y": -13.43826,
+                "z": 668.6223
+              },
+              "minAngle": -320,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 533.9894,
+                "y": -14.83853,
+                "z": 677.6685
+              },
+              "minAngle": -360,
+              "maxAngle": -280,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

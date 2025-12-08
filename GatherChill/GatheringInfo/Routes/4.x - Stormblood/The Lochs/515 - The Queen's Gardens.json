@@ -1,0 +1,76 @@
+{
+  "routeId": 515,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "The Queen\u0027s Gardens",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32248,
+    31702,
+    31703
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32248,
+          "locations": [
+            {
+              "position": {
+                "x": 468.2832,
+                "y": 87.07982,
+                "z": 393.6431
+              },
+              "minAngle": -310,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31702,
+          "locations": [
+            {
+              "position": {
+                "x": 526.1727,
+                "y": 100.0006,
+                "z": 238.2858
+              },
+              "minAngle": 40,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31703,
+          "locations": [
+            {
+              "position": {
+                "x": 438.87,
+                "y": 88.76586,
+                "z": 188.2373
+              },
+              "minAngle": -345,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

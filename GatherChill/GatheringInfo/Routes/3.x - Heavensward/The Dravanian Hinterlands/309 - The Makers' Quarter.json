@@ -1,0 +1,76 @@
+{
+  "routeId": 309,
+  "territoryId": 399,
+  "zoneName": "The Dravanian Hinterlands",
+  "placeName": "The Makers\u0027 Quarter",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31453,
+    31444,
+    31454
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31453,
+          "locations": [
+            {
+              "position": {
+                "x": 197.9418,
+                "y": 62.74836,
+                "z": -257.6559
+              },
+              "minAngle": -140,
+              "maxAngle": -40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31444,
+          "locations": [
+            {
+              "position": {
+                "x": 356.6781,
+                "y": 76.95129,
+                "z": -275.8235
+              },
+              "minAngle": -290,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31454,
+          "locations": [
+            {
+              "position": {
+                "x": 436.5547,
+                "y": 82.16499,
+                "z": -160.3192
+              },
+              "minAngle": -25,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

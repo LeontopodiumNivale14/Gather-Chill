@@ -1,0 +1,176 @@
+{
+  "routeId": 731,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "Yuzuka Manor",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33334,
+    33333,
+    33335,
+    33336,
+    33331,
+    33332
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33334,
+          "locations": [
+            {
+              "position": {
+                "x": -222.386,
+                "y": 23.28162,
+                "z": 425.76
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -209.1725,
+                "y": 22.35068,
+                "z": 425.5524
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33333,
+          "locations": [
+            {
+              "position": {
+                "x": -219.9592,
+                "y": 22.78741,
+                "z": 431.5036
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33335,
+          "locations": [
+            {
+              "position": {
+                "x": -349.8553,
+                "y": 33.90925,
+                "z": 452.5893
+              },
+              "minAngle": -90,
+              "maxAngle": 90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33336,
+          "locations": [
+            {
+              "position": {
+                "x": -361.5062,
+                "y": 33.49068,
+                "z": 453.4639
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -359.826,
+                "y": 35.47207,
+                "z": 442.164
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33331,
+          "locations": [
+            {
+              "position": {
+                "x": -231.3864,
+                "y": 17.74118,
+                "z": 511.0694
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33332,
+          "locations": [
+            {
+              "position": {
+                "x": -219.0789,
+                "y": 18.05494,
+                "z": 525.418
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -220.9139,
+                "y": 17.97838,
+                "z": 514.0063
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

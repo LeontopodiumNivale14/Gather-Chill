@@ -1,0 +1,64 @@
+{
+  "routeId": 856,
+  "territoryId": 961,
+  "zoneName": "Elpis",
+  "placeName": "Lethe",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34043
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34043,
+          "locations": [
+            {
+              "position": {
+                "x": 582.066,
+                "y": 145.9194,
+                "z": -346.1552
+              },
+              "minAngle": -280,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 577.0972,
+                "y": 146.0289,
+                "z": -327.7003
+              },
+              "minAngle": -50,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 591.0413,
+                "y": 145.9996,
+                "z": -334.7608
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

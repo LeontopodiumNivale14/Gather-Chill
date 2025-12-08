@@ -1,0 +1,64 @@
+{
+  "routeId": 605,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "Cleric",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    32679
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32679,
+          "locations": [
+            {
+              "position": {
+                "x": -103.3048,
+                "y": 19.55615,
+                "z": -54.58522
+              },
+              "minAngle": -65,
+              "maxAngle": 40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -77.53246,
+                "y": 15.7,
+                "z": -21.39066
+              },
+              "minAngle": -300,
+              "maxAngle": -265,
+              "minDistance": 2.2,
+              "maxDistance": 2.7,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -79.22808,
+                "y": 21.81012,
+                "z": -66.70032
+              },
+              "minAngle": -40,
+              "maxAngle": 35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

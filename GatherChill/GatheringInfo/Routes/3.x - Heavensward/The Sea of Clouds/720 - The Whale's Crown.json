@@ -1,0 +1,154 @@
+{
+  "routeId": 720,
+  "territoryId": 401,
+  "zoneName": "The Sea of Clouds",
+  "placeName": "The Whale\u0027s Crown",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33266,
+    33265,
+    33267,
+    33268,
+    33269,
+    33270
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33266,
+          "locations": [
+            {
+              "position": {
+                "x": 360.3335,
+                "y": 105.6061,
+                "z": 126.3383
+              },
+              "minAngle": -190,
+              "maxAngle": -135,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 354.0812,
+                "y": 105.6351,
+                "z": 126.507
+              },
+              "minAngle": -205,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33265,
+          "locations": [
+            {
+              "position": {
+                "x": 341.356,
+                "y": 108.2867,
+                "z": 152.7164
+              },
+              "minAngle": -260,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33267,
+          "locations": [
+            {
+              "position": {
+                "x": 397.8959,
+                "y": 103.8783,
+                "z": -4.409706
+              },
+              "minAngle": -330,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33268,
+          "locations": [
+            {
+              "position": {
+                "x": 404.0882,
+                "y": 103.0118,
+                "z": -13.69882
+              },
+              "minAngle": -260,
+              "maxAngle": -225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 396.4108,
+                "y": 104.2281,
+                "z": 5.39553
+              },
+              "minAngle": -280,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33269,
+          "locations": [
+            {
+              "position": {
+                "x": 287.0642,
+                "y": 106.2252,
+                "z": -49.71553
+              },
+              "minAngle": -140,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33270,
+          "locations": [
+            {
+              "position": {
+                "x": 291.6508,
+                "y": 106.9163,
+                "z": -53.06104
+              },
+              "minAngle": -330,
+              "maxAngle": -290,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

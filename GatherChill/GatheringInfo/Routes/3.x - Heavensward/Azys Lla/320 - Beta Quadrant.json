@@ -1,0 +1,64 @@
+{
+  "routeId": 320,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "Beta Quadrant",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31461
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31461,
+          "locations": [
+            {
+              "position": {
+                "x": 79.63015,
+                "y": 0.5219008,
+                "z": -804.5839
+              },
+              "minAngle": -150,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 72.07767,
+                "y": 0.7522836,
+                "z": -854.5031
+              },
+              "minAngle": -170,
+              "maxAngle": -150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 25.29292,
+                "y": 0.5668808,
+                "z": -833.7905
+              },
+              "minAngle": -335,
+              "maxAngle": -295,
+              "minDistance": 1,
+              "maxDistance": 1.8,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

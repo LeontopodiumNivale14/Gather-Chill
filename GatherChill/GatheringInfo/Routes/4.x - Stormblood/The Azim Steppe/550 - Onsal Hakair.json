@@ -1,0 +1,86 @@
+{
+  "routeId": 550,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Onsal Hakair",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 1,
+  "nodeIds": [
+    32341,
+    32342,
+    32343
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Theo",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32341,
+          "locations": [
+            {
+              "position": {
+                "x": 615.4055,
+                "y": 31.42307,
+                "z": -475.3718
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32342,
+          "locations": [
+            {
+              "position": {
+                "x": 612.0082,
+                "y": 25.45944,
+                "z": -442.0886
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32343,
+          "locations": [
+            {
+              "position": {
+                "x": 634.1258,
+                "y": 21.76424,
+                "z": -436.3917
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

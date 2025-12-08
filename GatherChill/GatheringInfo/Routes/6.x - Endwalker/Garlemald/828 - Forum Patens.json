@@ -1,0 +1,76 @@
+{
+  "routeId": 828,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "Forum Patens",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34049,
+    33961,
+    34048
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34049,
+          "locations": [
+            {
+              "position": {
+                "x": -530.1442,
+                "y": 31.43423,
+                "z": -237.049
+              },
+              "minAngle": -55,
+              "maxAngle": 25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33961,
+          "locations": [
+            {
+              "position": {
+                "x": -532.8604,
+                "y": 25.39917,
+                "z": -400.0458
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34048,
+          "locations": [
+            {
+              "position": {
+                "x": -644.5258,
+                "y": 44.35585,
+                "z": -289.3569
+              },
+              "minAngle": -150,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

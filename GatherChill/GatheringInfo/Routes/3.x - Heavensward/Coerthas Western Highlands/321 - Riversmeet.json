@@ -1,0 +1,64 @@
+{
+  "routeId": 321,
+  "territoryId": 397,
+  "zoneName": "Coerthas Western Highlands",
+  "placeName": "Riversmeet",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31462
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31462,
+          "locations": [
+            {
+              "position": {
+                "x": 735.1255,
+                "y": 205.2163,
+                "z": -245.4424
+              },
+              "minAngle": -25,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 741.558,
+                "y": 197.0331,
+                "z": -188.0686
+              },
+              "minAngle": 55,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 735.9623,
+                "y": 209.0792,
+                "z": -308.0258
+              },
+              "minAngle": -50,
+              "maxAngle": 40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

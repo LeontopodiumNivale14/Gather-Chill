@@ -1,0 +1,212 @@
+{
+  "routeId": 985,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Eshceyaani Wilds",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34819,
+    34820,
+    34817,
+    34818,
+    34815,
+    34816
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34819,
+          "locations": [
+            {
+              "position": {
+                "x": -86.69859,
+                "y": -8.177663,
+                "z": 572.7712
+              },
+              "minAngle": 45,
+              "maxAngle": 175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34820,
+          "locations": [
+            {
+              "position": {
+                "x": -83.81214,
+                "y": -8.291362,
+                "z": 581.595
+              },
+              "minAngle": 80,
+              "maxAngle": 175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -88.70462,
+                "y": -8.511888,
+                "z": 578.6565
+              },
+              "minAngle": 35,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -81.00482,
+                "y": -7.330131,
+                "z": 574.7444
+              },
+              "minAngle": 150,
+              "maxAngle": 245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34817,
+          "locations": [
+            {
+              "position": {
+                "x": -264.2871,
+                "y": -21.57944,
+                "z": 593.6306
+              },
+              "minAngle": 130,
+              "maxAngle": 255,
+              "minDistance": 1.5,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34818,
+          "locations": [
+            {
+              "position": {
+                "x": -266.9412,
+                "y": -21.20901,
+                "z": 593.9532
+              },
+              "minAngle": 70,
+              "maxAngle": 225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -268.0496,
+                "y": -21.79604,
+                "z": 598.2532
+              },
+              "minAngle": -45,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -260.2841,
+                "y": -22.10003,
+                "z": 595.726
+              },
+              "minAngle": 160,
+              "maxAngle": 330,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34815,
+          "locations": [
+            {
+              "position": {
+                "x": -276.2859,
+                "y": -3.218076,
+                "z": 437.6798
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34816,
+          "locations": [
+            {
+              "position": {
+                "x": -277.8067,
+                "y": -2.664376,
+                "z": 433.8469
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 1.2,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -273.7089,
+                "y": -2.972111,
+                "z": 434.3939
+              },
+              "minAngle": -125,
+              "maxAngle": -40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -281.1727,
+                "y": -2.682134,
+                "z": 433.9476
+              },
+              "minAngle": -345,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "routeId": 990,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Pyariyoanaan Plain",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34847,
+    34848,
+    34845,
+    34846,
+    34850,
+    34849
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34847,
+          "locations": [
+            {
+              "position": {
+                "x": 332.5418,
+                "y": -15.06052,
+                "z": -440.2179
+              },
+              "minAngle": -300,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34848,
+          "locations": [
+            {
+              "position": {
+                "x": 372.8542,
+                "y": -16.28143,
+                "z": -399.6796
+              },
+              "minAngle": -340,
+              "maxAngle": -255,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 355.2758,
+                "y": -16.28143,
+                "z": -455.5886
+              },
+              "minAngle": -85,
+              "maxAngle": 35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34845,
+          "locations": [
+            {
+              "position": {
+                "x": 225.391,
+                "y": -14.58655,
+                "z": -480.0624
+              },
+              "minAngle": -65,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34846,
+          "locations": [
+            {
+              "position": {
+                "x": 202.8076,
+                "y": -10.29987,
+                "z": -462.0585
+              },
+              "minAngle": -115,
+              "maxAngle": 20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 237.0488,
+                "y": -15.42688,
+                "z": -497.7035
+              },
+              "minAngle": -90,
+              "maxAngle": 40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34850,
+          "locations": [
+            {
+              "position": {
+                "x": 337.3125,
+                "y": -16.01691,
+                "z": -265.4455
+              },
+              "minAngle": 35,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 303.7157,
+                "y": -14.44197,
+                "z": -219.3367
+              },
+              "minAngle": -255,
+              "maxAngle": -160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34849,
+          "locations": [
+            {
+              "position": {
+                "x": 332.1736,
+                "y": -14.90814,
+                "z": -228.7785
+              },
+              "minAngle": -310,
+              "maxAngle": -170,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

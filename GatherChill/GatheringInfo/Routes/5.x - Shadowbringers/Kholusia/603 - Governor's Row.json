@@ -1,0 +1,64 @@
+{
+  "routeId": 603,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "Governor\u0027s Row",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32677
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32677,
+          "locations": [
+            {
+              "position": {
+                "x": 599.6082,
+                "y": 55.29507,
+                "z": 97.46719
+              },
+              "minAngle": -85,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 639.5254,
+                "y": 56.37857,
+                "z": 72.04266
+              },
+              "minAngle": -115,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 629.9447,
+                "y": 52.68325,
+                "z": 89.17248
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

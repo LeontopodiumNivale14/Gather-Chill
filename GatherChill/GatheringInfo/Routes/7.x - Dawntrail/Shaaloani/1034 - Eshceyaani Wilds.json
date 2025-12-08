@@ -1,0 +1,64 @@
+{
+  "routeId": 1034,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Eshceyaani Wilds",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34994
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34994,
+          "locations": [
+            {
+              "position": {
+                "x": -523.7059,
+                "y": -21.00357,
+                "z": 480.349
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -533.1641,
+                "y": -22.27962,
+                "z": 486.9809
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -536.2696,
+                "y": -20.42633,
+                "z": 474.9619
+              },
+              "minAngle": -180,
+              "maxAngle": -115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

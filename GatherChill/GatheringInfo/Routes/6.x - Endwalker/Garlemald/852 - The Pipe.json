@@ -1,0 +1,52 @@
+{
+  "routeId": 852,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "The Pipe",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34039
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34039,
+          "locations": [
+            {
+              "position": {
+                "x": 689.3304,
+                "y": 30.60487,
+                "z": -797.512
+              },
+              "minAngle": -360,
+              "maxAngle": -170,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 665.9991,
+                "y": 30.65222,
+                "z": -767.7621
+              },
+              "minAngle": -325,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

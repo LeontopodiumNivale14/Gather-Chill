@@ -1,0 +1,112 @@
+{
+  "routeId": 926,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "Flue Bridge",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34454,
+    34452,
+    34456
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34454,
+          "locations": [
+            {
+              "position": {
+                "x": 109.0661,
+                "y": 334.5937,
+                "z": -352.5801
+              },
+              "minAngle": -155,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 127.6687,
+                "y": 331.0687,
+                "z": -363.3432
+              },
+              "minAngle": -220,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34452,
+          "locations": [
+            {
+              "position": {
+                "x": 296.8122,
+                "y": 316.1091,
+                "z": -470.7567
+              },
+              "minAngle": -20,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 331.346,
+                "y": 329.0741,
+                "z": -415.5676
+              },
+              "minAngle": -360,
+              "maxAngle": -240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34456,
+          "locations": [
+            {
+              "position": {
+                "x": 198.9469,
+                "y": 321.2124,
+                "z": -503.8198
+              },
+              "minAngle": -70,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 183.2235,
+                "y": 322.9223,
+                "z": -472.2768
+              },
+              "minAngle": -160,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

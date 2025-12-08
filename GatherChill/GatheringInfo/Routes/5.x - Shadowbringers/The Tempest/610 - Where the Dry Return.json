@@ -1,0 +1,64 @@
+{
+  "routeId": 610,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "Where the Dry Return",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32684
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32684,
+          "locations": [
+            {
+              "position": {
+                "x": 566.3824,
+                "y": 444.7,
+                "z": -689.3016
+              },
+              "minAngle": -305,
+              "maxAngle": -235,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 566.6124,
+                "y": 446.5,
+                "z": -676.256
+              },
+              "minAngle": -355,
+              "maxAngle": -325,
+              "minDistance": 1,
+              "maxDistance": 1.9,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 566.581,
+                "y": 443.4997,
+                "z": -705.6918
+              },
+              "minAngle": -315,
+              "maxAngle": -260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

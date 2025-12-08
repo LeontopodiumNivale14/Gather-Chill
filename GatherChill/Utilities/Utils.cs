@@ -1,466 +1,138 @@
-﻿using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Network.Structures;
-using Dalamud.Interface.Textures;
-using ECommons.Automation.NeoTaskManager;
-using ECommons.DalamudServices.Legacy;
-using ECommons.ExcelServices;
-using ECommons.GameHelpers;
-using ECommons.Logging;
-using ECommons.Reflection;
-using ECommons.Throttlers;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using GatherChill.Utilities.GatheringHelpers;
-using Lumina.Excel.Sheets;
+﻿using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
 namespace GatherChill.Utilities;
 
-public static unsafe class Utils
+public static class Utils
 {
-    #region Plugin/Ecoms stuff
-
-    public static bool HasPlugin(string name) => DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
-    internal static bool GenericThrottle => FrameThrottler.Throttle("AutoRetainerGenericThrottle", 10);
-    public static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 3000, abortOnTimeout: false);
-
-    public static void PluginVerbos(string message) => PluginLog.Verbose(message);
-    public static void PluginInfo(string message) => PluginLog.Information(message);
-    public static void PluginDebug(string message) => PluginLog.Debug(message);
-
-    #endregion
-
-    #region Player Information
-
-    public static uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.RowId;
-    public static unsafe int GetLevel(int expArrayIndex = -1)
+    public class GatherPointInfo
     {
-        if (expArrayIndex == -1) expArrayIndex = Svc.ClientState.LocalPlayer?.ClassJob.Value.ExpArrayIndex ?? 0;
-        return UIState.Instance()->PlayerState.ClassJobLevels[expArrayIndex];
-    }
-    internal static unsafe short GetCurrentLevelFromSheet(Job? job = null)
-    {
-        PlayerState* playerState = PlayerState.Instance();
-        return playerState->ClassJobLevels[Svc.Data.GetExcelSheet<ClassJob>().GetRowOrDefault((uint)(job ?? (Player.Available ? Player.Object.GetJob() : 0)))?.ExpArrayIndex ?? 0];
+        public uint Type { get; set; }
+        public uint Level { get; set; }
+        public uint TerritoryId { get; set; }
+        public string ZoneName { get; set; }
+        public string PlaceName { get; set; }
+        public uint ExpId { get; set; }
+        public string ExpansionName { get; set; }
+        public SortedSet<uint> NodeIds { get; set; }
+        public List<uint> ItemIds { get; set; }
+        public int Radius { get; set; }
     }
 
-    public static bool IsInZone(uint zoneID) => Svc.ClientState.TerritoryType == zoneID;
-    public static uint CurrentTerritory() => GameMain.Instance()->CurrentTerritoryTypeId;
-
-    public static bool IsBetweenAreas => Svc.Condition[ConditionFlag.BetweenAreas] || Svc.Condition[ConditionFlag.BetweenAreas51];
-
-    public static bool PlayerNotBusy()
+    public static Dictionary<uint, GatherPointInfo> SheetInfo = new();
+    public static void UpdateSheetInfo()
     {
-        return Player.Available
-               && Player.Object.CastActionId == 0
-               && !IsOccupied()
-               && !Player.IsJumping
-               && Player.Object.IsTargetable
-               && !Player.IsAnimationLocked;
-    }
+        var sheet_gatherPoint = Svc.Data.GetExcelSheet<GatheringPoint>();
+        var sheet_TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>();
+        var sheet_PlaceName = Svc.Data.GetExcelSheet<PlaceName>();
 
-    public static unsafe bool HasStatusId(params uint[] statusIDs)
-    {
-        var statusID = Svc.ClientState.LocalPlayer!.StatusList
-            .Select(se => se.StatusId)
-            .ToList().Intersect(statusIDs)
-            .FirstOrDefault();
-
-        return statusID != default;
-    }
-
-    public static int GetGp()
-    {
-        var gp = Svc.ClientState.LocalPlayer?.CurrentGp ?? 0;
-        return (int)gp;
-    }
-
-    internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
-    internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
-
-    public static unsafe int GetItemCount(int itemID, bool includeHq = true)
-    => includeHq ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true)
-    + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
-    : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
-
-    public static Vector3 NavDestination = Vector3.Zero;
-
-    #endregion
-
-    #region Target Information
-
-    internal static bool? TargetgameObject(IGameObject? gameObject)
-    {
-        var x = gameObject;
-        if (Svc.Targets.Target != null && Svc.Targets.Target.BaseId == x.BaseId)
-            return true;
-
-        if (!IsOccupied())
+        foreach (var gatherPoint in sheet_gatherPoint)
         {
-            if (x != null)
+            uint routeId = 0;
+
+            uint nodeId = gatherPoint.RowId;
+            uint type = 0;
+            uint level = 0;
+            uint territoryId = 0;
+            uint expansion = 0;
+            string expansionName = "ARealmReborn";
+            string zoneName = "???";
+            string placeName = "???";
+            List<uint> itemIds = new();
+            int radius = 0;
+
+
+            if (gatherPoint.GatheringPointBase.Value.GatheringLevel == 0)
             {
-                if (EzThrottler.Throttle($"Throttle Targeting {x.BaseId}"))
-                {
-                    Svc.Targets.SetTarget(x);
-                    ECommons.Logging.PluginLog.Information($"Setting the target to {x.BaseId}");
-                }
-            }
-        }
-        return false;
-    }
-    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.BaseId == dataId)) != null;
-    internal static unsafe void InteractWithObject(IGameObject? gameObject)
-    {
-        try
-        {
-            if (gameObject == null || !gameObject.IsTargetable)
-                return;
-            var gameObjectPointer = (GameObject*)gameObject.Address;
-            TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
-        }
-        catch (Exception ex)
-        {
-            Svc.Log.Info($"InteractWithObject: Exception: {ex}");
-        }
-    }
-
-    #endregion
-
-    #region Addon Information
-
-    public static bool IsAddonActive(string AddonName) // Used to see if the addon is active/ready to be fired on
-    {
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
-        return addon != null && addon->IsVisible && addon->IsReady;
-    }
-
-    #endregion
-
-    #region LoadOnBoot
-
-    public static void UpdateDictionaries()
-    {
-        var GathTypeSheets = Svc.Data.GetExcelSheet<GatheringType>();
-        var GatheringPointBaseSheets = Svc.Data.GetExcelSheet<GatheringPointBase>();
-        var GatheringItemSheet = Svc.Data.GetExcelSheet<GatheringItem>();
-        var ItemSheet = Svc.Data.GetExcelSheet<Item>();
-        var EventSheet = Svc.Data.GetExcelSheet<EventItem>();
-
-        foreach (var entry in GatheringPointBaseSheets)
-        {
-            var key = entry.RowId;
-            var gatheringType = entry.GatheringType.RowId.ToInt();
-            var level = entry.GatheringLevel;
-            if (level == 0 || gatheringType is (4 or 5))
+                // This isn't actually a node, so continueing on
                 continue;
-
-            HashSet<uint> items = new();
-            for (int i = 0; i < 8; i++)
+            }
+            else
             {
-                var item = entry.Item[i].RowId;
-                if (item != 0)
+                var gatherPointBase = gatherPoint.GatheringPointBase.Value; // Sheet: GatherPointBase
+                routeId = gatherPointBase.RowId;
+                type = gatherPointBase.GatheringType.Value.RowId; // Column 1
+                level = gatherPointBase.GatheringLevel; // Column 2
+
+                for (int i = 0; i <= 7; i++) // Items 0-7
                 {
-                    PluginLog.Debug($"Key: {key} | Gather Item: {item}");
-                    var itemId = GatheringItemSheet.GetRow(item).Item.RowId;
-                    items.Add(itemId);
+                    var gatheringItemId = gatherPointBase.Item[i].RowId;
+                    if (Svc.Data.GetExcelSheet<GatheringItem>().TryGetRow(gatheringItemId, out var gatherItem))
+                    {
+                        var itemId = gatherItem.Item.RowId;
+                        if (itemId != 0)
+                            itemIds.Add(itemId);
+                    }
                 }
+
+                if (itemIds.Count == 0)
+                    continue;
             }
 
-            if (!GatheringPointBaseDict.ContainsKey(key))
+            if (gatherPoint.TerritoryType.Value.RowId != 0 || gatherPoint.TerritoryType.Value.RowId != 1)
             {
-                GatheringPointBaseDict[key] = new GPBaseInformation
-                {
-                    GatheringType = gatheringType,
-                    GatheringLevel = level,
-                    Items = items,
-                };
-            }
+                var territoryType = gatherPoint.TerritoryType.Value;
+                territoryId = territoryType.RowId;
+                if (territoryType.Map.IsValid)
+                    zoneName = territoryType.PlaceName.Value.Name.ToString();
 
-            foreach (var data in GatheringNodeInfoList)
-            {
-                if (data.NodeSet == key)
-                {
-                    GatheringPointBaseDict[key].NodeIds.Add(data.NodeId);
-                }
-            }
-        }
-
-        foreach (var item in GatheringItemSheet)
-        {
-            var itemId = item.Item.RowId;
-            if (itemId == 0 || EventSheet.HasRow(itemId))
-                continue;
-
-            string itemName = ItemSheet.GetRow(itemId).Name.ToString();
-
-            if (!GatheringItems.ContainsKey(itemId))
-            {
-                GatheringItems.Add(itemId, itemName);
-            }
-
-        }
-    }
-
-    public static void RouteInfoCreator()
-    {
-        var GatherPointsExported = Svc.Data.GetExcelSheet<ExportedGatheringPoint>(); // Contains: Route [key], the center point, type, and radius
-        var GatherPointBase = Svc.Data.GetExcelSheet<GatheringPointBase>(); // Contains: Route [key], items, type, items [0-7]
-        var GatherPoint = Svc.Data.GetExcelSheet<GatheringPoint>(); // Contains: NodeId [key], Reference to GatherPointBase (which one it belongs to), Territory Type (Leads to... well territory type), and expansion
-        var TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>(); // Contains: Territory ID [Key], Place Name (Specific Area Info) [ID for PlaceName]
-        var PlaceName = Svc.Data.GetExcelSheet<PlaceName>(); // Contains: Id [for placename] -> Name
-        var ExVersion = Svc.Data.GetExcelSheet<ExVersion>(); // Contains: Ex Version [Key] -> Expansion Name
-
-        var GatheringTypes = Svc.Data.GetExcelSheet<GatheringType>(); // Contains: Type [key], Name [Kind], Normal Icon, Shiny Icon
-        var GatheringItems = Svc.Data.GetExcelSheet<GatheringItem>(); // 
-        var ItemSheet = Svc.Data.GetExcelSheet<Item>();
-        var EventItemSheet = Svc.Data.GetExcelSheet<EventItem>();
-
-        // First thing first, going to load the icons for storage. This is moreso for astetics and lets me know what kind it is w/ a simple glance.
-        foreach (var entry in GatheringTypes)
-        {
-            var key = entry.RowId;
-            var name = entry.Name.ToString();
-            ISharedImmediateTexture? mainIcon = null;
-            ISharedImmediateTexture? offIcon = null;
-            if (entry.IconMain is { } IconMain)
-            {
-                if (Svc.Texture.TryGetFromGameIcon(IconMain, out var icon))
-                {
-                    mainIcon = icon;
-                }
-            }
-            if (entry.IconOff is { } IconOff)
-            {
-                if (Svc.Texture.TryGetFromGameIcon(IconOff, out var icon))
-                {
-                    offIcon = icon;
-                }
-            }
-
-            if (!GatherClasses.GatheringTypeIcons.ContainsKey(key))
-            {
-                GatherClasses.GatheringTypeIcons[key] = new GatherClasses.GatheringTypes
-                {
-                    Name = name,
-                    MainIcon = mainIcon,
-                    ShinyIcon = offIcon,
-                };
-            }
-        }
-
-        // Next thing, time to load the dictionary. This is moreso for internal reasons/debug purposes. But also a good back reference
-        foreach (var route in GatherPointsExported)
-        {
-            try
-            {
-                var routeId = route.RowId;
-                Vector2 mapCenter = new Vector2(route.X, route.Y);
-                var gatheringType = route.GatheringType.RowId;
-
-                // Really just here cause there doesn't need to be a route 0 entry. There is no route 0 in Ba-sing-se
-                if (routeId == 0)
+                if (zoneName == string.Empty)
                     continue;
 
-                if (!GatherClasses.GatheringDatabase.ContainsKey(routeId))
-                {
-                    GatherClasses.GatheringDatabase[routeId] = new GatherClasses.RouteInfo
-                    {
-                        MapCenter = mapCenter,
-                        MapRadius = route.Radius,
-                        GatheringType = gatheringType
-                    };
-                }
+                expansion = territoryType.ExVersion.Value.RowId;
             }
-            catch (Exception ex)
+            else
             {
-                PluginLog.Error($"Can't access row: {route.RowId}: {ex}");
+                // These shouldn't exist, and probably exist currently for leve purposes. So skipping them
+                continue;
             }
-        }
 
-        // Creating the expansion dictionary for personal use/storage (just a quick way vs cross referencing the sheet)
-        foreach (var ex in ExVersion)
-        {
-            uint expansionId = ex.RowId;
-            string expansionName = ex.Name.ToString();
-
-            GatherClasses.ExpansionInfo.Add(expansionId, expansionName);
-        }
-
-        // Update the route's items
-        foreach (var routeItems in GatherPointBase)
-        {
-            var routeId = routeItems.RowId;
-            if (GatherClasses.GatheringDatabase.ContainsKey(routeId))
+            if (gatherPoint.PlaceName.IsValid)
             {
-                Dictionary<uint, string> itemDict = new Dictionary<uint, string>();
-                HashSet<uint> itemIds = new HashSet<uint>();
-                itemDict.Clear();
-
-                for (var i = 0; i < 8; i++)
-                {
-                    if (routeItems.Item[i].RowId != 0)
-                    {
-                        var gathItemId = routeItems.Item[i].RowId;
-                        // An item is found, so time to check to see what the fuck kind of item it is. 
-                        // This leads to the GatheringItemSheet next so, time to check that. 
-
-                        if (GatheringItems.TryGetRow(gathItemId, out var gathItem))
-                        {
-                            var itemId = gathItem.Item.RowId;
-                            itemIds.Add(itemId);
-                            if (ItemSheet.TryGetRow(itemId, out var item))
-                            {
-                                string itemName = item.Name.ToString();
-                                itemDict.Add(itemId, itemName);
-                            }
-                            else if (EventItemSheet.TryGetRow(itemId, out var eventitem))
-                            {
-                                string itemName = eventitem.Name.ToString();
-                                itemDict.Add(itemId, itemName);
-                            }
-                        }
-                    }
-                }
-
-                GatherClasses.GatheringDatabase[routeId].ItemIds = itemIds;
-                GatherClasses.GatheringDatabase[routeId].Items = itemDict;
+                var placeNameSheet = gatherPoint.PlaceName.Value;
+                placeName = placeNameSheet.Name.ToString();
             }
-        }
 
-        // Setting Route Numbers to the nodes
-        foreach (var node in GatherPoint)
-        {
-            var nodeId = node.RowId;
-            var routeId = node.GatheringPointBase.RowId;
-            var territoryId = node.TerritoryType.RowId;
-
-            if (GatherClasses.GatheringDatabase.TryGetValue(routeId, out var route))
+            switch (expansion)
             {
-                Svc.Log.Debug($"RouteId: {routeId} was found");
-                route.NodeIds.Add(nodeId);
+                case 0: expansionName = "ARealmReborn"; break;
+                case 1: expansionName = "Heavensward"; break;
+                case 2: expansionName = "Stormblood"; break;
+                case 3: expansionName = "Shadowbringers"; break;
+                case 4: expansionName = "Endwalker"; break;
+                case 5: expansionName = "Dawntrail"; break;
+                default: expansionName = "???"; break;
+            }
 
-                if (route.ZoneId < 128 && TerritoryType.TryGetRow(territoryId, out var territory))
+            if (Svc.Data.GetExcelSheet<ExportedGatheringPoint>().TryGetRow(routeId, out var exportSheet))
+            {
+                radius = exportSheet.Radius;
+            }
+
+            if (SheetInfo.TryGetValue(routeId, out var routeInfo))
+            {
+                if (zoneName != "???")
+                    routeInfo.ZoneName = zoneName;
+                if (placeName != "???")
+                    routeInfo.PlaceName = placeName;
+                routeInfo.NodeIds.Add(nodeId);
+            }
+            else
+            {
+                SheetInfo.Add(routeId, new GatherPointInfo()
                 {
-                    var placeNameId = territory.PlaceName.RowId;
-                    if (placeNameId != 0)
-                    {
-                        string zoneName = PlaceName.GetRow(placeNameId).Name.ToString();
-
-                        route.ZoneId = territoryId;
-                        route.ZoneName = zoneName;
-                        route.ExpansionId = territory.ExVersion.RowId;
-                        route.ExpansionName = GatherClasses.ExpansionInfo[territory.ExVersion.RowId];
-                    }
-                }
+                    Type = type, 
+                    Level = level,
+                    TerritoryId = territoryId,
+                    ZoneName = zoneName,
+                    PlaceName = placeName,
+                    NodeIds = new() { nodeId },
+                    ItemIds = itemIds,
+                    Radius = radius,
+                    ExpId = expansion,
+                    ExpansionName = expansionName,
+                });
             }
         }
     }
-
-    #endregion
-
-    #region ActionUsage
-
-    public static bool BoonIncrease1Bool(int boonChance)
-    {
-        return C.AbilityConfigDict["BoonIncrease1"].Enable
-            && boonChance < 100
-            && !HasStatusId(GathActionDict["BoonIncrease1"].StatusId)
-            && GetGp() >= GathActionDict["BoonIncrease1"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["BoonIncrease1"].MinimumGP;
-    }
-
-    public static bool BoonIncrease2Bool(int boonChance)
-    {
-        return C.AbilityConfigDict["BoonIncrease2"].Enable
-            && boonChance < 100
-            && !HasStatusId(GathActionDict["BoonIncrease2"].StatusId)
-            && GetGp() >= GathActionDict["BoonIncrease2"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["BoonIncrease2"].MinimumGP;
-    }
-
-    public static bool TidingsBool()
-    {
-        return C.AbilityConfigDict["Tidings"].Enable
-            && !HasStatusId(GathActionDict["Tidings"].StatusId)
-            && GetGp() >= GathActionDict["Tidings"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["Tidings"].MinimumGP;
-    }
-
-    public static bool Yield1Bool()
-    {
-        return C.AbilityConfigDict["Yield1"].Enable
-            && !HasStatusId(GathActionDict["Yield1"].StatusId)
-            && GetGp() >= GathActionDict["Yield1"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["Yield1"].MinimumGP;
-    }
-
-    public static bool Yield2Bool()
-    {
-        return C.AbilityConfigDict["Yield2"].Enable
-            && !HasStatusId(GathActionDict["Yield2"].StatusId)
-            && GetGp() >= GathActionDict["Yield2"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["Yield2"].MinimumGP;
-    }
-
-    public static bool IntegrityBool(bool durMissing)
-    {
-        return C.AbilityConfigDict["IntegrityIncrease"].Enable
-            && durMissing
-            && GetGp() >= GathActionDict["IntegrityIncrease"].RequiredGp
-            && GetGp() >= C.AbilityConfigDict["IntegrityIncrease"].MinimumGP;
-    }
-
-    public static bool BonusIntegrityBool(bool durMissing)
-    {
-        return HasStatusId(GathActionDict["BonusIntegrityChance"].StatusId)
-            && durMissing;
-    }
-
-    #endregion
-
-    #region Useful Functions
-
-    public static Vector3 RoundVector3(Vector3 v, int decimals)
-    {
-        return new Vector3(
-            (float)Math.Round(v.X, decimals),
-            (float)Math.Round(v.Y, decimals),
-            (float)Math.Round(v.Z, decimals)
-        );
-    }
-
-
-    #endregion
-
-    #region Picto Tools
-
-    public static uint ToUintABGR(Vector4 col)
-    {
-        byte a = (byte)(col.W * 255);
-        byte b = (byte)(col.Z * 255);
-        byte g = (byte)(col.Y * 255);
-        byte r = (byte)(col.X * 255);
-        return (uint)((a << 24) | (b << 16) | (g << 8) | r);
-    }
-
-    public static Vector4 FromUintABGR(uint color)
-    {
-        float a = ((color >> 24) & 0xFF) / 255f;
-        float b = ((color >> 16) & 0xFF) / 255f;
-        float g = ((color >> 8) & 0xFF) / 255f;
-        float r = (color & 0xFF) / 255f;
-        return new Vector4(r, g, b, a);
-    }
-
-    public static float DegreesToRadians(float degrees)
-    {
-        return degrees * (MathF.PI / 180f);
-    }
-
-    #endregion
-
 }

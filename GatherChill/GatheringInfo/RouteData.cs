@@ -1,100 +1,128 @@
-﻿using ECommons.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Numerics;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace GatherChill.GatheringInfo;
-
-public abstract class RouteInfo
-{
-    public abstract uint ExpansionId { get; }
-    public abstract uint ZoneId { get; }
-    public abstract Vector2 MapPosition { get; }
-    public abstract int Radius { get; }
-    public abstract uint Id { get; }
-    public abstract HashSet<uint> ItemIds { get; }
-    public abstract HashSet<uint> NodeIds { get; }
-    public abstract List<NodeInfo> Nodes { get; }
-    public abstract uint GatherType { get; }
-}
-
-public class NodeInfo
-{
-    public uint NodeId { get; set; } = 0;
-    public Vector3 NodePosition { get; set; } = Vector3.Zero;
-    public LandingInfo LandingInfo { get; set; }
-}
-
-public class LandingInfo
-{
-    public Vector3 LandZone { get; set; } = Vector3.Zero;
-    public bool UseRadial { get; set; } = true;
-    public float InnerRadius { get; set; } = 1.0f;
-    public float OuterRadius { get; set; } = 3.0f;
-    public float StartAngle { get; set; } = 0.0f;
-    public float EndAngle { get; set; } = 360.0f;
-    public float RotationOffset { get; set; } = 0.0f;
-}
-
-// In RouteData.cs
-public class RouteData
+namespace GatherChill.GatheringInfo
 {
     /// <summary>
-    /// Key - ExpansionId
-    /// Value - Dictionary<ZoneId, Dictionary<RouteId, RouteInfo>>
+    /// Contains all the info for the gathering route
     /// </summary>
-    public Dictionary<uint, Dictionary<uint, Dictionary<uint, RouteInfo>>> GatheringInfo = new();
-
-    /// <summary>
-    /// Loads all route classes that inherit from RouteInfo using reflection
-    /// </summary>
-    public void LoadAllRoutes()
+    public class GatheringRoute
     {
-        // Get the current assembly
-        var assembly = Assembly.GetExecutingAssembly();
+        [JsonPropertyName("routeId")]
+        public uint RouteId { get; set; }
 
-        // Find all types that inherit from RouteInfo and aren't abstract
-        var routeTypes = assembly.GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(RouteInfo)) && !t.IsAbstract);
+        [JsonPropertyName("territoryId")]
+        public uint TerritoryId { get; set; }
 
-        foreach (var routeType in routeTypes)
+        [JsonPropertyName("zoneName")]
+        public string ZoneName { get; set; }
+
+        [JsonPropertyName("placeName")]
+        public string PlaceName { get; set; }
+
+        [JsonPropertyName("expansionId")]
+        public uint ExpansionId { get; set; } // 0 = ARR, 1 = HW, 2 = Stb, 3 = ShB, 4 = EW, 5 = DT
+
+        [JsonPropertyName("gatheringJobId")]
+        public uint GatheringJobId { get; set; } // 16 = MIN, 17 = BTN, 18 = FSH
+
+        [JsonPropertyName("levelRequirement")]
+        public int LevelRequirement { get; set; }
+
+        [JsonPropertyName("nodeIds")]
+        public List<uint> NodeIds { get; set; } = new();
+
+        [JsonPropertyName("requiresFolklore")]
+        public bool RequiresFolklore { get; set; }
+
+        [JsonPropertyName("folkloreBook")]
+        public string FolkloreBook { get; set; }
+
+        [JsonPropertyName("author")]
+        public string Author { get; set; }
+
+        [JsonPropertyName("lastUpdated")]
+        public string LastUpdated { get; set; }
+
+        [JsonPropertyName("nodeGroups")]
+        public List<NodeGroup> NodeGroups { get; set; } = new();
+    }
+
+    /// <summary>
+    /// A list/group of the nodes that are close together
+    /// ARR can sometimes be one group, while anything post HW are usually 3+
+    /// </summary>
+    public class NodeGroup
+    {
+        [JsonPropertyName("groupId")]
+        public int GroupId { get; set; }
+
+        [JsonPropertyName("nodes")]
+        public List<GatheringNode> Nodes { get; set; } = new();
+    }
+
+    /// <summary>
+    /// The node info itself, contains the nodeId + all the locations it's in
+    /// </summary>
+    public class GatheringNode
+    {
+        [JsonPropertyName("nodeId")]
+        public uint NodeId { get; set; }
+
+        [JsonPropertyName("locations")]
+        public List<NodeLocation> Locations { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Specific info about the node, position, landing angles... etc
+    /// </summary>
+    public class NodeLocation
+    {
+        [JsonPropertyName("position")]
+        public Position Position { get; set; }
+
+        [JsonPropertyName("minAngle")]
+        public float MinAngle { get; set; } = 0.0f;
+
+        [JsonPropertyName("maxAngle")]
+        public float MaxAngle { get; set; } = 360.0f;
+
+        [JsonPropertyName("minDistance")]
+        public float MinDistance { get; set; } = 1.0f;
+
+        [JsonPropertyName("maxDistance")]
+        public float MaxDistance { get; set; } = 5.0f;
+
+        [JsonPropertyName("allowFlying")]
+        public bool AllowFlying { get; set; } = true;
+    }
+
+    /// <summary>
+    /// Actual stored info on the position (just in .json format)
+    /// </summary>
+    public class Position
+    {
+        [JsonPropertyName("x")]
+        public float X { get; set; }
+
+        [JsonPropertyName("y")]
+        public float Y { get; set; }
+
+        [JsonPropertyName("z")]
+        public float Z { get; set; }
+
+        public Vector3 ToVector3() => new Vector3(X, Y, Z);
+
+        public static Position FromVector3(Vector3 vector) => new Position
         {
-            try
-            {
-                // Create an instance of the route class
-                var route = (RouteInfo)Activator.CreateInstance(routeType);
-
-                // Get expansion, zone, and route IDs
-                uint expansionId = route.ExpansionId;
-                uint zoneId = route.ZoneId;
-                uint routeId = route.Id;
-
-                // Ensure the expansion dictionary exists
-                if (!GatheringInfo.ContainsKey(expansionId))
-                {
-                    GatheringInfo[expansionId] = new Dictionary<uint, Dictionary<uint, RouteInfo>>();
-                }
-
-                // Ensure the zone dictionary exists
-                if (!GatheringInfo[expansionId].ContainsKey(zoneId))
-                {
-                    GatheringInfo[expansionId][zoneId] = new Dictionary<uint, RouteInfo>();
-                }
-
-                // Add the route using its ID as the key
-                GatheringInfo[expansionId][zoneId][routeId] = route;
-
-                PluginLog.Information($"Loaded route: {routeType.Name} (Expansion: {expansionId}, Zone: {zoneId}, Route: {routeId})");
-            }
-            catch (Exception ex)
-            {
-                PluginLog.Error($"Failed to load route {routeType.Name}: {ex.Message}");
-            }
-        }
-
-        PluginLog.Information($"Loaded {routeTypes.Count()} routes across {GatheringInfo.Count} expansions");
+            X = vector.X,
+            Y = vector.Y,
+            Z = vector.Z
+        };
     }
 }

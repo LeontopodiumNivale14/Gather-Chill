@@ -1,0 +1,64 @@
+{
+  "routeId": 527,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "The High Bank",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32275
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32275,
+          "locations": [
+            {
+              "position": {
+                "x": -456.554,
+                "y": 45.70671,
+                "z": -438.5111
+              },
+              "minAngle": -310,
+              "maxAngle": -260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -481.7688,
+                "y": 47.26837,
+                "z": -453.874
+              },
+              "minAngle": -25,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -501.7443,
+                "y": 45.09426,
+                "z": -422.858
+              },
+              "minAngle": -100,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "routeId": 924,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Timh Gyeus",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34440,
+    34444,
+    34442
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34440,
+          "locations": [
+            {
+              "position": {
+                "x": -623.2548,
+                "y": 115.0072,
+                "z": 639.9481
+              },
+              "minAngle": -115,
+              "maxAngle": -75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -625.6351,
+                "y": 120.7446,
+                "z": 654.7188
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34444,
+          "locations": [
+            {
+              "position": {
+                "x": -404.0598,
+                "y": 105.2424,
+                "z": 782.5858
+              },
+              "minAngle": -115,
+              "maxAngle": -70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -401.9083,
+                "y": 98.57439,
+                "z": 754.0812
+              },
+              "minAngle": -110,
+              "maxAngle": -45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34442,
+          "locations": [
+            {
+              "position": {
+                "x": -509.9301,
+                "y": 127.1202,
+                "z": 846.1483
+              },
+              "minAngle": -200,
+              "maxAngle": -145,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -488.1909,
+                "y": 125.55,
+                "z": 852.1786
+              },
+              "minAngle": -150,
+              "maxAngle": -145,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

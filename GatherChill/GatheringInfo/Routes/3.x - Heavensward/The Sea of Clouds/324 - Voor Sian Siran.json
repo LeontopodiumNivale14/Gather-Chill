@@ -1,0 +1,52 @@
+{
+  "routeId": 324,
+  "territoryId": 401,
+  "zoneName": "The Sea of Clouds",
+  "placeName": "Voor Sian Siran",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31465
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31465,
+          "locations": [
+            {
+              "position": {
+                "x": 608.8767,
+                "y": -153.4452,
+                "z": 727.9901
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 665.5395,
+                "y": -157.7969,
+                "z": 826.8955
+              },
+              "minAngle": -355,
+              "maxAngle": -190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

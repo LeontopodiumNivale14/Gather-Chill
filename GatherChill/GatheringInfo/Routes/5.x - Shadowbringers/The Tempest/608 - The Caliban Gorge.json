@@ -1,0 +1,64 @@
+{
+  "routeId": 608,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "The Caliban Gorge",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32682
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32682,
+          "locations": [
+            {
+              "position": {
+                "x": -274.5657,
+                "y": 272.2622,
+                "z": 6.350259
+              },
+              "minAngle": -165,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -269.0729,
+                "y": 272.2177,
+                "z": 21.31801
+              },
+              "minAngle": -180,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -282.1846,
+                "y": 271.2027,
+                "z": -5.627921
+              },
+              "minAngle": -195,
+              "maxAngle": -65,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

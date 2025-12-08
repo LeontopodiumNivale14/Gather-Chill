@@ -1,0 +1,64 @@
+{
+  "routeId": 290,
+  "territoryId": 399,
+  "zoneName": "The Dravanian Hinterlands",
+  "placeName": "The Ruling Quarter",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31705
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31705,
+          "locations": [
+            {
+              "position": {
+                "x": -272.7063,
+                "y": 154.8977,
+                "z": 439.2391
+              },
+              "minAngle": -155,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -331.3825,
+                "y": 143.3122,
+                "z": 413.3614
+              },
+              "minAngle": -210,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -295.3932,
+                "y": 149.562,
+                "z": 303.0117
+              },
+              "minAngle": -235,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

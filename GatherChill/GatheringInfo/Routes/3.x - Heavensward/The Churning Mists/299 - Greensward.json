@@ -1,0 +1,64 @@
+{
+  "routeId": 299,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "Greensward",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31709
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31709,
+          "locations": [
+            {
+              "position": {
+                "x": -614.5861,
+                "y": 168.0191,
+                "z": 763.6442
+              },
+              "minAngle": -330,
+              "maxAngle": -235,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -519.7656,
+                "y": 168.0021,
+                "z": 755.4191
+              },
+              "minAngle": -215,
+              "maxAngle": -130,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -691.1583,
+                "y": 173.6187,
+                "z": 813.4564
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

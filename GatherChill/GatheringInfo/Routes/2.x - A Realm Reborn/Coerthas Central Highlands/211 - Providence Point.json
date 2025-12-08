@@ -1,0 +1,52 @@
+{
+  "routeId": 211,
+  "territoryId": 155,
+  "zoneName": "Coerthas Central Highlands",
+  "placeName": "Providence Point",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    30999
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 30999,
+          "locations": [
+            {
+              "position": {
+                "x": 449.9411,
+                "y": 340.438,
+                "z": -428.0981
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 406.6353,
+                "y": 338.3764,
+                "z": -438.7314
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

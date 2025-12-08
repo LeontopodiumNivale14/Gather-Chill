@@ -1,0 +1,212 @@
+{
+  "routeId": 840,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "Giantsgall Grounds",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    33993,
+    33992,
+    33990,
+    33991,
+    33988,
+    33989
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33993,
+          "locations": [
+            {
+              "position": {
+                "x": -97.85602,
+                "y": 91.39626,
+                "z": -562.7067
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33992,
+          "locations": [
+            {
+              "position": {
+                "x": -91.53894,
+                "y": 91.14209,
+                "z": -520.9888
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -82.73576,
+                "y": 91.15034,
+                "z": -532.2811
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -119.5286,
+                "y": 89.67725,
+                "z": -601.3649
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33990,
+          "locations": [
+            {
+              "position": {
+                "x": 105.0951,
+                "y": 75.30056,
+                "z": -581.8511
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33991,
+          "locations": [
+            {
+              "position": {
+                "x": 113.0813,
+                "y": 72.75166,
+                "z": -575.8746
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 133.7231,
+                "y": 67.87361,
+                "z": -567.9795
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 109.7108,
+                "y": 71.64627,
+                "z": -562.0082
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33988,
+          "locations": [
+            {
+              "position": {
+                "x": 53.25103,
+                "y": 92.24804,
+                "z": -643.022
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33989,
+          "locations": [
+            {
+              "position": {
+                "x": 59.02333,
+                "y": 93.08621,
+                "z": -646.8438
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 8.818645,
+                "y": 90.40326,
+                "z": -640.8149
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 41.15356,
+                "y": 96.41193,
+                "z": -676.5558
+              },
+              "minAngle": -85,
+              "maxAngle": 90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

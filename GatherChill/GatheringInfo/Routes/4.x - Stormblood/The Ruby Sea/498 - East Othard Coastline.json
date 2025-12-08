@@ -1,0 +1,64 @@
+{
+  "routeId": 498,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "East Othard Coastline",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 65,
+  "nodeIds": [
+    32181
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32181,
+          "locations": [
+            {
+              "position": {
+                "x": -297.3186,
+                "y": 33.6607,
+                "z": -811.2194
+              },
+              "minAngle": -290,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -366.326,
+                "y": 33.5111,
+                "z": -804.7062
+              },
+              "minAngle": -115,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -322.6913,
+                "y": 39.92195,
+                "z": -850.1097
+              },
+              "minAngle": -10,
+              "maxAngle": 50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

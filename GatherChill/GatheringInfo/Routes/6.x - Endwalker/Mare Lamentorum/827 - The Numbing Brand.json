@@ -1,0 +1,76 @@
+{
+  "routeId": 827,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "The Numbing Brand",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34047,
+    33960,
+    34046
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34047,
+          "locations": [
+            {
+              "position": {
+                "x": -75.00626,
+                "y": 89.07687,
+                "z": 657.8351
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33960,
+          "locations": [
+            {
+              "position": {
+                "x": 18.49565,
+                "y": 111.6773,
+                "z": 737.7383
+              },
+              "minAngle": -150,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34046,
+          "locations": [
+            {
+              "position": {
+                "x": 82.72882,
+                "y": 71.23933,
+                "z": 588.6602
+              },
+              "minAngle": -335,
+              "maxAngle": -270,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

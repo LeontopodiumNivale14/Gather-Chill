@@ -1,0 +1,64 @@
+{
+  "routeId": 557,
+  "territoryId": 620,
+  "zoneName": "The Peaks",
+  "placeName": "Rustrock",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32370
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32370,
+          "locations": [
+            {
+              "position": {
+                "x": 581.4359,
+                "y": 273.1365,
+                "z": -536.6528
+              },
+              "minAngle": -205,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 572.472,
+                "y": 273.0863,
+                "z": -543.7453
+              },
+              "minAngle": -160,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 624.3592,
+                "y": 272.379,
+                "z": -547.8326
+              },
+              "minAngle": -315,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

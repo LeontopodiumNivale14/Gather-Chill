@@ -1,0 +1,64 @@
+{
+  "routeId": 0,
+  "territoryId": 939,
+  "zoneName": "Unknown",
+  "placeName": "Unknown",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 1,
+  "nodeIds": [
+    33836
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33836,
+          "locations": [
+            {
+              "position": {
+                "x": -433.7343,
+                "y": 320.735,
+                "z": -602.6309
+              },
+              "minAngle": -200,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -416.3145,
+                "y": 320.5766,
+                "z": -595.2392
+              },
+              "minAngle": -105,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -433.9591,
+                "y": 320.6597,
+                "z": -582.4659
+              },
+              "minAngle": -5,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

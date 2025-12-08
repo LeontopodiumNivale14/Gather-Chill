@@ -1,0 +1,40 @@
+{
+  "routeId": 771,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "Shoal Rock",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 65,
+  "nodeIds": [
+    33022
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33022,
+          "locations": [
+            {
+              "position": {
+                "x": 580.3148,
+                "y": 99.79443,
+                "z": -613.0334
+              },
+              "minAngle": -250,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

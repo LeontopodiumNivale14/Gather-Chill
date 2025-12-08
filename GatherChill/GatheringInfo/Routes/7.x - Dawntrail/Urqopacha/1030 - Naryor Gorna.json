@@ -1,0 +1,64 @@
+{
+  "routeId": 1030,
+  "territoryId": 1187,
+  "zoneName": "Urqopacha",
+  "placeName": "Naryor Gorna",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34990
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34990,
+          "locations": [
+            {
+              "position": {
+                "x": 790.9955,
+                "y": 137.0049,
+                "z": 391.3359
+              },
+              "minAngle": -305,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 771.1741,
+                "y": 139.1398,
+                "z": 414.7099
+              },
+              "minAngle": -275,
+              "maxAngle": -190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 773.144,
+                "y": 138.2719,
+                "z": 407.3316
+              },
+              "minAngle": -285,
+              "maxAngle": -160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

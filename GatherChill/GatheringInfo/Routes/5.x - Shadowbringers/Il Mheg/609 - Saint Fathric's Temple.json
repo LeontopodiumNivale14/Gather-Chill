@@ -1,0 +1,64 @@
+{
+  "routeId": 609,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Saint Fathric\u0027s Temple",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32683
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32683,
+          "locations": [
+            {
+              "position": {
+                "x": 427.9646,
+                "y": 183.3215,
+                "z": -56.99644
+              },
+              "minAngle": -40,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 459.9862,
+                "y": 186.8991,
+                "z": -60.42558
+              },
+              "minAngle": -360,
+              "maxAngle": -280,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 475.3741,
+                "y": 192.514,
+                "z": -15.59578
+              },
+              "minAngle": -325,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

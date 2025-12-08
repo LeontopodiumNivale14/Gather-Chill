@@ -1,0 +1,64 @@
+{
+  "routeId": 558,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "The Glittering Basin",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32371
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32371,
+          "locations": [
+            {
+              "position": {
+                "x": 342.5255,
+                "y": 28.90439,
+                "z": 670.0958
+              },
+              "minAngle": -240,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 336.0037,
+                "y": 36.50327,
+                "z": 701.9911
+              },
+              "minAngle": -165,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 348.216,
+                "y": 36.53113,
+                "z": 706.1531
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

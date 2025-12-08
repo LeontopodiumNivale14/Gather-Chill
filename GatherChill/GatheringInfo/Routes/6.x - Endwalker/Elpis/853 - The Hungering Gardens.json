@@ -1,0 +1,64 @@
+{
+  "routeId": 853,
+  "territoryId": 961,
+  "zoneName": "Elpis",
+  "placeName": "The Hungering Gardens",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34040
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34040,
+          "locations": [
+            {
+              "position": {
+                "x": 165.5449,
+                "y": 155.0234,
+                "z": -797.1223
+              },
+              "minAngle": -360,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 183.1327,
+                "y": 154.8293,
+                "z": -790.7365
+              },
+              "minAngle": -140,
+              "maxAngle": 5,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 173.2332,
+                "y": 155.1377,
+                "z": -788.0162
+              },
+              "minAngle": -70,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

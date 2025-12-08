@@ -1,0 +1,176 @@
+{
+  "routeId": 725,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "The Hundred Throes",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33300,
+    33299,
+    33297,
+    33298,
+    33295,
+    33296
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33300,
+          "locations": [
+            {
+              "position": {
+                "x": 560.8948,
+                "y": -19.68621,
+                "z": -534.3345
+              },
+              "minAngle": -75,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 557.1625,
+                "y": -19.65358,
+                "z": -547.1852
+              },
+              "minAngle": 60,
+              "maxAngle": 200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33299,
+          "locations": [
+            {
+              "position": {
+                "x": 571.0399,
+                "y": -19.2677,
+                "z": -544.8133
+              },
+              "minAngle": 200,
+              "maxAngle": 320,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33297,
+          "locations": [
+            {
+              "position": {
+                "x": 630.7735,
+                "y": -18.70739,
+                "z": -566.2144
+              },
+              "minAngle": 85,
+              "maxAngle": 240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33298,
+          "locations": [
+            {
+              "position": {
+                "x": 639.3101,
+                "y": -18.78794,
+                "z": -559.5169
+              },
+              "minAngle": -175,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 618.4453,
+                "y": -18.9477,
+                "z": -559.1786
+              },
+              "minAngle": 60,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33295,
+          "locations": [
+            {
+              "position": {
+                "x": 731.6483,
+                "y": -20.17027,
+                "z": -614.199
+              },
+              "minAngle": -35,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33296,
+          "locations": [
+            {
+              "position": {
+                "x": 743.4034,
+                "y": -19.02,
+                "z": -621.8422
+              },
+              "minAngle": 195,
+              "maxAngle": 325,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 727.6966,
+                "y": -20.47985,
+                "z": -627.8105
+              },
+              "minAngle": 60,
+              "maxAngle": 210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

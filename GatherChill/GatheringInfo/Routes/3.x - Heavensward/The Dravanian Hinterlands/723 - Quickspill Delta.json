@@ -1,0 +1,152 @@
+{
+  "routeId": 723,
+  "territoryId": 399,
+  "zoneName": "The Dravanian Hinterlands",
+  "placeName": "Quickspill Delta",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33285,
+    33286,
+    33288,
+    33287,
+    33284,
+    33283
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33285,
+          "locations": [
+            {
+              "position": {
+                "x": -426.4134,
+                "y": 137.5601,
+                "z": 514.3357
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33286,
+          "locations": [
+            {
+              "position": {
+                "x": -448.7838,
+                "y": 137.5986,
+                "z": 514.3243
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -433.5015,
+                "y": 137.6451,
+                "z": 487.8173
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33288,
+          "locations": [
+            {
+              "position": {
+                "x": -354.5423,
+                "y": 137.5715,
+                "z": 638.9959
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33287,
+          "locations": [
+            {
+              "position": {
+                "x": -352.4377,
+                "y": 137.5906,
+                "z": 604.364
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33284,
+          "locations": [
+            {
+              "position": {
+                "x": -254.4776,
+                "y": 137.97,
+                "z": 591.0092
+              },
+              "minAngle": -20,
+              "maxAngle": 85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33283,
+          "locations": [
+            {
+              "position": {
+                "x": -263.1079,
+                "y": 137.4419,
+                "z": 569.8724
+              },
+              "minAngle": -10,
+              "maxAngle": 190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

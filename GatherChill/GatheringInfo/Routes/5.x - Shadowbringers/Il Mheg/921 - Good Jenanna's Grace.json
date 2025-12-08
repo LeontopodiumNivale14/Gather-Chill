@@ -1,0 +1,176 @@
+{
+  "routeId": 921,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Good Jenanna\u0027s Grace",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34422,
+    34421,
+    34423,
+    34424,
+    34425,
+    34426
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34422,
+          "locations": [
+            {
+              "position": {
+                "x": -161.9915,
+                "y": 60.04895,
+                "z": -647.3901
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -179.2945,
+                "y": 60.84981,
+                "z": -630.9084
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34421,
+          "locations": [
+            {
+              "position": {
+                "x": -182.311,
+                "y": 60.81965,
+                "z": -640.2197
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34423,
+          "locations": [
+            {
+              "position": {
+                "x": -182.0749,
+                "y": 60.70063,
+                "z": -567.6271
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34424,
+          "locations": [
+            {
+              "position": {
+                "x": -184.7115,
+                "y": 59.23207,
+                "z": -573.9592
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -171.0273,
+                "y": 62.20385,
+                "z": -576.3321
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34425,
+          "locations": [
+            {
+              "position": {
+                "x": -333.3387,
+                "y": 82.66466,
+                "z": -505.7937
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34426,
+          "locations": [
+            {
+              "position": {
+                "x": -333.0683,
+                "y": 82.72758,
+                "z": -501.5885
+              },
+              "minAngle": 75,
+              "maxAngle": 265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -349.0388,
+                "y": 89.44427,
+                "z": -512.492
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

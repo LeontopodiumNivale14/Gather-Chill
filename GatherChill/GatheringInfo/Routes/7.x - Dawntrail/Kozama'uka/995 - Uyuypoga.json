@@ -1,0 +1,130 @@
+{
+  "routeId": 995,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Uyuypoga",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34875,
+    34876,
+    34878,
+    34877,
+    34880,
+    34879
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34875,
+          "locations": [
+            {
+              "position": {
+                "x": 483.1697,
+                "y": 6.208903,
+                "z": -369.9855
+              },
+              "minAngle": 175,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34876,
+          "locations": [
+            {
+              "position": {
+                "x": 468.3087,
+                "y": 6.144982,
+                "z": -355.3632
+              },
+              "minAngle": -175,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34878,
+          "locations": [
+            {
+              "position": {
+                "x": 504.0732,
+                "y": 6.792304,
+                "z": -591.5602
+              },
+              "minAngle": -55,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34877,
+          "locations": [
+            {
+              "position": {
+                "x": 523.9795,
+                "y": 6.393494,
+                "z": -589.0135
+              },
+              "minAngle": -335,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34880,
+          "locations": [
+            {
+              "position": {
+                "x": 603.8677,
+                "y": 21.53342,
+                "z": -473.2281
+              },
+              "minAngle": -240,
+              "maxAngle": -150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34879,
+          "locations": [
+            {
+              "position": {
+                "x": 604.6793,
+                "y": 21.20075,
+                "z": -467.9937
+              },
+              "minAngle": -105,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

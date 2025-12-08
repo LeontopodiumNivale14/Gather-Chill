@@ -1,0 +1,40 @@
+{
+  "routeId": 1191,
+  "territoryId": 1189,
+  "zoneName": "Yak T\u0027el",
+  "placeName": "The Xobr\u0027it Cinderfield",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35240
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35240,
+          "locations": [
+            {
+              "position": {
+                "x": 784.0546,
+                "y": 38.45524,
+                "z": -43.78995
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

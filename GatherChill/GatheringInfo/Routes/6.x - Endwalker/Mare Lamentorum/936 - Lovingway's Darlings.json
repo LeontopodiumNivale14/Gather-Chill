@@ -1,0 +1,64 @@
+{
+  "routeId": 936,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "Lovingway\u0027s Darlings",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34435
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34435,
+          "locations": [
+            {
+              "position": {
+                "x": 258.0318,
+                "y": 101.2435,
+                "z": -46.68359
+              },
+              "minAngle": -40,
+              "maxAngle": 85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 182.8847,
+                "y": 92.92259,
+                "z": -49.16527
+              },
+              "minAngle": -285,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 216.2297,
+                "y": 97.78034,
+                "z": -65.63747
+              },
+              "minAngle": -245,
+              "maxAngle": -95,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

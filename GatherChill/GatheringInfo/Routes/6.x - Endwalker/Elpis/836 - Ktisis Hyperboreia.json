@@ -1,0 +1,64 @@
+{
+  "routeId": 836,
+  "territoryId": 961,
+  "zoneName": "Elpis",
+  "placeName": "Ktisis Hyperboreia",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33969
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33969,
+          "locations": [
+            {
+              "position": {
+                "x": -390.2922,
+                "y": 329.7729,
+                "z": -713.666
+              },
+              "minAngle": -80,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -397.9714,
+                "y": 330.7951,
+                "z": -719.7114
+              },
+              "minAngle": -235,
+              "maxAngle": -190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -399.5345,
+                "y": 330.1162,
+                "z": -710.8873
+              },
+              "minAngle": -45,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

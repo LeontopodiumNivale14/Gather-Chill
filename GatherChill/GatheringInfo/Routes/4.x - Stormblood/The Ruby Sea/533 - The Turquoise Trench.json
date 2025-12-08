@@ -1,0 +1,176 @@
+{
+  "routeId": 533,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "The Turquoise Trench",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    32296,
+    32297,
+    32298,
+    32299,
+    32300,
+    32301
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32296,
+          "locations": [
+            {
+              "position": {
+                "x": -216.1387,
+                "y": 0.6300181,
+                "z": 616.7697
+              },
+              "minAngle": 180,
+              "maxAngle": 265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32297,
+          "locations": [
+            {
+              "position": {
+                "x": -236.5302,
+                "y": 0.503479,
+                "z": 634.821
+              },
+              "minAngle": 45,
+              "maxAngle": 65,
+              "minDistance": 1.6,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -242.0282,
+                "y": 1.464991,
+                "z": 649.7866
+              },
+              "minAngle": -20,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32298,
+          "locations": [
+            {
+              "position": {
+                "x": -267.9128,
+                "y": 0.6036554,
+                "z": 722.319
+              },
+              "minAngle": 230,
+              "maxAngle": 330,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32299,
+          "locations": [
+            {
+              "position": {
+                "x": -275.2201,
+                "y": 1.438162,
+                "z": 727.0667
+              },
+              "minAngle": 0,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -277.8375,
+                "y": 2.060616,
+                "z": 721.6605
+              },
+              "minAngle": 20,
+              "maxAngle": 85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32300,
+          "locations": [
+            {
+              "position": {
+                "x": -148.4246,
+                "y": 11.42871,
+                "z": 776.8299
+              },
+              "minAngle": 105,
+              "maxAngle": 240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32301,
+          "locations": [
+            {
+              "position": {
+                "x": -135.4789,
+                "y": 11.61927,
+                "z": 765.4382
+              },
+              "minAngle": 45,
+              "maxAngle": 155,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -169.3294,
+                "y": 11.36792,
+                "z": 784.0237
+              },
+              "minAngle": 85,
+              "maxAngle": 210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

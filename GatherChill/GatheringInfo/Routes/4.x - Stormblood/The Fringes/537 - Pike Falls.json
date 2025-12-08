@@ -1,0 +1,64 @@
+{
+  "routeId": 537,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "Pike Falls",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32310
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32310,
+          "locations": [
+            {
+              "position": {
+                "x": -319.766,
+                "y": 43.74977,
+                "z": -7.861277
+              },
+              "minAngle": -255,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -342.4322,
+                "y": 43.48926,
+                "z": -12.62284
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -328.6642,
+                "y": 43.91667,
+                "z": -19.13084
+              },
+              "minAngle": -325,
+              "maxAngle": -270,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

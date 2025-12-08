@@ -1,0 +1,112 @@
+{
+  "routeId": 938,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Good Jenanna\u0027s Grace",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34478,
+    34480,
+    34479
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34478,
+          "locations": [
+            {
+              "position": {
+                "x": -294.0755,
+                "y": 167.0642,
+                "z": -691.2261
+              },
+              "minAngle": -55,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -296.9678,
+                "y": 154.1658,
+                "z": -658.9399
+              },
+              "minAngle": -15,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34480,
+          "locations": [
+            {
+              "position": {
+                "x": -357.4536,
+                "y": 91.54216,
+                "z": -481.7332
+              },
+              "minAngle": -260,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -368.5277,
+                "y": 93.01973,
+                "z": -470.3806
+              },
+              "minAngle": -275,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34479,
+          "locations": [
+            {
+              "position": {
+                "x": -486.2769,
+                "y": 145.9332,
+                "z": -551.1654
+              },
+              "minAngle": -80,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -506.4927,
+                "y": 140.9475,
+                "z": -538.4146
+              },
+              "minAngle": -60,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

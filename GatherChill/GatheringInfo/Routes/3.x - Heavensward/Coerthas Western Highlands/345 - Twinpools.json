@@ -1,0 +1,64 @@
+{
+  "routeId": 345,
+  "territoryId": 397,
+  "zoneName": "Coerthas Western Highlands",
+  "placeName": "Twinpools",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31498
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31498,
+          "locations": [
+            {
+              "position": {
+                "x": 32.53334,
+                "y": 101.5317,
+                "z": -58.99042
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -2.843888,
+                "y": 100.8749,
+                "z": -69.23083
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -53.04253,
+                "y": 102.3497,
+                "z": -32.85252
+              },
+              "minAngle": -210,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

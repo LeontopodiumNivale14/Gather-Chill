@@ -1,0 +1,190 @@
+{
+  "routeId": 826,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "The Vitrified Fort",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33955,
+    33954,
+    33957,
+    33958,
+    33959,
+    33956
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33955,
+          "locations": [
+            {
+              "position": {
+                "x": -71.01024,
+                "y": 62.72608,
+                "z": 520.2852
+              },
+              "minAngle": -55,
+              "maxAngle": 25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -77.14732,
+                "y": 61.6394,
+                "z": 493.4321
+              },
+              "minAngle": -280,
+              "maxAngle": -140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -89.04427,
+                "y": 60.13459,
+                "z": 512.3419
+              },
+              "minAngle": -350,
+              "maxAngle": -225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33954,
+          "locations": [
+            {
+              "position": {
+                "x": -61.57536,
+                "y": 62.33738,
+                "z": 501.9658
+              },
+              "minAngle": -145,
+              "maxAngle": -35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33957,
+          "locations": [
+            {
+              "position": {
+                "x": 67.23822,
+                "y": 70.49869,
+                "z": 599.6188
+              },
+              "minAngle": -145,
+              "maxAngle": -125,
+              "minDistance": 1.6,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 68.13514,
+                "y": 69.00851,
+                "z": 593.6949
+              },
+              "minAngle": -30,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 61.89547,
+                "y": 72.11882,
+                "z": 603.4229
+              },
+              "minAngle": -340,
+              "maxAngle": -275,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33958,
+          "locations": [
+            {
+              "position": {
+                "x": 21.15702,
+                "y": 67.19438,
+                "z": 720.6735
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33959,
+          "locations": [
+            {
+              "position": {
+                "x": -2.036007,
+                "y": 62.38645,
+                "z": 729.0807
+              },
+              "minAngle": -260,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 2.84966,
+                "y": 68.43288,
+                "z": 684.7842
+              },
+              "minAngle": -170,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33956,
+          "locations": [
+            {
+              "position": {
+                "x": 74.28156,
+                "y": 79.74533,
+                "z": 627.7756
+              },
+              "minAngle": -30,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

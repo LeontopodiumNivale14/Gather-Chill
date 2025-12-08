@@ -1,0 +1,40 @@
+{
+  "routeId": 312,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "The Crab Pots",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 65,
+  "nodeIds": [
+    31441
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31441,
+          "locations": [
+            {
+              "position": {
+                "x": -14.82862,
+                "y": 23.9782,
+                "z": 641.7318
+              },
+              "minAngle": -30,
+              "maxAngle": 65,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

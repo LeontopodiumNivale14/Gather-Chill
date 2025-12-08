@@ -1,0 +1,166 @@
+{
+  "routeId": 596,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "The Wild Fete",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32650,
+    32651,
+    32655,
+    32654,
+    32653,
+    32652
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32650,
+          "locations": [
+            {
+              "position": {
+                "x": 124.01,
+                "y": -5.478088,
+                "z": 335.0424
+              },
+              "minAngle": -130,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32651,
+          "locations": [
+            {
+              "position": {
+                "x": 113.6644,
+                "y": 1.327454,
+                "z": 317.8301
+              },
+              "minAngle": -150,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 114.702,
+                "y": -0.1679077,
+                "z": 324.1168
+              },
+              "minAngle": -145,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32655,
+          "locations": [
+            {
+              "position": {
+                "x": 203.1397,
+                "y": -9.016846,
+                "z": 468.0642
+              },
+              "minAngle": -275,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 184.9496,
+                "y": -13.76054,
+                "z": 481.2664
+              },
+              "minAngle": -260,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32654,
+          "locations": [
+            {
+              "position": {
+                "x": 196.2826,
+                "y": -10.34127,
+                "z": 480.9603
+              },
+              "minAngle": -295,
+              "maxAngle": -240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32653,
+          "locations": [
+            {
+              "position": {
+                "x": 308.9328,
+                "y": 26.2512,
+                "z": 346.5039
+              },
+              "minAngle": -240,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 316.3347,
+                "y": 27.19614,
+                "z": 337.6669
+              },
+              "minAngle": -290,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32652,
+          "locations": [
+            {
+              "position": {
+                "x": 324.4525,
+                "y": 27.7694,
+                "z": 331.1665
+              },
+              "minAngle": -275,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

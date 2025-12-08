@@ -1,0 +1,64 @@
+{
+  "routeId": 634,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "Inviolate Witness",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32773
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32773,
+          "locations": [
+            {
+              "position": {
+                "x": 234.036,
+                "y": 141.7264,
+                "z": -575.4819
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 262.9496,
+                "y": 141.2072,
+                "z": -590.1935
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 250.0097,
+                "y": 140.9536,
+                "z": -541.6359
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

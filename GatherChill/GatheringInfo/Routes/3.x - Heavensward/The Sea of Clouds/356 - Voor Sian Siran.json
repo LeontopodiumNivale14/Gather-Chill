@@ -1,0 +1,166 @@
+{
+  "routeId": 356,
+  "territoryId": 401,
+  "zoneName": "The Sea of Clouds",
+  "placeName": "Voor Sian Siran",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31401,
+    31400,
+    31403,
+    31402,
+    31405,
+    31404
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31401,
+          "locations": [
+            {
+              "position": {
+                "x": 322.0299,
+                "y": -124.2216,
+                "z": 593.1786
+              },
+              "minAngle": -245,
+              "maxAngle": -155,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 355.2203,
+                "y": -124.4831,
+                "z": 546.3409
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31400,
+          "locations": [
+            {
+              "position": {
+                "x": 310.02,
+                "y": -117.2782,
+                "z": 530.663
+              },
+              "minAngle": -225,
+              "maxAngle": -150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31403,
+          "locations": [
+            {
+              "position": {
+                "x": 202.2505,
+                "y": -147.0208,
+                "z": 469.0724
+              },
+              "minAngle": -295,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 159.2674,
+                "y": -147.0208,
+                "z": 455.2348
+              },
+              "minAngle": -300,
+              "maxAngle": -215,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31402,
+          "locations": [
+            {
+              "position": {
+                "x": 100.6698,
+                "y": -146.2578,
+                "z": 502.179
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31405,
+          "locations": [
+            {
+              "position": {
+                "x": 135.5017,
+                "y": -146.8686,
+                "z": 576.7133
+              },
+              "minAngle": -185,
+              "maxAngle": -125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 73.65515,
+                "y": -145.5559,
+                "z": 640.3448
+              },
+              "minAngle": -190,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31404,
+          "locations": [
+            {
+              "position": {
+                "x": 78.89505,
+                "y": -145.5175,
+                "z": 580.6633
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

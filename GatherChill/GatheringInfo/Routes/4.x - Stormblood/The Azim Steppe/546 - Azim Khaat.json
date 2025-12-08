@@ -1,0 +1,86 @@
+{
+  "routeId": 546,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Azim Khaat",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 1,
+  "nodeIds": [
+    32329,
+    32330,
+    32331
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Theo",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32329,
+          "locations": [
+            {
+              "position": {
+                "x": 152.6547,
+                "y": 18.44606,
+                "z": -48.11443
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32330,
+          "locations": [
+            {
+              "position": {
+                "x": 153.6145,
+                "y": 17.2952,
+                "z": -64.51379
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32331,
+          "locations": [
+            {
+              "position": {
+                "x": 170.0975,
+                "y": 14.96311,
+                "z": -52.22673
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "routeId": 328,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "The Sea of Blades",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 70,
+  "nodeIds": [
+    31442
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31442,
+          "locations": [
+            {
+              "position": {
+                "x": 725.0036,
+                "y": -14.45671,
+                "z": 245.9483
+              },
+              "minAngle": -135,
+              "maxAngle": -70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "routeId": 928,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "The Norvrandt Slope",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34466,
+    34465,
+    34463,
+    34464,
+    34467,
+    34468
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34466,
+          "locations": [
+            {
+              "position": {
+                "x": 403.2184,
+                "y": 408.0598,
+                "z": -755.5223
+              },
+              "minAngle": 80,
+              "maxAngle": 190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 438.6136,
+                "y": 416.6389,
+                "z": -758.985
+              },
+              "minAngle": 110,
+              "maxAngle": 240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34465,
+          "locations": [
+            {
+              "position": {
+                "x": 415.5816,
+                "y": 412.4482,
+                "z": -758.7325
+              },
+              "minAngle": 90,
+              "maxAngle": 195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34463,
+          "locations": [
+            {
+              "position": {
+                "x": 415.8845,
+                "y": 431.2351,
+                "z": -896.2997
+              },
+              "minAngle": -65,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34464,
+          "locations": [
+            {
+              "position": {
+                "x": 400.7106,
+                "y": 428.3826,
+                "z": -893.9595
+              },
+              "minAngle": -40,
+              "maxAngle": 50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 431.8092,
+                "y": 434.546,
+                "z": -902.1445
+              },
+              "minAngle": -95,
+              "maxAngle": 35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34467,
+          "locations": [
+            {
+              "position": {
+                "x": 284.0778,
+                "y": 433.4644,
+                "z": -916.6171
+              },
+              "minAngle": -75,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34468,
+          "locations": [
+            {
+              "position": {
+                "x": 278.6176,
+                "y": 428.9509,
+                "z": -904.3234
+              },
+              "minAngle": 220,
+              "maxAngle": 345,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 305.7502,
+                "y": 432.027,
+                "z": -912.7272
+              },
+              "minAngle": -80,
+              "maxAngle": 40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

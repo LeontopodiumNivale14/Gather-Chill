@@ -1,0 +1,52 @@
+{
+  "routeId": 212,
+  "territoryId": 155,
+  "zoneName": "Coerthas Central Highlands",
+  "placeName": "Dragonhead",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31000
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31000,
+          "locations": [
+            {
+              "position": {
+                "x": 321.9806,
+                "y": 255.0239,
+                "z": 166.5216
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 248.1598,
+                "y": 267.1272,
+                "z": 49.99177
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

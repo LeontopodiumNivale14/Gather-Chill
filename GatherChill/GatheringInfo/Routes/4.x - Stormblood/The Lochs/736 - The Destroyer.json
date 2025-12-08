@@ -1,0 +1,130 @@
+{
+  "routeId": 736,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "The Destroyer",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33356,
+    33357,
+    33358,
+    33359,
+    33360,
+    33361
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33356,
+          "locations": [
+            {
+              "position": {
+                "x": -42.29421,
+                "y": 2.455177,
+                "z": -209.9179
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33357,
+          "locations": [
+            {
+              "position": {
+                "x": -67.14127,
+                "y": 1.743613,
+                "z": -176.9764
+              },
+              "minAngle": -65,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33358,
+          "locations": [
+            {
+              "position": {
+                "x": 47.02237,
+                "y": 1.784027,
+                "z": -148.7666
+              },
+              "minAngle": -330,
+              "maxAngle": -240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33359,
+          "locations": [
+            {
+              "position": {
+                "x": 53.98565,
+                "y": 1.281392,
+                "z": -126.9332
+              },
+              "minAngle": -360,
+              "maxAngle": -275,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33360,
+          "locations": [
+            {
+              "position": {
+                "x": -41.60408,
+                "y": 1.934993,
+                "z": -14.33537
+              },
+              "minAngle": -270,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33361,
+          "locations": [
+            {
+              "position": {
+                "x": -68.88663,
+                "y": 1.599759,
+                "z": -22.16043
+              },
+              "minAngle": -185,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

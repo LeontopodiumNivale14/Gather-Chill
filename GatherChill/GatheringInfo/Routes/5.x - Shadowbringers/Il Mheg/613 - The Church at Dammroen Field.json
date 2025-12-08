@@ -1,0 +1,202 @@
+{
+  "routeId": 613,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "The Church at Dammroen Field",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    32700,
+    32699,
+    32698,
+    32697,
+    32701,
+    32702
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32700,
+          "locations": [
+            {
+              "position": {
+                "x": 419.3635,
+                "y": 90.66742,
+                "z": -803.0828
+              },
+              "minAngle": -270,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 446.7854,
+                "y": 90.80423,
+                "z": -808.4418
+              },
+              "minAngle": -295,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 409.6893,
+                "y": 92.36864,
+                "z": -837.1503
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32699,
+          "locations": [
+            {
+              "position": {
+                "x": 439.6191,
+                "y": 91.08646,
+                "z": -823.8354
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32698,
+          "locations": [
+            {
+              "position": {
+                "x": 537.6547,
+                "y": 109.4316,
+                "z": -901.938
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 570.7479,
+                "y": 109.6759,
+                "z": -895.3174
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 584.9811,
+                "y": 109.3132,
+                "z": -882.4117
+              },
+              "minAngle": -25,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32697,
+          "locations": [
+            {
+              "position": {
+                "x": 567.2778,
+                "y": 108.2629,
+                "z": -915.0289
+              },
+              "minAngle": -75,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32701,
+          "locations": [
+            {
+              "position": {
+                "x": 564.8466,
+                "y": 103.5442,
+                "z": -740.0339
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32702,
+          "locations": [
+            {
+              "position": {
+                "x": 550.8293,
+                "y": 100.4802,
+                "z": -727.7112
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 579.4276,
+                "y": 105.1749,
+                "z": -727.7523
+              },
+              "minAngle": -260,
+              "maxAngle": -160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 609.4061,
+                "y": 110.5719,
+                "z": -732.3482
+              },
+              "minAngle": -325,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

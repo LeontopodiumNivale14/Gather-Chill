@@ -1,0 +1,166 @@
+{
+  "routeId": 715,
+  "territoryId": 397,
+  "zoneName": "Coerthas Western Highlands",
+  "placeName": "Red Rim",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33235,
+    33236,
+    33237,
+    33238,
+    33239,
+    33240
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33235,
+          "locations": [
+            {
+              "position": {
+                "x": -424.3992,
+                "y": 221.4367,
+                "z": 512.8405
+              },
+              "minAngle": -165,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33236,
+          "locations": [
+            {
+              "position": {
+                "x": -427.6401,
+                "y": 221.6764,
+                "z": 505.9319
+              },
+              "minAngle": -135,
+              "maxAngle": -70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -423.0564,
+                "y": 221.2173,
+                "z": 518.7305
+              },
+              "minAngle": -145,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33237,
+          "locations": [
+            {
+              "position": {
+                "x": -439.2927,
+                "y": 238.5517,
+                "z": 371.9098
+              },
+              "minAngle": -5,
+              "maxAngle": 95,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33238,
+          "locations": [
+            {
+              "position": {
+                "x": -436.8832,
+                "y": 237.176,
+                "z": 375.8199
+              },
+              "minAngle": 30,
+              "maxAngle": 140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -442.501,
+                "y": 238.8151,
+                "z": 369.4857
+              },
+              "minAngle": -50,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33239,
+          "locations": [
+            {
+              "position": {
+                "x": -365.4292,
+                "y": 221.6017,
+                "z": 292.7421
+              },
+              "minAngle": -75,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33240,
+          "locations": [
+            {
+              "position": {
+                "x": -366.3401,
+                "y": 221.4865,
+                "z": 297.6322
+              },
+              "minAngle": -175,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -364.8398,
+                "y": 221.4373,
+                "z": 286.566
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

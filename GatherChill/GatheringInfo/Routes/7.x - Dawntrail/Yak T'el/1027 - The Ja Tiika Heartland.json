@@ -1,0 +1,64 @@
+{
+  "routeId": 1027,
+  "territoryId": 1189,
+  "zoneName": "Yak T\u0027el",
+  "placeName": "The Ja Tiika Heartland",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34987
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34987,
+          "locations": [
+            {
+              "position": {
+                "x": 797.704,
+                "y": -144.9786,
+                "z": 658.0242
+              },
+              "minAngle": -80,
+              "maxAngle": 50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 756.4184,
+                "y": -168.2509,
+                "z": 641.4858
+              },
+              "minAngle": -215,
+              "maxAngle": -115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 748.801,
+                "y": -174.2342,
+                "z": 698.6124
+              },
+              "minAngle": -360,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

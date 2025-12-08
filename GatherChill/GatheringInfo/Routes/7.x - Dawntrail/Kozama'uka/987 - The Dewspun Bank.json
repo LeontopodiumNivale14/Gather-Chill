@@ -1,0 +1,164 @@
+{
+  "routeId": 987,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "The Dewspun Bank",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34831,
+    34832,
+    34828,
+    34827,
+    34830,
+    34829
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34831,
+          "locations": [
+            {
+              "position": {
+                "x": 654.7989,
+                "y": 121.8574,
+                "z": 518.8689
+              },
+              "minAngle": -65,
+              "maxAngle": 60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34832,
+          "locations": [
+            {
+              "position": {
+                "x": 638.961,
+                "y": 119.4446,
+                "z": 467.7013
+              },
+              "minAngle": -110,
+              "maxAngle": 25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 690.0587,
+                "y": 115.8617,
+                "z": 496.8795
+              },
+              "minAngle": 0,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34828,
+          "locations": [
+            {
+              "position": {
+                "x": 599.3455,
+                "y": 121.5376,
+                "z": 694.2341
+              },
+              "minAngle": -125,
+              "maxAngle": 40,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34827,
+          "locations": [
+            {
+              "position": {
+                "x": 600.5253,
+                "y": 124.8645,
+                "z": 751.1969
+              },
+              "minAngle": -240,
+              "maxAngle": -120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34830,
+          "locations": [
+            {
+              "position": {
+                "x": 762.9977,
+                "y": 123.3409,
+                "z": 718.8274
+              },
+              "minAngle": 75,
+              "maxAngle": 215,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 800.252,
+                "y": 124.2032,
+                "z": 656.793
+              },
+              "minAngle": -25,
+              "maxAngle": 95,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34829,
+          "locations": [
+            {
+              "position": {
+                "x": 793.8721,
+                "y": 127.6419,
+                "z": 696.0015
+              },
+              "minAngle": 25,
+              "maxAngle": 165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

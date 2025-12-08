@@ -1,0 +1,176 @@
+{
+  "routeId": 730,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "The Kobayashi Maru",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33325,
+    33326,
+    33327,
+    33328,
+    33329,
+    33330
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33325,
+          "locations": [
+            {
+              "position": {
+                "x": 953.1041,
+                "y": -127.1716,
+                "z": -816.3145
+              },
+              "minAngle": -25,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33326,
+          "locations": [
+            {
+              "position": {
+                "x": 956.8734,
+                "y": -129.366,
+                "z": -843.1625
+              },
+              "minAngle": 75,
+              "maxAngle": 210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 976.0558,
+                "y": -131.5356,
+                "z": -813.2305
+              },
+              "minAngle": -65,
+              "maxAngle": 30,
+              "minDistance": 1.4,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33327,
+          "locations": [
+            {
+              "position": {
+                "x": 887.1607,
+                "y": -141.6279,
+                "z": -863.3355
+              },
+              "minAngle": 185,
+              "maxAngle": 340,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33328,
+          "locations": [
+            {
+              "position": {
+                "x": 874.0369,
+                "y": -135.9791,
+                "z": -848.3512
+              },
+              "minAngle": -80,
+              "maxAngle": 60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 895.865,
+                "y": -144.0468,
+                "z": -890.5269
+              },
+              "minAngle": 195,
+              "maxAngle": 315,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33329,
+          "locations": [
+            {
+              "position": {
+                "x": 836.5433,
+                "y": -140.1729,
+                "z": -948.7974
+              },
+              "minAngle": 130,
+              "maxAngle": 295,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33330,
+          "locations": [
+            {
+              "position": {
+                "x": 843.2012,
+                "y": -139.2853,
+                "z": -961.9124
+              },
+              "minAngle": -95,
+              "maxAngle": 15,
+              "minDistance": 1.3,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 856.3994,
+                "y": -142.4276,
+                "z": -941.0324
+              },
+              "minAngle": 115,
+              "maxAngle": 265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

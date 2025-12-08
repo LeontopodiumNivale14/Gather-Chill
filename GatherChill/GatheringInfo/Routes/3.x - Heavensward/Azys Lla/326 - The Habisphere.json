@@ -1,0 +1,64 @@
+{
+  "routeId": 326,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "The Habisphere",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31467
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31467,
+          "locations": [
+            {
+              "position": {
+                "x": 664.5602,
+                "y": -9.39993,
+                "z": -385.7441
+              },
+              "minAngle": -140,
+              "maxAngle": -120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 692.2935,
+                "y": -8.998344,
+                "z": -367.9267
+              },
+              "minAngle": -190,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 665.8322,
+                "y": -9.879004,
+                "z": -320.044
+              },
+              "minAngle": -10,
+              "maxAngle": 20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

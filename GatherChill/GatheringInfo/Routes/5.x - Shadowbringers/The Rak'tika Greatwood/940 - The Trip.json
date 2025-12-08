@@ -1,0 +1,112 @@
+{
+  "routeId": 940,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "The Trip",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34485,
+    34484,
+    34486
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34485,
+          "locations": [
+            {
+              "position": {
+                "x": -319.2559,
+                "y": 4.24252,
+                "z": 632.6758
+              },
+              "minAngle": -40,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -331.1666,
+                "y": 2.907546,
+                "z": 621.7594
+              },
+              "minAngle": -360,
+              "maxAngle": -280,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34484,
+          "locations": [
+            {
+              "position": {
+                "x": -382.6521,
+                "y": 3.783071,
+                "z": 777.0652
+              },
+              "minAngle": -245,
+              "maxAngle": -130,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -375.3496,
+                "y": 5.017033,
+                "z": 780.3107
+              },
+              "minAngle": -200,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34486,
+          "locations": [
+            {
+              "position": {
+                "x": -158.8457,
+                "y": 11.02728,
+                "z": 671.3145
+              },
+              "minAngle": -340,
+              "maxAngle": -255,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -157.9883,
+                "y": 10.83111,
+                "z": 649.0412
+              },
+              "minAngle": -275,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

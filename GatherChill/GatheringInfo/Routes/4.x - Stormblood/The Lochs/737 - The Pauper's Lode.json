@@ -1,0 +1,130 @@
+{
+  "routeId": 737,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "The Pauper\u0027s Lode",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33362,
+    33363,
+    33365,
+    33364,
+    33366,
+    33367
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33362,
+          "locations": [
+            {
+              "position": {
+                "x": -882.2628,
+                "y": 96.88849,
+                "z": 393.8724
+              },
+              "minAngle": -220,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33363,
+          "locations": [
+            {
+              "position": {
+                "x": -893.6756,
+                "y": 93.88723,
+                "z": 392.2345
+              },
+              "minAngle": -205,
+              "maxAngle": -110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33365,
+          "locations": [
+            {
+              "position": {
+                "x": -870.7463,
+                "y": 89.63623,
+                "z": 332.9808
+              },
+              "minAngle": -110,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33364,
+          "locations": [
+            {
+              "position": {
+                "x": -864.7869,
+                "y": 90.98945,
+                "z": 325.2111
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33366,
+          "locations": [
+            {
+              "position": {
+                "x": -860.3108,
+                "y": 100.9802,
+                "z": 197.5349
+              },
+              "minAngle": -115,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33367,
+          "locations": [
+            {
+              "position": {
+                "x": -860.6311,
+                "y": 104.3432,
+                "z": 211.724
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

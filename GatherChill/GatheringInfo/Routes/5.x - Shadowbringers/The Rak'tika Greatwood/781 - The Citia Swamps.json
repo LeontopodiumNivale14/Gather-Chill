@@ -1,0 +1,76 @@
+{
+  "routeId": 781,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "The Citia Swamps",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33629,
+    33630,
+    33628
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33629,
+          "locations": [
+            {
+              "position": {
+                "x": -274.0288,
+                "y": 2.603682,
+                "z": 367.7305
+              },
+              "minAngle": -90,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33630,
+          "locations": [
+            {
+              "position": {
+                "x": -228.1236,
+                "y": 15.46209,
+                "z": 520.9321
+              },
+              "minAngle": -45,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33628,
+          "locations": [
+            {
+              "position": {
+                "x": -409.4182,
+                "y": 2.224207,
+                "z": 478.2794
+              },
+              "minAngle": -145,
+              "maxAngle": -65,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

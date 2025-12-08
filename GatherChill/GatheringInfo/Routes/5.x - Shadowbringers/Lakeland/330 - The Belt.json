@@ -1,0 +1,40 @@
+{
+  "routeId": 330,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "The Belt",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    31443
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31443,
+          "locations": [
+            {
+              "position": {
+                "x": 487.0385,
+                "y": 13.67042,
+                "z": 132.4976
+              },
+              "minAngle": -325,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

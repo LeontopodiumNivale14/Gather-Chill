@@ -1,0 +1,76 @@
+{
+  "routeId": 841,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "Yedlihmad",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    33994,
+    33995,
+    33996
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33994,
+          "locations": [
+            {
+              "position": {
+                "x": 215.4862,
+                "y": 39.25531,
+                "z": 426.5664
+              },
+              "minAngle": -240,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33995,
+          "locations": [
+            {
+              "position": {
+                "x": 118.5097,
+                "y": 16.57865,
+                "z": 538.0189
+              },
+              "minAngle": -205,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33996,
+          "locations": [
+            {
+              "position": {
+                "x": 37.43042,
+                "y": 36.16697,
+                "z": 401.2054
+              },
+              "minAngle": -95,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

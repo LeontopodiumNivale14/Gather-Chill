@@ -1,0 +1,76 @@
+{
+  "routeId": 782,
+  "territoryId": 397,
+  "zoneName": "Coerthas Western Highlands",
+  "placeName": "Coerthas River",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 55,
+  "nodeIds": [
+    33633,
+    33632,
+    33631
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33633,
+          "locations": [
+            {
+              "position": {
+                "x": 214.3664,
+                "y": 138.1042,
+                "z": -610.7087
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33632,
+          "locations": [
+            {
+              "position": {
+                "x": 240.7256,
+                "y": 133.1933,
+                "z": -396.7932
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33631,
+          "locations": [
+            {
+              "position": {
+                "x": 110.4504,
+                "y": 130.6704,
+                "z": -409.728
+              },
+              "minAngle": 0,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

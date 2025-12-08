@@ -1,0 +1,130 @@
+{
+  "routeId": 991,
+  "territoryId": 1191,
+  "zoneName": "Heritage Found",
+  "placeName": "East Yyasulani",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34855,
+    34856,
+    34853,
+    34854,
+    34851,
+    34852
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34855,
+          "locations": [
+            {
+              "position": {
+                "x": 576.4241,
+                "y": 137.287,
+                "z": 256.1416
+              },
+              "minAngle": -70,
+              "maxAngle": 65,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34856,
+          "locations": [
+            {
+              "position": {
+                "x": 632.802,
+                "y": 140.0272,
+                "z": 266.7732
+              },
+              "minAngle": -215,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34853,
+          "locations": [
+            {
+              "position": {
+                "x": 477.2389,
+                "y": 146.0513,
+                "z": 278.3748
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34854,
+          "locations": [
+            {
+              "position": {
+                "x": 429.9142,
+                "y": 146.1334,
+                "z": 251.2165
+              },
+              "minAngle": -55,
+              "maxAngle": 50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34851,
+          "locations": [
+            {
+              "position": {
+                "x": 575.9396,
+                "y": 109.7647,
+                "z": 440.0356
+              },
+              "minAngle": -170,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34852,
+          "locations": [
+            {
+              "position": {
+                "x": 615.4151,
+                "y": 115.5455,
+                "z": 414.8903
+              },
+              "minAngle": -330,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

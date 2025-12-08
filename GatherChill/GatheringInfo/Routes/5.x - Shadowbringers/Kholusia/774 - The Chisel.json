@@ -1,0 +1,40 @@
+{
+  "routeId": 774,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "The Chisel",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33025
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33025,
+          "locations": [
+            {
+              "position": {
+                "x": 322.2695,
+                "y": 33.19178,
+                "z": 563.5275
+              },
+              "minAngle": -345,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

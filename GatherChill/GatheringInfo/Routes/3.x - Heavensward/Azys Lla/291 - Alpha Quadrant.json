@@ -1,0 +1,64 @@
+{
+  "routeId": 291,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "Alpha Quadrant",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31706
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31706,
+          "locations": [
+            {
+              "position": {
+                "x": -841.3742,
+                "y": 47.25787,
+                "z": -326.056
+              },
+              "minAngle": 45,
+              "maxAngle": 115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -879.0999,
+                "y": 44.5785,
+                "z": -247.5014
+              },
+              "minAngle": -310,
+              "maxAngle": -235,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -842.9509,
+                "y": 47.3283,
+                "z": -358.555
+              },
+              "minAngle": -200,
+              "maxAngle": -125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

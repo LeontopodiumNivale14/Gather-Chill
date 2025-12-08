@@ -1,0 +1,64 @@
+{
+  "routeId": 1028,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Pyariyoanaan Plain",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34988
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34988,
+          "locations": [
+            {
+              "position": {
+                "x": 482.0667,
+                "y": -5.79855,
+                "z": 12.35901
+              },
+              "minAngle": -305,
+              "maxAngle": -155,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 463.7064,
+                "y": -14.97531,
+                "z": -87.11377
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 582.0848,
+                "y": -12.41048,
+                "z": -83.66297
+              },
+              "minAngle": -310,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

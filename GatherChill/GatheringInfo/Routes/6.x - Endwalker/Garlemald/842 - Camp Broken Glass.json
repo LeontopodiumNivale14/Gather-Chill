@@ -1,0 +1,176 @@
+{
+  "routeId": 842,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "Camp Broken Glass",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34002,
+    34001,
+    33999,
+    34000,
+    33998,
+    33997
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34002,
+          "locations": [
+            {
+              "position": {
+                "x": -278.0806,
+                "y": 23.49333,
+                "z": 457.1718
+              },
+              "minAngle": 155,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -247.303,
+                "y": 24.73875,
+                "z": 431.0542
+              },
+              "minAngle": 55,
+              "maxAngle": 265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34001,
+          "locations": [
+            {
+              "position": {
+                "x": -231.6437,
+                "y": 23.05049,
+                "z": 438.9474
+              },
+              "minAngle": 135,
+              "maxAngle": 340,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33999,
+          "locations": [
+            {
+              "position": {
+                "x": -224.5309,
+                "y": 18.15879,
+                "z": 302.212
+              },
+              "minAngle": -20,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34000,
+          "locations": [
+            {
+              "position": {
+                "x": -201.1902,
+                "y": 17.46593,
+                "z": 293.0554
+              },
+              "minAngle": -20,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -206.8405,
+                "y": 21.01518,
+                "z": 327.3298
+              },
+              "minAngle": 0,
+              "maxAngle": 205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33998,
+          "locations": [
+            {
+              "position": {
+                "x": -356.6845,
+                "y": 25.77399,
+                "z": 371.3325
+              },
+              "minAngle": -245,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -378.934,
+                "y": 21.82056,
+                "z": 365.7343
+              },
+              "minAngle": -160,
+              "maxAngle": 10,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33997,
+          "locations": [
+            {
+              "position": {
+                "x": -365.8535,
+                "y": 18.70865,
+                "z": 339.1927
+              },
+              "minAngle": -180,
+              "maxAngle": 5,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

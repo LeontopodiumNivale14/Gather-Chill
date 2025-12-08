@@ -1,0 +1,64 @@
+{
+  "routeId": 1031,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Yawtanane Grasslands",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34991
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34991,
+          "locations": [
+            {
+              "position": {
+                "x": 773.9482,
+                "y": 33.29974,
+                "z": 302.5254
+              },
+              "minAngle": -325,
+              "maxAngle": -185,
+              "minDistance": 1.9,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 729.5445,
+                "y": 32.43269,
+                "z": 351.4476
+              },
+              "minAngle": -265,
+              "maxAngle": -140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 773.4035,
+                "y": 33.22699,
+                "z": 327.7088
+              },
+              "minAngle": -305,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

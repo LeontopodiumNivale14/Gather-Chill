@@ -1,0 +1,64 @@
+{
+  "routeId": 217,
+  "territoryId": 152,
+  "zoneName": "East Shroud",
+  "placeName": "The Bramble Patch",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31005
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31005,
+          "locations": [
+            {
+              "position": {
+                "x": -183.5121,
+                "y": 51.46731,
+                "z": -118.0609
+              },
+              "minAngle": -95,
+              "maxAngle": -5,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -188.5473,
+                "y": 41.3952,
+                "z": -89.23669
+              },
+              "minAngle": 90,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -199.869,
+                "y": 51.80664,
+                "z": -120.4085
+              },
+              "minAngle": -90,
+              "maxAngle": -10,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

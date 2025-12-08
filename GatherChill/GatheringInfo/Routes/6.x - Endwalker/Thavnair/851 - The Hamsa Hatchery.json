@@ -1,0 +1,52 @@
+{
+  "routeId": 851,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "The Hamsa Hatchery",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34038
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34038,
+          "locations": [
+            {
+              "position": {
+                "x": -350.5327,
+                "y": 64.02026,
+                "z": -350.0851
+              },
+              "minAngle": -25,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -360.174,
+                "y": 62.7746,
+                "z": -345.5142
+              },
+              "minAngle": -110,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "routeId": 1024,
+  "territoryId": 1191,
+  "zoneName": "Heritage Found",
+  "placeName": "East Yyasulani",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34984
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34984,
+          "locations": [
+            {
+              "position": {
+                "x": 647.3126,
+                "y": 144.6288,
+                "z": -672.9774
+              },
+              "minAngle": -20,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 712.4153,
+                "y": 146.2651,
+                "z": -623.4225
+              },
+              "minAngle": -335,
+              "maxAngle": -225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 599.6642,
+                "y": 146.3701,
+                "z": -687.7194
+              },
+              "minAngle": -20,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

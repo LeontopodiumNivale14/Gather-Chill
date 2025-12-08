@@ -1,0 +1,64 @@
+{
+  "routeId": 1189,
+  "territoryId": 1189,
+  "zoneName": "Yak T\u0027el",
+  "placeName": "The Cerulean Cexudross",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35238
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35238,
+          "locations": [
+            {
+              "position": {
+                "x": -188.8114,
+                "y": -202.5435,
+                "z": 763.7458
+              },
+              "minAngle": -155,
+              "maxAngle": -25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -176.6779,
+                "y": -194.6925,
+                "z": 791.8182
+              },
+              "minAngle": -190,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -166.1637,
+                "y": -206.1596,
+                "z": 759.7393
+              },
+              "minAngle": -280,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

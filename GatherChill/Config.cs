@@ -7,54 +7,6 @@ public class Config
 {
     [JsonIgnore]
     public const int CurrentConfigVersion = 1;
-
-    public List<GatheringConfig> GatheringList = new();
-
-    public class AbilityConfig
-    {
-        public bool Enable { get; set; } = false;
-        public int MinimumGP { get; set; }
-        public int ChanceRequirement { get; set; } = 0;
-    }
-
-    public Dictionary<string, AbilityConfig> AbilityConfigDict = new()
-    {
-        { "BoonIncrease1", new AbilityConfig
-        {
-            Enable = false,
-            MinimumGP = 50,
-            ChanceRequirement = 60,
-        } },
-        { "BoonIncrease2", new AbilityConfig
-        {
-            Enable = false,
-            MinimumGP = 100,
-            ChanceRequirement = 70,
-        } },
-        { "Tidings", new AbilityConfig
-        {
-            Enable = false,
-            MinimumGP = 200,
-            ChanceRequirement = 70,
-        } },
-        { "Yield1", new AbilityConfig
-        {
-            Enable = false,
-            MinimumGP = 400,
-            ChanceRequirement = 0,
-        } },
-        { "Yield2", new AbilityConfig
-        {
-            Enable = false,
-            MinimumGP = 500,
-            ChanceRequirement = 0,
-        } },
-        { "IntegrityIncrease", new AbilityConfig {
-            Enable = false,
-            MinimumGP = 300,
-            ChanceRequirement = 0,
-        } }
-    };
     public Vector4 Picto_NodeColor { get; set; } = new Vector4(0, 0, 0, 0);
     public Vector4 Picto_LandAreaColor { get; set; } = new Vector4(0, 0, 0, 0);
     public Vector4 Picto_RadialColor { get; set; } = new Vector4(0, 0, 0, 0);

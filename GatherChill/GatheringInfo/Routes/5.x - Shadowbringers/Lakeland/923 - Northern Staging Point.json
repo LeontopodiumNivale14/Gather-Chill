@@ -1,0 +1,112 @@
+{
+  "routeId": 923,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "Northern Staging Point",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34434,
+    34436,
+    34438
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34434,
+          "locations": [
+            {
+              "position": {
+                "x": 706.3749,
+                "y": 93.83353,
+                "z": -611.124
+              },
+              "minAngle": -355,
+              "maxAngle": -285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 726.9025,
+                "y": 91.77892,
+                "z": -561.3099
+              },
+              "minAngle": -360,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34436,
+          "locations": [
+            {
+              "position": {
+                "x": 527.7883,
+                "y": 94.28271,
+                "z": -612.894
+              },
+              "minAngle": -195,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 549.8873,
+                "y": 96.97618,
+                "z": -623.4341
+              },
+              "minAngle": -105,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34438,
+          "locations": [
+            {
+              "position": {
+                "x": 646.5399,
+                "y": 51.10242,
+                "z": -408.774
+              },
+              "minAngle": -235,
+              "maxAngle": -130,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 687.0777,
+                "y": 59.64175,
+                "z": -429.9946
+              },
+              "minAngle": -335,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

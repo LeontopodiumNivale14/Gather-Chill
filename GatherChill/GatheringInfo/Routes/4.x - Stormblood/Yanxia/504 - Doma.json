@@ -1,0 +1,52 @@
+{
+  "routeId": 504,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "Doma",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32187
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32187,
+          "locations": [
+            {
+              "position": {
+                "x": -122.3518,
+                "y": 96.8298,
+                "z": -662.8013
+              },
+              "minAngle": -30,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -46.65513,
+                "y": 117.5033,
+                "z": -551.4407
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

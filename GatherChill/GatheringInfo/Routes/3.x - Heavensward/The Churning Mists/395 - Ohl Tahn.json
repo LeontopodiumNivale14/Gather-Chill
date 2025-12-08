@@ -1,0 +1,52 @@
+{
+  "routeId": 395,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "Ohl Tahn",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31507
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31507,
+          "locations": [
+            {
+              "position": {
+                "x": -599.645,
+                "y": 257.3095,
+                "z": -656.2281
+              },
+              "minAngle": -360,
+              "maxAngle": -270,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -546.1215,
+                "y": 258.5669,
+                "z": -595.7894
+              },
+              "minAngle": -360,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

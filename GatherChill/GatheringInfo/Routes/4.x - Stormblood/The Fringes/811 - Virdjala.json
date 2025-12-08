@@ -1,0 +1,140 @@
+{
+  "routeId": 811,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "Virdjala",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33875,
+    33876,
+    33873,
+    33874,
+    33878,
+    33877
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33875,
+          "locations": [
+            {
+              "position": {
+                "x": 567.9412,
+                "y": 50.43103,
+                "z": 373.1152
+              },
+              "minAngle": 200,
+              "maxAngle": 350,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33876,
+          "locations": [
+            {
+              "position": {
+                "x": 578.4171,
+                "y": 48.36443,
+                "z": 365.4806
+              },
+              "minAngle": -45,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33873,
+          "locations": [
+            {
+              "position": {
+                "x": 599.5352,
+                "y": 75.60928,
+                "z": 244.3069
+              },
+              "minAngle": -80,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33874,
+          "locations": [
+            {
+              "position": {
+                "x": 592.9609,
+                "y": 75.62624,
+                "z": 268.9515
+              },
+              "minAngle": 110,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33878,
+          "locations": [
+            {
+              "position": {
+                "x": 753.3094,
+                "y": 72.73058,
+                "z": 364.073
+              },
+              "minAngle": 95,
+              "maxAngle": 240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33877,
+          "locations": [
+            {
+              "position": {
+                "x": 764.3023,
+                "y": 74.18732,
+                "z": 337.2563
+              },
+              "minAngle": -70,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

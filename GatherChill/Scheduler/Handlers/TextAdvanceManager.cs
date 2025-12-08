@@ -18,7 +18,6 @@ namespace GatherChill.Scheduler.Handlers
                 {
                     WasChanged = false;
                     UnlockTA();
-                    PluginDebug($"TextAdvance unlocked");
                 }
             }
             else
@@ -27,7 +26,6 @@ namespace GatherChill.Scheduler.Handlers
                 {
                     WasChanged = true;
                     LockTA();
-                    PluginDebug($"TextAdvance locked");
                 }
             }
         }

@@ -1,0 +1,40 @@
+{
+  "routeId": 252,
+  "territoryId": 147,
+  "zoneName": "Northern Thanalan",
+  "placeName": "Bluefog",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31060
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31060,
+          "locations": [
+            {
+              "position": {
+                "x": 101.886,
+                "y": 34.31961,
+                "z": 36.88254
+              },
+              "minAngle": -80,
+              "maxAngle": 20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

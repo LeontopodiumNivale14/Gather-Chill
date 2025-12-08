@@ -1,0 +1,152 @@
+{
+  "routeId": 732,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "The Queen\u0027s Gardens",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33339,
+    33340,
+    33337,
+    33338,
+    33341,
+    33342
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33339,
+          "locations": [
+            {
+              "position": {
+                "x": 440.6299,
+                "y": 74.86803,
+                "z": -205.3779
+              },
+              "minAngle": 85,
+              "maxAngle": 215,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33340,
+          "locations": [
+            {
+              "position": {
+                "x": 426.4497,
+                "y": 70.57706,
+                "z": -198.046
+              },
+              "minAngle": 95,
+              "maxAngle": 180,
+              "minDistance": 1.3,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 453.1248,
+                "y": 77.29013,
+                "z": -211.6347
+              },
+              "minAngle": 85,
+              "maxAngle": 190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33337,
+          "locations": [
+            {
+              "position": {
+                "x": 561.2196,
+                "y": 94.65154,
+                "z": -315.6258
+              },
+              "minAngle": 50,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33338,
+          "locations": [
+            {
+              "position": {
+                "x": 563.1749,
+                "y": 93.41929,
+                "z": -335.4834
+              },
+              "minAngle": -25,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33341,
+          "locations": [
+            {
+              "position": {
+                "x": 388.9345,
+                "y": 54.85489,
+                "z": -350.8919
+              },
+              "minAngle": 55,
+              "maxAngle": 150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33342,
+          "locations": [
+            {
+              "position": {
+                "x": 394.7824,
+                "y": 51.66671,
+                "z": -369.6645
+              },
+              "minAngle": 70,
+              "maxAngle": 135,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

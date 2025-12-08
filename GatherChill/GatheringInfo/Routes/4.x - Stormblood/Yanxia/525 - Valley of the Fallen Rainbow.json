@@ -1,0 +1,64 @@
+{
+  "routeId": 525,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "Valley of the Fallen Rainbow",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32273
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32273,
+          "locations": [
+            {
+              "position": {
+                "x": 349.8284,
+                "y": -15.92713,
+                "z": -701.9008
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 307.1793,
+                "y": -15.49009,
+                "z": -677.8516
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 329.6968,
+                "y": -15.92713,
+                "z": -675.4686
+              },
+              "minAngle": -170,
+              "maxAngle": -75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

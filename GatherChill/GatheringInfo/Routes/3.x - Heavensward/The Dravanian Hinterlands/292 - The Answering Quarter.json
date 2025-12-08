@@ -1,0 +1,64 @@
+{
+  "routeId": 292,
+  "territoryId": 399,
+  "zoneName": "The Dravanian Hinterlands",
+  "placeName": "The Answering Quarter",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31707
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31707,
+          "locations": [
+            {
+              "position": {
+                "x": -745.5409,
+                "y": 177.6967,
+                "z": 282.1175
+              },
+              "minAngle": -145,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -759.3814,
+                "y": 176.8609,
+                "z": 216.4915
+              },
+              "minAngle": -225,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -723.8917,
+                "y": 173.7204,
+                "z": 329.9402
+              },
+              "minAngle": -20,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

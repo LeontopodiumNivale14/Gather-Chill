@@ -1,0 +1,166 @@
+{
+  "routeId": 623,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "The Wild Fete",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32754,
+    32755,
+    32753,
+    32752,
+    32756,
+    32757
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32754,
+          "locations": [
+            {
+              "position": {
+                "x": 196.4622,
+                "y": 19.6832,
+                "z": 54.82889
+              },
+              "minAngle": -115,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32755,
+          "locations": [
+            {
+              "position": {
+                "x": 193.7614,
+                "y": 18.75028,
+                "z": 69.81992
+              },
+              "minAngle": -125,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 202.2226,
+                "y": 18.75576,
+                "z": 96.64227
+              },
+              "minAngle": -135,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32753,
+          "locations": [
+            {
+              "position": {
+                "x": 239.6722,
+                "y": 1.234799,
+                "z": 240.146
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 241.4681,
+                "y": -0.1631919,
+                "z": 252.0975
+              },
+              "minAngle": -95,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32752,
+          "locations": [
+            {
+              "position": {
+                "x": 243.0375,
+                "y": 0.3715134,
+                "z": 245.5033
+              },
+              "minAngle": -215,
+              "maxAngle": -105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32756,
+          "locations": [
+            {
+              "position": {
+                "x": 357.3403,
+                "y": 3.443814,
+                "z": 155.2874
+              },
+              "minAngle": -285,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32757,
+          "locations": [
+            {
+              "position": {
+                "x": 383.2811,
+                "y": 1.929714,
+                "z": 145.2644
+              },
+              "minAngle": -215,
+              "maxAngle": -140,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 362.3256,
+                "y": 1.482867,
+                "z": 144.4389
+              },
+              "minAngle": -255,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "routeId": 294,
+  "territoryId": 397,
+  "zoneName": "Coerthas Western Highlands",
+  "placeName": "Riversmeet",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31373,
+    31372,
+    31375,
+    31374,
+    31371,
+    31370
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31373,
+          "locations": [
+            {
+              "position": {
+                "x": 460.7844,
+                "y": 166.069,
+                "z": 357.0733
+              },
+              "minAngle": -130,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 447.8235,
+                "y": 167.4331,
+                "z": 370.2539
+              },
+              "minAngle": -170,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31372,
+          "locations": [
+            {
+              "position": {
+                "x": 462.8444,
+                "y": 167.5313,
+                "z": 380.7374
+              },
+              "minAngle": -105,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31375,
+          "locations": [
+            {
+              "position": {
+                "x": 410.2468,
+                "y": 183.5301,
+                "z": 504.6102
+              },
+              "minAngle": -105,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31374,
+          "locations": [
+            {
+              "position": {
+                "x": 369.819,
+                "y": 186.7775,
+                "z": 540.4086
+              },
+              "minAngle": -135,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31371,
+          "locations": [
+            {
+              "position": {
+                "x": 487.4064,
+                "y": 188.57,
+                "z": 539.6458
+              },
+              "minAngle": -45,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31370,
+          "locations": [
+            {
+              "position": {
+                "x": 479.3926,
+                "y": 196.1108,
+                "z": 582.8488
+              },
+              "minAngle": -205,
+              "maxAngle": -50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

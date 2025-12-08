@@ -7,7 +7,6 @@ using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
 using GatherChill.Yaml;
-using GatherChill.Yaml.ConfigFiles;
 using Pictomancy;
 
 namespace GatherChill;
@@ -18,11 +17,6 @@ public sealed class GatherChill : IDalamudPlugin
     internal static GatherChill P = null!;
     public static Config C => P.config;
     private Config config;
-
-    private static GatherIndex? GatherIndexConfig;
-    public static GatherIndex GIndex => GatherIndexConfig ??= LoadConfig<GatherIndex>();
-    public static RouteData RD => P.routeData;
-    private RouteData routeData = null!;  // Make this private instance field
 
     private static T LoadConfig<T>() where T : IYamlConfig, new()
     {
@@ -45,7 +39,7 @@ public sealed class GatherChill : IDalamudPlugin
     internal MainWindow mainWindow;
     internal SettingsWindow settingWindow;
     internal DebugWindow debugWindow;
-    internal RouteEditorWindow routeEditorWindow;
+    internal RoutesWindow routeWindow;
 
     // Taskmanager from Ecommons
     internal TaskManager taskManager;
@@ -54,6 +48,9 @@ public sealed class GatherChill : IDalamudPlugin
     internal LifestreamIPC lifestream;
     internal NavmeshIPC navmesh;
     internal PandoraIPC pandora;
+
+    // ADD THIS - Route loader for gathering routes
+    internal GatheringRouteLoader routeLoader;
 
     public GatherChill(IDalamudPluginInterface pi)
     {
@@ -74,12 +71,15 @@ public sealed class GatherChill : IDalamudPlugin
         navmesh = new();
         pandora = new();
 
+        routeLoader = new(Svc.PluginInterface);
+        routeLoader.LoadAllRoutes();
+
         // all the windows
         windowSystem = new();
         mainWindow = new();
         settingWindow = new();
         debugWindow = new();
-        routeEditorWindow = new();
+        routeWindow = new();
 
         taskManager = new(new(abortOnTimeout: true, timeLimitMS: 20000, showDebug: true));
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
@@ -97,18 +97,7 @@ public sealed class GatherChill : IDalamudPlugin
         EzCmd.Add("/icegather", OnCommand);
         Svc.Framework.Update += Tick;
 
-        RouteInfoCreator();
-        RouteConfigManager.EnsureRouteConfigsExist();
-
-        routeData = new RouteData();  // lowercase
-        routeData.LoadAllRoutes();
-        PluginLog.Information($"Route data loaded: {routeData.GatheringInfo.Count} expansions");
-
-        // Log details
-        foreach (var (expId, zones) in routeData.GatheringInfo)
-        {
-            PluginLog.Information($"  Expansion {expId}: {zones.Count} zones");
-        }
+        UpdateSheetInfo();
     }
 
     private void Tick(object _)
@@ -130,9 +119,6 @@ public sealed class GatherChill : IDalamudPlugin
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
         PictoService.Dispose();
-
-        Safe(() => routeData?.GatheringInfo.Clear());
-        Safe(() => routeData = null!);
     }
 
     private void OnCommand(string command, string args)
@@ -157,10 +143,9 @@ public sealed class GatherChill : IDalamudPlugin
             settingWindow.IsOpen = true;
             return;
         }
-        // Add this new command
         else if (firstArg.ToLower() == "r" || firstArg.ToLower() == "routes")
         {
-            routeEditorWindow.IsOpen = true;
+            routeWindow.IsOpen = true;
             return;
         }
     }

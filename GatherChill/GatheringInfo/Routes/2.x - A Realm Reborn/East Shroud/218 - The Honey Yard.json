@@ -1,0 +1,64 @@
+{
+  "routeId": 218,
+  "territoryId": 152,
+  "zoneName": "East Shroud",
+  "placeName": "The Honey Yard",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31006
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31006,
+          "locations": [
+            {
+              "position": {
+                "x": -386.6373,
+                "y": 0.6453099,
+                "z": 146.8502
+              },
+              "minAngle": 20,
+              "maxAngle": 280,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -379.3322,
+                "y": 1.645311,
+                "z": 127.1692
+              },
+              "minAngle": -45,
+              "maxAngle": 85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -387.2642,
+                "y": 1.014643,
+                "z": 76.91808
+              },
+              "minAngle": -75,
+              "maxAngle": 70,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

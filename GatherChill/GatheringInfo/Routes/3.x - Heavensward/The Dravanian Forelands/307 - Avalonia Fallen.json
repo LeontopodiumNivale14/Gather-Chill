@@ -1,0 +1,76 @@
+{
+  "routeId": 307,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "Avalonia Fallen",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31440,
+    31451,
+    31450
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31440,
+          "locations": [
+            {
+              "position": {
+                "x": 166.1236,
+                "y": -59.99338,
+                "z": -148.7276
+              },
+              "minAngle": -115,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31451,
+          "locations": [
+            {
+              "position": {
+                "x": 51.44937,
+                "y": -60.48475,
+                "z": -33.93341
+              },
+              "minAngle": -140,
+              "maxAngle": -45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31450,
+          "locations": [
+            {
+              "position": {
+                "x": 245.5044,
+                "y": -62.91192,
+                "z": 31.92792
+              },
+              "minAngle": -190,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

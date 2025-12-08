@@ -1,0 +1,76 @@
+{
+  "routeId": 1020,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Miyakabek\u0027zoma",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34978,
+    34977,
+    34976
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34978,
+          "locations": [
+            {
+              "position": {
+                "x": 346.7417,
+                "y": 112.2709,
+                "z": 214.4158
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34977,
+          "locations": [
+            {
+              "position": {
+                "x": 164.9646,
+                "y": 115.4299,
+                "z": 287.3051
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34976,
+          "locations": [
+            {
+              "position": {
+                "x": 253.512,
+                "y": 121.1854,
+                "z": 45.02122
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

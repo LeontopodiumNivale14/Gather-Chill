@@ -1,0 +1,64 @@
+{
+  "routeId": 1025,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "Arena of Valor",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34985
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34985,
+          "locations": [
+            {
+              "position": {
+                "x": 152.7672,
+                "y": 26.12964,
+                "z": -216.4626
+              },
+              "minAngle": -145,
+              "maxAngle": -20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 190.373,
+                "y": 27.15223,
+                "z": -190.5117
+              },
+              "minAngle": -230,
+              "maxAngle": -80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 182.4086,
+                "y": 27.63403,
+                "z": -215.7915
+              },
+              "minAngle": -190,
+              "maxAngle": -20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

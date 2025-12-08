@@ -1,0 +1,64 @@
+{
+  "routeId": 933,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "Ostrakon Deka-okto",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34417
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34417,
+          "locations": [
+            {
+              "position": {
+                "x": -210.9699,
+                "y": 74.29292,
+                "z": 388.6321
+              },
+              "minAngle": -75,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -229.8904,
+                "y": 80.56128,
+                "z": 387.1686
+              },
+              "minAngle": -325,
+              "maxAngle": -255,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -235.909,
+                "y": 79.10212,
+                "z": 407.0196
+              },
+              "minAngle": -140,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

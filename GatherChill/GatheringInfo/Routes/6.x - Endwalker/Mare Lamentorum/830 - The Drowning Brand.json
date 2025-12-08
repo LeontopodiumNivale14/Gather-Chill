@@ -1,0 +1,64 @@
+{
+  "routeId": 830,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "The Drowning Brand",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 85,
+  "nodeIds": [
+    33963
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33963,
+          "locations": [
+            {
+              "position": {
+                "x": -260.406,
+                "y": 89.82719,
+                "z": 565.4117
+              },
+              "minAngle": -180,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -260.978,
+                "y": 86.54441,
+                "z": 550.2736
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -246.6563,
+                "y": 85.13789,
+                "z": 555.4446
+              },
+              "minAngle": -360,
+              "maxAngle": -215,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

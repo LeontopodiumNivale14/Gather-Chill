@@ -1,0 +1,64 @@
+{
+  "routeId": 214,
+  "territoryId": 137,
+  "zoneName": "Eastern La Noscea",
+  "placeName": "Bloodshore",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31002
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31002,
+          "locations": [
+            {
+              "position": {
+                "x": 488.5504,
+                "y": 13.33914,
+                "z": 244.0538
+              },
+              "minAngle": -85,
+              "maxAngle": -20,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 442.5584,
+                "y": 16.46545,
+                "z": 234.3894
+              },
+              "minAngle": 220,
+              "maxAngle": 270,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 447.8413,
+                "y": 16.23856,
+                "z": 347.8376
+              },
+              "minAngle": 0,
+              "maxAngle": 165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

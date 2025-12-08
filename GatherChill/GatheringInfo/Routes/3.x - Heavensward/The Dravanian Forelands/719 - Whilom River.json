@@ -1,0 +1,154 @@
+{
+  "routeId": 719,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "Whilom River",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33264,
+    33263,
+    33262,
+    33261,
+    33259,
+    33260
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33264,
+          "locations": [
+            {
+              "position": {
+                "x": 303.3145,
+                "y": -49.11625,
+                "z": -311.0007
+              },
+              "minAngle": 0,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 308.9608,
+                "y": -47.9846,
+                "z": -301.4759
+              },
+              "minAngle": -20,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33263,
+          "locations": [
+            {
+              "position": {
+                "x": 291.1995,
+                "y": -50.53298,
+                "z": -281.6843
+              },
+              "minAngle": -225,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33262,
+          "locations": [
+            {
+              "position": {
+                "x": 402.2288,
+                "y": -42.71875,
+                "z": -268.2165
+              },
+              "minAngle": -40,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 397.834,
+                "y": -42.45066,
+                "z": -271.6297
+              },
+              "minAngle": 20,
+              "maxAngle": 195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33261,
+          "locations": [
+            {
+              "position": {
+                "x": 404.7715,
+                "y": -43.30455,
+                "z": -249.1086
+              },
+              "minAngle": 40,
+              "maxAngle": 195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33259,
+          "locations": [
+            {
+              "position": {
+                "x": 406.762,
+                "y": -40.65998,
+                "z": -160.4967
+              },
+              "minAngle": -130,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33260,
+          "locations": [
+            {
+              "position": {
+                "x": 379.8401,
+                "y": -46.12787,
+                "z": -149.9247
+              },
+              "minAngle": -110,
+              "maxAngle": 25,
+              "minDistance": 1.5,
+              "maxDistance": 2.6,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

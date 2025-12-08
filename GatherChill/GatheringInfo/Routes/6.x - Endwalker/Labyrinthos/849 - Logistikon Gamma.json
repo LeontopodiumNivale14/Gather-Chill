@@ -1,0 +1,76 @@
+{
+  "routeId": 849,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "Logistikon Gamma",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34051,
+    34036,
+    34050
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34051,
+          "locations": [
+            {
+              "position": {
+                "x": -603.6166,
+                "y": -25.64351,
+                "z": 590.6614
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34036,
+          "locations": [
+            {
+              "position": {
+                "x": -487.9728,
+                "y": -27.88512,
+                "z": 647.0082
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34050,
+          "locations": [
+            {
+              "position": {
+                "x": -545.3068,
+                "y": -16.25014,
+                "z": 755.9166
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -18,7 +18,6 @@ namespace GatherChill.Scheduler.Handlers
                 {
                     WasChanged = false;
                     Unlock();
-                    PluginDebug($"YesAlready unlocked");
                 }
             }
             else
@@ -27,7 +26,6 @@ namespace GatherChill.Scheduler.Handlers
                 {
                     WasChanged = true;
                     Lock();
-                    PluginDebug($"YesAlready locked");
                 }
             }
         }

@@ -1,0 +1,140 @@
+{
+  "routeId": 813,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Onsal Hakair",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33885,
+    33886,
+    33887,
+    33888,
+    33889,
+    33890
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33885,
+          "locations": [
+            {
+              "position": {
+                "x": 288.2408,
+                "y": 23.61323,
+                "z": -234.9867
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33886,
+          "locations": [
+            {
+              "position": {
+                "x": 281.9221,
+                "y": 23.03055,
+                "z": -231.9227
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33887,
+          "locations": [
+            {
+              "position": {
+                "x": 407.1815,
+                "y": 26.86968,
+                "z": -325.3348
+              },
+              "minAngle": -60,
+              "maxAngle": 170,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33888,
+          "locations": [
+            {
+              "position": {
+                "x": 413.6349,
+                "y": 25.90826,
+                "z": -320.5389
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33889,
+          "locations": [
+            {
+              "position": {
+                "x": 451.9882,
+                "y": 8.707673,
+                "z": -136.5769
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33890,
+          "locations": [
+            {
+              "position": {
+                "x": 458.5264,
+                "y": 8.823095,
+                "z": -132.5937
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

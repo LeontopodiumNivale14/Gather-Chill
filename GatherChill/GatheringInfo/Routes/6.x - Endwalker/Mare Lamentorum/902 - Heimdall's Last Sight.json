@@ -1,0 +1,140 @@
+{
+  "routeId": 902,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "Heimdall\u0027s Last Sight",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34337,
+    34338,
+    34339,
+    34340,
+    34335,
+    34336
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34337,
+          "locations": [
+            {
+              "position": {
+                "x": 531.9888,
+                "y": 133.5777,
+                "z": 288.7549
+              },
+              "minAngle": 190,
+              "maxAngle": 345,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34338,
+          "locations": [
+            {
+              "position": {
+                "x": 562.9013,
+                "y": 134.3907,
+                "z": 254.6339
+              },
+              "minAngle": -75,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34339,
+          "locations": [
+            {
+              "position": {
+                "x": 685.4268,
+                "y": 130.6815,
+                "z": 267.9914
+              },
+              "minAngle": -75,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34340,
+          "locations": [
+            {
+              "position": {
+                "x": 720.4895,
+                "y": 139.9972,
+                "z": 239.97
+              },
+              "minAngle": -30,
+              "maxAngle": 90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34335,
+          "locations": [
+            {
+              "position": {
+                "x": 629.7982,
+                "y": 144.0473,
+                "z": 418.6548
+              },
+              "minAngle": 120,
+              "maxAngle": 260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34336,
+          "locations": [
+            {
+              "position": {
+                "x": 712.2249,
+                "y": 149.0579,
+                "z": 390.7473
+              },
+              "minAngle": 35,
+              "maxAngle": 195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

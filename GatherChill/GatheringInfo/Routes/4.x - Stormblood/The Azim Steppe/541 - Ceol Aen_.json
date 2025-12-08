@@ -1,0 +1,76 @@
+{
+  "routeId": 541,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Ceol Aen_",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 1,
+  "nodeIds": [
+    32314,
+    32315,
+    32316
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Theo",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32314,
+          "locations": [
+            {
+              "position": {
+                "x": -506.7959,
+                "y": 67.50204,
+                "z": -406.9001
+              },
+              "minAngle": 5,
+              "maxAngle": 170,
+              "minDistance": 1,
+              "maxDistance": 2.3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32315,
+          "locations": [
+            {
+              "position": {
+                "x": -505.4885,
+                "y": 67.502,
+                "z": -397.644
+              },
+              "minAngle": -20,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 2.1,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32316,
+          "locations": [
+            {
+              "position": {
+                "x": -501.4457,
+                "y": 67.48835,
+                "z": -391.6048
+              },
+              "minAngle": -50,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 2.2,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

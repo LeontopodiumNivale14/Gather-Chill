@@ -1,0 +1,76 @@
+{
+  "routeId": 817,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "Sharlayan Hamlet",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33908,
+    33906,
+    33907
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33908,
+          "locations": [
+            {
+              "position": {
+                "x": 165.2279,
+                "y": -19.58873,
+                "z": 46.27005
+              },
+              "minAngle": -210,
+              "maxAngle": -115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33906,
+          "locations": [
+            {
+              "position": {
+                "x": 268.4194,
+                "y": -16.85055,
+                "z": 162.6459
+              },
+              "minAngle": -145,
+              "maxAngle": -35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33907,
+          "locations": [
+            {
+              "position": {
+                "x": 128.5573,
+                "y": -26.17426,
+                "z": 202.1973
+              },
+              "minAngle": -10,
+              "maxAngle": 115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

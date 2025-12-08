@@ -1,0 +1,64 @@
+{
+  "routeId": 632,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "Sharptongue Drip",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32771
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32771,
+          "locations": [
+            {
+              "position": {
+                "x": -79.22906,
+                "y": 21.1,
+                "z": 274.7937
+              },
+              "minAngle": -20,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -76.65813,
+                "y": 18.2,
+                "z": 287.3494
+              },
+              "minAngle": -70,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -50.5008,
+                "y": 12.07276,
+                "z": 313.03
+              },
+              "minAngle": -335,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

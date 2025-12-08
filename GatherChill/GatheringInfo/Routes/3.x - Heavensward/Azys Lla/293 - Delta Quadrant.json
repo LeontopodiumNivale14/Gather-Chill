@@ -1,0 +1,52 @@
+{
+  "routeId": 293,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "Delta Quadrant",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31708
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31708,
+          "locations": [
+            {
+              "position": {
+                "x": -790.7378,
+                "y": -47.28778,
+                "z": 349.3552
+              },
+              "minAngle": -335,
+              "maxAngle": -135,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -709.1912,
+                "y": -78.21929,
+                "z": 344.3294
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "routeId": 627,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "The Shroud of the Samgha",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34362
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34362,
+          "locations": [
+            {
+              "position": {
+                "x": 361.331,
+                "y": 7.741143,
+                "z": 311.619
+              },
+              "minAngle": -165,
+              "maxAngle": -45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 446.3272,
+                "y": 8.042819,
+                "z": 255.3481
+              },
+              "minAngle": -330,
+              "maxAngle": -190,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 335.5055,
+                "y": 9.026793,
+                "z": 237.7542
+              },
+              "minAngle": -110,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

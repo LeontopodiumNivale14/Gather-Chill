@@ -1,0 +1,64 @@
+{
+  "routeId": 607,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "Weed",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32681
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32681,
+          "locations": [
+            {
+              "position": {
+                "x": 352.5925,
+                "y": 21.96574,
+                "z": 580.2242
+              },
+              "minAngle": -80,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 313.2422,
+                "y": 15.47577,
+                "z": 564.2788
+              },
+              "minAngle": -360,
+              "maxAngle": -225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 333.8784,
+                "y": 20.80173,
+                "z": 610.9354
+              },
+              "minAngle": -345,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

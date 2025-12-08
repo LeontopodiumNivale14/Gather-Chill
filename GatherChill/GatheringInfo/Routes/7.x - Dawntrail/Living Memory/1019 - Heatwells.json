@@ -1,0 +1,76 @@
+{
+  "routeId": 1019,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "Heatwells",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34973,
+    34975,
+    34974
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34973,
+          "locations": [
+            {
+              "position": {
+                "x": 575.0643,
+                "y": 28.69256,
+                "z": -151.2006
+              },
+              "minAngle": -180,
+              "maxAngle": -75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34975,
+          "locations": [
+            {
+              "position": {
+                "x": 748.2175,
+                "y": 28.39331,
+                "z": -249.4703
+              },
+              "minAngle": -55,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34974,
+          "locations": [
+            {
+              "position": {
+                "x": 799.847,
+                "y": 17.89119,
+                "z": -100.8945
+              },
+              "minAngle": -310,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "routeId": 506,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "East End",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 65,
+  "nodeIds": [
+    32194,
+    32198,
+    32197,
+    32195,
+    32196,
+    32199
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32194,
+          "locations": [
+            {
+              "position": {
+                "x": -551.4626,
+                "y": 114.1189,
+                "z": -384.8856
+              },
+              "minAngle": -290,
+              "maxAngle": -250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32198,
+          "locations": [
+            {
+              "position": {
+                "x": -525.5704,
+                "y": 83.37998,
+                "z": -197.2556
+              },
+              "minAngle": -45,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32197,
+          "locations": [
+            {
+              "position": {
+                "x": -542.4322,
+                "y": 99.85641,
+                "z": -254.1729
+              },
+              "minAngle": -275,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -529.2322,
+                "y": 103.2896,
+                "z": -265.6116
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32195,
+          "locations": [
+            {
+              "position": {
+                "x": -657.472,
+                "y": 128.0014,
+                "z": -323.8181
+              },
+              "minAngle": -285,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -679.319,
+                "y": 123.9155,
+                "z": -261.5573
+              },
+              "minAngle": -25,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32196,
+          "locations": [
+            {
+              "position": {
+                "x": -548.3562,
+                "y": 96.85734,
+                "z": -227.9828
+              },
+              "minAngle": -200,
+              "maxAngle": -135,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32199,
+          "locations": [
+            {
+              "position": {
+                "x": -459.4336,
+                "y": 84.27571,
+                "z": -271.7037
+              },
+              "minAngle": -360,
+              "maxAngle": -265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

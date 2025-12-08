@@ -1,0 +1,76 @@
+{
+  "routeId": 626,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "Tomra",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33619,
+    32765,
+    33620
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33619,
+          "locations": [
+            {
+              "position": {
+                "x": -248.0559,
+                "y": 455.5124,
+                "z": -671.5915
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32765,
+          "locations": [
+            {
+              "position": {
+                "x": -138.8022,
+                "y": 459.6972,
+                "z": -775.2883
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33620,
+          "locations": [
+            {
+              "position": {
+                "x": -37.93757,
+                "y": 420.1486,
+                "z": -610.9703
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

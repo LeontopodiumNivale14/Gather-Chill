@@ -1,0 +1,76 @@
+{
+  "routeId": 599,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "The Exarch Gate",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33611,
+    33612,
+    32663
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33611,
+          "locations": [
+            {
+              "position": {
+                "x": 774.5178,
+                "y": 27.08878,
+                "z": 365.4865
+              },
+              "minAngle": -45,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33612,
+          "locations": [
+            {
+              "position": {
+                "x": 641.7729,
+                "y": 15.09113,
+                "z": 377.899
+              },
+              "minAngle": -230,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32663,
+          "locations": [
+            {
+              "position": {
+                "x": 677.0565,
+                "y": 8.056039,
+                "z": 615.6698
+              },
+              "minAngle": -225,
+              "maxAngle": -150,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

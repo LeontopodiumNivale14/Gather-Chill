@@ -1,0 +1,64 @@
+{
+  "routeId": 338,
+  "territoryId": 958,
+  "zoneName": "Garlemald",
+  "placeName": "Tertium",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34358
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34358,
+          "locations": [
+            {
+              "position": {
+                "x": 567.7528,
+                "y": 14.3098,
+                "z": -234.057
+              },
+              "minAngle": -180,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 508.8692,
+                "y": 15.32319,
+                "z": -150.6417
+              },
+              "minAngle": -15,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 490.4205,
+                "y": 15.67376,
+                "z": -236.4765
+              },
+              "minAngle": -300,
+              "maxAngle": -155,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

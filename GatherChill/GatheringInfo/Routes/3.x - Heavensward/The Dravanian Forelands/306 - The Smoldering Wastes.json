@@ -1,0 +1,40 @@
+{
+  "routeId": 306,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "The Smoldering Wastes",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 55,
+  "nodeIds": [
+    31437
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31437,
+          "locations": [
+            {
+              "position": {
+                "x": 406.4903,
+                "y": -93.37117,
+                "z": 480.3979
+              },
+              "minAngle": -25,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

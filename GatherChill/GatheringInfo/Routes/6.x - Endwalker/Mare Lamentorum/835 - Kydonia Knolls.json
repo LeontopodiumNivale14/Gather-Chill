@@ -1,0 +1,64 @@
+{
+  "routeId": 835,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "Kydonia Knolls",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33968
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33968,
+          "locations": [
+            {
+              "position": {
+                "x": -574.5445,
+                "y": 143.78,
+                "z": 107.5853
+              },
+              "minAngle": -135,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -608.1351,
+                "y": 149.5996,
+                "z": 99.31207
+              },
+              "minAngle": -355,
+              "maxAngle": -260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -611.5208,
+                "y": 147.1237,
+                "z": 70.4239
+              },
+              "minAngle": -285,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

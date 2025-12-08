@@ -1,0 +1,40 @@
+{
+  "routeId": 714,
+  "territoryId": 815,
+  "zoneName": "Amh Araeng",
+  "placeName": "The Nabaath Severance",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33234
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33234,
+          "locations": [
+            {
+              "position": {
+                "x": 537.4887,
+                "y": -106.9657,
+                "z": 602.1052
+              },
+              "minAngle": 85,
+              "maxAngle": 195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

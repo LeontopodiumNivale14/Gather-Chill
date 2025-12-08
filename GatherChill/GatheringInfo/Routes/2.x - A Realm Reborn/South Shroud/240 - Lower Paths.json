@@ -1,0 +1,40 @@
+{
+  "routeId": 240,
+  "territoryId": 153,
+  "zoneName": "South Shroud",
+  "placeName": "Lower Paths",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31034
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31034,
+          "locations": [
+            {
+              "position": {
+                "x": -310.4894,
+                "y": 0.9743209,
+                "z": 382.6578
+              },
+              "minAngle": -85,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

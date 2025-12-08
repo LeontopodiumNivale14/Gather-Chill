@@ -1,0 +1,76 @@
+{
+  "routeId": 780,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "The Forest of the Lost Shepherd",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33627,
+    33626,
+    33625
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33627,
+          "locations": [
+            {
+              "position": {
+                "x": 426.5781,
+                "y": 9.591059,
+                "z": 136.9744
+              },
+              "minAngle": -290,
+              "maxAngle": -215,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33626,
+          "locations": [
+            {
+              "position": {
+                "x": 300.6837,
+                "y": 7.258451,
+                "z": 7.553601
+              },
+              "minAngle": -5,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33625,
+          "locations": [
+            {
+              "position": {
+                "x": 489.5431,
+                "y": 11.82839,
+                "z": -58.47987
+              },
+              "minAngle": -25,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

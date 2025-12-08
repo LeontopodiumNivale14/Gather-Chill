@@ -1,0 +1,64 @@
+{
+  "routeId": 221,
+  "territoryId": 145,
+  "zoneName": "Eastern Thanalan",
+  "placeName": "Drybone",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31009
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31009,
+          "locations": [
+            {
+              "position": {
+                "x": -438.9431,
+                "y": -2.664039,
+                "z": -295.1458
+              },
+              "minAngle": 25,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -472.4214,
+                "y": 3.363297,
+                "z": -287.7643
+              },
+              "minAngle": -55,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -461.1168,
+                "y": 1.888389,
+                "z": -257.1805
+              },
+              "minAngle": -170,
+              "maxAngle": -115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

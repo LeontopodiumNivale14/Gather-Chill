@@ -1,0 +1,64 @@
+{
+  "routeId": 855,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "The Ragnarok",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34042
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34042,
+          "locations": [
+            {
+              "position": {
+                "x": -608.1895,
+                "y": 81.07034,
+                "z": 578.6608
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -605.3243,
+                "y": 82.95043,
+                "z": 592.2387
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -589.4499,
+                "y": 82.99398,
+                "z": 588.3982
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

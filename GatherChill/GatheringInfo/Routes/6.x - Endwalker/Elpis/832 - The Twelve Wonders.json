@@ -1,0 +1,64 @@
+{
+  "routeId": 832,
+  "territoryId": 961,
+  "zoneName": "Elpis",
+  "placeName": "The Twelve Wonders",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33965
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33965,
+          "locations": [
+            {
+              "position": {
+                "x": -661.0935,
+                "y": -39.73534,
+                "z": 750.0247
+              },
+              "minAngle": -205,
+              "maxAngle": -120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -667.7715,
+                "y": -39.63021,
+                "z": 754.6814
+              },
+              "minAngle": -300,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -656.7103,
+                "y": -39.74007,
+                "z": 757.765
+              },
+              "minAngle": -100,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

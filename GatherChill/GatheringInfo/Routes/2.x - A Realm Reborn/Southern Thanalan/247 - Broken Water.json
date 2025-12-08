@@ -1,0 +1,52 @@
+{
+  "routeId": 247,
+  "territoryId": 146,
+  "zoneName": "Southern Thanalan",
+  "placeName": "Broken Water",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31055
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31055,
+          "locations": [
+            {
+              "position": {
+                "x": -238.3566,
+                "y": 22.29088,
+                "z": -538.4208
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -288.1281,
+                "y": 33.52722,
+                "z": -473.1611
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

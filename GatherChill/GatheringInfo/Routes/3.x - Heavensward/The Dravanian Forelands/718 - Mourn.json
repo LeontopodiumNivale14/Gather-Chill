@@ -1,0 +1,166 @@
+{
+  "routeId": 718,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "Mourn",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33253,
+    33254,
+    33255,
+    33256,
+    33258,
+    33257
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33253,
+          "locations": [
+            {
+              "position": {
+                "x": -341.6828,
+                "y": -14.94301,
+                "z": -598.4926
+              },
+              "minAngle": -25,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33254,
+          "locations": [
+            {
+              "position": {
+                "x": -332.4726,
+                "y": -13.44833,
+                "z": -601.2593
+              },
+              "minAngle": -30,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -348.8672,
+                "y": -14.62883,
+                "z": -599.343
+              },
+              "minAngle": -20,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33255,
+          "locations": [
+            {
+              "position": {
+                "x": -275.4121,
+                "y": -10.66476,
+                "z": -529.4013
+              },
+              "minAngle": -230,
+              "maxAngle": -170,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33256,
+          "locations": [
+            {
+              "position": {
+                "x": -268.6071,
+                "y": -10.61292,
+                "z": -528.8536
+              },
+              "minAngle": -220,
+              "maxAngle": -210,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -283.6498,
+                "y": -10.732,
+                "z": -524.7916
+              },
+              "minAngle": -240,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33258,
+          "locations": [
+            {
+              "position": {
+                "x": -215.6251,
+                "y": -12.5316,
+                "z": -641.4014
+              },
+              "minAngle": -280,
+              "maxAngle": -275,
+              "minDistance": 2.4,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -206.1881,
+                "y": -18.83969,
+                "z": -671.5204
+              },
+              "minAngle": -245,
+              "maxAngle": -225,
+              "minDistance": 2.3,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33257,
+          "locations": [
+            {
+              "position": {
+                "x": -222.1952,
+                "y": -18.66724,
+                "z": -658.897
+              },
+              "minAngle": -270,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

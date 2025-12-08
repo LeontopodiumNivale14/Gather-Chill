@@ -1,0 +1,64 @@
+{
+  "routeId": 1188,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Uyuyub\u0027",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35237
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35237,
+          "locations": [
+            {
+              "position": {
+                "x": -468.3068,
+                "y": 12.73508,
+                "z": -185.0297
+              },
+              "minAngle": -140,
+              "maxAngle": -50,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -471.2706,
+                "y": 12.90528,
+                "z": -193.521
+              },
+              "minAngle": -180,
+              "maxAngle": -75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -478.8657,
+                "y": 12.78292,
+                "z": -201.8458
+              },
+              "minAngle": -195,
+              "maxAngle": -90,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

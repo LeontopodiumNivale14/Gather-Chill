@@ -1,0 +1,64 @@
+{
+  "routeId": 695,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "Mornveil Forest",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34363
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34363,
+          "locations": [
+            {
+              "position": {
+                "x": 327.8939,
+                "y": 164.5674,
+                "z": -526.9774
+              },
+              "minAngle": -130,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 326.0526,
+                "y": 166.4822,
+                "z": -489.94
+              },
+              "minAngle": -210,
+              "maxAngle": -55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 342.2336,
+                "y": 166.696,
+                "z": -495.1375
+              },
+              "minAngle": -135,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "routeId": 726,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "Weston Waters",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33305,
+    33306,
+    33304,
+    33303,
+    33301,
+    33302
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33305,
+          "locations": [
+            {
+              "position": {
+                "x": -560.7639,
+                "y": 266.9573,
+                "z": -744.8922
+              },
+              "minAngle": -45,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33306,
+          "locations": [
+            {
+              "position": {
+                "x": -547.9997,
+                "y": 268.3711,
+                "z": -737.2209
+              },
+              "minAngle": 0,
+              "maxAngle": 95,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33304,
+          "locations": [
+            {
+              "position": {
+                "x": -682.6185,
+                "y": 261.1417,
+                "z": -778.2869
+              },
+              "minAngle": -50,
+              "maxAngle": 20,
+              "minDistance": 1.5,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33303,
+          "locations": [
+            {
+              "position": {
+                "x": -696.5138,
+                "y": 261.6092,
+                "z": -759.7711
+              },
+              "minAngle": 215,
+              "maxAngle": 310,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33301,
+          "locations": [
+            {
+              "position": {
+                "x": -792.3468,
+                "y": 271.3054,
+                "z": -737.431
+              },
+              "minAngle": 280,
+              "maxAngle": 360,
+              "minDistance": 2,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33302,
+          "locations": [
+            {
+              "position": {
+                "x": -800.0043,
+                "y": 269.2748,
+                "z": -729.5305
+              },
+              "minAngle": 230,
+              "maxAngle": 340,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

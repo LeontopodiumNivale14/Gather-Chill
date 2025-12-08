@@ -1,0 +1,76 @@
+{
+  "routeId": 1018,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Uyuypoga",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34972,
+    34971,
+    34970
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34972,
+          "locations": [
+            {
+              "position": {
+                "x": 690.197,
+                "y": 21.32297,
+                "z": 25.79391
+              },
+              "minAngle": -255,
+              "maxAngle": -155,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34971,
+          "locations": [
+            {
+              "position": {
+                "x": 863.2809,
+                "y": 26.78143,
+                "z": 56.90088
+              },
+              "minAngle": -295,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34970,
+          "locations": [
+            {
+              "position": {
+                "x": 877.2869,
+                "y": 9.230866,
+                "z": -107.8342
+              },
+              "minAngle": 0,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

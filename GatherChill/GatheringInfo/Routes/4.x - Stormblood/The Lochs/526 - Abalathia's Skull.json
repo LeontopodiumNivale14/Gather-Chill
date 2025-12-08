@@ -1,0 +1,64 @@
+{
+  "routeId": 526,
+  "territoryId": 621,
+  "zoneName": "The Lochs",
+  "placeName": "Abalathia\u0027s Skull",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32274
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32274,
+          "locations": [
+            {
+              "position": {
+                "x": -737.3265,
+                "y": 76.50858,
+                "z": -591.2296
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -787.0406,
+                "y": 78.22382,
+                "z": -640.0532
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -670.0129,
+                "y": 70.42876,
+                "z": -645.2087
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

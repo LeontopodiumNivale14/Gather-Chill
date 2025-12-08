@@ -1,0 +1,40 @@
+{
+  "routeId": 758,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "The Duergar\u0027s Tewel",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33588
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33588,
+          "locations": [
+            {
+              "position": {
+                "x": 733.7656,
+                "y": 272.9521,
+                "z": -459.7066
+              },
+              "minAngle": -220,
+              "maxAngle": -175,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

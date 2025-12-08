@@ -1,0 +1,40 @@
+{
+  "routeId": 684,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "White Oil Falls",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32990
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32990,
+          "locations": [
+            {
+              "position": {
+                "x": 346.7795,
+                "y": 161.5645,
+                "z": -15.97921
+              },
+              "minAngle": -255,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "routeId": 497,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "The Striped Hills",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    32180
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32180,
+          "locations": [
+            {
+              "position": {
+                "x": 224.3548,
+                "y": 67.9967,
+                "z": -642.8723
+              },
+              "minAngle": 0,
+              "maxAngle": 75,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 141.0763,
+                "y": 70.17472,
+                "z": -690.985
+              },
+              "minAngle": -320,
+              "maxAngle": -295,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 197.1969,
+                "y": 66.56018,
+                "z": -646.0788
+              },
+              "minAngle": -330,
+              "maxAngle": -295,
+              "minDistance": 1.8,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

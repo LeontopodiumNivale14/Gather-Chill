@@ -1,0 +1,154 @@
+{
+  "routeId": 739,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "The Aqueduct",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33377,
+    33376,
+    33375,
+    33374,
+    33378,
+    33379
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33377,
+          "locations": [
+            {
+              "position": {
+                "x": -594.0545,
+                "y": -64.39404,
+                "z": 593.7832
+              },
+              "minAngle": -310,
+              "maxAngle": -265,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -596.5495,
+                "y": -59.61267,
+                "z": 582.4266
+              },
+              "minAngle": -305,
+              "maxAngle": -260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33376,
+          "locations": [
+            {
+              "position": {
+                "x": -609.7657,
+                "y": -62.08899,
+                "z": 589.6543
+              },
+              "minAngle": -125,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33375,
+          "locations": [
+            {
+              "position": {
+                "x": -536.9317,
+                "y": -61.75995,
+                "z": 585.7331
+              },
+              "minAngle": -130,
+              "maxAngle": 0,
+              "minDistance": 1.6,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -553.1326,
+                "y": -67.94791,
+                "z": 603.3617
+              },
+              "minAngle": -30,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33374,
+          "locations": [
+            {
+              "position": {
+                "x": -543.1127,
+                "y": -64.65357,
+                "z": 597.4682
+              },
+              "minAngle": -40,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33378,
+          "locations": [
+            {
+              "position": {
+                "x": -628.0684,
+                "y": -68.02022,
+                "z": 659.0085
+              },
+              "minAngle": -45,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33379,
+          "locations": [
+            {
+              "position": {
+                "x": -635.8442,
+                "y": -67.90159,
+                "z": 665.6107
+              },
+              "minAngle": -70,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

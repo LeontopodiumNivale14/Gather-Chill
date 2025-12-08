@@ -1,0 +1,166 @@
+{
+  "routeId": 1036,
+  "territoryId": 1189,
+  "zoneName": "Yak T\u0027el",
+  "placeName": "The Ja Tiika Heartland",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 95,
+  "nodeIds": [
+    35000,
+    35001,
+    34999,
+    34998,
+    34997,
+    34996
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35000,
+          "locations": [
+            {
+              "position": {
+                "x": -16.37299,
+                "y": -170.9774,
+                "z": 663.569
+              },
+              "minAngle": -105,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 1.7,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 35001,
+          "locations": [
+            {
+              "position": {
+                "x": -12.40477,
+                "y": -171.3741,
+                "z": 645.4531
+              },
+              "minAngle": -360,
+              "maxAngle": -270,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 26.07764,
+                "y": -171.313,
+                "z": 655.024
+              },
+              "minAngle": -360,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -26.53546,
+                "y": -171.0079,
+                "z": 638.178
+              },
+              "minAngle": -5,
+              "maxAngle": 20,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34999,
+          "locations": [
+            {
+              "position": {
+                "x": -100.7395,
+                "y": -190.0542,
+                "z": 576.6908
+              },
+              "minAngle": -310,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34998,
+          "locations": [
+            {
+              "position": {
+                "x": -105.1922,
+                "y": -190.6356,
+                "z": 577.7003
+              },
+              "minAngle": -150,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34997,
+          "locations": [
+            {
+              "position": {
+                "x": -169.1191,
+                "y": -213.2117,
+                "z": 732.5192
+              },
+              "minAngle": -30,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -160.8902,
+                "y": -212.5125,
+                "z": 736.5601
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34996,
+          "locations": [
+            {
+              "position": {
+                "x": -169.1084,
+                "y": -210.0222,
+                "z": 743.4636
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "routeId": 628,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Phisor Lran",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 75,
+  "nodeIds": [
+    32767
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32767,
+          "locations": [
+            {
+              "position": {
+                "x": 191.6319,
+                "y": 1.253099,
+                "z": 750.9798
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 163.0859,
+                "y": 1.274736,
+                "z": 800.1416
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 150.9943,
+                "y": 1.267644,
+                "z": 746.8837
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "routeId": 651,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Thysm Lran",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32832,
+    32831,
+    32830,
+    32829,
+    32827,
+    32828
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32832,
+          "locations": [
+            {
+              "position": {
+                "x": 382.7488,
+                "y": -72.47251,
+                "z": 794.3513
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 388.7861,
+                "y": -74.19925,
+                "z": 801.0947
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 386.1797,
+                "y": -73.5009,
+                "z": 787.0967
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32831,
+          "locations": [
+            {
+              "position": {
+                "x": 396.5799,
+                "y": -76.29187,
+                "z": 790.9022
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32830,
+          "locations": [
+            {
+              "position": {
+                "x": 492.6384,
+                "y": -82.73045,
+                "z": 804.714
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 482.808,
+                "y": -82.61642,
+                "z": 802.591
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32829,
+          "locations": [
+            {
+              "position": {
+                "x": 493.5814,
+                "y": -82.43644,
+                "z": 790.831
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32827,
+          "locations": [
+            {
+              "position": {
+                "x": 490.9451,
+                "y": -97.88062,
+                "z": 636.6115
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32828,
+          "locations": [
+            {
+              "position": {
+                "x": 491.5274,
+                "y": -100.762,
+                "z": 626.6958
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

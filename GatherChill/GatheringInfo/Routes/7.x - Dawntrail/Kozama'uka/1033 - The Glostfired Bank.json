@@ -1,0 +1,64 @@
+{
+  "routeId": 1033,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "The Glostfired Bank",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34993
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34993,
+          "locations": [
+            {
+              "position": {
+                "x": -685.6004,
+                "y": 133.0576,
+                "z": 572.1357
+              },
+              "minAngle": -280,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -681.8829,
+                "y": 126.4195,
+                "z": 481.5804
+              },
+              "minAngle": -315,
+              "maxAngle": -225,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -740.6408,
+                "y": 149.1586,
+                "z": 679.0509
+              },
+              "minAngle": -180,
+              "maxAngle": -65,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "routeId": 337,
+  "territoryId": 399,
+  "zoneName": "The Dravanian Hinterlands",
+  "placeName": "Saint Mocianne\u0027s Arboretum",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31485,
+    31486,
+    31488
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31485,
+          "locations": [
+            {
+              "position": {
+                "x": -671.3333,
+                "y": 150.9955,
+                "z": 185.0633
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31486,
+          "locations": [
+            {
+              "position": {
+                "x": -754.1547,
+                "y": 178.0086,
+                "z": 339.0067
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31488,
+          "locations": [
+            {
+              "position": {
+                "x": -925.7498,
+                "y": 225.2721,
+                "z": 254.8341
+              },
+              "minAngle": -180,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

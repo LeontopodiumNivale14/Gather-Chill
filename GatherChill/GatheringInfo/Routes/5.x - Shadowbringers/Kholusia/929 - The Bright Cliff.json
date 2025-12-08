@@ -1,0 +1,112 @@
+{
+  "routeId": 929,
+  "territoryId": 814,
+  "zoneName": "Kholusia",
+  "placeName": "The Bright Cliff",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34471,
+    34469,
+    34470
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34471,
+          "locations": [
+            {
+              "position": {
+                "x": 712.5905,
+                "y": 7.786932,
+                "z": 367.0836
+              },
+              "minAngle": -100,
+              "maxAngle": -55,
+              "minDistance": 2,
+              "maxDistance": 3,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 715.6683,
+                "y": 10.28156,
+                "z": 326.4376
+              },
+              "minAngle": -90,
+              "maxAngle": -45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34469,
+          "locations": [
+            {
+              "position": {
+                "x": 629.4498,
+                "y": 31.4507,
+                "z": 248.018
+              },
+              "minAngle": -25,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 643.1847,
+                "y": 31.7547,
+                "z": 244.6832
+              },
+              "minAngle": -55,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34470,
+          "locations": [
+            {
+              "position": {
+                "x": 559.936,
+                "y": 4.487294,
+                "z": 468.0613
+              },
+              "minAngle": -55,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 572.2902,
+                "y": 12.00586,
+                "z": 450.547
+              },
+              "minAngle": -65,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

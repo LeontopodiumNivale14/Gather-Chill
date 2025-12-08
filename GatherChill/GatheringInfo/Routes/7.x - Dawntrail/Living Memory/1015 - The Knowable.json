@@ -1,0 +1,76 @@
+{
+  "routeId": 1015,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "The Knowable",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34962,
+    34961,
+    34963
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34962,
+          "locations": [
+            {
+              "position": {
+                "x": -403.1963,
+                "y": -4.44043,
+                "z": -438.6041
+              },
+              "minAngle": -255,
+              "maxAngle": -145,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34961,
+          "locations": [
+            {
+              "position": {
+                "x": -689.1841,
+                "y": -3.281493,
+                "z": -472.5652
+              },
+              "minAngle": -125,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34963,
+          "locations": [
+            {
+              "position": {
+                "x": -555.1761,
+                "y": -7.116513,
+                "z": -648.6161
+              },
+              "minAngle": -70,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

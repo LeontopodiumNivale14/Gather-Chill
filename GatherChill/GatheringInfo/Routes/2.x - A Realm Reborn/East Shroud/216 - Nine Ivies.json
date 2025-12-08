@@ -1,0 +1,64 @@
+{
+  "routeId": 216,
+  "territoryId": 152,
+  "zoneName": "East Shroud",
+  "placeName": "Nine Ivies",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31004
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31004,
+          "locations": [
+            {
+              "position": {
+                "x": 0.1616389,
+                "y": -7.138183,
+                "z": 275.7002
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 29.71215,
+                "y": -3.306695,
+                "z": 213.1672
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 45.42078,
+                "y": -1.671828,
+                "z": 256.2338
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 1.7,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

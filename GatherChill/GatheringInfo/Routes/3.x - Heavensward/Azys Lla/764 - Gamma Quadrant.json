@@ -1,0 +1,154 @@
+{
+  "routeId": 764,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "Gamma Quadrant",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33595,
+    33594,
+    33597,
+    33596,
+    33598,
+    33599
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33595,
+          "locations": [
+            {
+              "position": {
+                "x": 668.0621,
+                "y": 19.2401,
+                "z": 325.3393
+              },
+              "minAngle": -285,
+              "maxAngle": -240,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33594,
+          "locations": [
+            {
+              "position": {
+                "x": 675.0063,
+                "y": 19.03245,
+                "z": 312.0991
+              },
+              "minAngle": -295,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33597,
+          "locations": [
+            {
+              "position": {
+                "x": 631.4982,
+                "y": 17.10102,
+                "z": 241.3262
+              },
+              "minAngle": -120,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33596,
+          "locations": [
+            {
+              "position": {
+                "x": 622.6965,
+                "y": 21.71836,
+                "z": 251.6853
+              },
+              "minAngle": -45,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 642.4247,
+                "y": 14.8229,
+                "z": 228.4323
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33598,
+          "locations": [
+            {
+              "position": {
+                "x": 736.4139,
+                "y": 7.684157,
+                "z": 230.1508
+              },
+              "minAngle": -160,
+              "maxAngle": -130,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33599,
+          "locations": [
+            {
+              "position": {
+                "x": 755.2874,
+                "y": 5.323399,
+                "z": 236.7633
+              },
+              "minAngle": -180,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 724.9553,
+                "y": 7.70503,
+                "z": 215.8326
+              },
+              "minAngle": -160,
+              "maxAngle": -120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

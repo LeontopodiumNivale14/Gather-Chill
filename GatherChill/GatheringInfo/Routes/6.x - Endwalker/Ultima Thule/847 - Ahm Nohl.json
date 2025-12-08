@@ -1,0 +1,142 @@
+{
+  "routeId": 847,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "Ahm Nohl",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34024,
+    34025,
+    34026,
+    34027,
+    34028,
+    34029
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34024,
+          "locations": [
+            {
+              "position": {
+                "x": -614.3435,
+                "y": 72.52612,
+                "z": 84.21448
+              },
+              "minAngle": -150,
+              "maxAngle": -115,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34025,
+          "locations": [
+            {
+              "position": {
+                "x": -615.198,
+                "y": 71.79371,
+                "z": 82.01721
+              },
+              "minAngle": -100,
+              "maxAngle": -60,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34026,
+          "locations": [
+            {
+              "position": {
+                "x": -760.6202,
+                "y": 61.49334,
+                "z": 34.71832
+              },
+              "minAngle": 20,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34027,
+          "locations": [
+            {
+              "position": {
+                "x": -763.0071,
+                "y": 61.6693,
+                "z": 34.5165
+              },
+              "minAngle": -35,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34028,
+          "locations": [
+            {
+              "position": {
+                "x": -713.5881,
+                "y": 70.87805,
+                "z": -48.87469
+              },
+              "minAngle": -75,
+              "maxAngle": -5,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34029,
+          "locations": [
+            {
+              "position": {
+                "x": -691.3116,
+                "y": 70.68101,
+                "z": -91.12169
+              },
+              "minAngle": -55,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -712.2606,
+                "y": 70.54321,
+                "z": -58.78311
+              },
+              "minAngle": -175,
+              "maxAngle": -100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

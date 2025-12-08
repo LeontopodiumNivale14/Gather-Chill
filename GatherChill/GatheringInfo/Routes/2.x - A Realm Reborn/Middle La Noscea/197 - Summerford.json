@@ -1,0 +1,190 @@
+{
+  "routeId": 197,
+  "territoryId": 134,
+  "zoneName": "Middle La Noscea",
+  "placeName": "Summerford",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    30373,
+    30375,
+    30376,
+    30374
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 30373,
+          "locations": [
+            {
+              "position": {
+                "x": -7.250644,
+                "y": 47.13503,
+                "z": 31.54072
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -12.45945,
+                "y": 48.81578,
+                "z": -39.47475
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -4.770366,
+                "y": 48.9969,
+                "z": 4.600432
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30375,
+          "locations": [
+            {
+              "position": {
+                "x": -63.25118,
+                "y": 45.89258,
+                "z": 8.707791
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -55.32331,
+                "y": 46.54463,
+                "z": -5.440426
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -65.77558,
+                "y": 45.29813,
+                "z": 0.6923263
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30376,
+          "locations": [
+            {
+              "position": {
+                "x": -90.96844,
+                "y": 40.84414,
+                "z": 39.01356
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -123.9829,
+                "y": 43.15182,
+                "z": -0.9642326
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -92.61315,
+                "y": 41.74643,
+                "z": 25.9026
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30374,
+          "locations": [
+            {
+              "position": {
+                "x": -101.1138,
+                "y": 43.8482,
+                "z": -25.39335
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -111.0851,
+                "y": 46.57095,
+                "z": -61.64178
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -108.2213,
+                "y": 46.55541,
+                "z": -57.61868
+              },
+              "minAngle": 0,
+              "maxAngle": 359,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

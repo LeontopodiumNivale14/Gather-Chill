@@ -1,0 +1,64 @@
+{
+  "routeId": 248,
+  "territoryId": 134,
+  "zoneName": "Middle La Noscea",
+  "placeName": "Zephyr Drift",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31056
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31056,
+          "locations": [
+            {
+              "position": {
+                "x": 200.1235,
+                "y": 65.77048,
+                "z": 207.2034
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 89.6678,
+                "y": 60.76498,
+                "z": 246.9656
+              },
+              "minAngle": -130,
+              "maxAngle": 10,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 141.3147,
+                "y": 62.37666,
+                "z": 284.5144
+              },
+              "minAngle": 160,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

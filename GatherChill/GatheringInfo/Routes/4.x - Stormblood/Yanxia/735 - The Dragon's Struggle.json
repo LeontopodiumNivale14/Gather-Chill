@@ -1,0 +1,130 @@
+{
+  "routeId": 735,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "The Dragon\u0027s Struggle",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33352,
+    33353,
+    33351,
+    33350,
+    33354,
+    33355
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33352,
+          "locations": [
+            {
+              "position": {
+                "x": -422.3638,
+                "y": -112.4732,
+                "z": -582.3047
+              },
+              "minAngle": -295,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33353,
+          "locations": [
+            {
+              "position": {
+                "x": -430.7385,
+                "y": -112.612,
+                "z": -568.7487
+              },
+              "minAngle": -300,
+              "maxAngle": -260,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33351,
+          "locations": [
+            {
+              "position": {
+                "x": -485.985,
+                "y": -118.5042,
+                "z": -642.1003
+              },
+              "minAngle": -85,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33350,
+          "locations": [
+            {
+              "position": {
+                "x": -481.6736,
+                "y": -109.9486,
+                "z": -656.4765
+              },
+              "minAngle": -110,
+              "maxAngle": -15,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33354,
+          "locations": [
+            {
+              "position": {
+                "x": -462.5411,
+                "y": -100.3339,
+                "z": -460.1712
+              },
+              "minAngle": -190,
+              "maxAngle": -135,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 33355,
+          "locations": [
+            {
+              "position": {
+                "x": -462.9991,
+                "y": -99.20029,
+                "z": -449.3781
+              },
+              "minAngle": -40,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

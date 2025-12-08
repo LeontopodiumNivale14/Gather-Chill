@@ -1,0 +1,64 @@
+{
+  "routeId": 223,
+  "territoryId": 145,
+  "zoneName": "Eastern Thanalan",
+  "placeName": "The Burning Wall",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31011
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31011,
+          "locations": [
+            {
+              "position": {
+                "x": 339.9391,
+                "y": 22.44436,
+                "z": 45.65207
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 308.1687,
+                "y": 11.61312,
+                "z": -6.337274
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 339.9988,
+                "y": 15.12653,
+                "z": -4.592734
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "routeId": 920,
+  "territoryId": 813,
+  "zoneName": "Lakeland",
+  "placeName": "The Stay",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34420,
+    34418,
+    34416
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34420,
+          "locations": [
+            {
+              "position": {
+                "x": -312.4968,
+                "y": 23.78443,
+                "z": -268.2531
+              },
+              "minAngle": -70,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -282.2307,
+                "y": 33.74974,
+                "z": -261.1516
+              },
+              "minAngle": -80,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34418,
+          "locations": [
+            {
+              "position": {
+                "x": -109.0743,
+                "y": 19.83319,
+                "z": -232.7845
+              },
+              "minAngle": -10,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -72.07407,
+                "y": 18.90694,
+                "z": -206.7846
+              },
+              "minAngle": -35,
+              "maxAngle": 80,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 34416,
+          "locations": [
+            {
+              "position": {
+                "x": -177.328,
+                "y": 71.8902,
+                "z": -403.8857
+              },
+              "minAngle": -310,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -166.3627,
+                "y": 60.29913,
+                "z": -370.1928
+              },
+              "minAngle": -320,
+              "maxAngle": -245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

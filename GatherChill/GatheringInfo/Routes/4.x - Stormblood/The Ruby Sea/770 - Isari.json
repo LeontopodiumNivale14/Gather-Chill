@@ -1,0 +1,40 @@
+{
+  "routeId": 770,
+  "territoryId": 613,
+  "zoneName": "The Ruby Sea",
+  "placeName": "Isari",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 65,
+  "nodeIds": [
+    33021
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33021,
+          "locations": [
+            {
+              "position": {
+                "x": -776.3109,
+                "y": 9.524816,
+                "z": -285.9094
+              },
+              "minAngle": -275,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

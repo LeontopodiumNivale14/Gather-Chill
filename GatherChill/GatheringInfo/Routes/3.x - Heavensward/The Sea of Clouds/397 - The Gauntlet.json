@@ -1,0 +1,64 @@
+{
+  "routeId": 397,
+  "territoryId": 401,
+  "zoneName": "The Sea of Clouds",
+  "placeName": "The Gauntlet",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31509
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31509,
+          "locations": [
+            {
+              "position": {
+                "x": 781.2183,
+                "y": -9.928694,
+                "z": -381.4036
+              },
+              "minAngle": -285,
+              "maxAngle": -230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 756.488,
+                "y": -9.917932,
+                "z": -457.6566
+              },
+              "minAngle": -335,
+              "maxAngle": -255,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 705.9585,
+                "y": -9.964172,
+                "z": -358.4802
+              },
+              "minAngle": -145,
+              "maxAngle": -85,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

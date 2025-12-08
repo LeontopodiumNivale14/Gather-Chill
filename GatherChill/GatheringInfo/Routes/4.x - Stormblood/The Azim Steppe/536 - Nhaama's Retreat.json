@@ -1,0 +1,64 @@
+{
+  "routeId": 536,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Nhaama\u0027s Retreat",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32309
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32309,
+          "locations": [
+            {
+              "position": {
+                "x": 148.3773,
+                "y": 32.87914,
+                "z": 788.1909
+              },
+              "minAngle": -235,
+              "maxAngle": -185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 115.2593,
+                "y": 32.1449,
+                "z": 769.0432
+              },
+              "minAngle": -215,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 131.8531,
+                "y": 33.68119,
+                "z": 798.0145
+              },
+              "minAngle": -250,
+              "maxAngle": -195,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

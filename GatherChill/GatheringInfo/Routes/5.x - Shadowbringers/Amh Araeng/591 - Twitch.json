@@ -1,0 +1,176 @@
+{
+  "routeId": 591,
+  "territoryId": 815,
+  "zoneName": "Amh Araeng",
+  "placeName": "Twitch",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 70,
+  "nodeIds": [
+    32625,
+    32624,
+    32622,
+    32623,
+    32621,
+    32620
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32625,
+          "locations": [
+            {
+              "position": {
+                "x": 451.1189,
+                "y": -40.18039,
+                "z": 184.7025
+              },
+              "minAngle": 95,
+              "maxAngle": 245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 471.4881,
+                "y": -41.63216,
+                "z": 185.0577
+              },
+              "minAngle": 160,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32624,
+          "locations": [
+            {
+              "position": {
+                "x": 463.4016,
+                "y": -41.51461,
+                "z": 181.6076
+              },
+              "minAngle": 90,
+              "maxAngle": 250,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32622,
+          "locations": [
+            {
+              "position": {
+                "x": 507.8041,
+                "y": -33.50595,
+                "z": 26.54234
+              },
+              "minAngle": 60,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32623,
+          "locations": [
+            {
+              "position": {
+                "x": 509.3797,
+                "y": -30.43971,
+                "z": -2.22134
+              },
+              "minAngle": -55,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 490.9295,
+                "y": -30.41992,
+                "z": -0.7659363
+              },
+              "minAngle": -70,
+              "maxAngle": 25,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32621,
+          "locations": [
+            {
+              "position": {
+                "x": 378.5,
+                "y": -29.83888,
+                "z": 25.41485
+              },
+              "minAngle": -65,
+              "maxAngle": 30,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 358.2361,
+                "y": -30,
+                "z": 26.45336
+              },
+              "minAngle": -40,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 32620,
+          "locations": [
+            {
+              "position": {
+                "x": 365.5395,
+                "y": -34.4827,
+                "z": 42.98462
+              },
+              "minAngle": 190,
+              "maxAngle": 285,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

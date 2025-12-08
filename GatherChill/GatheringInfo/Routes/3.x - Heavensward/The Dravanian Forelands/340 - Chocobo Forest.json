@@ -1,0 +1,64 @@
+{
+  "routeId": 340,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "Chocobo Forest",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 50,
+  "nodeIds": [
+    31493
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31493,
+          "locations": [
+            {
+              "position": {
+                "x": 212.8449,
+                "y": -25.08769,
+                "z": -473.0538
+              },
+              "minAngle": -50,
+              "maxAngle": 245,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 199.9407,
+                "y": -29.08817,
+                "z": -433.7411
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 193.9708,
+                "y": -23.64505,
+                "z": -479.9466
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 2.1,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

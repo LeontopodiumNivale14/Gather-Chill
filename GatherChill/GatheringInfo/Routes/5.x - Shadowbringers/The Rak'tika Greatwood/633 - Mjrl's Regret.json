@@ -1,0 +1,64 @@
+{
+  "routeId": 633,
+  "territoryId": 817,
+  "zoneName": "The Rak\u0027tika Greatwood",
+  "placeName": "Mjrl\u0027s Regret",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32772
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32772,
+          "locations": [
+            {
+              "position": {
+                "x": 143.8618,
+                "y": -25.91127,
+                "z": 753.3024
+              },
+              "minAngle": -235,
+              "maxAngle": -180,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 179.9792,
+                "y": -24.98761,
+                "z": 753.9448
+              },
+              "minAngle": -240,
+              "maxAngle": -200,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 162.0822,
+                "y": -23.94631,
+                "z": 805.7821
+              },
+              "minAngle": -270,
+              "maxAngle": -205,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

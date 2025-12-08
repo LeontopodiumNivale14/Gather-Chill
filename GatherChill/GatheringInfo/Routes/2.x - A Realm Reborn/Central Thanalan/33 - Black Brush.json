@@ -1,0 +1,190 @@
+{
+  "routeId": 33,
+  "territoryId": 141,
+  "zoneName": "Central Thanalan",
+  "placeName": "Black Brush",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 20,
+  "nodeIds": [
+    30091,
+    30090,
+    30093,
+    30092
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 30091,
+          "locations": [
+            {
+              "position": {
+                "x": -19.77202,
+                "y": -4.6776,
+                "z": -94.25727
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -17.33079,
+                "y": -1.848804,
+                "z": -111.8472
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -20.48863,
+                "y": -3.708008,
+                "z": -101.9446
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30090,
+          "locations": [
+            {
+              "position": {
+                "x": 14.00002,
+                "y": 2.039978,
+                "z": -51.59384
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 9.932534,
+                "y": 3.094246,
+                "z": -31.6725
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": 9.699391,
+                "y": 5.866946,
+                "z": -12.66552
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30093,
+          "locations": [
+            {
+              "position": {
+                "x": -45.83522,
+                "y": -8.588797,
+                "z": -31.27869
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -34.39115,
+                "y": -7.081903,
+                "z": -52.68773
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -44.66915,
+                "y": -9.73625,
+                "z": -45.68573
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 30092,
+          "locations": [
+            {
+              "position": {
+                "x": -57.72831,
+                "y": -7.003906,
+                "z": -88.41019
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -55.26844,
+                "y": -6.271651,
+                "z": -93.69823
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            },
+            {
+              "position": {
+                "x": -65.52525,
+                "y": -9.323925,
+                "z": -75.60963
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

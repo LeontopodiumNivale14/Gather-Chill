@@ -1,0 +1,76 @@
+{
+  "routeId": 311,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "The Lost Landlord",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 60,
+  "nodeIds": [
+    31448,
+    31469,
+    31470
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31448,
+          "locations": [
+            {
+              "position": {
+                "x": -153.8254,
+                "y": -32.67331,
+                "z": 690.6343
+              },
+              "minAngle": -360,
+              "maxAngle": -295,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31469,
+          "locations": [
+            {
+              "position": {
+                "x": -293.3091,
+                "y": -29.35549,
+                "z": 701.4666
+              },
+              "minAngle": -285,
+              "maxAngle": -165,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        },
+        {
+          "nodeId": 31470,
+          "locations": [
+            {
+              "position": {
+                "x": -8.144587,
+                "y": -65.25702,
+                "z": 762.9059
+              },
+              "minAngle": -280,
+              "maxAngle": -220,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "allowFlying": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
