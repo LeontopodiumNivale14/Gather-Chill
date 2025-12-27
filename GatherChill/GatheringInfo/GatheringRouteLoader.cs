@@ -20,7 +20,7 @@ namespace GatherChill.GatheringInfo
         // Dictionary to store routes by routeId for fast lookup
         public Dictionary<uint, GatheringRoute> Routes { get; private set; } = new();
 
-        // Expansion names for folder organization
+        // Expansion names for fold.er organization
         private static readonly Dictionary<uint, string> ExpansionNames = new()
         {
             { 0, "2.x - A Realm Reborn" },
@@ -421,11 +421,13 @@ namespace GatherChill.GatheringInfo
                         ExpansionId = info.ExpId,
                         TerritoryId = info.TerritoryId,
                         ZoneName = info.ZoneName,
+                        PlaceName = info.PlaceName,
                         GatheringJobId = info.Type, // Assuming Type is 16/17/18
                         LevelRequirement = (int)info.Level,
                         NodeIds = info.NodeIds?.ToList() ?? new List<uint>(),
                         RequiresFolklore = false, // Unknown at generation time
                         FolkloreBook = "",
+                        TimedNode = false,
                         Author = "Ice",
                         LastUpdated = DateTime.Now.ToString("yyyy-MM-dd"),
                         NodeGroups = GenerateDefaultNodeGroups(info)
@@ -492,7 +494,7 @@ namespace GatherChill.GatheringInfo
                             MinAngle = -180.0f,
                             MaxAngle = 180.0f,
                             MinDistance = 1.0f,
-                            MaxDistance = info.Radius > 0 ? info.Radius : 5.0f,
+                            MaxDistance = info.Radius > 0 ? info.Radius : 3.0f,
                             AllowFlying = true
                         }
                     }

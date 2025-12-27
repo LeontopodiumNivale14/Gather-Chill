@@ -51,6 +51,9 @@ namespace GatherChill.GatheringInfo
 
         [JsonPropertyName("nodeGroups")]
         public List<NodeGroup> NodeGroups { get; set; } = new();
+
+        [JsonPropertyName("timedNode")]
+        public bool TimedNode { get; set; } = false;
     }
 
     /// <summary>
@@ -100,6 +103,9 @@ namespace GatherChill.GatheringInfo
 
         [JsonPropertyName("allowFlying")]
         public bool AllowFlying { get; set; } = true;
+
+        [JsonPropertyName("fanHightIncrease")]
+        public float FanHeightIncrease { get; set; } = 0.0f;
     }
 
     /// <summary>

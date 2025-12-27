@@ -14,7 +14,7 @@
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev",
-  "lastUpdated": "2025-12-08",
+  "lastUpdated": "2025-12-24 21:52:34",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -29,13 +29,18 @@
                 "z": -595.0866
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 5,
+              "maxDistance": 3.5,
               "allowFlying": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
         {
           "nodeId": 34969,
           "locations": [
@@ -46,13 +51,18 @@
                 "z": -784.6777
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 5,
+              "maxDistance": 3,
               "allowFlying": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
         {
           "nodeId": 34968,
           "locations": [
@@ -63,9 +73,9 @@
                 "z": -737.9261
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 1,
               "minDistance": 1,
-              "maxDistance": 5,
+              "maxDistance": 3,
               "allowFlying": true
             }
           ]

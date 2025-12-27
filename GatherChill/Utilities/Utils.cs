@@ -1,10 +1,87 @@
-﻿using Lumina.Excel.Sheets;
+﻿using Dalamud.Game.ClientState.Objects.Types;
+using ECommons.Automation.NeoTaskManager;
+using ECommons.DalamudServices.Legacy;
+using ECommons.GameHelpers;
+using ECommons.Reflection;
+using ECommons.Throttlers;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
 namespace GatherChill.Utilities;
 
 public static class Utils
 {
+    public static bool HasPlugin(string name) => DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
+    public static TaskManagerConfiguration TaskConfig => new(timeLimitMS: 10 * 60 * 3000, abortOnTimeout: false);
+    public static unsafe void MountAction()
+    {
+        /*
+        // bool useMount = C.MountId != 0 && PlayerState.Instance()->IsMountUnlocked(C.MountId);
+
+        if (!Player.IsCasting && !Player.Mounting)
+        {
+            if (useMount)
+            {
+                ActionManager.Instance()->UseAction(ActionType.Mount, C.MountId);
+                IceLogging.Info($"Attempting to mount: {C.MountName}");
+            }
+            else
+            {
+                ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+                IceLogging.Info($"Resorting to using the mount roulette");
+            }
+        }
+        */
+        if (!Player.IsCasting && !Player.Mounting)
+        {
+            ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+        }
+    }
+    public static unsafe void Dismount()
+    {
+        if (Player.Mounted)
+        {
+            ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+        }
+    }
+    public static void TargetgameObject(IGameObject? gameObject)
+    {
+        var x = gameObject;
+        var currentTarget = Svc.Targets.Target;
+        if (currentTarget != null && currentTarget.BaseId == x.BaseId)
+            return;
+
+        if (!GenericHelpers.IsOccupied())
+        {
+            if (x != null)
+            {
+                if (EzThrottler.Throttle($"Throttle targeting: {x.BaseId}"))
+                {
+                    // IceLogging.Info($"Attempting to set the target to: {x.BaseId} | {x.Name}", "[Target Game Object]");
+                    Svc.Targets.SetTarget(x);
+                }
+            }
+        }
+    }
+    public static unsafe void InteractWithObject(IGameObject? gameObject)
+    {
+        try
+        {
+            if (gameObject == null || !gameObject.IsTargetable)
+                return;
+            var gameObjectPointer = (GameObject*)gameObject.Address;
+            TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
+        }
+        catch (Exception ex)
+        {
+            // IceLogging.Error($"InteractWithObject: Exception: {ex}");
+        }
+    }
+
     public class GatherPointInfo
     {
         public uint Type { get; set; }
@@ -52,6 +129,13 @@ public static class Utils
                 var gatherPointBase = gatherPoint.GatheringPointBase.Value; // Sheet: GatherPointBase
                 routeId = gatherPointBase.RowId;
                 type = gatherPointBase.GatheringType.Value.RowId; // Column 1
+                if (type is 0 or 1)
+                    type = 16;
+                else if (type is 2 or 3)
+                    type = 17;
+                else if (type is 4 or 5)
+                    type = 18;
+
                 level = gatherPointBase.GatheringLevel; // Column 2
 
                 for (int i = 0; i <= 7; i++) // Items 0-7
@@ -134,5 +218,28 @@ public static class Utils
                 });
             }
         }
+    }
+
+    public static uint ToUintABGR(Vector4 col)
+    {
+        byte a = (byte)(col.W * 255);
+        byte b = (byte)(col.Z * 255);
+        byte g = (byte)(col.Y * 255);
+        byte r = (byte)(col.X * 255);
+        return (uint)((a << 24) | (b << 16) | (g << 8) | r);
+    }
+
+    public static Vector4 FromUintABGR(uint color)
+    {
+        float a = ((color >> 24) & 0xFF) / 255f;
+        float b = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float r = (color & 0xFF) / 255f;
+        return new Vector4(r, g, b, a);
+    }
+
+    public static float DegreesToRadians(float degrees)
+    {
+        return degrees * (MathF.PI / 180f);
     }
 }

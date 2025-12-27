@@ -1,0 +1,42 @@
+{
+  "routeId": 711,
+  "territoryId": 901,
+  "zoneName": "The Diadem",
+  "placeName": "",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33231
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33231,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 11,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

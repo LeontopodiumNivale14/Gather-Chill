@@ -11,8 +11,8 @@
   ],
   "requiresFolklore": false,
   "folkloreBook": "",
-  "author": "alydev",
-  "lastUpdated": "2025-12-08",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-26 22:56:23",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -22,27 +22,29 @@
           "locations": [
             {
               "position": {
+                "x": 675.5321,
+                "y": -15.85419,
+                "z": -262.8062
+              },
+              "minAngle": -50,
+              "maxAngle": 169,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            },
+            {
+              "position": {
                 "x": 684.2892,
                 "y": -15.46072,
                 "z": -261.1012
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 264,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            },
-            {
-              "position": {
-                "x": 675.5321,
-                "y": -15.85419,
-                "z": -262.8062
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -50,15 +52,17 @@
                 "y": -16.40344,
                 "z": -259.5407
               },
-              "minAngle": 0,
-              "maxAngle": 0,
+              "minAngle": -206,
+              "maxAngle": 36,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": true
 }

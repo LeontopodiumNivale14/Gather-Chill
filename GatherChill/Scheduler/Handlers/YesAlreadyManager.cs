@@ -12,6 +12,7 @@ namespace GatherChill.Scheduler.Handlers
         private static bool WasChanged = false;
         internal static void Tick()
         {
+            /*
             if (WasChanged)
             {
                 if (!SchedulerMain.AreWeTicking)
@@ -28,6 +29,7 @@ namespace GatherChill.Scheduler.Handlers
                     Lock();
                 }
             }
+            */
         }
         internal static void Lock()
         {

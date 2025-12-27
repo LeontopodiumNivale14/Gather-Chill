@@ -16,8 +16,8 @@
   ],
   "requiresFolklore": false,
   "folkloreBook": "",
-  "author": "alydev",
-  "lastUpdated": "2025-12-08",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-26 23:20:04",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -34,8 +34,9 @@
               "minAngle": -300,
               "maxAngle": -185,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -51,8 +52,9 @@
               "minAngle": -340,
               "maxAngle": -255,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -63,11 +65,17 @@
               "minAngle": -85,
               "maxAngle": 35,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
         {
           "nodeId": 34845,
           "locations": [
@@ -80,8 +88,9 @@
               "minAngle": -65,
               "maxAngle": 45,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -97,8 +106,9 @@
               "minAngle": -115,
               "maxAngle": 20,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -109,8 +119,32 @@
               "minAngle": -90,
               "maxAngle": 40,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34849,
+          "locations": [
+            {
+              "position": {
+                "x": 332.1736,
+                "y": -14.90814,
+                "z": -228.7785
+              },
+              "minAngle": -310,
+              "maxAngle": -170,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -126,8 +160,9 @@
               "minAngle": 35,
               "maxAngle": 150,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -138,29 +173,14 @@
               "minAngle": -255,
               "maxAngle": -160,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            }
-          ]
-        },
-        {
-          "nodeId": 34849,
-          "locations": [
-            {
-              "position": {
-                "x": 332.1736,
-                "y": -14.90814,
-                "z": -228.7785
-              },
-              "minAngle": -310,
-              "maxAngle": -170,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

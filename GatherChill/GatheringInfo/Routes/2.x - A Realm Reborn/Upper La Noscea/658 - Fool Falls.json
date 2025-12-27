@@ -1,0 +1,99 @@
+{
+  "routeId": 658,
+  "territoryId": 139,
+  "zoneName": "Upper La Noscea",
+  "placeName": "Fool Falls",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 35,
+  "nodeIds": [
+    32859,
+    32860,
+    32861,
+    32862
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32859,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 43,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32860,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 43,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32861,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 43,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32862,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 43,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

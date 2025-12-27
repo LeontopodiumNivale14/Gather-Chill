@@ -1,0 +1,99 @@
+{
+  "routeId": 657,
+  "territoryId": 153,
+  "zoneName": "South Shroud",
+  "placeName": "Lower Paths",
+  "expansionId": 0,
+  "gatheringJobId": 17,
+  "levelRequirement": 45,
+  "nodeIds": [
+    32855,
+    32856,
+    32857,
+    32858
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32855,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 56,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32856,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 56,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32857,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 56,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32858,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 56,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

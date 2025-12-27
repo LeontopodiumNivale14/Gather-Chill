@@ -11,8 +11,8 @@
   ],
   "requiresFolklore": false,
   "folkloreBook": "",
-  "author": "alydev",
-  "lastUpdated": "2025-12-08",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-26 22:54:25",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -27,10 +27,11 @@
                 "z": 480.349
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -39,10 +40,11 @@
                 "z": 486.9809
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -50,15 +52,17 @@
                 "y": -20.42633,
                 "z": 474.9619
               },
-              "minAngle": -180,
-              "maxAngle": -115,
+              "minAngle": -298,
+              "maxAngle": -63,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": true
 }

@@ -1,0 +1,137 @@
+{
+  "routeId": 662,
+  "territoryId": 400,
+  "zoneName": "The Churning Mists",
+  "placeName": "Gron Rhei",
+  "expansionId": 1,
+  "gatheringJobId": 17,
+  "levelRequirement": 60,
+  "nodeIds": [
+    32875,
+    32876,
+    32877,
+    32878,
+    32879,
+    32880
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32875,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32876,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32877,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32878,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32879,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32880,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 104,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

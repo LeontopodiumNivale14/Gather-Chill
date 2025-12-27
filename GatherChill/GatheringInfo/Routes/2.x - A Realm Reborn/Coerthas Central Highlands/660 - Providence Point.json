@@ -1,0 +1,99 @@
+{
+  "routeId": 660,
+  "territoryId": 155,
+  "zoneName": "Coerthas Central Highlands",
+  "placeName": "Providence Point",
+  "expansionId": 0,
+  "gatheringJobId": 16,
+  "levelRequirement": 45,
+  "nodeIds": [
+    32867,
+    32868,
+    32869,
+    32870
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32867,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 39,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32868,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 39,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32869,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 39,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 32870,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 39,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

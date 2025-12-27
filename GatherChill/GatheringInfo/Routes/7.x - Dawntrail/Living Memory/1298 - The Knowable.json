@@ -1,0 +1,42 @@
+{
+  "routeId": 1298,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "The Knowable",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35461
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35461,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 15,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

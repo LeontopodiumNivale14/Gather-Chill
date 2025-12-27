@@ -1,0 +1,42 @@
+{
+  "routeId": 1300,
+  "territoryId": 1187,
+  "zoneName": "Urqopacha",
+  "placeName": "Larh Tortoh",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    35463
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 35463,
+          "locations": [
+            {
+              "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "minAngle": -180,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 10,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

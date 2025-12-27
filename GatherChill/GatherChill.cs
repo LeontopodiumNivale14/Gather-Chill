@@ -1,11 +1,13 @@
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
+using ECommons.GameHelpers;
 using ECommons.Logging;
 using GatherChill.GatheringInfo;
 using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
+using GatherChill.Ui.RouteWindowTabs;
 using GatherChill.Yaml;
 using Pictomancy;
 
@@ -102,7 +104,7 @@ public sealed class GatherChill : IDalamudPlugin
 
     private void Tick(object _)
     {
-        if (SchedulerMain.AreWeTicking && Svc.ClientState.LocalPlayer != null)
+        if (Player.Available)
         {
             SchedulerMain.Tick();
         }

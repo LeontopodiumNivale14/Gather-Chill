@@ -1,45 +1,37 @@
 
 
 #nullable disable
+using GatherChill.Enums;
+using GatherChill.Scheduler.Tasks;
+
 namespace GatherChill.Scheduler
 {
     internal static unsafe class SchedulerMain
     {
-        internal static bool AreWeTicking;
-        internal static bool EnableTicking
-        {
-            get => AreWeTicking;
-            private set => AreWeTicking = value;
-        }
         internal static bool EnablePlugin()
         {
-            EnableTicking = true;
             return true;
         }
         internal static bool DisablePlugin()
         {
-            EnableTicking = false;
-
             P.navmesh.Stop();
             P.taskManager.Abort();
 
-            NodeSet = 0;
-            GatheredItem = 0;
-            NodeIdIndex = 0;
+            RouteId = null;
+            ItemId = null;
 
             return true;
         }
 
-        internal static string CurrentProcess = "";
-        internal static uint GatheredItem = 0; // Item to be stored for later use
-        internal static uint NodeSet = 0; // Keeps the gathering node set 
-        internal static int NodeIdIndex = 0; // which of the nodes are you currently in on the set
+        internal static IceState State = IceState.Idle;
+        internal static uint? RouteId = 0;
+        internal static uint? ItemId = 0;
 
         internal static void Tick()
         {
-            if (AreWeTicking)
+            if (P.taskManager.NumQueuedTasks == 0 && State != IceState.Idle)
             {
-
+                Task_GatherRoute.Enqueue(RouteId.Value, ItemId.Value);
             }
         }
     }
