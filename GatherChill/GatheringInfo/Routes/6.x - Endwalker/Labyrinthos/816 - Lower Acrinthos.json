@@ -16,8 +16,8 @@
   ],
   "requiresFolklore": false,
   "folkloreBook": "",
-  "author": "liza",
-  "lastUpdated": "2025-12-08",
+  "author": "liza, Ice",
+  "lastUpdated": "2025-12-29 17:51:59",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -34,8 +34,9 @@
               "minAngle": 80,
               "maxAngle": 235,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -48,11 +49,12 @@
                 "y": 73.2991,
                 "z": -400.5821
               },
-              "minAngle": 35,
+              "minAngle": 54,
               "maxAngle": 225,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -63,8 +65,9 @@
               "minAngle": -80,
               "maxAngle": 80,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -75,8 +78,9 @@
               "minAngle": -140,
               "maxAngle": 15,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
@@ -97,8 +101,9 @@
               "minAngle": -10,
               "maxAngle": 155,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0.2
             },
             {
               "position": {
@@ -109,8 +114,9 @@
               "minAngle": -45,
               "maxAngle": 90,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -121,8 +127,9 @@
               "minAngle": -115,
               "maxAngle": 65,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0.2
             }
           ]
         },
@@ -138,8 +145,9 @@
               "minAngle": -90,
               "maxAngle": 75,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
@@ -160,8 +168,9 @@
               "minAngle": 85,
               "maxAngle": 215,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -172,8 +181,9 @@
               "minAngle": -120,
               "maxAngle": 50,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             },
             {
               "position": {
@@ -184,8 +194,9 @@
               "minAngle": -135,
               "maxAngle": 55,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -201,12 +212,14 @@
               "minAngle": -125,
               "maxAngle": 55,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.5,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

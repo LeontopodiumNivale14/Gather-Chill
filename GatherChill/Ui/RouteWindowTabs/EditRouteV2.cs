@@ -607,6 +607,8 @@ namespace GatherChill.Ui.RouteWindowTabs
             }
 
             ImGui.SameLine(0, 5);
+            bool isHoveringMinAngle = false;
+            bool isHoveringMaxAngle = false;
 
             using (var nodeDetails = ImRaii.Child("Route_SpecificNode", new(0, 0), true))
             {
@@ -639,18 +641,46 @@ namespace GatherChill.Ui.RouteWindowTabs
                                 var minAngle = locationInfo.MinAngle;
                                 var maxAngle = locationInfo.MaxAngle;
 
-                                ImGui.SetNextItemWidth(300);
-                                if (ImGui.DragFloatRange2("Angle Range##editanglerange", ref minAngle, ref maxAngle, 1f, -360f, 360f))
+                                ImGui.SetNextItemWidth(150);
+                                if (ImGui.DragFloat("Min Angle##editminangle", ref minAngle, 1f, -360f, 360f))
                                 {
+                                    // Clamp minAngle to valid range
+                                    minAngle = Math.Clamp(minAngle, -360f, 360f);
+
                                     // Ensure the range doesn't exceed 360 degrees
                                     if (maxAngle - minAngle > 360f)
                                     {
                                         maxAngle = minAngle + 360f;
                                     }
 
+                                    // Clamp maxAngle after adjustment
+                                    maxAngle = Math.Clamp(maxAngle, -360f, 360f);
+
                                     locationInfo.MinAngle = minAngle;
                                     locationInfo.MaxAngle = maxAngle;
                                 }
+                                isHoveringMinAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
+
+                                ImGui.SameLine();
+                                ImGui.SetNextItemWidth(150);
+                                if (ImGui.DragFloat("Max Angle##editmaxangle", ref maxAngle, 1f, -360f, 360f))
+                                {
+                                    // Clamp maxAngle to valid range
+                                    maxAngle = Math.Clamp(maxAngle, -360f, 360f);
+
+                                    // Ensure the range doesn't exceed 360 degrees
+                                    if (maxAngle - minAngle > 360f)
+                                    {
+                                        minAngle = maxAngle - 360f;
+                                    }
+
+                                    // Clamp minAngle after adjustment
+                                    minAngle = Math.Clamp(minAngle, -360f, 360f);
+
+                                    locationInfo.MinAngle = minAngle;
+                                    locationInfo.MaxAngle = maxAngle;
+                                }
+                                isHoveringMaxAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
 
                                 var fanHeightIncrease = locationInfo.FanHeightIncrease;
                                 ImGui.SetNextItemWidth(200);
@@ -870,6 +900,36 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                             Vector3 fanLoc = new Vector3(nodeLoc.Position.X, nodeLoc.Position.Y + nodeLoc.FanHeightIncrease, nodeLoc.Position.Z);
                             var fanColor = isSelected ? selectedColor : ToUintABGR(C.Picto_RadiusColor);
+                            var editColor = ToUintABGR(C.Picto_GroupColor1);
+
+                            if (isSelected)
+                            {
+                                if (isHoveringMinAngle)
+                                {
+                                    // Draw a thin fan slice at the min angle edge
+                                    pictoDraw.AddFanFilled(
+                                        fanLoc,
+                                        nodeLoc.MinDistance,
+                                        nodeLoc.MaxDistance,
+                                        DegreesToRadians(nodeLoc.MinAngle - 2), // 2 degree width on each side
+                                        DegreesToRadians(nodeLoc.MinAngle + 2),
+                                        editColor
+                                    );
+                                }
+
+                                if (isHoveringMaxAngle)
+                                {
+                                    // Draw a thin fan slice at the max angle edge
+                                    pictoDraw.AddFanFilled(
+                                        fanLoc,
+                                        nodeLoc.MinDistance,
+                                        nodeLoc.MaxDistance,
+                                        DegreesToRadians(nodeLoc.MaxAngle - 2), // 2 degree width on each side
+                                        DegreesToRadians(nodeLoc.MaxAngle + 2),
+                                        editColor
+                                    );
+                                }
+                            }
 
                             pictoDraw.AddFanFilled(
                                 fanLoc,
