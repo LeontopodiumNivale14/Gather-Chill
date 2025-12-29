@@ -16,53 +16,12 @@
   ],
   "requiresFolklore": false,
   "folkloreBook": "",
-  "author": "liza",
-  "lastUpdated": "2025-12-08",
+  "author": "Ice",
+  "lastUpdated": "2025-12-27 21:42:21",
   "nodeGroups": [
     {
       "groupId": 0,
       "nodes": [
-        {
-          "nodeId": 34906,
-          "locations": [
-            {
-              "position": {
-                "x": 236.4964,
-                "y": -5.339633,
-                "z": -346.5587
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            },
-            {
-              "position": {
-                "x": 252.2469,
-                "y": -4.50562,
-                "z": -352.3626
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            },
-            {
-              "position": {
-                "x": 270.0348,
-                "y": 4.734006,
-                "z": -370.3
-              },
-              "minAngle": -5,
-              "maxAngle": 160,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            }
-          ]
-        },
         {
           "nodeId": 34905,
           "locations": [
@@ -73,10 +32,55 @@
                 "z": -372.8286
               },
               "minAngle": 0,
-              "maxAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.7,
+              "allowFlying": true,
+              "fanHightIncrease": 0.6
+            }
+          ]
+        },
+        {
+          "nodeId": 34906,
+          "locations": [
+            {
+              "position": {
+                "x": 236.4964,
+                "y": -5.339633,
+                "z": -346.5587
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 2.7,
+              "allowFlying": true,
+              "fanHightIncrease": 0.2
+            },
+            {
+              "position": {
+                "x": 252.2469,
+                "y": -4.50562,
+                "z": -352.3626
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0.8
+            },
+            {
+              "position": {
+                "x": 270.0348,
+                "y": 4.734006,
+                "z": -370.3
+              },
+              "minAngle": -5,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 2.4,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
@@ -84,6 +88,73 @@
     },
     {
       "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34907,
+          "locations": [
+            {
+              "position": {
+                "x": 283.6485,
+                "y": 0.7870179,
+                "z": -271.4115
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 1
+            }
+          ]
+        },
+        {
+          "nodeId": 34908,
+          "locations": [
+            {
+              "position": {
+                "x": 302.2965,
+                "y": 8.926453,
+                "z": -260.731
+              },
+              "minAngle": 0,
+              "maxAngle": 122,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            },
+            {
+              "position": {
+                "x": 285.4504,
+                "y": 2.914429,
+                "z": -276.6309
+              },
+              "minAngle": 0,
+              "maxAngle": 102,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            },
+            {
+              "position": {
+                "x": 275.5448,
+                "y": -1.8458,
+                "z": -259.0833
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
       "nodes": [
         {
           "nodeId": 34909,
@@ -97,8 +168,9 @@
               "minAngle": -55,
               "maxAngle": 215,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.6,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         },
@@ -111,11 +183,12 @@
                 "y": 18.42068,
                 "z": -333.2723
               },
-              "minAngle": 0,
-              "maxAngle": 0,
+              "minAngle": 11,
+              "maxAngle": 227,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0.4
             },
             {
               "position": {
@@ -123,11 +196,12 @@
                 "y": 19.24389,
                 "z": -388.6381
               },
-              "minAngle": 0,
-              "maxAngle": 0,
+              "minAngle": -56,
+              "maxAngle": 134,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0.2
             },
             {
               "position": {
@@ -138,75 +212,14 @@
               "minAngle": -190,
               "maxAngle": 50,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "groupId": 2,
-      "nodes": [
-        {
-          "nodeId": 34908,
-          "locations": [
-            {
-              "position": {
-                "x": 268.0552,
-                "y": -4.003453,
-                "z": -173.8766
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            },
-            {
-              "position": {
-                "x": 244.3824,
-                "y": -8.541841,
-                "z": -212.8872
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            },
-            {
-              "position": {
-                "x": 236.6972,
-                "y": -13.99463,
-                "z": -189.6181
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
-            }
-          ]
-        },
-        {
-          "nodeId": 34907,
-          "locations": [
-            {
-              "position": {
-                "x": 269.0605,
-                "y": -6.302063,
-                "z": -193.4243
-              },
-              "minAngle": 0,
-              "maxAngle": 0,
-              "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 2.7,
+              "allowFlying": true,
+              "fanHightIncrease": 0.2
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

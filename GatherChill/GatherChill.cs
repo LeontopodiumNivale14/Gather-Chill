@@ -83,7 +83,7 @@ public sealed class GatherChill : IDalamudPlugin
         debugWindow = new();
         routeWindow = new();
 
-        taskManager = new(new(abortOnTimeout: true, timeLimitMS: 20000, showDebug: true));
+        taskManager = new(new(abortOnTimeout: true, timeLimitMS: 20000, showDebug: false));
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         Svc.PluginInterface.UiBuilder.OpenMainUi += () =>
         {

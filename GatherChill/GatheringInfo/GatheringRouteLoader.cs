@@ -506,5 +506,73 @@ namespace GatherChill.GatheringInfo
             nodeGroups.Add(defaultGroup);
             return nodeGroups;
         }
+
+        public bool ContainsSpecificNode(GatheringRoute route, uint nodeId, Vector3 position)
+        {
+            foreach (var group in route.NodeGroups)
+            {
+                foreach (var node in group.Nodes)
+                {
+                    if (node.NodeId != nodeId)
+                        continue;
+
+                    foreach (var location in (node.Locations))
+                    {
+                        var existingPos = location.Position.ToVector3();
+                        if (position == existingPos)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void AddNodeLocationIfMissing(GatheringRoute route, uint nodeId, Vector3 position, float minAngle = 0f, float maxAngle = 0f, float minDistance = 1.0f, float maxDistance = 3.0f, bool allowFlying = true)
+        {
+            if (ContainsSpecificNode(route, nodeId, position))
+                return;
+
+            if (!route.NodeIds.Contains(nodeId))
+                return;
+
+            // if somehow group 0 doesn't get created, making sure it exist now
+            var group0 = route.NodeGroups.FirstOrDefault(g => g.GroupId == 0);
+            if (group0 == null)
+            {
+                group0 = new NodeGroup { GroupId = 0 };
+                route.NodeGroups.Insert(0, group0);
+            }
+
+            // Check if this nodeId already exists in group 0
+            var existingNode = group0.Nodes.FirstOrDefault(n => n.NodeId == nodeId);
+
+            var newLocation = new NodeLocation
+            {
+                Position = Position.FromVector3(position),
+                MinAngle = minAngle,
+                MaxAngle = maxAngle,
+                MinDistance = minDistance,
+                MaxDistance = maxDistance,
+                AllowFlying = allowFlying,
+                FanHeightIncrease = 0.0f
+            };
+
+            if (existingNode != null)
+            {
+                // Node already exists in group 0, just add the new location to it
+                existingNode.Locations.Add(newLocation);
+            }
+            else
+            {
+                // Node doesn't exist yet, create a new one
+                var newNode = new GatheringNode
+                {
+                    NodeId = nodeId,
+                    Locations = new List<NodeLocation> { newLocation }
+                };
+                group0.Nodes.Add(newNode);
+            }
+        }
     }
 }

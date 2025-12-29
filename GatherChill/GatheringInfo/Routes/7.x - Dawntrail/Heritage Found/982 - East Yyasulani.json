@@ -17,7 +17,7 @@
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev, Ice",
-  "lastUpdated": "2025-12-24 22:43:55",
+  "lastUpdated": "2025-12-27 19:51:02",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -34,7 +34,7 @@
               "minAngle": -190,
               "maxAngle": -70,
               "minDistance": 1,
-              "maxDistance": 3,
+              "maxDistance": 1.8,
               "allowFlying": true,
               "fanHightIncrease": 0
             }
@@ -45,19 +45,6 @@
           "locations": [
             {
               "position": {
-                "x": 275.3005,
-                "y": 72.70397,
-                "z": -61.31194
-              },
-              "minAngle": -135,
-              "maxAngle": -50,
-              "minDistance": 1,
-              "maxDistance": 3,
-              "allowFlying": true,
-              "fanHightIncrease": 0
-            },
-            {
-              "position": {
                 "x": 280.6269,
                 "y": 74.10883,
                 "z": -52.97342
@@ -65,7 +52,20 @@
               "minAngle": -185,
               "maxAngle": -80,
               "minDistance": 1,
-              "maxDistance": 3,
+              "maxDistance": 1.7,
+              "allowFlying": true,
+              "fanHightIncrease": 0
+            },
+            {
+              "position": {
+                "x": 275.3005,
+                "y": 72.70397,
+                "z": -61.31194
+              },
+              "minAngle": -135,
+              "maxAngle": -50,
+              "minDistance": 1,
+              "maxDistance": 2.3,
               "allowFlying": true,
               "fanHightIncrease": 0
             },
@@ -78,7 +78,7 @@
               "minAngle": -210,
               "maxAngle": -65,
               "minDistance": 1,
-              "maxDistance": 3,
+              "maxDistance": 2,
               "allowFlying": true,
               "fanHightIncrease": 0
             }
@@ -98,10 +98,10 @@
                 "y": 96.58538,
                 "z": 143.489
               },
-              "minAngle": -310,
-              "maxAngle": -270,
-              "minDistance": 1,
-              "maxDistance": 3,
+              "minAngle": -327,
+              "maxAngle": -234,
+              "minDistance": 0.5,
+              "maxDistance": 1.8,
               "allowFlying": true,
               "fanHightIncrease": 0
             }
@@ -116,10 +116,10 @@
                 "y": 103.4146,
                 "z": 162.1496
               },
-              "minAngle": -320,
-              "maxAngle": -270,
-              "minDistance": 1,
-              "maxDistance": 3,
+              "minAngle": -338,
+              "maxAngle": -251,
+              "minDistance": 0.5,
+              "maxDistance": 1.4,
               "allowFlying": true,
               "fanHightIncrease": 0
             },
@@ -129,10 +129,10 @@
                 "y": 95.97193,
                 "z": 111.469
               },
-              "minAngle": -255,
-              "maxAngle": -200,
-              "minDistance": 1,
-              "maxDistance": 3,
+              "minAngle": -280,
+              "maxAngle": -165,
+              "minDistance": 0.5,
+              "maxDistance": 1.7,
               "allowFlying": true,
               "fanHightIncrease": 0
             },
@@ -142,10 +142,10 @@
                 "y": 96.3616,
                 "z": 131.3751
               },
-              "minAngle": -230,
-              "maxAngle": -205,
-              "minDistance": 1,
-              "maxDistance": 3,
+              "minAngle": -284,
+              "maxAngle": -173,
+              "minDistance": 0.5,
+              "maxDistance": 1.5,
               "allowFlying": true,
               "fanHightIncrease": 0
             }
@@ -220,5 +220,6 @@
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

@@ -17,7 +17,7 @@
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev, Ice",
-  "lastUpdated": "2025-12-24 22:51:46",
+  "lastUpdated": "2025-12-27 20:14:49",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -113,8 +113,8 @@
                 "y": 109.7647,
                 "z": 440.0356
               },
-              "minAngle": -170,
-              "maxAngle": 0,
+              "minAngle": -232,
+              "maxAngle": -138,
               "minDistance": 1,
               "maxDistance": 3,
               "allowFlying": true,
@@ -142,5 +142,6 @@
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
+using ECommons.Logging;
 using GatherChill.GatheringInfo;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Tasks;
@@ -30,6 +31,8 @@ namespace GatherChill.Ui.RouteWindowTabs
         private int _draggedNodeIndex = -1;
         private int _draggedLocationIndex = -1;
         private bool _isDragging = false;
+
+        private float navRadius = 0.1f;
 
         private readonly Random _random = new Random();
 
@@ -250,12 +253,18 @@ namespace GatherChill.Ui.RouteWindowTabs
                     return;
 
                 ImGui.Text("Node Groups");
-                ImGui.SameLine();
                 if (ImGui.Button("Add New Group"))
                 {
                     var newGroupId = route.NodeGroups.Count > 0 ? route.NodeGroups.Max(g => g.GroupId) + 1
                                                                 : 1;
                     route.NodeGroups.Add(new NodeGroup { GroupId = newGroupId });
+                }
+                if (ImGui.Button("Add Missing Nodes"))
+                {
+                    foreach (var obj in Svc.Objects.Where(x => x.ObjectKind == ObjectKind.GatheringPoint))
+                    {
+                        P.routeLoader.AddNodeLocationIfMissing(route, obj.BaseId, obj.Position);
+                    }
                 }
 
                 ImGui.Separator();
@@ -674,12 +683,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                                 if (ImGui.Checkbox("Allow Flying##editflying", ref allowFlying))
                                     locationInfo.AllowFlying = allowFlying;
 
+                                ImGui.SetNextItemWidth(100);
+                                ImGui.DragFloat("Navmesh ground point", ref navRadius, 0.1f, 0);
+
                                 if (ImGui.Button("Fly to destination"))
                                 {
                                     var destination = GetRandomPointInFan(locationInfo);
-                                    bool distanceForFly = Player.DistanceTo(destination) > 25 || Svc.Condition[ConditionFlag.InFlight];
-                                    ECommons.Logging.DuoLog.Debug($"Destination: {destination:N2}");
-                                    Task_NavmeshMove.Task_NavTo(destination, distance: 1, stayMounted: true, fly: distanceForFly);
+                                    bool distanceForFly = (Player.DistanceTo(destination) > 25 || Svc.Condition[ConditionFlag.InFlight]) && !Svc.Condition[ConditionFlag.Diving];
+                                    DuoLog.Debug($"Destination: {destination:N2} | can fly: {distanceForFly}");
+                                    PluginLog.Debug("We're doing the flying version");
+                                    Task_NavmeshMove.Task_FlyTo(destination, distance: 1, stayMounted: true);
                                 }
                             }
 
@@ -856,6 +869,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             }
 
                             Vector3 fanLoc = new Vector3(nodeLoc.Position.X, nodeLoc.Position.Y + nodeLoc.FanHeightIncrease, nodeLoc.Position.Z);
+                            var fanColor = isSelected ? selectedColor : ToUintABGR(C.Picto_RadiusColor);
 
                             pictoDraw.AddFanFilled(
                                 fanLoc,
@@ -863,7 +877,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                                 nodeLoc.MaxDistance,
                                 DegreesToRadians(nodeLoc.MinAngle),
                                 DegreesToRadians(nodeLoc.MaxAngle),
-                                ToUintABGR(C.Picto_RadiusColor)
+                                fanColor
                             );
                         }
                     }

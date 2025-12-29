@@ -12,7 +12,7 @@
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "Ice",
-  "lastUpdated": "2025-12-27",
+  "lastUpdated": "2025-12-29 03:43:57",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -22,16 +22,42 @@
           "locations": [
             {
               "position": {
-                "x": 0,
-                "y": 0,
-                "z": 0
+                "x": -818.6547,
+                "y": 60.9949,
+                "z": 175.9972
               },
-              "minAngle": -180,
-              "maxAngle": 180,
+              "minAngle": 0,
+              "maxAngle": 360,
               "minDistance": 1,
-              "maxDistance": 10,
+              "maxDistance": 3,
               "allowFlying": true,
-              "fanHightIncrease": 0
+              "fanHightIncrease": 0.5
+            },
+            {
+              "position": {
+                "x": -811.6652,
+                "y": 71.78057,
+                "z": 193.3537
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0.6
+            },
+            {
+              "position": {
+                "x": -806.7766,
+                "y": 61.30029,
+                "z": 182.616
+              },
+              "minAngle": 0,
+              "maxAngle": 360,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "allowFlying": true,
+              "fanHightIncrease": 0.6
             }
           ]
         }

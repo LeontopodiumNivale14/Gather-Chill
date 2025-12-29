@@ -12,6 +12,7 @@ public class Config
 
     // Selected color - Bright Blue
     public Vector4 Picto_SelectedColor { get; set; } = new Vector4(0f, 0f, 1f, 1f); // RGBA: Blue
+    public Vector4 Picto_SelectedFanColor { get; set; } = new Vector4(0f, 0f, 1f, 1f); // RGBA: Blue
 
     // Group 0 colors - Red theme
     public Vector4 Picto_GroupColor1 { get; set; } = new Vector4(1f, 0f, 0f, 1f);      // Bright Red
