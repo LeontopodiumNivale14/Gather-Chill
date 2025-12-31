@@ -10,7 +10,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace GatherChill.Utilities;
 

@@ -6,7 +6,6 @@ using ECommons.Logging;
 using ECommons.Throttlers;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities;
-using GatherChill.Utilities.GatheringHelpers;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
@@ -112,7 +111,7 @@ namespace GatherChill.Scheduler.Tasks
                 TargetFanPoint = null;
 
                 var firstNode = currentNode.Locations[0];
-                var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(firstNode, Player.Position);
+                var randomFanPoint = GetRandomPointInFan(firstNode);
                 if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
                 {
                     if (EzThrottler.Throttle("Throttle message"))
@@ -167,7 +166,7 @@ namespace GatherChill.Scheduler.Tasks
 
                 if (distanceToLoc > 75)
                 {
-                    var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(location, Player.Position);
+                    var randomFanPoint = GetRandomPointInFan(location);
                     if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
                     {
                         if (EzThrottler.Throttle("Throttle message"))
@@ -232,26 +231,14 @@ namespace GatherChill.Scheduler.Tasks
                 return true;
             }
 
-            TargetFanPoint = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
-
-            var closestWalkPoint = Vector3.Zero;
-            if (targetLocation.UseSpecificWalkingSpots)
-            {
-                var walkPointSpecific = targetLocation.WalkablePositions.OrderBy(x => Vector3.Distance(TargetFanPoint.Value, x.ToVector3())).FirstOrDefault();
-                closestWalkPoint = walkPointSpecific.ToVector3();
-            }
-            else
-            {
-                closestWalkPoint = NodeLocationExtensions.GetRandomGatherPosition(targetLocation, Player.Position);
-            }
+            TargetFanPoint = GetRandomPointInFan(targetLocation);
 
             if (Player.DistanceTo(node.Position) >= minFlyDistance && !Svc.Condition[ConditionFlag.Diving])
             {
                 PluginLog.Debug("We're moving onto the next set via flying");
                 P.taskManager.EnqueueMulti
                 (
-                    new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, true), "True Fly Task", TaskConfig),
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true), "Moving to the node", TaskConfig),
+                    new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, false), "True Fly Task", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
                 );
             }
@@ -260,14 +247,14 @@ namespace GatherChill.Scheduler.Tasks
                 PluginLog.Debug("We're moving onto the next set via ground movement");
                 P.taskManager.EnqueueMulti
                 (
-                    new(() => Task_NavmeshMove.Task_GroundTo(TargetFanPoint.Value, true, 0.5f, true), "Ground movement", TaskConfig),
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true), "Moving to the node", TaskConfig),
+                    new(() => Task_NavmeshMove.Task_GroundTo(TargetFanPoint.Value, true, 0.5f, false), "Ground movement", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
                 );
             }
 
             return true;
         }
+
         private static bool? InteractWithNode(uint nodeId)
         {
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
@@ -330,6 +317,25 @@ namespace GatherChill.Scheduler.Tasks
             return false;
         }
 
+        private static Vector3 GetRandomPointInFan(NodeLocation nodeLoc)
+        {
+            // Get random distance between min and max
+            float distance = (float)(_random.NextDouble() * (nodeLoc.MaxDistance - nodeLoc.MinDistance) + nodeLoc.MinDistance);
 
+            // Get random angle between min and max (in degrees)
+            float angleDegrees = (float)(_random.NextDouble() * (nodeLoc.MaxAngle - nodeLoc.MinAngle) + nodeLoc.MinAngle);
+
+            // Convert to radians
+            float angleRadians = angleDegrees * MathF.PI / 180f;
+
+            float offsetX = distance * -MathF.Sin(angleRadians);
+            float offsetZ = distance * MathF.Cos(angleRadians);
+
+            return new Vector3(
+                nodeLoc.Position.X + offsetX,
+                nodeLoc.Position.Y + nodeLoc.FanHeightIncrease,
+                nodeLoc.Position.Z + offsetZ
+            );
+        }
     }
 }

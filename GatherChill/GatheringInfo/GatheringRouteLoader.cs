@@ -1,7 +1,6 @@
 ﻿using Dalamud.Plugin;
 using ECommons.Logging;
 using GatherChill.GatheringInfo;
-using GatherChill.Utilities.GatheringHelpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -499,10 +498,10 @@ namespace GatherChill.GatheringInfo
                                 Y = 0,
                                 Z = 0
                             },
-                            FlightAngle_Min = 0f,
-                            FlightAngle_Max = 0f,
-                            FlightDistance_Min = 1.0f,
-                            FlightDistance_Max = info.Radius > 0 ? info.Radius : 3.0f,
+                            MinAngle = -180.0f,
+                            MaxAngle = 180.0f,
+                            MinDistance = 1.0f,
+                            MaxDistance = info.Radius > 0 ? info.Radius : 3.0f,
                             AllowFlying = true
                         }
                     }
@@ -558,12 +557,12 @@ namespace GatherChill.GatheringInfo
             var newLocation = new NodeLocation
             {
                 Position = Position.FromVector3(position),
-                FlightAngle_Min = minAngle,
-                FlightAngle_Max = maxAngle,
-                FlightDistance_Min = minDistance,
-                FlightDistance_Max = maxDistance,
+                MinAngle = minAngle,
+                MaxAngle = maxAngle,
+                MinDistance = minDistance,
+                MaxDistance = maxDistance,
                 AllowFlying = allowFlying,
-                FlightFan_Height = 0.0f
+                FanHeightIncrease = 0.0f
             };
 
             if (existingNode != null)

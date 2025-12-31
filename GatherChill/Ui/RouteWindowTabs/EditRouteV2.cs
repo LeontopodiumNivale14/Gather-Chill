@@ -4,17 +4,14 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using ECommons.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.GatheringInfo;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Tasks;
 using GatherChill.Utilities;
-using GatherChill.Utilities.GatheringHelpers;
 using Lumina.Excel.Sheets;
 using Pictomancy;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Text;
 
 namespace GatherChill.Ui.RouteWindowTabs
@@ -253,9 +250,7 @@ namespace GatherChill.Ui.RouteWindowTabs
             using (var routeGroups = ImRaii.Child("Route_RouteGroups", new Vector2(300, 200), true))
             {
                 if (!routeGroups.Success)
-                {
-
-                }
+                    return;
 
                 ImGui.Text("Node Groups");
                 if (ImGui.Button("Add New Group"))
@@ -356,10 +351,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                         // Use the max height so all columns are aligned
                         using (var groupChild = ImRaii.Child($"GroupNodes{groupIdx}", new Vector2(-1, maxGroupHeight), true))
                         {
-                            if (!groupChild.Success)
-                            {
-
-                            }
+                            if (!groupChild.Success) continue;
 
                             // Draw nodes in this group
                             for (int nodeIdx = 0; nodeIdx < group.Nodes.Count; nodeIdx++)
@@ -508,7 +500,6 @@ namespace GatherChill.Ui.RouteWindowTabs
                 else
                 {
                     var selectedGroup = route.NodeGroups[selectedGroupIndex];
-
                     if (selectedNodeIndex < 0 || selectedNodeIndex >= selectedGroup.Nodes.Count)
                     {
                         ImGui.TextWrapped("We seem to have selected an invalid node, please select a proper one");
@@ -597,10 +588,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     var newLoc = new NodeLocation
                                     {
                                         Position = new Position { X = loc.Position.X, Y = loc.Position.Y, Z = loc.Position.Z },
-                                        FlightAngle_Min = loc.FlightAngle_Min,
-                                        FlightAngle_Max = loc.FlightAngle_Max,
-                                        FlightDistance_Min = loc.FlightDistance_Min,
-                                        FlightDistance_Max = loc.FlightDistance_Max,
+                                        MinAngle = loc.MinAngle,
+                                        MaxAngle = loc.MaxAngle,
+                                        MinDistance = loc.MinDistance,
+                                        MaxDistance = loc.MaxDistance,
                                         AllowFlying = loc.AllowFlying
                                     };
                                     selectedNode.Locations.Insert(i + 1, newLoc);
@@ -618,7 +609,6 @@ namespace GatherChill.Ui.RouteWindowTabs
             ImGui.SameLine(0, 5);
             bool isHoveringMinAngle = false;
             bool isHoveringMaxAngle = false;
-            Vector3? hoveredDotLoc = null;
 
             using (var nodeDetails = ImRaii.Child("Route_SpecificNode", new(0, 0), true))
             {
@@ -638,278 +628,101 @@ namespace GatherChill.Ui.RouteWindowTabs
                             if (selectedLocationIndex < 0 || selectedLocationIndex >= selectedNode.Locations.Count)
                             {
                                 ImGui.Text($"Select a location to edit | current index: {selectedLocationIndex} | Current count: {selectedNode.Locations.Count}");
-                                if (selectedNode.Locations.Count > 0)
-                                {
-                                    selectedLocationIndex = 0;
-                                }
                             }
                             else
                             {
 
                                 var locationInfo = selectedNode.Locations[selectedLocationIndex];
+
+                                // Actual node editing here
+
+                                ImGui.Text($"Node Location: {locationInfo.Position.X:N2}, {locationInfo.Position.Y:N2}, {locationInfo.Position.Z:N2}");
+
+                                var minAngle = locationInfo.MinAngle;
+                                var maxAngle = locationInfo.MaxAngle;
+
+                                ImGui.SetNextItemWidth(150);
+                                if (ImGui.DragFloat("Min Angle##editminangle", ref minAngle, 1f, -360f, 360f))
+                                {
+                                    // Clamp minAngle to valid range
+                                    minAngle = Math.Clamp(minAngle, -360f, 360f);
+
+                                    // Ensure the range doesn't exceed 360 degrees
+                                    if (maxAngle - minAngle > 360f)
+                                    {
+                                        maxAngle = minAngle + 360f;
+                                    }
+
+                                    // Clamp maxAngle after adjustment
+                                    maxAngle = Math.Clamp(maxAngle, -360f, 360f);
+
+                                    locationInfo.MinAngle = minAngle;
+                                    locationInfo.MaxAngle = maxAngle;
+                                }
+                                isHoveringMinAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
+
+                                ImGui.SameLine();
+                                ImGui.SetNextItemWidth(150);
+                                if (ImGui.DragFloat("Max Angle##editmaxangle", ref maxAngle, 1f, -360f, 360f))
+                                {
+                                    // Clamp maxAngle to valid range
+                                    maxAngle = Math.Clamp(maxAngle, -360f, 360f);
+
+                                    // Ensure the range doesn't exceed 360 degrees
+                                    if (maxAngle - minAngle > 360f)
+                                    {
+                                        minAngle = maxAngle - 360f;
+                                    }
+
+                                    // Clamp minAngle after adjustment
+                                    minAngle = Math.Clamp(minAngle, -360f, 360f);
+
+                                    locationInfo.MinAngle = minAngle;
+                                    locationInfo.MaxAngle = maxAngle;
+                                }
+                                isHoveringMaxAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
+
+                                var fanHeightIncrease = locationInfo.FanHeightIncrease;
+                                ImGui.SetNextItemWidth(200);
+                                if (ImGui.DragFloat("Fan Height Increase", ref fanHeightIncrease, 0.1f, 0, 5))
+                                {
+                                    locationInfo.FanHeightIncrease = fanHeightIncrease;
+                                }
+
+                                ImGui.Separator();
+
+                                float minDistance = locationInfo.MinDistance;
+                                float maxDistance = locationInfo.MaxDistance;
+
+                                ImGui.SetNextItemWidth(200);
+                                if (ImGui.DragFloatRange2("Distance", ref minDistance, ref maxDistance, 0.1f, 1, 5))
+                                {
+                                    locationInfo.MinDistance = minDistance;
+                                    locationInfo.MaxDistance = maxDistance;
+                                }
+                                ImGui.SameLine();
+                                if (ImGui.Button("Default dist"))
+                                {
+                                    locationInfo.MinDistance = 1;
+                                    locationInfo.MaxDistance = 3;
+                                }
+
+                                ImGui.Separator();
+
                                 bool allowFlying = locationInfo.AllowFlying;
                                 if (ImGui.Checkbox("Allow Flying##editflying", ref allowFlying))
                                     locationInfo.AllowFlying = allowFlying;
 
-                                ImGui.Dummy(new Vector2(0, 5));
-
-                                ImGui.Text($"Node Location: {locationInfo.Position.X:N2}, {locationInfo.Position.Y:N2}, {locationInfo.Position.Z:N2}");
-                                ImGui.Separator();
-                                ImGui.Text("Flight Ring Info");
-                                var minAngle = locationInfo.FlightAngle_Min;
-                                var maxAngle = locationInfo.FlightAngle_Max;
-
-                                float CalculateArcSpan(float min, float max)
-                                {
-                                    if (min <= max)
-                                        return max - min;
-                                    else
-                                        return (360f - min) + max;
-                                }
-
-                                ImGui.SetNextItemWidth(150);
-                                if (ImGui.DragFloat("Min Angle##editminangle", ref minAngle, 1f, 0f, 360f))
-                                {
-                                    // Normalize to 0-360 range
-                                    minAngle = minAngle % 360f;
-                                    if (minAngle < 0f) minAngle += 360f;
-
-                                    locationInfo.FlightAngle_Min = minAngle;
-
-                                    // Optional: Show warning if range is suspicious
-                                    float span = CalculateArcSpan(minAngle, maxAngle);
-                                    if (span > 359f)
-                                    {
-                                        ImGui.SameLine();
-                                        ImGui.TextColored(new Vector4(1f, 0.5f, 0f, 1f), "⚠ Full circle");
-                                    }
-                                }
-                                isHoveringMinAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
-
-                                ImGui.SetNextItemWidth(150);
-                                if (ImGui.DragFloat("Max Angle##editmaxangle", ref maxAngle, 1f, 0f, 360f))
-                                {
-                                    // Normalize to 0-360 range
-                                    maxAngle = maxAngle % 360f;
-                                    if (maxAngle < 0f) maxAngle += 360f;
-
-                                    locationInfo.FlightAngle_Max = maxAngle;
-
-                                    // Optional: Show warning if range is suspicious
-                                    float span = CalculateArcSpan(minAngle, maxAngle);
-                                    if (span > 359f)
-                                    {
-                                        ImGui.SameLine();
-                                        ImGui.TextColored(new Vector4(1f, 0.5f, 0f, 1f), "⚠ Full circle");
-                                    }
-                                }
-                                isHoveringMaxAngle = ImGui.IsItemHovered() || ImGui.IsItemActive();
-
-                                var fanHeight = locationInfo.FlightFan_Height;
-                                ImGui.SetNextItemWidth(150);
-                                if (ImGui.DragFloat("Fan Height Set", ref fanHeight, 0.1f))
-                                {
-                                    locationInfo.FlightFan_Height = fanHeight;
-                                }
-
-                                ImGui.Dummy(new(0, 5));
-                                float minDistance = locationInfo.FlightDistance_Min;
-                                float maxDistance = locationInfo.FlightDistance_Max;
-
-                                ImGui.SetNextItemWidth(150);
-                                if (ImGui.DragFloatRange2("Distance", ref minDistance, ref maxDistance, 0.1f, 1f, 8f))
-                                {
-                                    locationInfo.FlightDistance_Min = minDistance;
-                                    locationInfo.FlightDistance_Max = maxDistance;
-                                }
-                                ImGui.SameLine();
-                                if (ImGui.Button("Default dist##landFanEdit"))
-                                {
-                                    locationInfo.FlightDistance_Min = 3;
-                                    locationInfo.FlightDistance_Max = 5;
-                                }
-
-                                ImGui.Separator();
-                                bool useLandingSpots = locationInfo.UseSpecificWalkingSpots;
-                                if (ImGui.Checkbox("Use Specific Landing Spots", ref useLandingSpots))
-                                {
-                                    locationInfo.UseSpecificWalkingSpots = useLandingSpots;
-                                }
-
-                                ImGui.Dummy(new(0, 5));
-
-                                if (useLandingSpots)
-                                {
-                                    if (ImGui.Button("Add position as walk to"))
-                                    {
-                                        locationInfo.WalkablePositions.Add(new Position()
-                                        {
-                                            X = Player.Position.X,
-                                            Y = Player.Position.Y,
-                                            Z = Player.Position.Z
-                                        });
-                                    }
-                                    ImGui.SetNextItemWidth(200);
-                                    if (ImGui.CollapsingHeader("Move to points"))
-                                    {
-                                        if (locationInfo.WalkablePositions.Count > 0)
-                                        {
-                                            if (ImGui.BeginTable("Landable Locations Table", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
-                                            {
-                                                ImGui.TableSetupColumn("X");
-                                                ImGui.TableSetupColumn("Y");
-                                                ImGui.TableSetupColumn("Z");
-                                                ImGui.TableSetupColumn("Move To");
-                                                ImGui.TableSetupColumn("Remove");
-
-                                                ImGui.TableHeadersRow();
-
-                                                for (int i = 0; i < locationInfo.WalkablePositions.Count; i++)
-                                                {
-                                                    var position = locationInfo.WalkablePositions[i];
-                                                    ImGui.PushID($"{position}{i}");
-
-                                                    ImGui.TableNextRow();
-                                                    ImGui.TableSetColumnIndex(0);
-                                                    ImGui.Text($"{position.X:N2}");
-
-                                                    ImGui.TableNextColumn();
-                                                    ImGui.Text($"{position.Y:N2}");
-
-                                                    ImGui.TableNextColumn();
-                                                    ImGui.Text($"{position.Z:N2}");
-
-                                                    ImGui.TableNextColumn();
-                                                    if (ImGui.Button("Move to"))
-                                                    {
-                                                        P.navmesh.PathfindAndMoveTo(position.ToVector3(), false);
-                                                    }
-                                                    if (ImGui.IsItemHovered())
-                                                    {
-                                                        hoveredDotLoc = position.ToVector3();
-                                                    }
-
-                                                    ImGui.TableNextColumn();
-                                                    if (ImGui.Button("Remove"))
-                                                    {
-                                                        locationInfo.WalkablePositions.Remove(position);
-                                                        break;
-                                                    }
-                                                    if (ImGui.IsItemHovered())
-                                                    {
-                                                        hoveredDotLoc = position.ToVector3();
-                                                    }
-
-                                                    ImGui.PopID();
-                                                }
-
-                                                ImGui.EndTable();
-
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    var gatheringAngle_Min = locationInfo.GatherAngle_Min;
-                                    var gatheringAngle_Max = locationInfo.GatherAngle_Max;
-                                    var gatheringDist_Min = locationInfo.GatherDist_Min;
-                                    var gatheringDist_Max = locationInfo.GatherDist_Max;
-                                    var gatherFan_height = locationInfo.GatherFan_Height;
-
-                                    ImGui.SetNextItemWidth(150);
-                                    if (ImGui.DragFloat("Min Angle##editgatheringAngle_Min", ref gatheringAngle_Min, 1f, 0f, 360f))
-                                    {
-                                        // Normalize to 0-360 range
-                                        gatheringAngle_Min = gatheringAngle_Min % 360f;
-                                        if (gatheringAngle_Min < 0f) gatheringAngle_Min += 360f;
-
-                                        locationInfo.GatherAngle_Min = gatheringAngle_Min;
-
-                                        // Optional: Show warning if range is suspicious
-                                        float span = CalculateArcSpan(gatheringAngle_Min, gatheringAngle_Max);
-                                        if (span > 359f)
-                                        {
-                                            ImGui.SameLine();
-                                            ImGui.TextColored(new Vector4(1f, 0.5f, 0f, 1f), "⚠ Full circle");
-                                        }
-                                    }
-
-                                    ImGui.SetNextItemWidth(150);
-                                    if (ImGui.DragFloat("Max Angle##editgatheringAngle_Max", ref gatheringAngle_Max, 1f, 0f, 360f))
-                                    {
-                                        // Normalize to 0-360 range
-                                        gatheringAngle_Max = gatheringAngle_Max % 360f;
-                                        if (gatheringAngle_Max < 0f) gatheringAngle_Max += 360f;
-
-                                        locationInfo.GatherAngle_Max = gatheringAngle_Max;
-
-                                        // Optional: Show warning if range is suspicious
-                                        float span = CalculateArcSpan(gatheringAngle_Min, gatheringAngle_Max);
-                                        if (span > 359f)
-                                        {
-                                            ImGui.SameLine();
-                                            ImGui.TextColored(new Vector4(1f, 0.5f, 0f, 1f), "⚠ Full circle");
-                                        }
-                                    }
-
-                                    ImGui.SetNextItemWidth(150);
-                                    if (ImGui.DragFloat("Fan Height", ref gatherFan_height, 0.1f))
-                                    {
-                                        locationInfo.GatherFan_Height = gatherFan_height;
-                                    }
-                                    ImGui.SameLine();
-                                    if (ImGui.Button("Match to land fan height"))
-                                    {
-                                        locationInfo.GatherFan_Height = locationInfo.FlightFan_Height;
-                                    }
-
-                                    ImGui.SetNextItemWidth(150);
-                                    if (ImGui.DragFloatRange2("Gather Distance", ref gatheringDist_Min, ref gatheringDist_Max, 0.1f, 1, 3))
-                                    {
-                                        locationInfo.GatherDist_Min = gatheringDist_Min;
-                                        locationInfo.GatherDist_Max = gatheringDist_Max;
-                                    }
-                                    ImGui.SameLine();
-                                    if (ImGui.Button("Default dist##gatherEditVersion"))
-                                    {
-                                        locationInfo.GatherDist_Min = 1;
-                                        locationInfo.GatherDist_Max = 2.4f;
-                                    }
-                                    ImGui.SameLine();
-                                    if (ImGui.Button("Match to land fan"))
-                                    {
-                                        locationInfo.GatherAngle_Min = locationInfo.FlightAngle_Min;
-                                        locationInfo.GatherAngle_Max = locationInfo.FlightAngle_Max;
-                                        locationInfo.GatherDist_Min = locationInfo.FlightDistance_Min;
-                                        locationInfo.GatherDist_Max = locationInfo.FlightDistance_Max;
-                                        locationInfo.GatherFan_Height = locationInfo.FlightFan_Height;
-                                    }
-
-                                }
-
-                                ImGui.Separator();
+                                ImGui.SetNextItemWidth(100);
+                                ImGui.DragFloat("Navmesh ground point", ref navRadius, 0.1f, 0);
 
                                 if (ImGui.Button("Fly to destination"))
                                 {
-                                    var destination = NodeLocationExtensions.GetRandomFlightPosition(locationInfo, Player.Position);
-                                    var closestPoint = Vector3.Zero;
-                                    if (locationInfo.UseSpecificWalkingSpots)
-                                    {
-                                        var walkPointSpecific = locationInfo.WalkablePositions.OrderBy(x => Vector3.Distance(destination, x.ToVector3())).FirstOrDefault();
-                                        closestPoint = walkPointSpecific.ToVector3();
-                                    }
-                                    else
-                                    {
-                                        closestPoint = NodeLocationExtensions.GetRandomGatherPosition(locationInfo, Player.Position);
-                                    }
-                                    P.taskManager.Enqueue(() => Task_NavmeshMove.Task_FlyTo(destination, distance: 1, stayMounted: true), TaskConfig);
-                                    P.taskManager.Enqueue(() => Task_NavmeshMove.Task_GroundTo(closestPoint, true, 1, true), TaskConfig);
-                                }
-                                ImGui.SameLine();
-                                if (ImGui.Button("Land?"))
-                                {
-                                    LandFunction();
+                                    var destination = GetRandomPointInFan(locationInfo);
+                                    bool distanceForFly = (Player.DistanceTo(destination) > 25 || Svc.Condition[ConditionFlag.InFlight]) && !Svc.Condition[ConditionFlag.Diving];
+                                    DuoLog.Debug($"Destination: {destination:N2} | can fly: {distanceForFly}");
+                                    PluginLog.Debug("We're doing the flying version");
+                                    Task_NavmeshMove.Task_FlyTo(destination, distance: 1, stayMounted: true);
                                 }
                             }
 
@@ -1085,7 +898,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                                 pictoDraw.AddText(textLoc, ToUintABGR(C.Picto_TextColor), $"{node.NodeId} | {nodeLoc.Position.ToVector3():N2}", C.Picto_TextScale);
                             }
 
-                            Vector3 fanLoc = new Vector3(nodeLoc.Position.X, nodeLoc.Position.Y + nodeLoc.FlightFan_Height, nodeLoc.Position.Z);
+                            Vector3 fanLoc = new Vector3(nodeLoc.Position.X, nodeLoc.Position.Y + nodeLoc.FanHeightIncrease, nodeLoc.Position.Z);
                             var fanColor = isSelected ? selectedColor : ToUintABGR(C.Picto_RadiusColor);
                             var editColor = ToUintABGR(C.Picto_GroupColor1);
 
@@ -1096,10 +909,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     // Draw a thin fan slice at the min angle edge
                                     pictoDraw.AddFanFilled(
                                         fanLoc,
-                                        nodeLoc.FlightDistance_Min,
-                                        nodeLoc.FlightDistance_Max,
-                                        DegreesToRadians(nodeLoc.FlightAngle_Min - 2), // 2 degree width on each side
-                                        DegreesToRadians(nodeLoc.FlightAngle_Min + 2),
+                                        nodeLoc.MinDistance,
+                                        nodeLoc.MaxDistance,
+                                        DegreesToRadians(nodeLoc.MinAngle - 2), // 2 degree width on each side
+                                        DegreesToRadians(nodeLoc.MinAngle + 2),
                                         editColor
                                     );
                                 }
@@ -1109,10 +922,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     // Draw a thin fan slice at the max angle edge
                                     pictoDraw.AddFanFilled(
                                         fanLoc,
-                                        nodeLoc.FlightDistance_Min,
-                                        nodeLoc.FlightDistance_Max,
-                                        DegreesToRadians(nodeLoc.FlightAngle_Max - 2), // 2 degree width on each side
-                                        DegreesToRadians(nodeLoc.FlightAngle_Max + 2),
+                                        nodeLoc.MinDistance,
+                                        nodeLoc.MaxDistance,
+                                        DegreesToRadians(nodeLoc.MaxAngle - 2), // 2 degree width on each side
+                                        DegreesToRadians(nodeLoc.MaxAngle + 2),
                                         editColor
                                     );
                                 }
@@ -1120,38 +933,12 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                             pictoDraw.AddFanFilled(
                                 fanLoc,
-                                nodeLoc.FlightDistance_Min,
-                                nodeLoc.FlightDistance_Max,
-                                DegreesToRadians(nodeLoc.FlightAngle_Min),
-                                DegreesToRadians(nodeLoc.FlightAngle_Max),
+                                nodeLoc.MinDistance,
+                                nodeLoc.MaxDistance,
+                                DegreesToRadians(nodeLoc.MinAngle),
+                                DegreesToRadians(nodeLoc.MaxAngle),
                                 fanColor
                             );
-
-                            if (nodeLoc.UseSpecificWalkingSpots)
-                            {
-                                foreach (var walkPosition in nodeLoc.WalkablePositions)
-                                {
-                                    var normalColor = ToUintABGR(C.Picto_DotColor);
-                                    if (hoveredDotLoc != null && hoveredDotLoc == walkPosition.ToVector3())
-                                    {
-                                        normalColor = editColor;
-                                    }
-                                    pictoDraw.AddDot(walkPosition.ToVector3(), 5, normalColor);
-                                }
-                            }
-                            else
-                            {
-                                Vector3 landFanLoc = new Vector3(nodeLoc.Position.X, nodeLoc.Position.Y + nodeLoc.GatherFan_Height, nodeLoc.Position.Z);
-                                pictoDraw.AddFanFilled
-                                (
-                                    landFanLoc,
-                                    nodeLoc.GatherDist_Min,
-                                    nodeLoc.GatherDist_Max,
-                                    DegreesToRadians(nodeLoc.GatherAngle_Min),
-                                    DegreesToRadians(nodeLoc.GatherAngle_Max),
-                                    fanColor
-                                );
-                            }
                         }
                     }
                 }
@@ -1177,10 +964,10 @@ namespace GatherChill.Ui.RouteWindowTabs
         private Vector3 GetRandomPointInFan(NodeLocation nodeLoc)
         {
             // Get random distance between min and max
-            float distance = (float)(_random.NextDouble() * (nodeLoc.FlightDistance_Max - nodeLoc.FlightDistance_Min) + nodeLoc.FlightDistance_Min);
+            float distance = (float)(_random.NextDouble() * (nodeLoc.MaxDistance - nodeLoc.MinDistance) + nodeLoc.MinDistance);
 
             // Get random angle between min and max (in degrees)
-            float angleDegrees = (float)(_random.NextDouble() * (nodeLoc.FlightAngle_Max - nodeLoc.FlightAngle_Min) + nodeLoc.FlightAngle_Min);
+            float angleDegrees = (float)(_random.NextDouble() * (nodeLoc.MaxAngle - nodeLoc.MinAngle) + nodeLoc.MinAngle);
 
             // Convert to radians
             float angleRadians = angleDegrees * MathF.PI / 180f;
@@ -1190,7 +977,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
             return new Vector3(
                 nodeLoc.Position.X + offsetX,
-                nodeLoc.Position.Y + nodeLoc.FlightFan_Height,
+                nodeLoc.Position.Y + nodeLoc.FanHeightIncrease,
                 nodeLoc.Position.Z + offsetZ
             );
         }
@@ -1238,11 +1025,6 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 ImGui.EndTable();
             }
-        }
-
-        private static unsafe void LandFunction()
-        {
-            ActionManager.Instance()->UseAction(ActionType.GeneralAction, 23);
         }
     }
 }
