@@ -1,0 +1,89 @@
+{
+  "routeId": 830,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "The Drowning Brand",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 85,
+  "nodeIds": [
+    33963
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-29 04:46:32",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33963,
+          "locations": [
+            {
+              "position": {
+                "x": -260.406,
+                "y": 89.82719,
+                "z": 565.4117
+              },
+              "minAngle": 146,
+              "maxAngle": 290,
+              "minDistance": 1,
+              "maxDistance": 1.5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -260.978,
+                "y": 86.54441,
+                "z": 550.2736
+              },
+              "minAngle": 275,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "fanHightIncrease": 0.3,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -246.6563,
+                "y": 85.13789,
+                "z": 555.4446
+              },
+              "minAngle": -0,
+              "maxAngle": 145,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "fanHightIncrease": 0.4,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

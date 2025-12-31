@@ -1,0 +1,49 @@
+{
+  "routeId": 767,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "Virdjala",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    31511
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31511,
+          "locations": [
+            {
+              "position": {
+                "x": 504.1625,
+                "y": 71.61754,
+                "z": 495.0582
+              },
+              "minAngle": 85,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

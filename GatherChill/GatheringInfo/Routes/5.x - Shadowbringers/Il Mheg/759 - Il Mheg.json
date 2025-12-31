@@ -1,0 +1,49 @@
+{
+  "routeId": 759,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Voeburtenburg",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33589
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33589,
+          "locations": [
+            {
+              "position": {
+                "x": 710.4203,
+                "y": 123.8035,
+                "z": -638.7688
+              },
+              "minAngle": 75,
+              "maxAngle": 120,
+              "minDistance": 1.6,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

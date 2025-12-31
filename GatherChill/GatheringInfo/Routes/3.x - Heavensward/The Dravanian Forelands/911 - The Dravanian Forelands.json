@@ -1,0 +1,111 @@
+{
+  "routeId": 911,
+  "territoryId": 398,
+  "zoneName": "The Dravanian Forelands",
+  "placeName": "Avalonia Fallen",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 1,
+  "nodeIds": [
+    34382,
+    34383,
+    34384
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34382,
+          "locations": [
+            {
+              "position": {
+                "x": -528.8412,
+                "y": -89.70924,
+                "z": 458.582
+              },
+              "minAngle": 350,
+              "maxAngle": 80,
+              "minDistance": 2.1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34383,
+          "locations": [
+            {
+              "position": {
+                "x": -636.4533,
+                "y": -100.1258,
+                "z": 484.7436
+              },
+              "minAngle": 285,
+              "maxAngle": 35,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34384,
+          "locations": [
+            {
+              "position": {
+                "x": -589.4542,
+                "y": -100.4852,
+                "z": 528.1926
+              },
+              "minAngle": 335,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

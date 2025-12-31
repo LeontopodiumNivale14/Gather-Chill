@@ -1,0 +1,111 @@
+{
+  "routeId": 817,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "Sharlayan Hamlet",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33908,
+    33906,
+    33907
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 17:56:41",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33908,
+          "locations": [
+            {
+              "position": {
+                "x": 165.2279,
+                "y": -19.58873,
+                "z": 46.27005
+              },
+              "minAngle": 150,
+              "maxAngle": 245,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.6,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33906,
+          "locations": [
+            {
+              "position": {
+                "x": 268.4194,
+                "y": -16.85055,
+                "z": 162.6459
+              },
+              "minAngle": 215,
+              "maxAngle": 325,
+              "minDistance": 1,
+              "maxDistance": 2.5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33907,
+          "locations": [
+            {
+              "position": {
+                "x": 128.5573,
+                "y": -26.17426,
+                "z": 202.1973
+              },
+              "minAngle": 350,
+              "maxAngle": 115,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

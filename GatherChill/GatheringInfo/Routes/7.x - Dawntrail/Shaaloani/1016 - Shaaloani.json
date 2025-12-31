@@ -1,0 +1,111 @@
+{
+  "routeId": 1016,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Eshceyaani Wilds",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34964,
+    34966,
+    34965
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-26 21:21:44",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34964,
+          "locations": [
+            {
+              "position": {
+                "x": -372.8458,
+                "y": 16.67804,
+                "z": -543.258
+              },
+              "minAngle": 183,
+              "maxAngle": 1,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.6,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34966,
+          "locations": [
+            {
+              "position": {
+                "x": -230.585,
+                "y": 15.94978,
+                "z": -456.545
+              },
+              "minAngle": 32,
+              "maxAngle": 279,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.4,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34965,
+          "locations": [
+            {
+              "position": {
+                "x": -183.0379,
+                "y": 32.31871,
+                "z": -657.202
+              },
+              "minAngle": 73,
+              "maxAngle": 73,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.8,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

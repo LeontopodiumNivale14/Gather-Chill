@@ -1,0 +1,89 @@
+{
+  "routeId": 1031,
+  "territoryId": 1190,
+  "zoneName": "Shaaloani",
+  "placeName": "Yawtanane Grasslands",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34991
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, ice",
+  "lastUpdated": "2025-12-26 22:49:02",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34991,
+          "locations": [
+            {
+              "position": {
+                "x": 773.4035,
+                "y": 33.22699,
+                "z": 327.7088
+              },
+              "minAngle": 55,
+              "maxAngle": 165,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 773.9482,
+                "y": 33.29974,
+                "z": 302.5254
+              },
+              "minAngle": 35,
+              "maxAngle": 175,
+              "minDistance": 1.9,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 729.5445,
+                "y": 32.43269,
+                "z": 351.4476
+              },
+              "minAngle": 103,
+              "maxAngle": 251,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}
