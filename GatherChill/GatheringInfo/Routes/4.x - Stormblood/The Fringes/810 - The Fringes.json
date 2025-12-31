@@ -1,0 +1,189 @@
+{
+  "routeId": 810,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "Vira Nilya",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    33871,
+    33872,
+    33867,
+    33868,
+    33870,
+    33869
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33871,
+          "locations": [
+            {
+              "position": {
+                "x": 556.8531,
+                "y": 73.44064,
+                "z": 99.57761
+              },
+              "minAngle": 35,
+              "maxAngle": 160,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 33872,
+          "locations": [
+            {
+              "position": {
+                "x": 561.7782,
+                "y": 73.45153,
+                "z": 72.6368
+              },
+              "minAngle": 15,
+              "maxAngle": 165,
+              "minDistance": 1.3,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 33867,
+          "locations": [
+            {
+              "position": {
+                "x": 498.26,
+                "y": 76.74628,
+                "z": -46.34168
+              },
+              "minAngle": 295,
+              "maxAngle": 45,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 33868,
+          "locations": [
+            {
+              "position": {
+                "x": 473.011,
+                "y": 76.55681,
+                "z": -47.70556
+              },
+              "minAngle": 315,
+              "maxAngle": 60,
+              "minDistance": 1.9,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 33870,
+          "locations": [
+            {
+              "position": {
+                "x": 361.4784,
+                "y": 70.79905,
+                "z": 146.1887
+              },
+              "minAngle": 305,
+              "maxAngle": 40,
+              "minDistance": 1.3,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        },
+        {
+          "nodeId": 33869,
+          "locations": [
+            {
+              "position": {
+                "x": 364.7684,
+                "y": 70.90228,
+                "z": 167.3831
+              },
+              "minAngle": 105,
+              "maxAngle": 230,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

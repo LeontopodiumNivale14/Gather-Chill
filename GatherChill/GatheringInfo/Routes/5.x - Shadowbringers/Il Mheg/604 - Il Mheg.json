@@ -1,0 +1,89 @@
+{
+  "routeId": 604,
+  "territoryId": 816,
+  "zoneName": "Il Mheg",
+  "placeName": "Sextuplet Shallow",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 75,
+  "nodeIds": [
+    32678
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32678,
+          "locations": [
+            {
+              "position": {
+                "x": 229.7788,
+                "y": 20.95107,
+                "z": -411.9648
+              },
+              "minAngle": 95,
+              "maxAngle": 145,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 259.2719,
+                "y": 37.64067,
+                "z": -397.3579
+              },
+              "minAngle": 35,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 257.8905,
+                "y": 38.98222,
+                "z": -419.9471
+              },
+              "minAngle": 55,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

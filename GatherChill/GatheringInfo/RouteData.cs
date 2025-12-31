@@ -86,26 +86,49 @@ namespace GatherChill.GatheringInfo
     /// </summary>
     public class NodeLocation
     {
+        // Node Position itself
         [JsonPropertyName("position")]
         public Position Position { get; set; }
 
+        // Flight Fan Stuff
         [JsonPropertyName("minAngle")]
-        public float MinAngle { get; set; } = 0.0f;
+        public float FlightAngle_Min { get; set; } = 0.0f;
 
         [JsonPropertyName("maxAngle")]
-        public float MaxAngle { get; set; } = 360.0f;
+        public float FlightAngle_Max { get; set; } = 0.0f;
 
         [JsonPropertyName("minDistance")]
-        public float MinDistance { get; set; } = 1.0f;
+        public float FlightDistance_Min { get; set; } = 3.0f;
 
         [JsonPropertyName("maxDistance")]
-        public float MaxDistance { get; set; } = 5.0f;
+        public float FlightDistance_Max { get; set; } = 5.0f;
+
+        [JsonPropertyName("fanHightIncrease")]
+        public float FlightFan_Height { get; set; } = 0.0f;
 
         [JsonPropertyName("allowFlying")]
         public bool AllowFlying { get; set; } = true;
 
-        [JsonPropertyName("fanHightIncrease")]
-        public float FanHeightIncrease { get; set; } = 0.0f;
+        // Bool to choose whether we're doing fan position finder, 
+        [JsonPropertyName("specificWalkSpots")]
+        public bool UseSpecificWalkingSpots { get; set; } = false;
+
+        // if true, use this
+        [JsonPropertyName("walkablePositions")]
+        public List<Position> WalkablePositions { get; set; } = new();
+
+        // if false, using ring 
+        [JsonPropertyName("gatherAngle_Minimum")]
+        public float GatherAngle_Min { get; set; } = 0.0f;
+        [JsonPropertyName("gatherAngle_Maximum")]
+        public float GatherAngle_Max { get; set; } = 0.0f;
+        [JsonPropertyName("gatherDistance_Minimum")]
+        public float GatherDist_Min { get; set; } = 1.0f;
+        [JsonPropertyName("gatherDistance_Maximum")]
+        public float GatherDist_Max { get; set; } = 2.4f;
+        [JsonPropertyName("gatherFan_Height")]
+        public float GatherFan_Height { get; set; } = 0.0f;
+
     }
 
     /// <summary>

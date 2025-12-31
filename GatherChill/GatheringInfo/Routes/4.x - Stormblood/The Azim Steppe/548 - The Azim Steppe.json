@@ -1,0 +1,111 @@
+{
+  "routeId": 548,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "Onsal Hakair",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 1,
+  "nodeIds": [
+    32335,
+    32336,
+    32337
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "plogon_enjoyer",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32335,
+          "locations": [
+            {
+              "position": {
+                "x": -80.14488,
+                "y": 58.18221,
+                "z": -358.3333
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 32336,
+          "locations": [
+            {
+              "position": {
+                "x": -58.9046,
+                "y": 52.59887,
+                "z": -350.7942
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 32337,
+          "locations": [
+            {
+              "position": {
+                "x": -81.5958,
+                "y": 51.05495,
+                "z": -334.9854
+              },
+              "minAngle": 0,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

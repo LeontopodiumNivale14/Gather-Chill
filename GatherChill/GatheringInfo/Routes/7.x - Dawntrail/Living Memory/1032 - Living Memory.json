@@ -1,0 +1,136 @@
+{
+  "routeId": 1032,
+  "territoryId": 1192,
+  "zoneName": "Living Memory",
+  "placeName": "The Knowable",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34992
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-31 11:53:38",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34992,
+          "locations": [
+            {
+              "position": {
+                "x": -626.212,
+                "y": -3.633392,
+                "z": -319.044
+              },
+              "minAngle": 317,
+              "maxAngle": 94,
+              "minDistance": 2.8,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": true,
+              "walkablePositions": [
+                {
+                  "x": -627.51056,
+                  "y": -4.8314805,
+                  "z": -319.12845
+                },
+                {
+                  "x": -627.12103,
+                  "y": -4.766911,
+                  "z": -318.20575
+                },
+                {
+                  "x": -626.2067,
+                  "y": -4.572894,
+                  "z": -317.39908
+                },
+                {
+                  "x": -625.3379,
+                  "y": -4.4205956,
+                  "z": -317.2865
+                }
+              ],
+              "gatherAngle_Minimum": 317,
+              "gatherAngle_Maximum": 94,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 3,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -606.1658,
+                "y": -3.767174,
+                "z": -312.2564
+              },
+              "minAngle": 305,
+              "maxAngle": 80,
+              "minDistance": 3.6,
+              "maxDistance": 4,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": true,
+              "walkablePositions": [
+                {
+                  "x": -607.5695,
+                  "y": -4.497323,
+                  "z": -311.84967
+                },
+                {
+                  "x": -607.06976,
+                  "y": -4.573056,
+                  "z": -311.41333
+                },
+                {
+                  "x": -606.2908,
+                  "y": -4.608904,
+                  "z": -311.00024
+                },
+                {
+                  "x": -605.3696,
+                  "y": -4.5055623,
+                  "z": -311.0753
+                },
+                {
+                  "x": -604.66766,
+                  "y": -4.1014204,
+                  "z": -311.6065
+                }
+              ],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 3,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -590.8397,
+                "y": -3.633392,
+                "z": -310.7007
+              },
+              "minAngle": 270,
+              "maxAngle": 25,
+              "minDistance": 1.2,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 270,
+              "gatherAngle_Maximum": 25,
+              "gatherDistance_Minimum": 1.2,
+              "gatherDistance_Maximum": 3,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

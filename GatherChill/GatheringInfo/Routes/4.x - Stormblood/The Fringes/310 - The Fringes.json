@@ -1,0 +1,49 @@
+{
+  "routeId": 310,
+  "territoryId": 612,
+  "zoneName": "The Fringes",
+  "placeName": "Mirage Creek",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 65,
+  "nodeIds": [
+    31439
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 31439,
+          "locations": [
+            {
+              "position": {
+                "x": 406.4829,
+                "y": 61.99023,
+                "z": -428.095
+              },
+              "minAngle": 90,
+              "maxAngle": 185,
+              "minDistance": 1,
+              "maxDistance": 5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

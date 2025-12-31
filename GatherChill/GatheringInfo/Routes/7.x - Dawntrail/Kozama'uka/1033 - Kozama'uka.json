@@ -1,0 +1,89 @@
+{
+  "routeId": 1033,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "The Glostfired Bank",
+  "expansionId": 5,
+  "gatheringJobId": 17,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34993
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-28 19:09:12",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34993,
+          "locations": [
+            {
+              "position": {
+                "x": -685.6004,
+                "y": 133.0576,
+                "z": 572.1357
+              },
+              "minAngle": 80,
+              "maxAngle": 175,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -681.8829,
+                "y": 126.4195,
+                "z": 481.5804
+              },
+              "minAngle": 45,
+              "maxAngle": 135,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.3,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -740.6408,
+                "y": 149.1586,
+                "z": 679.0509
+              },
+              "minAngle": 180,
+              "maxAngle": 295,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": true
+}

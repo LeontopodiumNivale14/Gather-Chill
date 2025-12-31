@@ -31,6 +31,7 @@ public class Config
     public Vector4 Picto_GroupColor8 { get; set; } = new Vector4(0.8f, 0f, 0.8f, 1f);  // Dark Magenta
     public Vector4 Picto_RadiusColor { get; set; } = new Vector4(0f, 0f, 1f, 1f); // RGBA: Blue
     public Vector4 Picto_TextColor { get; set; } = new Vector4(1f, 1f, 1f, 1f); // White (RGBA)
+    public Vector4 Picto_DotColor { get; set; } = new Vector4(1f, 1f, 1f, 1f); // White (RGBA)
     public float Picto_TextScale { get; set; } = 1;
     public bool UseVfx { get; set; } = false;
 

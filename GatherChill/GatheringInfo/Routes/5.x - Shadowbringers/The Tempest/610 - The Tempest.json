@@ -1,0 +1,89 @@
+{
+  "routeId": 610,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "Where the Dry Return",
+  "expansionId": 3,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    32684
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 18:22:54",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 32684,
+          "locations": [
+            {
+              "position": {
+                "x": 566.3824,
+                "y": 444.7,
+                "z": -689.3016
+              },
+              "minAngle": 55,
+              "maxAngle": 125,
+              "minDistance": 1,
+              "maxDistance": 2.5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 566.6124,
+                "y": 446.5,
+                "z": -676.256
+              },
+              "minAngle": 5,
+              "maxAngle": 114,
+              "minDistance": 1,
+              "maxDistance": 1.9,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 566.581,
+                "y": 443.4997,
+                "z": -705.6918
+              },
+              "minAngle": 45,
+              "maxAngle": 134,
+              "minDistance": 1,
+              "maxDistance": 2.3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

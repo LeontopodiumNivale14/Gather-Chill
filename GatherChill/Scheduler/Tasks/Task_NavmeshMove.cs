@@ -24,11 +24,7 @@ namespace GatherChill.Scheduler.Tasks
             bool isFlying = Svc.Condition[ConditionFlag.InFlight];
             bool mounted = Player.Mounted;
 
-            // Config versions to change later when I actually do this better...
-            float minMountDistance = 50;
-            float dismountDistance = 15;
             bool JumpIfStuck = true;
-            bool useMount = true;
 
             if (!P.navmesh.Installed)
                 return true;

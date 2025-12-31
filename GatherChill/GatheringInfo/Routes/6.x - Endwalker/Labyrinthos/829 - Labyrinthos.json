@@ -1,0 +1,89 @@
+{
+  "routeId": 829,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "Psyche",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 85,
+  "nodeIds": [
+    33962
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 17:58:25",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33962,
+          "locations": [
+            {
+              "position": {
+                "x": 547.0615,
+                "y": 87.31076,
+                "z": -5.177197
+              },
+              "minAngle": 55,
+              "maxAngle": 180,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 551.9311,
+                "y": 86.90916,
+                "z": -22.14117
+              },
+              "minAngle": 20,
+              "maxAngle": 201,
+              "minDistance": 1,
+              "maxDistance": 1.9,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 552.0779,
+                "y": 89.13397,
+                "z": -10.16052
+              },
+              "minAngle": 65,
+              "maxAngle": 175,
+              "minDistance": 1,
+              "maxDistance": 1.9,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

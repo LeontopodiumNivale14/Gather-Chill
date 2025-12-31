@@ -1,0 +1,89 @@
+{
+  "routeId": 1022,
+  "territoryId": 1188,
+  "zoneName": "Kozama\u0027uka",
+  "placeName": "Uyuyub\u0027",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 95,
+  "nodeIds": [
+    34982
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-28 19:09:10",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34982,
+          "locations": [
+            {
+              "position": {
+                "x": -734.5833,
+                "y": 5.786473,
+                "z": -704.4938
+              },
+              "minAngle": 215,
+              "maxAngle": 325,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -700.1735,
+                "y": 8.616351,
+                "z": -746.3823
+              },
+              "minAngle": 275,
+              "maxAngle": 18,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -736.6277,
+                "y": 4.251953,
+                "z": -663.9069
+              },
+              "minAngle": 210,
+              "maxAngle": 308,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": true
+}

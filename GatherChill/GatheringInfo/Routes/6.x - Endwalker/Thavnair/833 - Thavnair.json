@@ -1,0 +1,89 @@
+{
+  "routeId": 833,
+  "territoryId": 957,
+  "zoneName": "Thavnair",
+  "placeName": "Purusa",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    33966
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 16:42:41",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33966,
+          "locations": [
+            {
+              "position": {
+                "x": 542.1649,
+                "y": 8.963387,
+                "z": 173.3215
+              },
+              "minAngle": 330,
+              "maxAngle": 100,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 547.9667,
+                "y": 10.12471,
+                "z": 161.0895
+              },
+              "minAngle": 135,
+              "maxAngle": 240,
+              "minDistance": 1,
+              "maxDistance": 2.4,
+              "fanHightIncrease": 0.4,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 547.5946,
+                "y": 9.456854,
+                "z": 185.9271
+              },
+              "minAngle": 320,
+              "maxAngle": 55,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": true
+}

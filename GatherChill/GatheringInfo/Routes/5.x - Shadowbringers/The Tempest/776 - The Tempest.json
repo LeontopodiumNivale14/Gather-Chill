@@ -1,0 +1,49 @@
+{
+  "routeId": 776,
+  "territoryId": 818,
+  "zoneName": "The Tempest",
+  "placeName": "The Norvrandt Slope",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33027
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 18:29:45",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33027,
+          "locations": [
+            {
+              "position": {
+                "x": 798.5544,
+                "y": 421.3766,
+                "z": -492.9901
+              },
+              "minAngle": 40,
+              "maxAngle": 165,
+              "minDistance": 1,
+              "maxDistance": 1.7,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

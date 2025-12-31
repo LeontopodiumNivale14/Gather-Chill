@@ -1,0 +1,89 @@
+{
+  "routeId": 400,
+  "territoryId": 956,
+  "zoneName": "Labyrinthos",
+  "placeName": "The Central Circuit",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34360
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-29 17:43:46",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34360,
+          "locations": [
+            {
+              "position": {
+                "x": -505.7667,
+                "y": -30.46793,
+                "z": -2.952615
+              },
+              "minAngle": 255,
+              "maxAngle": 0,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -528.7167,
+                "y": -27.05937,
+                "z": -7.708698
+              },
+              "minAngle": 40,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 2.5,
+              "fanHightIncrease": 0.5,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": -515.692,
+                "y": -29.20288,
+                "z": -2.64785
+              },
+              "minAngle": 307,
+              "maxAngle": 82,
+              "minDistance": 1,
+              "maxDistance": 2,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

@@ -1,0 +1,111 @@
+{
+  "routeId": 1014,
+  "territoryId": 1191,
+  "zoneName": "Heritage Found",
+  "placeName": "East Yyasulani",
+  "expansionId": 5,
+  "gatheringJobId": 16,
+  "levelRequirement": 100,
+  "nodeIds": [
+    34958,
+    34959,
+    34960
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-24 22:28:45",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34958,
+          "locations": [
+            {
+              "position": {
+                "x": 127.9431,
+                "y": 51.40716,
+                "z": -495.9732
+              },
+              "minAngle": 340,
+              "maxAngle": 25,
+              "minDistance": 2,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34959,
+          "locations": [
+            {
+              "position": {
+                "x": 291.8341,
+                "y": 87.11346,
+                "z": -350.5845
+              },
+              "minAngle": 155,
+              "maxAngle": 280,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34960,
+          "locations": [
+            {
+              "position": {
+                "x": 363.0869,
+                "y": 84.87339,
+                "z": -545.386
+              },
+              "minAngle": 40,
+              "maxAngle": 145,
+              "minDistance": 1,
+              "maxDistance": 3,
+              "fanHightIncrease": 0.2,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}

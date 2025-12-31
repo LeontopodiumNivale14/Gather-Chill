@@ -12,7 +12,7 @@
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev",
-  "lastUpdated": "2025-12-08",
+  "lastUpdated": "2025-12-29 18:19:33",
   "nodeGroups": [
     {
       "groupId": 0,
@@ -26,15 +26,17 @@
                 "y": 443.3225,
                 "z": -849.7838
               },
-              "minAngle": -60,
-              "maxAngle": 0,
+              "minAngle": -87,
+              "maxAngle": 10,
               "minDistance": 1,
-              "maxDistance": 5,
-              "allowFlying": true
+              "maxDistance": 1.2,
+              "allowFlying": true,
+              "fanHightIncrease": 0
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "timedNode": false
 }

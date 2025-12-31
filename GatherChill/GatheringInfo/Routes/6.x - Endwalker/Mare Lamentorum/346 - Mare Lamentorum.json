@@ -1,0 +1,89 @@
+{
+  "routeId": 346,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "Sinus Tormenti",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 90,
+  "nodeIds": [
+    34359
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev, Ice",
+  "lastUpdated": "2025-12-29 03:49:47",
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34359,
+          "locations": [
+            {
+              "position": {
+                "x": 362.5642,
+                "y": 131.456,
+                "z": -9.672108
+              },
+              "minAngle": 340,
+              "maxAngle": 120,
+              "minDistance": 1,
+              "maxDistance": 2.4,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 405.9718,
+                "y": 137.1529,
+                "z": 41.91616
+              },
+              "minAngle": 5,
+              "maxAngle": 110,
+              "minDistance": 1,
+              "maxDistance": 2.2,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            },
+            {
+              "position": {
+                "x": 450.7056,
+                "y": 131.5175,
+                "z": 101.7013
+              },
+              "minAngle": -0,
+              "maxAngle": 105,
+              "minDistance": 1,
+              "maxDistance": 1.5,
+              "fanHightIncrease": 0,
+              "allowFlying": true,
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timedNode": false
+}
