@@ -341,6 +341,13 @@ namespace GatherChill.GatheringInfo
                 throw;
             }
         }
+        public void SaveAllRoute()
+        {
+            foreach (var route in Routes.Values)
+            {
+                SaveRoute(route);
+            }
+        }
 
         /// <summary>
         /// Sanitize a string to be used as a folder name
@@ -573,6 +580,138 @@ namespace GatherChill.GatheringInfo
                     Locations = new List<NodeLocation> { newLocation }
                 };
                 group0.Nodes.Add(newNode);
+            }
+        }
+
+        /// <summary>
+        /// Normalizes all angle values in all loaded routes to 0-360 range
+        /// </summary>
+        public NormalizationResult NormalizeAllLoadedRoutes()
+        {
+            var result = new NormalizationResult();
+
+            foreach (var route in Routes.Values)
+            {
+                result.RoutesProcessed++;
+                int locationsInRoute = 0;
+                int normalizedInRoute = 0;
+
+                foreach (var group in route.NodeGroups)
+                {
+                    foreach (var node in group.Nodes)
+                    {
+                        foreach (var location in node.Locations)
+                        {
+                            locationsInRoute++;
+                            bool wasNormalized = false;
+
+                            // Normalize flight angles
+                            var originalFlightMin = location.FlightAngle_Min;
+                            var originalFlightMax = location.FlightAngle_Max;
+
+                            location.FlightAngle_Min = NormalizeAngleTo360(location.FlightAngle_Min);
+                            location.FlightAngle_Max = NormalizeAngleTo360(location.FlightAngle_Max);
+
+                            if (originalFlightMin != location.FlightAngle_Min ||
+                                originalFlightMax != location.FlightAngle_Max)
+                            {
+                                wasNormalized = true;
+                            }
+
+                            // Normalize gather angles
+                            var originalGatherMin = location.GatherAngle_Min;
+                            var originalGatherMax = location.GatherAngle_Max;
+
+                            location.GatherAngle_Min = NormalizeAngleTo360(location.GatherAngle_Min);
+                            location.GatherAngle_Max = NormalizeAngleTo360(location.GatherAngle_Max);
+
+                            if (originalGatherMin != location.GatherAngle_Min ||
+                                originalGatherMax != location.GatherAngle_Max)
+                            {
+                                wasNormalized = true;
+                            }
+
+                            if (wasNormalized)
+                            {
+                                normalizedInRoute++;
+                            }
+                        }
+                    }
+                }
+
+                result.TotalLocations += locationsInRoute;
+                result.NormalizedLocations += normalizedInRoute;
+
+                if (normalizedInRoute > 0)
+                {
+                    result.RoutesModified++;
+                }
+            }
+
+            PluginLog.Information($"Normalization complete: {result}");
+            return result;
+        }
+
+        /// <summary>
+        /// Normalizes an angle to 0-360 range
+        /// </summary>
+        private float NormalizeAngleTo360(float angle)
+        {
+            angle = angle % 360f;
+            if (angle < 0f)
+                angle += 360f;
+            return angle;
+        }
+
+        /// <summary>
+        /// Save all currently loaded routes back to their files
+        /// </summary>
+        public void SaveAllRoutes()
+        {
+            int savedCount = 0;
+            int failedCount = 0;
+
+            PluginLog.Information($"Starting to save {Routes.Count} routes...");
+
+            foreach (var route in Routes.Values)
+            {
+                try
+                {
+                    SaveRoute(route);
+                    savedCount++;
+
+                    if (savedCount % 10 == 0)
+                    {
+                        PluginLog.Information($"Saved {savedCount} routes so far...");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PluginLog.Error($"Failed to save route {route.RouteId}: {ex.Message}");
+                    failedCount++;
+                }
+            }
+
+            PluginLog.Information($"Save complete: {savedCount} saved, {failedCount} failed");
+        }
+
+        /// <summary>
+        /// Normalize all routes and save them
+        /// </summary>
+        public void NormalizeAndSaveAllRoutes()
+        {
+            PluginLog.Information("Starting normalization and save process...");
+
+            var result = NormalizeAllLoadedRoutes();
+
+            if (result.NormalizedLocations > 0)
+            {
+                PluginLog.Information($"Normalized {result.NormalizedLocations} locations across {result.RoutesModified} routes");
+                SaveAllRoutes();
+            }
+            else
+            {
+                PluginLog.Information("No routes needed normalization");
             }
         }
     }
