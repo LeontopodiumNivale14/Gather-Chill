@@ -903,7 +903,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     {
                                         closestPoint = NodeLocationExtensions.GetRandomGatherPosition(locationInfo, Player.Position);
                                     }
-                                    P.taskManager.Enqueue(() => Task_NavmeshMove.Task_FlyTo(destination, distance: 1, stayMounted: true), TaskConfig);
+                                    P.taskManager.Enqueue(() => Task_NavmeshMove.Task_FlyTo(destination, distance: 1, stayMounted: false), TaskConfig);
                                     P.taskManager.Enqueue(() => Task_NavmeshMove.Task_GroundTo(closestPoint, true, 1, true), TaskConfig);
                                 }
                                 ImGui.SameLine();
