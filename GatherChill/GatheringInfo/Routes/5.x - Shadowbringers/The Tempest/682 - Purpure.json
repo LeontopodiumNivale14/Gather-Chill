@@ -26,12 +26,19 @@
                 "y": -239.8588,
                 "z": 495.6803
               },
-              "minAngle": -280,
-              "maxAngle": -215,
+              "minAngle": 80,
+              "maxAngle": 145,
               "minDistance": 2.4,
               "maxDistance": 2.9,
+              "fanHightIncrease": 0,
               "allowFlying": true,
-              "fanHightIncrease": 0
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
             }
           ]
         }

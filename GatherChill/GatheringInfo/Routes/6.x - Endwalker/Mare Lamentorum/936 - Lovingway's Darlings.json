@@ -26,12 +26,19 @@
                 "y": 101.2435,
                 "z": -46.68359
               },
-              "minAngle": -40,
+              "minAngle": 320,
               "maxAngle": 85,
               "minDistance": 1,
               "maxDistance": 2,
+              "fanHightIncrease": 0,
               "allowFlying": true,
-              "fanHightIncrease": 0
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
             },
             {
               "position": {
@@ -39,12 +46,19 @@
                 "y": 92.92259,
                 "z": -49.16527
               },
-              "minAngle": -285,
-              "maxAngle": -175,
+              "minAngle": 75,
+              "maxAngle": 185,
               "minDistance": 1,
               "maxDistance": 2.7,
+              "fanHightIncrease": 0.4,
               "allowFlying": true,
-              "fanHightIncrease": 0.4
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
             },
             {
               "position": {
@@ -52,12 +66,19 @@
                 "y": 97.78034,
                 "z": -65.63747
               },
-              "minAngle": -245,
-              "maxAngle": -95,
+              "minAngle": 115,
+              "maxAngle": 265,
               "minDistance": 1,
               "maxDistance": 3,
+              "fanHightIncrease": 0.6,
               "allowFlying": true,
-              "fanHightIncrease": 0.6
+              "specificWalkSpots": false,
+              "walkablePositions": [],
+              "gatherAngle_Minimum": 0,
+              "gatherAngle_Maximum": 0,
+              "gatherDistance_Minimum": 1,
+              "gatherDistance_Maximum": 2.4,
+              "gatherFan_Height": 0
             }
           ]
         }

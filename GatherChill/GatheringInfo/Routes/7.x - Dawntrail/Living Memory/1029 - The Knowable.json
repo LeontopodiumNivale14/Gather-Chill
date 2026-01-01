@@ -26,8 +26,8 @@
                 "y": -3.524841,
                 "z": -677.0406
               },
-              "minAngle": -255,
-              "maxAngle": -105,
+              "minAngle": 105,
+              "maxAngle": 255,
               "minDistance": 3.9,
               "maxDistance": 4.4,
               "fanHightIncrease": -0.6,
@@ -61,7 +61,7 @@
                 }
               ],
               "gatherAngle_Minimum": 0,
-              "gatherAngle_Maximum": 360,
+              "gatherAngle_Maximum": 0,
               "gatherDistance_Minimum": 1,
               "gatherDistance_Maximum": 3,
               "gatherFan_Height": 0
@@ -73,7 +73,7 @@
                 "z": -706.9849
               },
               "minAngle": 0,
-              "maxAngle": 360,
+              "maxAngle": 0,
               "minDistance": 1,
               "maxDistance": 3,
               "fanHightIncrease": -0.2,
@@ -117,7 +117,7 @@
                 }
               ],
               "gatherAngle_Minimum": 0,
-              "gatherAngle_Maximum": 360,
+              "gatherAngle_Maximum": 0,
               "gatherDistance_Minimum": 1,
               "gatherDistance_Maximum": 3,
               "gatherFan_Height": -0.2
@@ -129,7 +129,7 @@
                 "z": -714.8772
               },
               "minAngle": 0,
-              "maxAngle": 360,
+              "maxAngle": 0,
               "minDistance": 1,
               "maxDistance": 3.2,
               "fanHightIncrease": -0.3,
@@ -173,7 +173,7 @@
                 }
               ],
               "gatherAngle_Minimum": 0,
-              "gatherAngle_Maximum": 360,
+              "gatherAngle_Maximum": 0,
               "gatherDistance_Minimum": 1,
               "gatherDistance_Maximum": 3.2,
               "gatherFan_Height": -0.3
