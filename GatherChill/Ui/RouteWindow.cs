@@ -2,6 +2,7 @@
 
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
+using GatherChill.GatheringInfo;
 using GatherChill.Ui.RouteWindowTabs;
 using GatherChill.Utilities;
 using Lumina.Excel.Sheets;
@@ -72,6 +73,16 @@ public class RoutesWindow : Window
             if (ImGui.Button("Add missing from sheets"))
             {
                 P.routeLoader.GenerateRoutesFromSheetInfo(SheetInfo);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Normalize All Routes"))
+            {
+                P.routeLoader.NormalizeAllLoadedRoutes();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Save all"))
+            {
+                P.routeLoader.SaveAllRoute();
             }
 
             ImGui.Checkbox("View current zone only", ref viewOnlyZone);

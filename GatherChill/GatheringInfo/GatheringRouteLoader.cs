@@ -345,7 +345,7 @@ namespace GatherChill.GatheringInfo
         {
             foreach (var route in Routes.Values)
             {
-                SaveRoute(route);
+                SaveRoute(route, route.PlaceName);
             }
         }
 
