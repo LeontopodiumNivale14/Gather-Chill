@@ -1,9 +1,5 @@
-﻿using ECommons.Logging;
-using GatherChill.GatheringInfo;
-using System;
+﻿using GatherChill.GatheringInfo;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GatherChill.Utilities.GatheringHelpers
 {
@@ -13,17 +9,17 @@ namespace GatherChill.Utilities.GatheringHelpers
 
         public static Vector3 GetRandomFlightPosition(this NodeLocation nodeLocation, Vector3 playerPosition, float sectionSize = 15f)
         {
-            Vector3 nodePos = nodeLocation.Position.ToVector3();
+            Vector3 nodePos = nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
-            float ffxivMin = PictomancyToFFXIV(nodeLocation.FlightAngle_Min);
-            float ffxivMax = PictomancyToFFXIV(nodeLocation.FlightAngle_Max);
+            float ffxivMin = PictomancyToFFXIV(nodeLocation.Flight_FanInfo.Fan_StartAngle);
+            float ffxivMax = PictomancyToFFXIV(nodeLocation.Flight_FanInfo.Fan_EndAngle);
 
             var (sectionMin, sectionMax) = GetNearestSection(ffxivMin, ffxivMax, angleToPlayer, sectionSize);
             float selectedAngle = RandomAngleInRange(sectionMin, sectionMax);
-            float selectedDistance = _random.NextFloat(nodeLocation.FlightDistance_Min, nodeLocation.FlightDistance_Max);
+            float selectedDistance = _random.NextFloat(nodeLocation.Flight_FanInfo.Fan_DistanceMin, nodeLocation.Flight_FanInfo.Fan_DistanceMax);
 
-            return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.FlightFan_Height);
+            return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.Flight_FanInfo.Fan_Height);
         }
 
         public static Vector3 GetRandomGatherPosition(this NodeLocation nodeLocation, Vector3 playerPosition, float sectionSize = 15f)
@@ -33,17 +29,17 @@ namespace GatherChill.Utilities.GatheringHelpers
                 return GetNearestWalkablePosition(nodeLocation.WalkablePositions, playerPosition);
             }
 
-            Vector3 nodePos = nodeLocation.Position.ToVector3();
+            Vector3 nodePos = nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
-            float ffxivMin = PictomancyToFFXIV(nodeLocation.GatherAngle_Min);
-            float ffxivMax = PictomancyToFFXIV(nodeLocation.GatherAngle_Max);
+            float ffxivMin = PictomancyToFFXIV(nodeLocation.Gathering_FanInfo.Fan_StartAngle);
+            float ffxivMax = PictomancyToFFXIV(nodeLocation.Gathering_FanInfo.Fan_EndAngle);
 
             var (sectionMin, sectionMax) = GetNearestSection(ffxivMin, ffxivMax, angleToPlayer, sectionSize);
             float selectedAngle = RandomAngleInRange(sectionMin, sectionMax);
-            float selectedDistance = _random.NextFloat(nodeLocation.GatherDist_Min, nodeLocation.GatherDist_Max);
+            float selectedDistance = _random.NextFloat(nodeLocation.Gathering_FanInfo.Fan_DistanceMin, nodeLocation.Gathering_FanInfo.Fan_DistanceMax);
 
-            return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.GatherFan_Height);
+            return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.Gathering_FanInfo.Fan_Height);
         }
 
         public static (Vector3 flightPos, Vector3 gatherPos) GetRandomPositions(
@@ -233,14 +229,14 @@ namespace GatherChill.Utilities.GatheringHelpers
             );
         }
 
-        private static Vector3 GetNearestWalkablePosition(List<Position> walkablePositions, Vector3 playerPosition)
+        private static Vector3 GetNearestWalkablePosition(List<Vector3> walkablePositions, Vector3 playerPosition)
         {
-            Vector3 nearest = walkablePositions[0].ToVector3();
+            Vector3 nearest = walkablePositions[0];
             float minDistSq = Vector3.DistanceSquared(nearest, playerPosition);
 
             for (int i = 1; i < walkablePositions.Count; i++)
             {
-                Vector3 pos = walkablePositions[i].ToVector3();
+                Vector3 pos = walkablePositions[i];
                 float distSq = Vector3.DistanceSquared(pos, playerPosition);
 
                 if (distSq < minDistSq)

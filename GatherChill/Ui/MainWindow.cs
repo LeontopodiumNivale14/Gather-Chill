@@ -33,10 +33,6 @@ namespace GatherChill.Ui
             P.windowSystem.RemoveWindow(this);
         }
 
-        private static int gatheringType = 0;
-        private static uint GatheringSlot = 0;
-        private static string itemName = string.Empty;
-
         /// <summary>
         /// Primary draw method. Responsible for drawing the entire UI of the main window.
         /// </summary>

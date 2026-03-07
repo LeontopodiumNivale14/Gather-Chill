@@ -13,46 +13,49 @@ namespace GatherChill.GatheringInfo
     /// </summary>
     public class GatheringRoute
     {
-        [JsonPropertyName("routeId")]
+        /// <summary>
+        /// Route/KeyId 
+        /// </summary>
         public uint RouteId { get; set; }
-
-        [JsonPropertyName("territoryId")]
+        /// <summary>
+        /// TerritoryID associated with the route
+        /// </summary>
         public uint TerritoryId { get; set; }
-
-        [JsonPropertyName("zoneName")]
+        /// <summary>
+        /// Zone/Territory Name. Stored in english but, just so i know what this gathering route belongs to
+        /// </summary>
         public string ZoneName { get; set; }
-
-        [JsonPropertyName("placeName")]
+        /// <summary>
+        /// Location of the gathering zone/internal name
+        /// </summary>
         public string PlaceName { get; set; }
-
-        [JsonPropertyName("expansionId")]
-        public uint ExpansionId { get; set; } // 0 = ARR, 1 = HW, 2 = Stb, 3 = ShB, 4 = EW, 5 = DT
-
-        [JsonPropertyName("gatheringJobId")]
-        public uint GatheringJobId { get; set; } // 16 = MIN, 17 = BTN, 18 = FSH
-
-        [JsonPropertyName("levelRequirement")]
+        /// <summary>
+        /// Expansion the route belongs to<br></br>
+        /// This is to make sure that it just gets sorted into the right folder<br></br>
+        /// 0 = ARR, 1 = HW, 2 = Stb, 3 = ShB, 4 = EW, 5 = DT
+        /// </summary>
+        public uint ExpansionId { get; set; }
+        /// <summary>
+        /// JobIds tied to that gathering point
+        /// 16 = MIN, 17 = BTN, 18 = FSH
+        /// </summary>
+        public uint GatheringJobId { get; set; }
+        /// <summary>
+        /// Lv. Requirement to interact/see the node
+        /// </summary>
         public int LevelRequirement { get; set; }
-
-        [JsonPropertyName("nodeIds")]
+        /// <summary>
+        /// List of all the nodeIds that are contains in this route
+        /// </summary>
         public List<uint> NodeIds { get; set; } = new();
-
-        [JsonPropertyName("requiresFolklore")]
-        public bool RequiresFolklore { get; set; }
-
-        [JsonPropertyName("folkloreBook")]
-        public string FolkloreBook { get; set; }
-
-        [JsonPropertyName("author")]
-        public string Author { get; set; }
-
-        [JsonPropertyName("lastUpdated")]
-        public string LastUpdated { get; set; }
-
-        [JsonPropertyName("nodeGroups")]
+        /// <summary>
+        /// Node Groups/Node Position info. This contains the exact info of all the different nodes
+        /// </summary>
         public List<NodeGroup> NodeGroups { get; set; } = new();
-
-        [JsonPropertyName("timedNode")]
+        public bool RequiresFolklore { get; set; }
+        public string FolkloreBook { get; set; }
+        public string Author { get; set; }
+        public string LastUpdated { get; set; }
         public bool TimedNode { get; set; } = false;
     }
 
@@ -62,10 +65,7 @@ namespace GatherChill.GatheringInfo
     /// </summary>
     public class NodeGroup
     {
-        [JsonPropertyName("groupId")]
         public int GroupId { get; set; }
-
-        [JsonPropertyName("nodes")]
         public List<GatheringNode> Nodes { get; set; } = new();
     }
 
@@ -74,10 +74,7 @@ namespace GatherChill.GatheringInfo
     /// </summary>
     public class GatheringNode
     {
-        [JsonPropertyName("nodeId")]
         public uint NodeId { get; set; }
-
-        [JsonPropertyName("locations")]
         public List<NodeLocation> Locations { get; set; } = new();
     }
 
@@ -86,72 +83,22 @@ namespace GatherChill.GatheringInfo
     /// </summary>
     public class NodeLocation
     {
-        // Node Position itself
-        [JsonPropertyName("position")]
-        public Position Position { get; set; }
-
-        // Flight Fan Stuff
-        [JsonPropertyName("minAngle")]
-        public float FlightAngle_Min { get; set; } = 0.0f;
-
-        [JsonPropertyName("maxAngle")]
-        public float FlightAngle_Max { get; set; } = 0.0f;
-
-        [JsonPropertyName("minDistance")]
-        public float FlightDistance_Min { get; set; } = 3.0f;
-
-        [JsonPropertyName("maxDistance")]
-        public float FlightDistance_Max { get; set; } = 5.0f;
-
-        [JsonPropertyName("fanHightIncrease")]
-        public float FlightFan_Height { get; set; } = 0.0f;
-
-        [JsonPropertyName("allowFlying")]
+        public Vector3 Position { get; set; }
         public bool AllowFlying { get; set; } = true;
-
-        // Bool to choose whether we're doing fan position finder, 
-        [JsonPropertyName("specificWalkSpots")]
+        public FanInfo Flight_FanInfo { get; set; } = new();
+        public FanInfo Gathering_FanInfo { get; set; } = new();
+        // Bool to choose whether we're doing fan position finder
         public bool UseSpecificWalkingSpots { get; set; } = false;
-
-        // if true, use this
-        [JsonPropertyName("walkablePositions")]
-        public List<Position> WalkablePositions { get; set; } = new();
-
-        // if false, using ring 
-        [JsonPropertyName("gatherAngle_Minimum")]
-        public float GatherAngle_Min { get; set; } = 0.0f;
-        [JsonPropertyName("gatherAngle_Maximum")]
-        public float GatherAngle_Max { get; set; } = 0.0f;
-        [JsonPropertyName("gatherDistance_Minimum")]
-        public float GatherDist_Min { get; set; } = 1.0f;
-        [JsonPropertyName("gatherDistance_Maximum")]
-        public float GatherDist_Max { get; set; } = 2.4f;
-        [JsonPropertyName("gatherFan_Height")]
-        public float GatherFan_Height { get; set; } = 0.0f;
+        public List<Vector3> WalkablePositions { get; set; } = new();
 
     }
 
-    /// <summary>
-    /// Actual stored info on the position (just in .json format)
-    /// </summary>
-    public class Position
+    public class FanInfo
     {
-        [JsonPropertyName("x")]
-        public float X { get; set; }
-
-        [JsonPropertyName("y")]
-        public float Y { get; set; }
-
-        [JsonPropertyName("z")]
-        public float Z { get; set; }
-
-        public Vector3 ToVector3() => new Vector3(X, Y, Z);
-
-        public static Position FromVector3(Vector3 vector) => new Position
-        {
-            X = vector.X,
-            Y = vector.Y,
-            Z = vector.Z
-        };
+        public float Fan_StartAngle { get; set; } = 0.0f;
+        public float Fan_EndAngle { get; set; } = 0.0f;
+        public float Fan_DistanceMin { get; set; } = 1.0f;
+        public float Fan_DistanceMax { get; set; } = 3.0f;
+        public float Fan_Height { get; set; } = 0.0f;
     }
 }

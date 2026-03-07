@@ -16,6 +16,7 @@ public class NavmeshIPC
     public NavmeshIPC() => EzIPC.Init(this, Name);
     public bool Installed => HasPlugin(Name);
 
+
     [EzIPC("Nav.%m")] public readonly Func<bool> IsReady;
     [EzIPC("Nav.%m")] public readonly Func<float> BuildProgress;
     [EzIPC("Nav.%m")] public readonly Func<bool> Reload;
@@ -31,6 +32,7 @@ public class NavmeshIPC
     [EzIPC("Path.%m")] public readonly Func<bool> IsRunning;
     [EzIPC("Path.%m")] public readonly Action<float> SetTolerance;
 
-    [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float> NearestPoint;
+    [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float, Vector3?> NearestPoint;
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, bool, float, Vector3?> PointOnFloor;
+    [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float, Vector3?> NearestPointReachable;
 }

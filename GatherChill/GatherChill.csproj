@@ -14,7 +14,9 @@
 
   <ItemGroup>
     <Compile Remove="GatheringInfo\Heavensword\**" />
+    <Compile Remove="Ui\DebugTabs\**" />
     <EmbeddedResource Remove="GatheringInfo\Heavensword\**" />
+    <EmbeddedResource Remove="Ui\DebugTabs\**" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -30,11 +32,6 @@
   <ItemGroup>
     <PackageReference Update="DalamudPackager" Version="14.0.1" />
     <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.39" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Ui\DebugTabs\" />
-    <Folder Include="Yaml\ConfigFiles\" />
   </ItemGroup>
   
   

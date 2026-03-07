@@ -15,7 +15,6 @@ namespace GatherChill.Scheduler.Tasks
     internal class Task_GatherRoute
     {
         private static GatheringRoute selectedRoute = null;
-        private static GatheringRouteLoader _routeLoader = P.routeLoader;
         private static readonly Random _random = new Random();
 
         private static uint LoadedRouteId = 0;
@@ -33,7 +32,6 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
             {
-                P.taskManager.Enqueue(() => LoadRoute(routeId), "Load Route");
                 P.taskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
             }
         }
@@ -48,41 +46,6 @@ namespace GatherChill.Scheduler.Tasks
         // Probably turn this into it's own task in itself
         // If none are within range, just go ahead and move onto the next
         // This also means refactoring navmesh movement for flying and ground movement as a whole into their own things for sanity check
-
-        private static bool? LoadRoute(uint routeId)
-        {
-            var loadedRoute = _routeLoader.GetRoute(routeId);
-
-            if (loadedRoute != null)
-            {
-                selectedRoute = loadedRoute;
-
-                if (LoadedRouteId != routeId)
-                {
-                    LoadedRouteId = routeId;
-                    RouteIndex = 0;
-                    GatherRoute.Clear();
-
-                    foreach (var group in selectedRoute.NodeGroups)
-                    {
-                        foreach (var node in group.Nodes)
-                        {
-                            GatherRoute.Add(node);
-                        }
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                if (EzThrottler.Throttle("Throttling log message", 1000))
-                {
-                    PluginLog.Debug($"We've found an invalid route. RouteId: {routeId}");
-                }
-            }
-            return false;
-        }
         private static bool? TravelFarCheck()
         {
             if (GatherRoute.Count == 0)
@@ -107,7 +70,7 @@ namespace GatherChill.Scheduler.Tasks
                 PluginLog.Verbose("Currently in travel check mode");
 
             // bool allNodesInRange = currentNode.Locations.All(x => Player.DistanceTo(x.Position.ToVector3()) <= loadRange);
-            if (Player.DistanceTo(currentNode.Locations[0].Position.ToVector3()) > loadRange)
+            if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
             {
                 TargetFanPoint = null;
 
@@ -161,7 +124,7 @@ namespace GatherChill.Scheduler.Tasks
             {
                 PluginLog.Verbose($"Checking location: {NodeCheckIndex}");
                 var location = currentNode.Locations[NodeCheckIndex];
-                var distanceToLoc = Player.DistanceTo(location.Position.ToVector3());
+                var distanceToLoc = Player.DistanceTo(location.Position);
                 if (EzThrottler.Throttle("Location message throttle"))
                     PluginLog.Debug($"Distance to location: {distanceToLoc:N2}");
 
@@ -225,7 +188,7 @@ namespace GatherChill.Scheduler.Tasks
             float minFlyDistance = 25;
 
             var currentNode = GatherRoute[RouteIndex];
-            var targetLocation = currentNode.Locations.Where(x => x.Position.ToVector3() == node.Position).FirstOrDefault();
+            var targetLocation = currentNode.Locations.Where(x => x.Position == node.Position).FirstOrDefault();
             if (targetLocation == null)
             {
                 PluginLog.Error("We're getting an invalid node location");
@@ -237,8 +200,8 @@ namespace GatherChill.Scheduler.Tasks
             var closestWalkPoint = Vector3.Zero;
             if (targetLocation.UseSpecificWalkingSpots)
             {
-                var walkPointSpecific = targetLocation.WalkablePositions.OrderBy(x => Vector3.Distance(TargetFanPoint.Value, x.ToVector3())).FirstOrDefault();
-                closestWalkPoint = walkPointSpecific.ToVector3();
+                var walkPointSpecific = targetLocation.WalkablePositions.OrderBy(x => Vector3.Distance(TargetFanPoint.Value, x)).FirstOrDefault();
+                closestWalkPoint = walkPointSpecific;
             }
             else
             {
