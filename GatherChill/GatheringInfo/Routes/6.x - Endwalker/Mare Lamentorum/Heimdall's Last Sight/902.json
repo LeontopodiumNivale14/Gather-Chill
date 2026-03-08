@@ -1,0 +1,189 @@
+{
+  "routeId": 902,
+  "territoryId": 959,
+  "zoneName": "Mare Lamentorum",
+  "placeName": "Heimdall\u0027s Last Sight",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 85,
+  "nodeIds": [
+    34335,
+    34336,
+    34337,
+    34338,
+    34339,
+    34340
+  ],
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 34337,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 34338,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodes": [
+        {
+          "nodeId": 34339,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 34340,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodes": [
+        {
+          "nodeId": 34336,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 34335,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "liza, Ice",
+  "lastUpdated": "2025-12-29 04:56:13",
+  "timedNode": false
+}

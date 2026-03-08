@@ -1,0 +1,179 @@
+{
+  "routeId": 741,
+  "territoryId": 402,
+  "zoneName": "Azys Lla",
+  "placeName": "Cooling Station",
+  "expansionId": 1,
+  "gatheringJobId": 16,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33386,
+    33387,
+    33388,
+    33389,
+    33390,
+    33391
+  ],
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33390,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33391,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33387,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33386,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33389,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33388,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "timedNode": false
+}

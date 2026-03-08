@@ -1,0 +1,199 @@
+{
+  "routeId": 734,
+  "territoryId": 614,
+  "zoneName": "Yanxia",
+  "placeName": "Valley of the Fallen Rainbow",
+  "expansionId": 2,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    33344,
+    33345,
+    33346,
+    33347,
+    33348,
+    33349
+  ],
+  "nodeGroups": [
+    {
+      "groupId": 0,
+      "nodes": [
+        {
+          "nodeId": 33346,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33347,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33349,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33348,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33344,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        },
+        {
+          "nodeId": 33345,
+          "locations": [
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            },
+            {
+              "position": {},
+              "allowFlying": true,
+              "flight_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "gathering_FanInfo": {
+                "fan_StartAngle": 0,
+                "fan_EndAngle": 0,
+                "fan_DistanceMin": 1,
+                "fan_DistanceMax": 3,
+                "fan_Height": 0
+              },
+              "useSpecificWalkingSpots": false,
+              "walkablePositions": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "requiresFolklore": false,
+  "folkloreBook": "",
+  "author": "alydev",
+  "lastUpdated": "2025-12-08",
+  "timedNode": false
+}

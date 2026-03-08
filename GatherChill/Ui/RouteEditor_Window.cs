@@ -41,12 +41,6 @@ namespace GatherChill.Ui
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Temp"))
-                {
-                    Route_UpdateAll.Draw();
-                    ImGui.EndTabItem();
-                }
-
                 ImGui.EndTabBar();
             }
         }

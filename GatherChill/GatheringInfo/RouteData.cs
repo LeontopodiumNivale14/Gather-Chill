@@ -51,7 +51,7 @@ namespace GatherChill.GatheringInfo
         /// <summary>
         /// Node Groups/Node Position info. This contains the exact info of all the different nodes
         /// </summary>
-        public List<NodeGroup> NodeGroups { get; set; } = new();
+        public List<GatheringNode> NodeInfo { get; set; } = new();
         public bool RequiresFolklore { get; set; }
         public string FolkloreBook { get; set; }
         public string Author { get; set; }
@@ -60,20 +60,11 @@ namespace GatherChill.GatheringInfo
     }
 
     /// <summary>
-    /// A list/group of the nodes that are close together
-    /// ARR can sometimes be one group, while anything post HW are usually 3+
-    /// </summary>
-    public class NodeGroup
-    {
-        public int GroupId { get; set; }
-        public List<GatheringNode> Nodes { get; set; } = new();
-    }
-
-    /// <summary>
     /// The node info itself, contains the nodeId + all the locations it's in
     /// </summary>
     public class GatheringNode
     {
+        public int GroupId { get; set; } = 0;
         public uint NodeId { get; set; }
         public List<NodeLocation> Locations { get; set; } = new();
     }

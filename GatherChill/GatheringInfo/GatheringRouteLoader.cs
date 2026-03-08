@@ -86,14 +86,24 @@ namespace GatherChill.GatheringInfo
                 return;
             }
 
-            var dir = Path.Combine(outputDirectory, expansionFolder);
+            // Expansion/ZoneName/PlaceName (if different from zone)
+            var dir = Path.Combine(outputDirectory, expansionFolder, SanitizeName(route.ZoneName));
+            if (!string.IsNullOrWhiteSpace(route.PlaceName) && route.PlaceName != route.ZoneName)
+                dir = Path.Combine(dir, SanitizeName(route.PlaceName));
+
             Directory.CreateDirectory(dir);
 
             var filePath = Path.Combine(dir, $"{route.RouteId}.json");
             File.WriteAllText(filePath, JsonSerializer.Serialize(route, _writeOptions));
 
             Routes[route.RouteId] = route;
-            PluginLog.Verbose($"Saved route {route.RouteId} -> {Path.Combine(expansionFolder, $"{route.RouteId}.json")}");
+            PluginLog.Verbose($"Saved route {route.RouteId} -> {Path.GetRelativePath(outputDirectory, filePath)}");
+        }
+
+        private static string SanitizeName(string name)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            return string.Join("_", name.Split(invalid, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
         }
 
         public void SaveAllRoutes(string outputDirectory)
@@ -116,12 +126,11 @@ namespace GatherChill.GatheringInfo
 
         public bool ContainsSpecificNode(GatheringRoute route, uint nodeId, Vector3 position)
         {
-            foreach (var group in route.NodeGroups)
-                foreach (var node in group.Nodes)
-                    if (node.NodeId == nodeId)
-                        foreach (var location in node.Locations)
-                            if (location.Position == position)
-                                return true;
+            foreach (var node in route.NodeInfo)
+                if (node.NodeId == nodeId)
+                    foreach (var location in node.Locations)
+                        if (location.Position == position)
+                            return true;
             return false;
         }
 
@@ -130,37 +139,24 @@ namespace GatherChill.GatheringInfo
             if (ContainsSpecificNode(route, nodeId, position)) return;
             if (!route.NodeIds.Contains(nodeId)) return;
 
-            var group0 = route.NodeGroups.FirstOrDefault(g => g.GroupId == 0)
-                         ?? new NodeGroup { GroupId = 0 };
+            var newLocation = new NodeLocation { Position = position };
 
-            if (!route.NodeGroups.Contains(group0))
-                route.NodeGroups.Insert(0, group0);
-
-            var newLocation = new NodeLocation
-            {
-                Position = position,
-            };
-
-            var existing = group0.Nodes.FirstOrDefault(n => n.NodeId == nodeId);
+            var existing = route.NodeInfo.FirstOrDefault(n => n.NodeId == nodeId);
             if (existing != null)
                 existing.Locations.Add(newLocation);
             else
-                group0.Nodes.Add(new GatheringNode { NodeId = nodeId, Locations = new() { newLocation } });
+                route.NodeInfo.Add(new GatheringNode { NodeId = nodeId, GroupId = 0, Locations = new() { newLocation } });
         }
 
         // ── Internals ─────────────────────────────────────────────────────────
 
         private bool ValidateRoute(GatheringRoute route, string source)
         {
-            if (route.RouteId == 0) { PluginLog.Warning($"{source}: invalid routeId (0)"); return false; }
-            if (string.IsNullOrWhiteSpace(route.ZoneName)) { PluginLog.Warning($"{source}: missing zone name"); return false; }
-            if (route.GatheringJobId is < 16 or > 18) { PluginLog.Warning($"{source}: invalid jobId {route.GatheringJobId}"); return false; }
-            if (route.NodeGroups is null or { Count: 0 }) { PluginLog.Warning($"{source}: no node groups"); return false; }
+            if (route.NodeIds is null or { Count: 0 }) { PluginLog.Warning($"{source}: no nodes"); return false; }
 
-            foreach (var group in route.NodeGroups)
-                foreach (var node in group.Nodes)
-                    if (node.Locations is null or { Count: 0 })
-                    { PluginLog.Warning($"{source}: node {node.NodeId} has no locations"); return false; }
+            foreach (var node in route.NodeInfo)
+                if (node.Locations is null or { Count: 0 })
+                { PluginLog.Warning($"{source}: node {node.NodeId} has no locations"); return false; }
 
             return true;
         }
