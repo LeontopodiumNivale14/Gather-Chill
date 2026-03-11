@@ -213,7 +213,10 @@ namespace GatherChill.Ui.RouteWindowTabs
         private static bool _isGeneratingFan = false;
         private static string _fanGenStatus = string.Empty;
 
-        private static void NodeDetails(GatheringRoute routeInfo)
+        private static uint _draggedNodeId = 0;
+        private static int _dragTargetGroupId = -1;
+
+        private static unsafe void NodeDetails(GatheringRoute routeInfo)
         {
             if (ImGui.BeginTable("Node Details", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
             {
@@ -235,12 +238,18 @@ namespace GatherChill.Ui.RouteWindowTabs
                             P.routeEditor.AddNodeLocationIfMissing(routeInfo, node.BaseId, node.Position);
                     }
 
-                    if (ImGui.Button("Clear Bad Data"))
+                    if (ImGui.Button("+Group"))
+                        routeInfo.GroupCount++;
+
+                    ImGui.SameLine();
+
+                    using (var disabled = ImRaii.Disabled(routeInfo.GroupCount <= 1))
                     {
-                        foreach (var nodeGroup in routeInfo.NodeInfo)
+                        if (ImGui.Button("-Group"))
                         {
-                            foreach (var nodeInfo in nodeGroup.Locations.Where(x => x.Position == Vector3.Zero))
-                                nodeGroup.Locations.Remove(nodeInfo);
+                            foreach (var node in routeInfo.NodeInfo.Where(n => n.GroupId == routeInfo.GroupCount - 1))
+                                node.GroupId = routeInfo.GroupCount - 2;
+                            routeInfo.GroupCount--;
                         }
                     }
 
@@ -266,13 +275,35 @@ namespace GatherChill.Ui.RouteWindowTabs
                     }
 
                     // Group the nodes by GroupId first so we know the position within each group
-                    var groupedNodes = routeInfo.NodeInfo.OrderBy(x => x.GroupId).GroupBy(x => x.GroupId);
+                    var groupedNodes = Enumerable.Range(0, routeInfo.GroupCount).Select(gId => (gId, nodes: routeInfo.NodeInfo.Where(n => n.GroupId == gId).ToList()));
 
-                    foreach (var group in groupedNodes)
+                    foreach (var (groupId, locationsList) in groupedNodes)
                     {
-                        var colors = C.Picto_GroupColors.TryGetValue(group.Key, out var c) ? c : C.Picto_GroupColors[0]; // fallback to red
+                        var colors = C.Picto_GroupColors.TryGetValue(groupId, out var c) ? c : C.Picto_GroupColors[0];
 
-                        var locationsList = group.ToList();
+                        // Group header row as drop target
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextDisabled($"── Group {groupId} ──");
+
+                        if (ImGui.BeginDragDropTarget())
+                        {
+                            try
+                            {
+                                var payload = ImGui.AcceptDragDropPayload("GATHERING_NODE");
+                                if (payload.DataSize > 0 && _draggedNodeId != 0)
+                                {
+                                    var node = routeInfo.NodeInfo.FirstOrDefault(n => n.NodeId == _draggedNodeId);
+                                    if (node != null)
+                                        node.GroupId = groupId;  // was group.Key
+                                    _draggedNodeId = 0;
+                                }
+                            }
+                            catch { }
+                            ImGui.EndDragDropTarget();
+                        }
+
+                        // Node rows
                         for (int i = 0; i < locationsList.Count; i++)
                         {
                             var nodeGroup = locationsList[i];
@@ -291,35 +322,52 @@ namespace GatherChill.Ui.RouteWindowTabs
                             if (selectedNodeId == nodeGroup.NodeId)
                                 ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.2f, 0.25f)));
 
-                            if (ImGui.Button($"{nodeGroup.NodeId}"))
+                            // Button is both the select trigger and drag source
+                            ImGui.Button($"{nodeGroup.NodeId}");
+
+                            if (ImGui.IsItemClicked() && selectedNodeId != nodeGroup.NodeId)
                             {
-                                if (selectedNodeId != nodeGroup.NodeId)
-                                {
-                                    selectedNodeId = nodeGroup.NodeId;
-                                    selectedLocationIndex = 0;
-                                }
+                                selectedNodeId = nodeGroup.NodeId;
+                                selectedLocationIndex = 0;
+                            }
+
+                            if (ImGui.BeginDragDropSource())
+                            {
+                                byte[] dummyData = new byte[1];
+                                ImGui.SetDragDropPayload("GATHERING_NODE", dummyData, (ImGuiCond)0);
+                                _draggedNodeId = nodeGroup.NodeId;
+                                ImGui.Text($"Node {nodeGroup.NodeId} → Group ?");
+                                ImGui.EndDragDropSource();
+                            }
+
+                            // After the node button, before TableNextColumn
+                            ImGui.SameLine();
+                            if (ImGui.ArrowButton("##up", ImGuiDir.Up))
+                            {
+                                var idx = routeInfo.NodeInfo.IndexOf(nodeGroup);
+                                // Find the previous node in the same group
+                                var prevIdx = idx - 1;
+                                while (prevIdx >= 0 && routeInfo.NodeInfo[prevIdx].GroupId != nodeGroup.GroupId)
+                                    prevIdx--;
+
+                                if (prevIdx >= 0)
+                                    (routeInfo.NodeInfo[prevIdx], routeInfo.NodeInfo[idx]) = (routeInfo.NodeInfo[idx], routeInfo.NodeInfo[prevIdx]);
+                            }
+                            ImGui.SameLine();
+                            if (ImGui.ArrowButton("##down", ImGuiDir.Down))
+                            {
+                                var idx = routeInfo.NodeInfo.IndexOf(nodeGroup);
+                                // Find the next node in the same group
+                                var nextIdx = idx + 1;
+                                while (nextIdx < routeInfo.NodeInfo.Count && routeInfo.NodeInfo[nextIdx].GroupId != nodeGroup.GroupId)
+                                    nextIdx++;
+
+                                if (nextIdx < routeInfo.NodeInfo.Count)
+                                    (routeInfo.NodeInfo[nextIdx], routeInfo.NodeInfo[idx]) = (routeInfo.NodeInfo[idx], routeInfo.NodeInfo[nextIdx]);
                             }
 
                             ImGui.TableNextColumn();
                             ImGui_Util.Table_VertCenterText($"{nodeGroup.Locations.Count}");
-
-                            ImGui.TableNextColumn();
-                            List<int> groupIds = new() { 0, 1, 2, 3, 4, 5 };
-                            var currentGroup = nodeGroup.GroupId;
-                            ImGui.SetNextItemWidth(100);
-                            if (ImGui.BeginCombo("##nodeGroup", $"{currentGroup}"))
-                            {
-                                foreach (var groupId in groupIds)
-                                {
-                                    bool isSelected = groupId == currentGroup;
-                                    if (ImGui.Selectable($"Group {groupId}", isSelected))
-                                        nodeGroup.GroupId = groupId;
-
-                                    if (isSelected)
-                                        ImGui.SetItemDefaultFocus();
-                                }
-                                ImGui.EndCombo();
-                            }
 
                             ImGui.PopID();
                         }

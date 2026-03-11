@@ -52,6 +52,7 @@ namespace GatherChill.GatheringInfo
         /// Node Groups/Node Position info. This contains the exact info of all the different nodes
         /// </summary>
         public List<GatheringNode> NodeInfo { get; set; } = new();
+        public int GroupCount { get; set; } = 3;
         public bool RequiresFolklore { get; set; }
         public string FolkloreBook { get; set; }
         public string Author { get; set; }
