@@ -12,10 +12,12 @@ namespace GatherChill.Utilities.GatheringHelpers
             Vector3 nodePos = nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
-            float ffxivMin = PictomancyToFFXIV(nodeLocation.Flight_FanInfo.Fan_StartAngle);
-            float ffxivMax = PictomancyToFFXIV(nodeLocation.Flight_FanInfo.Fan_EndAngle);
+            var (sectionMin, sectionMax) = GetNearestSection(
+                nodeLocation.Flight_FanInfo.Fan_StartAngle,
+                nodeLocation.Flight_FanInfo.Fan_EndAngle,
+                angleToPlayer,
+                sectionSize);
 
-            var (sectionMin, sectionMax) = GetNearestSection(ffxivMin, ffxivMax, angleToPlayer, sectionSize);
             float selectedAngle = RandomAngleInRange(sectionMin, sectionMax);
             float selectedDistance = _random.NextFloat(nodeLocation.Flight_FanInfo.Fan_DistanceMin, nodeLocation.Flight_FanInfo.Fan_DistanceMax);
 
@@ -25,48 +27,24 @@ namespace GatherChill.Utilities.GatheringHelpers
         public static Vector3 GetRandomGatherPosition(this NodeLocation nodeLocation, Vector3 playerPosition, float sectionSize = 15f)
         {
             if (nodeLocation.UseSpecificWalkingSpots && nodeLocation.WalkablePositions.Count > 0)
-            {
                 return GetNearestWalkablePosition(nodeLocation.WalkablePositions, playerPosition);
-            }
 
             Vector3 nodePos = nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
-            float ffxivMin = PictomancyToFFXIV(nodeLocation.Gathering_FanInfo.Fan_StartAngle);
-            float ffxivMax = PictomancyToFFXIV(nodeLocation.Gathering_FanInfo.Fan_EndAngle);
+            var (sectionMin, sectionMax) = GetNearestSection(
+                nodeLocation.Gathering_FanInfo.Fan_StartAngle,
+                nodeLocation.Gathering_FanInfo.Fan_EndAngle,
+                angleToPlayer,
+                sectionSize);
 
-            var (sectionMin, sectionMax) = GetNearestSection(ffxivMin, ffxivMax, angleToPlayer, sectionSize);
             float selectedAngle = RandomAngleInRange(sectionMin, sectionMax);
             float selectedDistance = _random.NextFloat(nodeLocation.Gathering_FanInfo.Fan_DistanceMin, nodeLocation.Gathering_FanInfo.Fan_DistanceMax);
 
             return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.Gathering_FanInfo.Fan_Height);
         }
 
-        public static (Vector3 flightPos, Vector3 gatherPos) GetRandomPositions(
-            this NodeLocation nodeLocation,
-            Vector3 playerPosition,
-            float sectionSize = 15f)
-        {
-            return (
-                nodeLocation.GetRandomFlightPosition(playerPosition, sectionSize),
-                nodeLocation.GetRandomGatherPosition(playerPosition, sectionSize)
-            );
-        }
-
         #region Helper Methods
-
-        /// <summary>
-        /// Converts Pictomancy coordinates to FFXIV world coordinates
-        /// Pictomancy: 0=South, 90=West, 180=North, 270=East
-        /// FFXIV: 0=North, 90=East, 180=South, 270=West
-        /// </summary>
-        private static float PictomancyToFFXIV(float pictomancyAngle)
-        {
-            float ffxivAngle = (pictomancyAngle + 180f) % 360f;
-            if (ffxivAngle < 0f)
-                ffxivAngle += 360f;
-            return ffxivAngle;
-        }
 
         private static float CalculateAngleToPlayer(Vector3 nodePos, Vector3 playerPos)
         {
@@ -106,11 +84,7 @@ namespace GatherChill.Utilities.GatheringHelpers
             return span;
         }
 
-        private static (float sectionMin, float sectionMax) GetNearestSection(
-            float allowedMin,
-            float allowedMax,
-            float targetAngle,
-            float sectionSize)
+        private static (float sectionMin, float sectionMax) GetNearestSection(float allowedMin, float allowedMax, float targetAngle, float sectionSize)
         {
             float rangeSpan = GetRangeSpan(allowedMin, allowedMax);
 

@@ -81,7 +81,6 @@ namespace GatherChill.GatheringInfo
         // Bool to choose whether we're doing fan position finder
         public bool UseSpecificWalkingSpots { get; set; } = false;
         public List<Vector3> WalkablePositions { get; set; } = new();
-
     }
 
     public class FanInfo

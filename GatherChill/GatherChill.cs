@@ -80,6 +80,7 @@ public sealed class GatherChill : IDalamudPlugin
             """);
         EzCmd.Add("/icegather", OnCommand);
         Svc.Framework.Update += Tick;
+        Svc.PluginInterface.UiBuilder.Draw += OnDraw;
 
         UpdateSheetInfo();
     }
@@ -95,10 +96,19 @@ public sealed class GatherChill : IDalamudPlugin
         YesAlreadyManager.Tick();
     }
 
+    public void OnDraw()
+    {
+        if (Player.Available)
+        {
+            PictoManager.DrawPicto();
+        }
+    }
+
     public void Dispose()
     {
         Safe(() => Svc.Framework.Update -= Tick);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
+        Safe(() => Svc.PluginInterface.UiBuilder.Draw -= OnDraw);
         ECommonsMain.Dispose();
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);

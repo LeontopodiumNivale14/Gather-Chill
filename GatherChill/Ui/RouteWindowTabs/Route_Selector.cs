@@ -25,12 +25,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                     foreach (var route in sortedTable)
                     {
                         ImGui.TableNextRow();
+                        if (Route_Editor.SelectedRoute == route.Key)
+                            ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.2f, 0.25f)));
+
                         ImGui.PushID($"{route.Key}");
 
                         ImGui.TableSetColumnIndex(0);
                         if (ImGui.Button($"{route.Key}"))
                         {
-                            Route_Editor.SelectedRoute = route.Key;  // was: Route_Editor.SelectedRoute = route.Key;
+                            Route_Editor.SelectedRoute = route.Key;
+
                         }
 
                         ImGui.TableNextColumn();

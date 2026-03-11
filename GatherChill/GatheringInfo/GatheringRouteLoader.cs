@@ -18,13 +18,15 @@ namespace GatherChill.GatheringInfo
         {
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true
+            AllowTrailingCommas = true,
+            Converters = { new Vector3Converter() }
         };
 
         private static readonly JsonSerializerOptions _writeOptions = new()
         {
             WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new Vector3Converter() }
         };
 
         private static readonly Dictionary<uint, string> ExpansionNames = new()

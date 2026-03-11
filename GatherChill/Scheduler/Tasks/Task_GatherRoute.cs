@@ -293,6 +293,5 @@ namespace GatherChill.Scheduler.Tasks
             return false;
         }
 
-
     }
 }

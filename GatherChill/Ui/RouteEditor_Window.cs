@@ -35,7 +35,7 @@ namespace GatherChill.Ui
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Route Editor"))
+                if (ImGui.BeginTabItem($"Route Editor [{Route_Editor.SelectedRoute}]"))
                 {
                     Route_Editor.Draw();
                     ImGui.EndTabItem();
