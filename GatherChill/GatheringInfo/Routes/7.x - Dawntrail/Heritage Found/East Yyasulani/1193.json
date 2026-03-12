@@ -9,38 +9,39 @@
   "nodeIds": [
     35242
   ],
-  "nodeGroups": [
+  "nodeInfo": [
     {
       "groupId": 0,
-      "nodes": [
+      "nodeId": 35242,
+      "locations": [
         {
-          "nodeId": 35242,
-          "locations": [
-            {
-              "position": {},
-              "allowFlying": true,
-              "flight_FanInfo": {
-                "fan_StartAngle": 0,
-                "fan_EndAngle": 0,
-                "fan_DistanceMin": 1,
-                "fan_DistanceMax": 3,
-                "fan_Height": 0
-              },
-              "gathering_FanInfo": {
-                "fan_StartAngle": 0,
-                "fan_EndAngle": 0,
-                "fan_DistanceMin": 1,
-                "fan_DistanceMax": 3,
-                "fan_Height": 0
-              },
-              "useSpecificWalkingSpots": false,
-              "walkablePositions": []
-            }
-          ]
+          "position": {
+            "x": 636.6819,
+            "y": 131.6217,
+            "z": -41.96706
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 54,
+            "fan_EndAngle": 174,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0.94
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 54,
+            "fan_EndAngle": 174,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.28
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
         }
       ]
     }
   ],
+  "groupCount": 1,
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev, Ice",

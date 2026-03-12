@@ -216,6 +216,8 @@ namespace GatherChill.Ui.RouteWindowTabs
         private static uint _draggedNodeId = 0;
         private static int _dragTargetGroupId = -1;
 
+        private static bool AutoUpdateMissing = true;
+
         private static unsafe void NodeDetails(GatheringRoute routeInfo)
         {
             if (ImGui.BeginTable("Node Details", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
@@ -233,6 +235,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                     {
                         var gatheringNodes = Svc.Objects.Where(x => routeInfo.NodeIds.Contains(x.BaseId))
                                              .Where(x => x.ObjectKind == ObjectKind.GatheringPoint);
+
+                        foreach (var node in gatheringNodes)
+                            P.routeEditor.AddNodeLocationIfMissing(routeInfo, node.BaseId, node.Position);
+                    }
+
+                    ImGui.Checkbox("Auto Update Missing", ref AutoUpdateMissing);
+                    if (AutoUpdateMissing)
+                    {
+                        var gatheringNodes = Svc.Objects.Where(x => routeInfo.NodeIds.Contains(x.BaseId))
+                     .Where(x => x.ObjectKind == ObjectKind.GatheringPoint);
 
                         foreach (var node in gatheringNodes)
                             P.routeEditor.AddNodeLocationIfMissing(routeInfo, node.BaseId, node.Position);
@@ -489,7 +501,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                         gatherInfo.Fan_Height = gather_Height;
                     }
 
-                    using (var disabled = ImRaii.Disabled(_isGeneratingFan))
+                    using (var disabled = ImRaii.Disabled(_isGeneratingFan || !ImGui.IsKeyDown(ImGuiKey.LeftShift)))
                     {
                         if (ImGui.Button("Generate Fan from Navmesh"))
                         {
@@ -553,7 +565,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                         flightInfo.Fan_Height = flight_Height;
                     }
 
-                    using (var disabled = ImRaii.Disabled(_isGeneratingFan))
+                    using (var disabled = ImRaii.Disabled(_isGeneratingFan || !ImGui.IsKeyDown(ImGuiKey.LeftShift)))
                     {
                         if (ImGui.Button("Generate Fan from Navmesh"))
                         {

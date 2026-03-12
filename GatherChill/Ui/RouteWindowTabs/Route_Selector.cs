@@ -58,6 +58,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     {
                                         ImGui.SetTooltip($"{itemInfo.Name}");
                                     }
+                                    if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                                    {
+                                        ImGui.SetClipboardText($"{itemInfo.Name}");
+                                    }
                                     ImGui.SameLine();
                                 }
                             }
