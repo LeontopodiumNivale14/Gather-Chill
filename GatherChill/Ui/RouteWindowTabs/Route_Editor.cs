@@ -2,9 +2,11 @@
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
+using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -207,7 +209,52 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         private static void ItemDetails(GatheringRoute routeInfo)
         {
+            if (ImGui.BeginTable("Item Details: Potentional Gather", 3, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
+            {
+                ImGui.TableSetupColumn("Icon");
+                ImGui.TableSetupColumn("Have");
+                ImGui.TableSetupColumn("Name");
 
+                ImGui.TableHeadersRow();
+
+                if (Utils.SheetInfo.TryGetValue(SelectedRoute, out var sheetInfo))
+                {
+                    foreach (var item in sheetInfo.ItemIds)
+                    {
+                        if (Svc.Data.GetExcelSheet<Item>().TryGetRow(item, out var itemInfo))
+                        {
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            if (Svc.Texture.TryGetFromGameIcon((int)itemInfo.Icon, out var icon))
+                            {
+                                if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, new(24, 24)))
+                                {
+                                    SchedulerMain.State = Enums.IceState.Start;
+                                    SchedulerMain.RouteId = SelectedRoute;
+                                    SchedulerMain.ItemId = item;
+                                }
+                            }
+
+                            ImGui.TableNextColumn();
+                            if (Utils.GetItemCount(item, out var count))
+                            {
+                                ImGui_Util.Table_VertCenterText($"{count}");
+                            }
+
+                            ImGui.TableNextColumn();
+                            ImGui_Util.Table_VertCenterText($"{itemInfo.Name}");
+                        }
+                    }
+                }
+                else
+                {
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"This route: {SelectedRoute} doesn't exist in the sheets?");
+                }
+
+                ImGui.EndTable();
+            }
         }
 
         private static bool _isGeneratingFan = false;

@@ -89,6 +89,7 @@ internal static class PictoManager
         AddDrawCommand(pictoDraw =>
         {
             PictoService.VfxRenderer.AddCircle(id, origin, 3, color);
+            // PictoService.VfxRenderer.AddOmen(id, $"{id}_Omen", origin, color:color);
         });
     }
 
@@ -178,7 +179,7 @@ internal static class PictoManager
             });
         }
     }
-
+    
     /// <summary>
     /// Fancy ass fucking triangle that might not be used? But also, it's neat so I'm keeping it. <br></br>
     /// Esentially just picto drawing a custom triangle in the 3d space

@@ -243,4 +243,24 @@ public static class Utils
     {
         return degrees * (MathF.PI / 180f);
     }
+
+    public static unsafe bool GetItemCount(uint itemID, out int count, bool includeHq = true, bool includeNq = true)
+    {
+        try
+        {
+            itemID = itemID >= 1_000_000 ? itemID - 1_000_000 : itemID;
+            count = 0;
+            if (includeHq)
+                count += InventoryManager.Instance()->GetInventoryItemCount(itemID, true);
+            if (includeNq)
+                count += InventoryManager.Instance()->GetInventoryItemCount(itemID, false);
+            count += InventoryManager.Instance()->GetInventoryItemCount(itemID + 500_000);
+            return true;
+        }
+        catch
+        {
+            count = 0;
+            return false;
+        }
+    }
 }
