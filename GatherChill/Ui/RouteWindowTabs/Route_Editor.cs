@@ -627,6 +627,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                         P.navmesh.PathfindAndMoveTo(randomPos, true);
                     }
 
+                    ImGui.SameLine();
+                    if (ImGui.Button("Match to Gathering Fan"))
+                    {
+                        flightInfo.Fan_DistanceMin = gather_FanEnd + 0.2f;
+                        flightInfo.Fan_DistanceMax = 3f;
+                        flightInfo.Fan_StartAngle = gather_FanStart;
+                        flightInfo.Fan_EndAngle = gather_FanEnd;
+                        flightInfo.Fan_Height = gather_Height;
+                    }
+
                     ImGui.PopID();
 
 
