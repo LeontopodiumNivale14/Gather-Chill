@@ -630,10 +630,20 @@ namespace GatherChill.Ui.RouteWindowTabs
                     ImGui.SameLine();
                     if (ImGui.Button("Match to Gathering Fan"))
                     {
-                        flightInfo.Fan_DistanceMin = gather_FanEnd + 0.2f;
-                        flightInfo.Fan_DistanceMax = 3f;
                         flightInfo.Fan_StartAngle = gather_FanStart;
                         flightInfo.Fan_EndAngle = gather_FanEnd;
+                        flightInfo.Fan_DistanceMin = gather_FanMin;
+                        flightInfo.Fan_DistanceMax = gather_FanMax;
+                        flightInfo.Fan_Height = gather_Height;
+                    }
+
+                    ImGui.SameLine();
+                    if (ImGui.Button("Move to behind Gathering Fan"))
+                    {
+                        flightInfo.Fan_StartAngle = gather_FanStart;
+                        flightInfo.Fan_EndAngle = gather_FanEnd;
+                        flightInfo.Fan_DistanceMin = gather_FanMax + 0.2f;
+                        flightInfo.Fan_DistanceMax = 4;
                         flightInfo.Fan_Height = gather_Height;
                     }
 
