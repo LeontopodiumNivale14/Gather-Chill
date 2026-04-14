@@ -18,8 +18,8 @@ global using System;
 global using static ECommons.GenericHelpers;
 
 global using static GatherChill.GatherChill;
-global using static GatherChill.Utilities.Utils;
-global using static GatherChill.Utilities.Data;
+global using static GatherChill.Utilities.Utility.Utils;
+global using static GatherChill.Utilities.GatheringHelpers.Gather_Util;
 
 // tables being used acrossed the plugin
 global using Dalamud.Plugin.Services;

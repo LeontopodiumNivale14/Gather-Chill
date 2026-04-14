@@ -1,6 +1,7 @@
 ﻿using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
-using GatherChill.Utilities;
+using GatherChill.Utilities.Tools;
+using GatherChill.Utilities.Utility;
 using Pictomancy;
 using System;
 using System.Collections.Generic;

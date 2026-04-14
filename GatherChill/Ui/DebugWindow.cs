@@ -7,8 +7,11 @@ using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using GatherChill.Scheduler;
 using GatherChill.Utilities;
+using GatherChill.Utilities.Tools;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
+using System.Text;
+using static GatherChill.Utilities.Tools.IceLogging;
 
 namespace GatherChill.Ui;
 
@@ -30,7 +33,34 @@ internal class DebugWindow : Window
 
     public override void Draw()
     {
-        DrawGatherPointTable();
+        if (ImGui.BeginTabBar("Gather & Chill: Debug Tabs"))
+        {
+            if (ImGui.BeginTabItem("Task Info"))
+            {
+                TaskInfoDetails();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Log Viewer"))
+            {
+                Ui_LogViewer.Draw_Debug();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Destination Log"))
+            {
+                DestinationLogViewer();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Gathering Table"))
+            {
+                DrawGatherPointTable();
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
+        }
     }
 
     public void DrawGatherPointTable()
@@ -134,6 +164,71 @@ internal class DebugWindow : Window
                 {
                     ImGui.Text("");
                 }
+            }
+
+            ImGui.EndTable();
+        }
+    }
+
+    public void TaskInfoDetails()
+    {
+        ImGui.Text($"Running task: {P.taskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.taskManager.NumQueuedTasks}");
+        string currentTask = P.taskManager.CurrentTask?.Name ?? "";
+        ImGui.Text($"Current task running: {currentTask}");
+        ImGui.Text($"Current State: {SchedulerMain.State}");
+        ImGui.Text($"ItemId set: {SchedulerMain.ItemId}");
+        ImGui.Text($"Task Count: {P.taskManager.Tasks.Count}");
+    }
+
+    private static void DestinationLogViewer()
+    {
+        ImGuiTableFlags flags = ImGuiTableFlags.RowBg |
+                                ImGuiTableFlags.Borders |
+                                ImGuiTableFlags.ScrollY |
+                                ImGuiTableFlags.SizingFixedFit;
+
+        if (ImGui.BeginTable("Destination Log Viewer", 5, flags))
+        {
+            ImGui.TableSetupColumn("Timestamp");
+            ImGui.TableSetupColumn("Start");
+            ImGui.TableSetupColumn("Destination");
+            ImGui.TableSetupColumn("Distance");
+
+            ImGui.TableHeadersRow();
+
+            var filteredLogs = DestinationLogs.Logs.AsEnumerable();
+            var entryNumber = 0;
+
+            foreach (var log in filteredLogs.OrderByDescending(l => l.Timestamp))
+            {
+                ImGui.TableNextRow();
+
+                ImGui.PushID($"{log.PlayerDestination}_{entryNumber}");
+
+                ImGui.TableSetColumnIndex(0);
+                ImGui_Util.Table_VertCenterText(log.Timestamp.ToString("HH:mm:ss"));
+
+                ImGui.TableNextColumn();
+                ImGui_Util.Table_VertCenterText($"X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
+
+                ImGui.TableNextColumn();
+                ImGui_Util.Table_VertCenterText($"X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
+
+                ImGui.TableNextColumn();
+                ImGui_Util.Table_VertCenterText($"{log.Distance}");
+
+                ImGui.TableNextColumn();
+                if (ImGui.Button("Copy Info"))
+                {
+                    var clipboardText = new StringBuilder();
+                    clipboardText.AppendLine($"Start: X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
+                    clipboardText.Append($"End: X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
+                    ImGui.SetClipboardText($"{clipboardText}");
+                    Notify.Success("Log copied to clipbard");
+                }
+                ImGui.PopID();
+
+                entryNumber += 1;
             }
 
             ImGui.EndTable();

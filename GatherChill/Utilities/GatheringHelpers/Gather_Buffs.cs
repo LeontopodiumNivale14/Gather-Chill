@@ -1,187 +1,191 @@
-﻿using System;
+﻿using ECommons.ExcelServices;
+using ECommons.GameHelpers;
+using GatherChill.Enums;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
-using System.Text;
 
-namespace GatherChill.Utilities
+namespace GatherChill.Utilities.GatheringHelpers;
+
+public static partial class Gather_Util
 {
-    internal class GatherBuffs
+    public class GatheringActions
     {
-        public class GatheringActions
-        {
-            /// <summary>
-            /// Internal name for myself to know wtf this is
-            /// </summary>
-            public string ActionName { get; set; }
-            public Dictionary<uint, uint> ClassAction { get; set; } = new();
-            /// <summary>
-            /// Sheet name
-            /// </summary>
-            public uint StatusId { get; set; }
-            /// <summary>
-            /// The status name attached to it (personal use)
-            /// </summary>
-            public string StatusName { get; set; }
-            /// <summary>
-            /// The amount of GP required for the skill
-            /// </summary>
-            public int RequiredGp { get; set; }
-            public int RequiredLv { get; set; }
-        }
+        /// <summary>
+        /// Internal name for myself to know wtf this is
+        /// </summary>
+        public string ActionName { get; set; }
+        public Dictionary<Job, uint> ClassAction { get; set; } = new();
+        /// <summary>
+        /// Sheet name
+        /// </summary>
+        public uint StatusId { get; set; }
+        public uint StatusId2 { get; set; }
+        /// <summary>
+        /// The status name attached to it (personal use)
+        /// </summary>
+        public string StatusName { get; set; }
+        /// <summary>
+        /// The amount of GP required for the skill
+        /// </summary>
+        public int RequiredGp { get; set; }
+        public int RequiredLv { get; set; }
+    }
 
-        public static Dictionary<string, GatheringActions> GathActionDict = new()
+    public static Dictionary<GatherBuffId, GatheringActions> GathActionDict = new()
         {
-            { "BoonIncrease1", new GatheringActions
+            { GatherBuffId.BoonIncrease_1, new()
             {
                 ActionName = "Pioneer's Gift I",
                 ClassAction = new()
                 {
-                    [16] = 21177,
-                    [17] = 21178,
+                    [Job.MIN] = 21177,
+                    [Job.BTN] = 21178,
                 },
                 StatusId = 2666,
                 StatusName = "Gift of the Land",
                 RequiredGp = 50,
                 RequiredLv = 15,
             }},
-            { "BoonIncrease2", new GatheringActions
+            { GatherBuffId.BoonIncrease_2, new()
             {
                 ActionName = "Pioneer's Gift II",
                 ClassAction = new()
                 {
-                    [16] = 25589,
-                    [17] = 25590,
+                    [Job.MIN] = 25589,
+                    [Job.BTN] = 25590,
                 },
                 StatusId = 759,
                 StatusName = "Gift of the Land II",
                 RequiredGp = 100,
                 RequiredLv = 50,
             }},
-            { "Tidings", new GatheringActions
+            { GatherBuffId.Tidings, new()
             {
                 ActionName = "Nophica's Tidings",
                 ClassAction = new()
                 {
-                    [16] = 21203,
-                    [17] = 21204,
+                    [Job.MIN] = 21203,
+                    [Job.BTN] = 21204,
                 },
                 StatusId = 2667,
                 StatusName = "Gatherer's Bounty",
                 RequiredGp = 200,
                 RequiredLv = 81,
             }},
-            { "YieldI", new GatheringActions
+            { GatherBuffId.YieldI, new()
             {
                 ActionName = "Blessed Harvest",
                 ClassAction = new()
                 {
-                    [16] = 239,
-                    [17] = 222,
+                    [Job.MIN] = 239,
+                    [Job.BTN] = 222,
                 },
                 StatusId = 219,
                 StatusName = "Gathering Yield Up",
                 RequiredGp = 400,
                 RequiredLv = 30,
             }},
-            { "YieldII", new GatheringActions
+            { GatherBuffId.YieldII, new()
             {
                 ActionName = "Blessed Harvest II",
                 ClassAction = new()
                 {
-                    [16] = 241,
-                    [17] = 224,
+                    [Job.MIN] = 241,
+                    [Job.BTN] = 224,
                 },
                 StatusId = 219,
                 StatusName = "Gathering Yield Up",
                 RequiredGp = 500,
                 RequiredLv = 40,
             }},
-            { "BonusIntegrity", new GatheringActions
+            { GatherBuffId.BonusIntegrity, new()
             {
                 ActionName = "Ageless Words",
                 ClassAction = new()
                 {
-                    [16] = 232,
-                    [17] = 215,
+                    [Job.MIN] = 232,
+                    [Job.BTN] = 215,
                 },
                 RequiredGp = 300,
                 RequiredLv = 30,
             }},
-            { "BonusIntegrityChance", new GatheringActions
+            { GatherBuffId.BonusIntegrity_Chance, new()
             {
                 ActionName = "Wise of the World",
                 ClassAction = new()
                 {
-                    [16] = 26521,
-                    [17] = 26522,
+                    [Job.MIN] = 26521,
+                    [Job.BTN] = 26522,
                 },
                 StatusId = 2765,
                 StatusName = "",
                 RequiredGp = 0,
                 RequiredLv = 90,
             }},
-            { "BountifulYieldII", new GatheringActions
+            { GatherBuffId.BYII, new()
             {
                 ActionName = "Bountiful Yield/Harvest II",
                 ClassAction = new()
                 {
-                    [16] = 272,
-                    [17] = 273,
+                    [Job.MIN] = 272,
+                    [Job.BTN] = 273,
                 },
                 StatusId = 1286,
+                StatusId2 = 756,
                 StatusName = "",
                 RequiredGp = 100,
                 RequiredLv = 68,
             }},
-            { "FieldMasteryIII", new GatheringActions
+            { GatherBuffId.FieldMasteryIII, new()
             {
                 // 50% increase
                 ActionName = "Field Mastery III",
                 ClassAction = new()
                 {
-                    [16] = 295,
-                    [17] = 294,
+                    [Job.MIN] = 295,
+                    [Job.BTN] = 294,
                 },
                 StatusId = 218,
                 StatusName = "Gathering Rate Up",
                 RequiredGp = 250,
                 RequiredLv = 10,
             }},
-            { "FieldMasteryII", new GatheringActions
+            { GatherBuffId.FieldMasteryII, new()
             {
                 // 15% increase
                 ActionName = "Field Mastery II",
                 ClassAction = new()
                 {
-                    [16] = 237,
-                    [17] = 220,
+                    [Job.MIN] = 237,
+                    [Job.BTN] = 220,
                 },
                 StatusId = 218,
                 StatusName = "Gathering Rate Up",
                 RequiredGp = 100,
                 RequiredLv = 5,
             }},
-            { "FieldMasteryI", new GatheringActions
+            { GatherBuffId.FieldMasteryI, new()
             {
                 // 5% increase
                 ActionName = "Field Mastery I",
                 ClassAction = new()
                 {
-                    [16] = 235,
-                    [17] = 218,
+                    [Job.MIN] = 235,
+                    [Job.BTN] = 218,
                 },
                 StatusId = 218,
                 StatusName = "Gathering Rate Up",
                 RequiredGp = 50,
                 RequiredLv = 4,
             }},
-            { "FieldMasteryTemp", new GatheringActions
+            { GatherBuffId.FieldMasteryTemp, new()
             {
                 // 15% increase [temp]
                 ActionName = "Clear Vision | Flora Mastery",
                 ClassAction = new()
                 {
-                    [16] = 4072,
-                    [17] = 4086,
+                    [Job.MIN] = 4072,
+                    [Job.BTN] = 4086,
                 },
                 StatusId = 754,
                 StatusName = "Gathering Rate Up (Limited)",
@@ -190,15 +194,15 @@ namespace GatherChill.Utilities
             }},
         };
 
-        public static Dictionary<string, GatheringActions> GathCollectableBuffs = new()
+    public static Dictionary<string, GatheringActions> GathCollectableBuffs = new()
         {
             { "Scrutiny", new GatheringActions
             {
                 ActionName = "Scrutiny",
                 ClassAction = new()
                 {
-                    [16] = 22185,
-                    [17] = 22189
+                    [Job.MIN] = 22185,
+                    [Job.BTN] = 22189
                 },
                 StatusId = 757,
                 StatusName = "",
@@ -209,8 +213,8 @@ namespace GatherChill.Utilities
                 ActionName = "Collector's Focus",
                 ClassAction = new()
                 {
-                    [16] = 21205,
-                    [17] = 21206
+                    [Job.MIN] = 21205,
+                    [Job.BTN] = 21206
                 },
                 StatusId = 2668,
                 StatusName = "",
@@ -221,8 +225,8 @@ namespace GatherChill.Utilities
                 ActionName = "Priming Touch",
                 ClassAction = new()
                 {
-                    [16] = 21205,
-                    [17] = 34872
+                    [Job.MIN] = 21205,
+                    [Job.BTN] = 34872
                 },
                 StatusId = 2668,
                 StatusName = "",
@@ -234,8 +238,8 @@ namespace GatherChill.Utilities
                 ActionName = "Collectors High Standard",
                 ClassAction = new()
                 {
-                    [16] = 27,
-                    [17] = 27,
+                    [Job.MIN] = 27,
+                    [Job.BTN] = 27,
                 },
                 StatusId = 3911,
                 StatusName = "",
@@ -246,8 +250,8 @@ namespace GatherChill.Utilities
                 ActionName = "Ageless Words",
                 ClassAction = new()
                 {
-                    [16] = 232,
-                    [17] = 215,
+                    [Job.MIN] = 232,
+                    [Job.BTN] = 215,
                 },
                 RequiredGp = 300,
             }},
@@ -256,8 +260,8 @@ namespace GatherChill.Utilities
                 ActionName = "Wise of the World",
                 ClassAction = new()
                 {
-                    [16] = 26521,
-                    [17] = 26522,
+                    [Job.MIN] = 26521,
+                    [Job.BTN] = 26522,
                 },
                 StatusId = 2765,
                 StatusName = "",
@@ -265,7 +269,7 @@ namespace GatherChill.Utilities
             }},
         };
 
-        public static Dictionary<string, GatheringActions> GathCollectableActions = new()
+    public static Dictionary<string, GatheringActions> GathCollectableActions = new()
         {
             { "Scour", new GatheringActions
             {
@@ -273,8 +277,8 @@ namespace GatherChill.Utilities
                 ActionName = "Scour",
                 ClassAction = new()
                 {
-                    [16] = 22182,
-                    [17] = 22186
+                    [Job.MIN] = 22182,
+                    [Job.BTN] = 22186
                 },
                 StatusId = 0,
                 StatusName = "n/a",
@@ -286,8 +290,8 @@ namespace GatherChill.Utilities
                 ActionName = "Brazen Woodsman",
                 ClassAction = new()
                 {
-                    [16] = 22183,
-                    [17] = 22187
+                    [Job.MIN] = 22183,
+                    [Job.BTN] = 22187
                 },
                 StatusId = 0,
                 StatusName = "n/a",
@@ -299,8 +303,8 @@ namespace GatherChill.Utilities
                 ActionName = "Meticulous Woodsman",
                 ClassAction = new()
                 {
-                    [16] = 22184,
-                    [17] = 22188
+                    [Job.MIN] = 22184,
+                    [Job.BTN] = 22188
                 },
                 StatusId = 0,
                 StatusName = "n/a",
@@ -311,8 +315,8 @@ namespace GatherChill.Utilities
                 ActionName = "Ageless Words",
                 ClassAction = new()
                 {
-                    [16] = 232,
-                    [17] = 215
+                    [Job.MIN] = 232,
+                    [Job.BTN] = 215
                 },
                 RequiredGp = 300,
             }},
@@ -321,8 +325,8 @@ namespace GatherChill.Utilities
                 ActionName = "Wise of the World",
                 ClassAction = new()
                 {
-                    [16] = 26521,
-                    [17] = 26522
+                    [Job.MIN] = 26521,
+                    [Job.BTN] = 26522
                 },
                 StatusId = 2765,
                 StatusName = "",
@@ -333,13 +337,12 @@ namespace GatherChill.Utilities
                 ActionName = "Collect",
                 ClassAction = new()
                 {
-                    [16] = 240,
-                    [17] = 815,
+                    [Job.MIN] = 240,
+                    [Job.BTN] = 815,
                 },
                 StatusId = 0,
                 StatusName = "",
                 RequiredGp = 0,
             } },
         };
-    }
 }

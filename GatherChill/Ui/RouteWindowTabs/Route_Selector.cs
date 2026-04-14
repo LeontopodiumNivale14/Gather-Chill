@@ -1,4 +1,5 @@
 ﻿using Dalamud.Interface.Utility.Raii;
+using GatherChill.Utilities;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,15 @@ namespace GatherChill.Ui.RouteWindowTabs
             var size = ImGui.GetContentRegionAvail();
             if (ImGui.BeginChild("Child: Route Selector", size, true))
             {
-                if (ImGui.BeginTable("Route Selector Table", 3, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
+                if (ImGui.BeginTable("Route Selector Table", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
                 {
                     ImGui.TableSetupColumn("Route ID");
                     ImGui.TableSetupColumn("Location");
                     ImGui.TableSetupColumn("Items");
 
                     var sortedTable = P.routeEditor.Routes
-                                      .OrderBy(x => x.Value.TerritoryId);
+                                      .OrderBy(x => x.Value.TerritoryId)
+                                      .ThenBy(x => x.Key);
 
                     foreach (var route in sortedTable)
                     {
@@ -43,10 +45,20 @@ namespace GatherChill.Ui.RouteWindowTabs
                         {
                             ImGui.SetTooltip($"ID: {route.Value.TerritoryId}");
                         }
-
-                        ImGui.TableNextColumn();
                         if (SheetInfo.TryGetValue(route.Key, out var gatherPointInfo))
                         {
+                            ImGui.SameLine();
+                            if (ImGuiEx.IconButton(FontAwesomeIcon.Flag, $"{route.Key}_Map"))
+                            {
+                                gatherPointInfo.Map.OpenMap($"Route {route.Key}");
+                            }
+                            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                            {
+                                if (P.navmesh.Installed)
+                                    P.navmesh.PathToFlag();
+                            }
+
+                            ImGui.TableNextColumn();
                             foreach (var item in gatherPointInfo.ItemIds)
                             {
                                 if (Svc.Data.GetExcelSheet<Item>().TryGetRow(item, out var itemInfo))
@@ -62,6 +74,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                                     {
                                         ImGui.SetClipboardText($"{itemInfo.Name}");
                                     }
+                                    ImGui.SameLine();
+                                }
+                            }
+
+                            ImGui.TableNextColumn();
+                            if (gatherPointInfo.TimedInfo.Count > 0)
+                            {
+                                foreach (var time in gatherPointInfo.TimedInfo)
+                                {
+                                    ImGui.Text($"{time.StartFormatted} - {time.EndFormatted}");
                                     ImGui.SameLine();
                                 }
                             }

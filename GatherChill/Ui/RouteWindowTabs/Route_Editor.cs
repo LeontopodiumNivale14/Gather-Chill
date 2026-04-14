@@ -4,8 +4,9 @@ using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
-using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Tools;
+using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,6 +29,11 @@ namespace GatherChill.Ui.RouteWindowTabs
                 if (ImGui.Button("Save Route"))
                 {
                     P.routeEditor.SaveRoute(routeInfo, C.SaveLocation);
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("Stop Current"))
+                {
+                    SchedulerMain.DisablePlugin();
                 }
 
                 if (ImGui.BeginTabBar("Route Editor: Route Selection"))
@@ -217,7 +223,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 ImGui.TableHeadersRow();
 
-                if (Utils.SheetInfo.TryGetValue(SelectedRoute, out var sheetInfo))
+                if (Gather_Util.SheetInfo.TryGetValue(SelectedRoute, out var sheetInfo))
                 {
                     foreach (var item in sheetInfo.ItemIds)
                     {
@@ -242,7 +248,12 @@ namespace GatherChill.Ui.RouteWindowTabs
                             }
 
                             ImGui.TableNextColumn();
-                            ImGui_Util.Table_VertCenterText($"{itemInfo.Name}");
+                            if (ImGui.Button($"{itemInfo.Name}"))
+                            {
+                                SchedulerMain.State = Enums.IceState.Start;
+                                SchedulerMain.RouteId = SelectedRoute;
+                                SchedulerMain.ItemId = item;
+                            }
                         }
                     }
                 }
@@ -444,7 +455,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 if (ImGui.Button("Stop Navmesh"))
                 {
-                    P.navmesh.Stop();
+                    P.navmesh.PathStop();
                 }
 
                 // Validate selectedNodeId — fall back to first if missing

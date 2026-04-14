@@ -4,7 +4,7 @@ using ECommons.Throttlers;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace GatherChill.Utilities;
+namespace GatherChill.Utilities.Tools;
 
 internal static class IceLogging
 {

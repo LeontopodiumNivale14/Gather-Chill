@@ -14,11 +14,12 @@ namespace GatherChill.Scheduler
         }
         internal static bool DisablePlugin()
         {
-            P.navmesh.Stop();
+            P.navmesh.SmartStop();
             P.taskManager.Abort();
 
             RouteId = null;
             ItemId = null;
+            State = IceState.Idle;
 
             return true;
         }

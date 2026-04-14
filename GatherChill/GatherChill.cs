@@ -7,6 +7,7 @@ using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
+using GatherChill.Utilities.Tools;
 using Pictomancy;
 
 namespace GatherChill;
@@ -82,6 +83,7 @@ public sealed class GatherChill : IDalamudPlugin
         Svc.Framework.Update += Tick;
         Svc.PluginInterface.UiBuilder.Draw += OnDraw;
 
+        ExcelHelper.Init();
         UpdateSheetInfo();
     }
 
