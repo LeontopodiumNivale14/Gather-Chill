@@ -3,10 +3,14 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using GatherChill.Enums;
 using GatherChill.Scheduler;
 using GatherChill.Utilities;
+using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
@@ -56,6 +60,12 @@ internal class DebugWindow : Window
             if (ImGui.BeginTabItem("Gathering Table"))
             {
                 DrawGatherPointTable();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Buff Info"))
+            {
+                BuffViewer();
                 ImGui.EndTabItem();
             }
 
@@ -232,6 +242,33 @@ internal class DebugWindow : Window
             }
 
             ImGui.EndTable();
+        }
+    }
+
+    private void BuffViewer()
+    {
+        var gatherDict = Gather_Util.GathActionDict[GatherBuffId.GivingLand];
+
+        ImGui.Text($"Giving land CD: MIN: {BuffCD(gatherDict.ClassAction[Job.MIN])} | BTN: {BuffCD(gatherDict.ClassAction[Job.BTN]):N1}");
+    }
+
+    private unsafe float BuffCD(uint actionId)
+    {
+        // Get the recast time for an action
+        var recastGroup = ActionManager.Instance()->GetRecastGroupDetail(ActionManager.Instance()->GetRecastGroup(1, actionId));
+
+        if (recastGroup != null)
+        {
+            float total = recastGroup->Total;     // total cooldown duration
+            float elapsed = recastGroup->Elapsed; // how much has elapsed
+            float remaining = total - elapsed;    // time remaining
+            bool isActive = recastGroup->IsActive; // Is Active (leaving these here because it's just nice to know/might use in future)
+
+            return remaining;
+        }
+        else
+        {
+            return 0;
         }
     }
 }

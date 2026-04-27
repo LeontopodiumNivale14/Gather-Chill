@@ -5,10 +5,13 @@ using ECommons.GameHelpers;
 using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
@@ -285,7 +288,26 @@ namespace GatherChill.Scheduler.Tasks
                     {
                         if (gather.CurrentIntegrity != 0)
                         {
-                            if (Basic_BuffCheck())
+                            List<uint> Crystals = new()
+                            {
+                                // shards
+                                2, 3, 4, 5, 6, 7,
+
+                                // crystals
+                                8, 9, 10, 11, 12, 13,
+
+                                // clusters
+                                14, 15, 16, 17, 18, 19
+                            };
+
+                            if (Crystals.Contains(itemId))
+                            {
+                                bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
+
+                                if (Crystal_BuffCheck(maxInteg))
+                                    return false;
+                            }
+                            else if (Basic_BuffCheck())
                                 return false;
 
                             if (EzThrottler.Throttle($"Gathering Item: {itemId}"))
@@ -303,7 +325,7 @@ namespace GatherChill.Scheduler.Tasks
         }
         private static unsafe bool Basic_BuffCheck()
         {
-            var actionInfo = Gather_Util.GathActionDict[Enums.GatherBuffId.BYII];
+            var actionInfo = Gather_Util.GathActionDict[GatherBuffId.BYII];
             bool hasBuff = Utils.HasStatusId(actionInfo.StatusId) || Utils.HasStatusId(actionInfo.StatusId2);
             bool hasGp = Utils.GetGp() >= actionInfo.RequiredGp;
             var actionId = actionInfo.ClassAction[Player.Job];
@@ -315,6 +337,89 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
                 return false;
+        }
+
+        private static unsafe bool Crystal_BuffCheck(bool MaxDurability)
+        {
+            var job = Player.Job;
+            var level = Player.Level;
+
+            var givingLand = Gather_Util.GathActionDict[GatherBuffId.GivingLand];
+            var twelveBounty = Gather_Util.GathActionDict[GatherBuffId.TwelveBounty];
+
+            if (MaxDurability)
+            {
+                var cooldown = BuffCooldown(givingLand.ClassAction[job]);
+                if (cooldown < 40)
+                {
+                    // We're within possible range of using the skill, need to see if it's actually 0, if yes then we can buff, if not then we continue onwards.
+                    if (cooldown == 0)
+                    {
+                        if (!Utils.HasStatusId(givingLand.StatusId) && (Utils.GetGp() >= givingLand.RequiredGp) && level >= givingLand.RequiredLv)
+                        {
+                            if (EzThrottler.Throttle("Using Action", 100))
+                                ActionManager.Instance()->UseAction(ActionType.Action, givingLand.ClassAction[job]);
+
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!Utils.HasStatusId(twelveBounty.StatusId) && Utils.GetGp() >= twelveBounty.RequiredGp && level >= twelveBounty.RequiredLv)
+                    {
+                        if (EzThrottler.Throttle("Using Action", 100))
+                            ActionManager.Instance()->UseAction(ActionType.Action, twelveBounty.ClassAction[job]);
+
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                var increaseInteg = Gather_Util.GathActionDict[GatherBuffId.BonusIntegrity];
+                var bonusInteg = Gather_Util.GathActionDict[GatherBuffId.BonusIntegrity_Chance];
+
+                if (Utils.HasStatusId(bonusInteg.StatusId))
+                {
+                    if (EzThrottler.Throttle("Using Action", 100))
+                        ActionManager.Instance()->UseAction(ActionType.Action, bonusInteg.ClassAction[job]);
+
+                    return true;
+                }
+
+                if (Utils.HasStatusId(givingLand.StatusId))
+                {
+                    if (Utils.GetGp() >= increaseInteg.RequiredGp && level >= increaseInteg.RequiredLv)
+                    {
+                        if (EzThrottler.Throttle("Using Action", 100))
+                            ActionManager.Instance()->UseAction(ActionType.Action, increaseInteg.ClassAction[job]);
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static unsafe float BuffCooldown(uint ActionId)
+        {
+            var recastGroup = ActionManager.Instance()->GetRecastGroupDetail(ActionManager.Instance()->GetRecastGroup(1, ActionId));
+
+            if (recastGroup != null)
+            {
+                float total = recastGroup->Total;     // total cooldown duration
+                float elapsed = recastGroup->Elapsed; // how much has elapsed
+                float remaining = total - elapsed;    // time remaining
+                bool isActive = recastGroup->IsActive; // Is Active (leaving these here because it's just nice to know/might use in future)
+
+                return remaining;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

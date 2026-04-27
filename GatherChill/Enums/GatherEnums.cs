@@ -18,5 +18,9 @@ namespace GatherChill.Enums
         FieldMasteryII,
         FieldMasteryI,
         FieldMasteryTemp,
+
+        // Crystal Specfic Buffs
+        TwelveBounty,
+        GivingLand,
     }
 }
