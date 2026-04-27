@@ -12,6 +12,8 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         public static void Draw()
         {
+            ImGui.Text($"Current Route: {C.SaveLocation}");
+
             if (ImGui.Button("Browse for Export Folder"))
             {
                 fileDialogManager.OpenFolderDialog("Select Export Folder", (success, path) =>

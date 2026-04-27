@@ -35,7 +35,7 @@ namespace GatherChill.GatheringInfo
             { 5, "7.x - Dawntrail" }
         };
 
-        // ── Load ──────────────────────────────────────────────────────────────
+        // Loading Routes
 
         public void LoadAllRoutes()
         {
@@ -74,7 +74,7 @@ namespace GatherChill.GatheringInfo
             PluginLog.Information($"Loaded {Routes.Count} gathering routes");
         }
 
-        // ── Save ──────────────────────────────────────────────────────────────
+        // Saving Routes
 
         public void SaveRoute(GatheringRoute route, string outputDirectory)
         {
