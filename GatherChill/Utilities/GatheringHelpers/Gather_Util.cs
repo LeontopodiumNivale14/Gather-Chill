@@ -160,6 +160,9 @@ public static partial class Gather_Util
                 };
             }
 
+            if (Ignore_Routes.Contains(routeId))
+                continue;
+
             if (SheetInfo.TryGetValue(routeId, out var routeInfo))
             {
                 if (zoneName != "???")
