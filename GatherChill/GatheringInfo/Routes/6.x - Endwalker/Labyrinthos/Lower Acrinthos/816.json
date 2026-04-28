@@ -14,7 +14,332 @@
     33904,
     33905
   ],
-  "nodeInfo": [],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 33902,
+      "locations": [
+        {
+          "position": {
+            "x": 88.60914,
+            "y": 73.62239,
+            "z": -402.4773
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 270,
+            "fan_EndAngle": 44,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 270,
+            "fan_EndAngle": 44,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 0,
+      "nodeId": 33903,
+      "locations": [
+        {
+          "position": {
+            "x": 98.62136,
+            "y": 74.0167,
+            "z": -394.248
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 54,
+            "fan_EndAngle": 181,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 54,
+            "fan_EndAngle": 181,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 93.23958,
+            "y": 73.67628,
+            "z": -393.219
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 115,
+            "fan_EndAngle": 240,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 115,
+            "fan_EndAngle": 240,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 85.61829,
+            "y": 73.2991,
+            "z": -400.5821
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 244,
+            "fan_EndAngle": 9,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 244,
+            "fan_EndAngle": 9,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodeId": 33900,
+      "locations": [
+        {
+          "position": {
+            "x": -8.431995,
+            "y": 70.52238,
+            "z": -470.8453
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 61,
+            "fan_EndAngle": 197,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0.29
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 61,
+            "fan_EndAngle": 197,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.6
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 1,
+      "nodeId": 33901,
+      "locations": [
+        {
+          "position": {
+            "x": 2.243042,
+            "y": 70.71661,
+            "z": -453.1277
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 283,
+            "fan_EndAngle": 30,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 283,
+            "fan_EndAngle": 30,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": -18.2041,
+            "y": 69.83583,
+            "z": -464.331
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 78,
+            "fan_EndAngle": 209,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 78,
+            "fan_EndAngle": 209,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 1.110765,
+            "y": 71.56169,
+            "z": -477.9129
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 88,
+            "fan_EndAngle": 196,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 88,
+            "fan_EndAngle": 196,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodeId": 33904,
+      "locations": [
+        {
+          "position": {
+            "x": 102.0981,
+            "y": 81.4679,
+            "z": -550.4082
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 109,
+            "fan_EndAngle": 244,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 109,
+            "fan_EndAngle": 244,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "nodeId": 33905,
+      "locations": [
+        {
+          "position": {
+            "x": 90.8064,
+            "y": 80.4303,
+            "z": -549.3706
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 138,
+            "fan_EndAngle": 273,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 138,
+            "fan_EndAngle": 273,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 108.5405,
+            "y": 82.52325,
+            "z": -552.4589
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 84,
+            "fan_EndAngle": 222,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 84,
+            "fan_EndAngle": 222,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 120.6405,
+            "y": 84.99234,
+            "z": -556.7947
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 194,
+            "fan_EndAngle": 333,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 194,
+            "fan_EndAngle": 333,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    }
+  ],
   "groupCount": 3,
   "requiresFolklore": false,
   "folkloreBook": "",
