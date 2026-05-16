@@ -1,4 +1,4 @@
-﻿using GatherChill.GatheringInfo;
+﻿using GatherChill.GatheringRoutes;
 using System.Collections.Generic;
 
 namespace GatherChill.Utilities.GatheringHelpers

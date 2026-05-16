@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 
-namespace GatherChill.GatheringInfo
+namespace GatherChill.GatheringRoutes
 {
     public class GatheringRouteLoader
     {

@@ -2,7 +2,7 @@ using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
 using ECommons.GameHelpers;
 using GatherChill.ConfigFiles;
-using GatherChill.GatheringInfo;
+using GatherChill.GatheringRoutes;
 using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
