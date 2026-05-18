@@ -2,6 +2,7 @@
 using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities;
+using GatherChill.Utilities.GatheringHelpers;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -50,11 +51,13 @@ namespace GatherChill.Ui.RouteWindowTabs
             var size = ImGui.GetContentRegionAvail();
             if (ImGui.BeginChild("Child: Route Selector", size, true))
             {
-                if (ImGui.BeginTable("Route Selector Table", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
+                if (ImGui.BeginTable("Route Selector Table", 5, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
                 {
                     ImGui.TableSetupColumn("Route ID");
+                    ImGui.TableSetupColumn("Class");
                     ImGui.TableSetupColumn("Location");
                     ImGui.TableSetupColumn("Items");
+                    ImGui.TableSetupColumn("Time Slots");
 
                     // Filtering out the pre-requisites of filtering first (Expansion + ZoneID if need be)
                     var filtered = P.routeEditor.Routes
@@ -85,6 +88,13 @@ namespace GatherChill.Ui.RouteWindowTabs
                             if (ImGui.Button($"{route.Key}"))
                             {
                                 Route_Editor.UpdateRoute(route.Key);
+                            }
+
+                            ImGui.TableNextColumn();
+                            var job = route.Value.GatheringJobId;
+                            if (Gather_Util.JobIcons.TryGetValue(job, out var jobIcon))
+                            {
+                                ImGui.Image(jobIcon.GetWrapOrEmpty().Handle, new(24, 24));
                             }
 
                             ImGui.TableNextColumn();
@@ -169,7 +179,6 @@ namespace GatherChill.Ui.RouteWindowTabs
 
             return result;
         }
-
         private static List<KeyValuePair<uint, GatheringRoute>> SortGroupByNearestNeighbor(IEnumerable<KeyValuePair<uint, GatheringRoute>> routes)
         {
             var remaining = routes.ToList();
@@ -216,13 +225,11 @@ namespace GatherChill.Ui.RouteWindowTabs
             var pos = GetFlagPos(routeId);
             return pos.HasValue ? pos.Value.X + pos.Value.Y : float.MaxValue;
         }
-
         private static Vector2? GetFlagPos(uint routeId)
         {
             if (!SheetInfo.TryGetValue(routeId, out var info)) return null;
             return new Vector2(info.Map.X, info.Map.Y);
         }
-
         private static float GetFlagDistance(uint routeId, Vector2 from)
         {
             var pos = GetFlagPos(routeId);

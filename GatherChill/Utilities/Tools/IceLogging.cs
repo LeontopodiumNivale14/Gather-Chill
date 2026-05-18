@@ -29,20 +29,17 @@ internal static class IceLogging
         }
         return string.Empty;
     }
-
     private static string FormatMessage(string message, string prefix = null)
     {
         var callerPrefix = prefix ?? GetCallerPrefix();
         return $"{callerPrefix} {message}";
     }
-
     public static void Verbose(string message, string prefix = null, bool debugOnly = false)
     {
         var formattedMessage = FormatMessage(message, prefix);
         PluginLog.Verbose(formattedMessage);
         LogSystem.Log(LogLevel.Verbose, message, prefix);
     }
-
     public static void Debug(string message, string prefix = null, bool debugOnly = false)
     {
         LogSystem.Log(LogLevel.Debug, message, prefix);
@@ -59,7 +56,6 @@ internal static class IceLogging
             PluginLog.Debug(formattedMessage);
         }
     }
-
     public static void Info(string message, string prefix = null, bool debugOnly = false)
     {
         LogSystem.Log(LogLevel.Info, message, prefix);
@@ -76,7 +72,6 @@ internal static class IceLogging
             PluginLog.Information(formattedMessage);
         }
     }
-
     public static void ChatInfo(string s, string prefix = null)
     {
         LogSystem.Log(LogLevel.Info, s, prefix);
@@ -97,7 +92,6 @@ internal static class IceLogging
             }
         }
     }
-
     public static void ChatError(string s, string prefix = null)
     {
         LogSystem.Log(LogLevel.Error, s, prefix);
@@ -118,21 +112,18 @@ internal static class IceLogging
             }
         }
     }
-
     public static void Warning(string message, string prefix = null)
     {
         LogSystem.Log(LogLevel.Warning, message, prefix);
         var formattedMessage = FormatMessage(message, prefix);
         PluginLog.Warning(formattedMessage);
     }
-
     public static void Error(string message, string prefix = null)
     {
         LogSystem.Log(LogLevel.Error, message, prefix);
         var formattedMessage = FormatMessage(message, prefix);
         PluginLog.Error(formattedMessage);
     }
-
     public static void Fatal(string message, string prefix = null)
     {
         LogSystem.Log(LogLevel.Verbose, message, prefix);
@@ -172,7 +163,6 @@ internal static class IceLogging
         // Helper to create a unique key
         public string GetKey() => $"{Level}|{Category ?? ""}|{Message}";
     }
-
     public class DestinationEntry
     {
         public DateTime Timestamp { get; set; }
@@ -188,7 +178,6 @@ internal static class IceLogging
             Distance = Vector3.Distance(Player.Position, end);
         }
     }
-
     public static class DestinationLogs
     {
         private static List<DestinationEntry> logs = new();
@@ -202,7 +191,6 @@ internal static class IceLogging
                 logs.RemoveAt(0);
         }
     }
-
     public static class LogSystem
     {
         private static List<LogEntry> logs = new();

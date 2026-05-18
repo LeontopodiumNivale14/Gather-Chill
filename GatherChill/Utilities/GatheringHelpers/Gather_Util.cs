@@ -1,4 +1,5 @@
-﻿using GatherChill.Utilities.Tools;
+﻿using Dalamud.Interface.Textures;
+using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Pictomancy;
 using System.Collections.Generic;
@@ -51,6 +52,14 @@ public static partial class Gather_Util
             Utils.SetGatheringRing(TerritoryId, X, Y, Radius, tooltip);
         }
     }
+    public static Dictionary<uint, uint> Job_IconIds = new()
+    {
+        [16] = 62510, // MIN
+        [17] = 62511, // BTN,
+        [18] = 62512, // FSH
+    };
+    public static Dictionary<uint, ISharedImmediateTexture> JobIcons = new();
+
     public static Dictionary<uint, GatherPointInfo> SheetInfo = new();
     public static void UpdateSheetInfo()
     {
@@ -234,6 +243,13 @@ public static partial class Gather_Util
             }
 
             route.Value.TimedInfo = timeInfo;
+        }
+
+        // Updating Icon Dictionary here for quick usage
+        foreach (var jobIcon in Job_IconIds)
+        {
+            if (Svc.Texture.TryGetFromGameIcon(jobIcon.Value, out var texture))
+                JobIcons.TryAdd(jobIcon.Key, texture);
         }
     }
 }
