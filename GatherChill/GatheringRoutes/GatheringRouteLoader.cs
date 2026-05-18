@@ -195,15 +195,7 @@ namespace GatherChill.GatheringInfo
                     ZoneName = info.ZoneName ?? "Unknown",
                     PlaceName = info.PlaceName ?? "",
                     NodeIds = info.NodeIds.ToList(),
-                    NodeInfo = info.NodeIds.Select(nid => new GatheringNode
-                    {
-                        NodeId = nid,
-                        GroupId = 0,
-                        Locations = new List<NodeLocation>
-                {
-                    new() { Position = new Vector3(info.Map.X, 0f, info.Map.Y) }
-                }
-                    }).ToList()
+                    NodeInfo = new()
                 };
 
                 SaveRoute(stub, outputDirectory);
