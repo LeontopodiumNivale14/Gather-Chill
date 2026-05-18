@@ -73,15 +73,11 @@ internal class DebugWindow : Window
         }
     }
 
+    private uint _NodeIdSearch = 0;
+
     public void DrawGatherPointTable()
     {
-        if (ImGui.BeginTable("GatherPointTable", 8,
-            ImGuiTableFlags.Borders |
-            ImGuiTableFlags.RowBg |
-            ImGuiTableFlags.Resizable |
-            ImGuiTableFlags.ScrollY |
-            ImGuiTableFlags.Sortable | 
-            ImGuiTableFlags.SizingFixedFit))
+        if (ImGui.BeginTable("GatherPointTable", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Sortable |  ImGuiTableFlags.SizingFixedFit))
         {
             // Setup columns
             ImGui.TableSetupColumn("ID");
@@ -92,7 +88,7 @@ internal class DebugWindow : Window
             ImGui.TableSetupColumn("Place Name");
             ImGui.TableSetupColumn("Expansion");
             ImGui.TableSetupColumn("Items");
-            ImGui.TableSetupScrollFreeze(0, 1);
+            ImGui.TableSetupScrollFreeze(0, 2);
             ImGui.TableHeadersRow();
 
             // Get sorting specs
@@ -129,9 +125,16 @@ internal class DebugWindow : Window
                 };
             }
 
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(1);
+            ImGui.InputUInt("###NodeIdSearch", ref _NodeIdSearch);
+
             // Draw rows
             foreach (var kvp in sortedData)
             {
+                if (_NodeIdSearch != 0 && !kvp.Value.NodeIds.Contains(_NodeIdSearch))
+                    continue;
+
                 ImGui.TableNextRow();
 
                 ImGui.TableNextColumn();

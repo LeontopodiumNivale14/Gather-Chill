@@ -1,5 +1,6 @@
 ﻿using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
+using Pictomancy;
 using System.Collections.Generic;
 
 namespace GatherChill.Utilities.GatheringHelpers;
@@ -106,7 +107,16 @@ public static partial class Gather_Util
                         if (itemId != 0)
                             itemIds.Add(itemId);
                     }
+                    else if (ExcelHelper.Sheet_SpearfishingItem.TryGetRow(gatheringItemId, out var spearfishItem))
+                    {
+                        var itemId = spearfishItem.Item.RowId;
+                        if (itemId != 0)
+                            itemIds.Add(itemId);
+                    }
                 }
+
+                if (type == 18)
+                    IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
 
                 if (itemIds.Count == 0)
                     continue;
