@@ -9,6 +9,7 @@ namespace GatherChill.Ui.RouteWindowTabs
     internal class Route_UpdateAll
     {
         private static FileDialogManager fileDialogManager = new FileDialogManager();
+        private static bool _TestExport = false;
 
         public static void Draw()
         {
@@ -50,6 +51,12 @@ namespace GatherChill.Ui.RouteWindowTabs
             {
                 var location = C.SaveLocation;
                 P.routeEditor.LoadRoutesFromDirectory(location);
+            }
+
+            ImGui.Checkbox("Test Export", ref _TestExport);
+            if (ImGui.Button("Export Missing Routes"))
+            {
+                P.routeEditor.CreateStubsForMissingRoutes(C.SaveLocation, _TestExport);
             }
 
             fileDialogManager.Draw();

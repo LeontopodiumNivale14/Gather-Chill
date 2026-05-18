@@ -1,4 +1,6 @@
 ﻿using ECommons.Logging;
+using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -145,6 +147,70 @@ namespace GatherChill.GatheringInfo
         {
             foreach (var route in Routes.Values)
                 SaveRoute(route, outputDirectory);
+        }
+
+        /// <summary>
+        /// Finds GatherPointInfo entries that have no corresponding loaded route and aren't ignored.
+        /// Pulls from the list of ignored routes -> outputs it back to me
+        /// </summary>
+        public List<uint> FindMissingRoutes(Dictionary<uint, GatherPointInfo> sheetInfo)
+        {
+            return sheetInfo.Keys
+                .Where(id => !Gather_Util.Ignore_Routes.Contains(id) && !Routes.ContainsKey(id))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Creates stub route files for any GatherPointInfo entries not covered by an existing route.<br></br>
+        /// Esentially a quick way to make sure that I can just add the missing files that are existing in that location<br></br>
+        /// While also not COMPLETELY overriding all of the info every time I need to make sure a route exist
+        /// Also made to ignore the not load list so certain items/routes can be completely ignored/saving space
+        /// </summary>
+        public void CreateStubsForMissingRoutes(string outputDirectory, bool dryRun = false)
+        {
+            var sheetInfo = Gather_Util.SheetInfo;
+            var missing = FindMissingRoutes(sheetInfo);
+
+            if (missing.Count == 0)
+            {
+                IceLogging.Info("No missing routes found.");
+                return;
+            }
+
+            IceLogging.Info($"Found {missing.Count} missing route(s){(dryRun ? " (dry run)" : "")}:");
+
+            foreach (var id in missing)
+            {
+                var info = sheetInfo[id];
+                IceLogging.Info($"  [{id}] {info.ZoneName} / {info.PlaceName} — nodes: {string.Join(", ", info.NodeIds)}");
+
+                if (dryRun) 
+                    continue;
+
+                var stub = new GatheringRoute
+                {
+                    RouteId = id,
+                    ExpansionId = info.ExpId,
+                    TerritoryId = info.TerritoryId,
+                    ZoneName = info.ZoneName ?? "Unknown",
+                    PlaceName = info.PlaceName ?? "",
+                    NodeIds = info.NodeIds.ToList(),
+                    NodeInfo = info.NodeIds.Select(nid => new GatheringNode
+                    {
+                        NodeId = nid,
+                        GroupId = 0,
+                        Locations = new List<NodeLocation>
+                {
+                    new() { Position = new Vector3(info.Map.X, 0f, info.Map.Y) }
+                }
+                    }).ToList()
+                };
+
+                SaveRoute(stub, outputDirectory);
+            }
+
+            if (!dryRun)
+                IceLogging.Info($"Created {missing.Count} stub route file(s) in {outputDirectory}");
         }
 
         // ── Queries 
