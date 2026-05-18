@@ -1,4 +1,6 @@
 ﻿using ECommons.GameHelpers;
+using ECommons.Throttlers;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
@@ -12,7 +14,7 @@ namespace GatherChill.Scheduler.Handlers;
 // This will run on framework thread -> just load whatever it's suppose to load
 // Which, is nice cause it means that I can add things from different windows here and run it all under the same code
 
-internal static class PictoManager
+internal static partial class PictoManager
 {
     // Storage for draw commands - initialize inline to avoid any timing issues
     private static readonly List<Action<PctDrawList>> drawCommands = new();
@@ -66,11 +68,21 @@ internal static class PictoManager
     }
 
     // Helper methods for common draws
-    public static void DrawArrow(Vector3 targetPos, uint fillColor, uint outlineColor, bool scaleWithDistance = true)
+    public static void DrawArrow(Vector3 origin, float rotation, float backRadius, float tipRadius, float depth, float wingSpread, float notchFrac, uint color)
     {
         AddDrawCommand(pictoDraw =>
         {
-            Picto_TriangleRotate(pictoDraw, targetPos, fillColor, outlineColor, scaleWithDistance);
+            DrawCrazyArrow(pictoDraw, origin, rotation, backRadius, tipRadius, depth, wingSpread, notchFrac, color);
+        });
+    }
+
+    public static void DrawArrowToward(Vector3 target, float backRadius, float tipRadius, float depth, float wingSpread, float notchFrac, uint color, float height = 2f)
+    {
+        var position = Player.Position;
+        position = new(position.X, position.Y + height, position.Z);
+        AddDrawCommand(pictoDraw =>
+        {
+            DrawCrazyArrowToward(pictoDraw, position, target, backRadius, tipRadius, depth, wingSpread, notchFrac, color);
         });
     }
 
@@ -82,7 +94,6 @@ internal static class PictoManager
             pictoDraw.AddCircleFilled(targetPos, 3, adaptedColor);
         });
     }
-
     public static void DrawVfxCircle(string id, Vector3 origin, Vector4 color)
     {
         AddDrawCommand(pictoDraw =>
@@ -91,7 +102,6 @@ internal static class PictoManager
             // PictoService.VfxRenderer.AddOmen(id, $"{id}_Omen", origin, color:color);
         });
     }
-
     public static void DrawGatheringFan(NodeLocation location, Vector3 selectedNode)
     {
         var fanColor_Gather = location.Position == selectedNode ? C.Picto_SelectedFan : C.Picto_GatherFanColor;

@@ -531,6 +531,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                 if (editorNode != null)
                 {
                     selectedNodePos = editorNode.Position;
+                    PictoManager.DrawArrowToward(selectedNodePos, 0.606f, 0.05f, 2.952f, 0.7f, 0.33f, ToUintABGR(C.Picto_SelectedFan), 3.5f);
 
                     ImGui.Text($"Node Position: {editorNode.Position.X:N2}, {editorNode.Position.Y:N2}, {editorNode.Position.Z:N2}");
                     bool fly = editorNode.AllowFlying;
@@ -603,6 +604,23 @@ namespace GatherChill.Ui.RouteWindowTabs
                             flying = true;
 
                         P.navmesh.PathfindAndMoveTo(randomPos, flying);
+                    }
+
+                    ImGui.SameLine();
+                    using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.LeftShift)))
+                    {
+                        if (ImGui.Button("Basic Fan"))
+                        {
+                            gatherInfo.Fan_StartAngle = 0;
+                            gatherInfo.Fan_EndAngle = 359;
+                            gatherInfo.Fan_DistanceMin = 1;
+                            gatherInfo.Fan_DistanceMax = 2;
+                            gatherInfo.Fan_Height = 0;
+                        }
+                    }
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    {
+                        ImGui.SetTooltip("Hold Shift to Allow");
                     }
 
                     ImGui.PopID();

@@ -9,8 +9,39 @@
   "nodeIds": [
     34333
   ],
-  "nodeInfo": [],
-  "groupCount": 3,
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 34333,
+      "locations": [
+        {
+          "position": {
+            "x": -738.2492,
+            "y": -73.24876,
+            "z": 753.8808
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 240,
+            "fan_EndAngle": 117,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 240,
+            "fan_EndAngle": 117,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    }
+  ],
+  "groupCount": 1,
   "requiresFolklore": false,
   "folkloreBook": null,
   "author": null,

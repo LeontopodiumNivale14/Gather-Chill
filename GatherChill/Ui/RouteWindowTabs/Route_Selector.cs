@@ -17,6 +17,16 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         public static uint FilterExpansionId = 0;
         public static uint FilterTerritoryId = 0;
+        public static uint FilterJob = 0;
+
+        public static Dictionary<uint, string> Job_FilterOptions = new()
+        {
+            [0] = "All",
+            [16] = "MIN",
+            [17] = "BTN",
+            [18] = "FSH",
+        };
+        
 
         public enum RouteSortMode
         {
@@ -42,6 +52,18 @@ namespace GatherChill.Ui.RouteWindowTabs
 
             ImGui.Checkbox("Filter by current Zone", ref Filter_Zone);
 
+            var keys = Job_FilterOptions.Keys.ToArray();
+            var labels = Job_FilterOptions.Values.ToArray();
+
+            int currentIndex = Array.IndexOf(keys, FilterJob);
+            if (currentIndex < 0) currentIndex = 0;
+
+            ImGui.SetNextItemWidth(200);
+            if (ImGui.Combo("##JobFilter", ref currentIndex, labels, labels.Length))
+            {
+                FilterJob = keys[currentIndex];
+            }
+
             if (ImGui.RadioButton("Sort by ID", CurrentSortMode == RouteSortMode.ByRouteId))
                 CurrentSortMode = RouteSortMode.ByRouteId;
             ImGui.SameLine();
@@ -62,7 +84,8 @@ namespace GatherChill.Ui.RouteWindowTabs
                     // Filtering out the pre-requisites of filtering first (Expansion + ZoneID if need be)
                     var filtered = P.routeEditor.Routes
                         .Where(x => !Filter_Expansion || x.Value.ExpansionId == FilterExpansionId)
-                        .Where(x => !Filter_Zone || x.Value.TerritoryId == Player.Territory.RowId);
+                        .Where(x => !Filter_Zone || x.Value.TerritoryId == Player.Territory.RowId)
+                        .Where(x => FilterJob == 0 || x.Value.GatheringJobId == FilterJob);
 
                     // Then sorting it via the mode (so I don't have to travel across the lands reaching far and wide >.>)
                     IEnumerable<KeyValuePair<uint, GatheringRoute>> sortedTable = CurrentSortMode switch
