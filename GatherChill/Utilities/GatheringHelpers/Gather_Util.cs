@@ -1,6 +1,10 @@
-﻿using Dalamud.Interface.Textures;
+﻿using ECommons.Logging;
+using GatherChill.Enums;
+using GatherChill.Items;
+using Dalamud.Interface.Textures;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
+using Lumina.Excel.Sheets;
 using Pictomancy;
 using System.Collections.Generic;
 
@@ -10,7 +14,7 @@ public static partial class Gather_Util
 {
     public class GatherPointInfo
     {
-        public uint Type { get; set; }
+        public CombinedGatherType Type { get; set; }
         public uint Level { get; set; }
         public uint TerritoryId { get; set; }
         public string ZoneName { get; set; }
@@ -78,6 +82,7 @@ public static partial class Gather_Util
 
             uint nodeId = gatherPoint.RowId;
             uint type = 0;
+            CombinedGatherType combinedType = CombinedGatherType.UNKNOWN;
             uint level = 0;
             uint territoryId = 0;
             uint expansion = 0;
@@ -99,11 +104,11 @@ public static partial class Gather_Util
                 routeId = gatherPointBase.RowId;
                 type = gatherPointBase.GatheringType.Value.RowId; // Column 1
                 if (type is 0 or 1)
-                    type = 16;
+                    combinedType = CombinedGatherType.Miner;
                 else if (type is 2 or 3)
-                    type = 17;
+                    combinedType = CombinedGatherType.Botanist;
                 else if (type is 4 or 5)
-                    type = 18;
+                    combinedType = CombinedGatherType.Fisher;
 
                 level = gatherPointBase.GatheringLevel; // Column 2
 
@@ -121,6 +126,22 @@ public static partial class Gather_Util
                         var itemId = spearfishItem.Item.RowId;
                         if (itemId != 0)
                             itemIds.Add(itemId);
+                    }
+                }
+
+                // some items aren't in GatheringPointBase; look up each point in GatheringItemPoint to make sure
+                // this produces a dictionary of (GatheringPoint, [GatheringItems])
+                var gatherItemPoints = ExcelHelper.Sheet_GatheringItemPoint.SelectMany(g => g).GroupBy(row => row.GatheringPoint.RowId).ToDictionary(group => group.Key, group => group.Select(g => g.RowId).Distinct().ToList());
+                if (gatherItemPoints.TryGetValue(gatherPoint.RowId, out var giList))
+                {
+                    foreach (uint gatheringItemId in giList)
+                    {
+                        if (ExcelHelper.Sheet_GatheringItem.TryGetRow(gatheringItemId, out var gatherItem))
+                        {
+                            var itemId = gatherItem.Item.RowId;
+                            if (itemId != 0 && !itemIds.Contains(itemId))
+                                itemIds.Add(itemId);
+                        }
                     }
                 }
 
@@ -194,7 +215,7 @@ public static partial class Gather_Util
             {
                 SheetInfo.Add(routeId, new GatherPointInfo()
                 {
-                    Type = type,
+                    Type = combinedType,
                     Level = level,
                     TerritoryId = territoryId,
                     ZoneName = zoneName,
@@ -206,6 +227,25 @@ public static partial class Gather_Util
                     ExpansionName = expansionName,
                     Map = mapInfo,
                 });
+            }
+
+            // assign item data that we couldn't get from just Item and GatheringItem, but can here
+            foreach (uint itemId in itemIds)
+            {
+                if (P.allItems.TryGetValue(itemId, out var globalItem))
+                {
+                    globalItem.Type = combinedType;
+                    if (zoneName != "???")
+                    {
+                        if (globalItem.ZoneName != "" && globalItem.ZoneName != zoneName)
+                            globalItem.ZoneName = "(various)"; // todo
+                        else globalItem.ZoneName = zoneName;
+                    }
+                    if (placeName != "???" && placeName != "" && !globalItem.PlaceNames.Contains(placeName))
+                        globalItem.PlaceNames.Add(placeName);
+                    if (!globalItem.RouteIds.Contains(routeId)) globalItem.RouteIds.Add(routeId);
+                    P.allItems[itemId] = globalItem;
+                }
             }
         }
 
@@ -251,5 +291,22 @@ public static partial class Gather_Util
             if (Svc.Texture.TryGetFromGameIcon(jobIcon.Value, out var texture))
                 JobIcons.TryAdd(jobIcon.Key, texture);
         }
+    }
+
+    public static void LoadAllItems()
+    {
+        if (ExcelHelper.Sheet_GatheringItem == null)
+        {
+            PluginLog.Error("GatheringItem sheet not initialized");
+            return;
+        }
+
+        // check for valid row IDs and names and eliminate possible duplicates
+        P.allItems = ExcelHelper.Sheet_GatheringItem
+            .Where(gi => gi.Item.RowId != 0 && gi.Item.RowId < 1000000)  // valid and known row IDs
+            .Where(gi => gi.Item.TryGetValue<Item>(out var i) && !i.Name.IsEmpty) // linked to a valid item
+            .Where(gi => gi.Item.TryGetValue<Item>(out var i) && i.FilterGroup != 50) // not a cosmic exploration material
+            .GroupBy(gi => gi.Item.RowId).Select(group => group.First()) // prevent duplicates
+            .ToDictionary(gi => gi.Item.RowId, gi => new GatherableItem(gi));
     }
 }

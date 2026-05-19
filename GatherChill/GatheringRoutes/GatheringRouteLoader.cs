@@ -189,7 +189,7 @@ namespace GatherChill.GatheringRoutes
 
                 var stub = new GatheringRoute
                 {
-                    GatheringJobId = info.Type,
+                    GatheringJobId = (uint)info.Type,
                     RouteId = id,
                     ExpansionId = info.ExpId,
                     TerritoryId = info.TerritoryId,
