@@ -2,13 +2,15 @@ using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
 using ECommons.GameHelpers;
 using GatherChill.ConfigFiles;
-using GatherChill.GatheringInfo;
+using GatherChill.GatheringRoutes;
 using GatherChill.IPC;
+using GatherChill.Items;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
 using GatherChill.Utilities.Tools;
 using Pictomancy;
+using System.Collections.Generic;
 
 namespace GatherChill;
 
@@ -36,6 +38,10 @@ public sealed class GatherChill : IDalamudPlugin
 
     // putting this here to initialize all the routes, instead of having to go a roundbout way of accessing it...
     internal GatheringRouteLoader routeEditor;
+
+    internal Dictionary<uint, GatherableItem> allItems;
+    public static float ITEM_ICON_SIZE = 24f;
+    
 
     public GatherChill(IDalamudPluginInterface pi)
     {
@@ -86,6 +92,7 @@ public sealed class GatherChill : IDalamudPlugin
         Svc.PluginInterface.UiBuilder.Draw += OnDraw;
 
         ExcelHelper.Init();
+        LoadAllItems();
         UpdateSheetInfo();
     }
 

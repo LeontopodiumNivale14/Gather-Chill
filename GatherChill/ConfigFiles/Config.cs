@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using ECommons.Configuration;
+using GatherChill.Enums;
 
 namespace GatherChill.ConfigFiles;
 
 public partial class Config
 {
     public int ConfigVersion { get; set; } = 1;
+    public FilterFlags ItemFilter = FilterFlags.All;
 
     public void Save()
     {

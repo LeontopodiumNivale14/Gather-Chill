@@ -1,7 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
-using GatherChill.GatheringInfo;
+using GatherChill.GatheringRoutes;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;

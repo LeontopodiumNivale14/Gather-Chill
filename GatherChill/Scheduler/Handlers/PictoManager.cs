@@ -1,7 +1,7 @@
 ﻿using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-using GatherChill.GatheringInfo;
+using GatherChill.GatheringRoutes;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Pictomancy;

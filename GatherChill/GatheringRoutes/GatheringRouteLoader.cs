@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 
-namespace GatherChill.GatheringInfo
+namespace GatherChill.GatheringRoutes
 {
     public class GatheringRouteLoader
     {
@@ -189,7 +189,7 @@ namespace GatherChill.GatheringInfo
 
                 var stub = new GatheringRoute
                 {
-                    GatheringJobId = info.Type,
+                    GatheringJobId = (uint)info.Type,
                     RouteId = id,
                     ExpansionId = info.ExpId,
                     TerritoryId = info.TerritoryId,
