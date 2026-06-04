@@ -12,8 +12,6 @@ public class NavmeshIPC
     public const string Name = "vnavmesh";
     public const string Repo = "https://puni.sh/api/repository/veyn";
 
-    public const float NodeCloseRange = 3f;
-
     public NavmeshIPC() => EzIPC.Init(this, Name);
     public bool Installed => Utils.HasPlugin(Name);
 
@@ -39,13 +37,14 @@ public class NavmeshIPC
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, bool, float, Vector3?> PointOnFloor;
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float, Vector3?> NearestPointReachable;
 
-    [EzIPC("SmartNav.%m")] public readonly Action PathToFlag;
-    [EzIPC("SmartNav.Stop")] public readonly Action SmartNavStop;
-    [EzIPC("SmartNav.IsRunning")] public readonly Func<bool> SmartIsRunning;
-    [EzIPC("SmartNav.PathToPoint")] public readonly Action<uint, Vector3> Smart_PathToPoint;
-    [EzIPC("SmartNav.PathToTerritory")] public readonly Action<uint> Smart_PathToTerritory;
+    // SmartNav IPC disabled until vnavmesh SmartNav API is updated (cross-zone travel will use Lifestream + SimpleMove).
+    // [EzIPC("SmartNav.%m")] public readonly Action PathToFlag;
+    // [EzIPC("SmartNav.Stop")] public readonly Action SmartNavStop;
+    // [EzIPC("SmartNav.IsRunning")] public readonly Func<bool> SmartIsRunning;
+    // [EzIPC("SmartNav.PathToPoint")] public readonly Action<uint, Vector3> Smart_PathToPoint;
+    // [EzIPC("SmartNav.PathToTerritory")] public readonly Action<uint> Smart_PathToTerritory;
 
-    public bool NavRunning() => SmartIsRunning() || IsRunning();
+    public bool NavRunning() => IsRunning();
 
     public bool IsPathfindInProgress() =>
         (PathfindInProgress?.Invoke() ?? false) || (NavPathfindInProgress?.Invoke() ?? false);
@@ -139,17 +138,8 @@ public class NavmeshIPC
 
     public void SmartPath(uint territory, Vector3? position = null)
     {
-        if (position != null)
-            Smart_PathToPoint(territory, position.Value);
-        else
-            Smart_PathToTerritory(territory);
+        // SmartNav disabled — see commented IPC above.
     }
 
-    public void SmartStop()
-    {
-        if (IsRunning())
-            PathStop();
-        else if (SmartIsRunning())
-            SmartNavStop();
-    }
+    public void SmartStop() => StopCompletely();
 }

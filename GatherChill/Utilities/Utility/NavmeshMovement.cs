@@ -1,8 +1,10 @@
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GatherChill.ConfigFiles;
+using GatherChill.GatheringInfo;
 using GatherChill.IPC;
 using Lumina.Excel.Sheets;
 
@@ -16,10 +18,11 @@ internal static unsafe class NavmeshMovement
     public const float LongMoveMountDistance = 30f;
     public const float PreferFlyDistance = 25f;
     public const float NearbyObjectCullDistance = 30f;
-    public const float NodePathCloseRange = NavmeshIPC.NodeCloseRange;
     public const float InteractRetrySlack = 0.5f;
 
     public static float InteractDistance => C.NavmeshInteractDistance;
+
+    public const float GatherFanCloseRange = FinalApproachCloseRange;
 
     public static bool IsWithinHorizontalRange(Vector3 destination, float range) =>
         P.navmesh.IsWithinHorizontalRange(destination, range);
@@ -51,8 +54,14 @@ internal static unsafe class NavmeshMovement
     public static bool WantsFlyPath(bool requestFly, Vector3 target) =>
         requestFly ? CanUseFlyMovement() : ShouldUseFlyPath(target);
 
+    public static bool ShouldUseFlyPathForNode(NodeLocation node, Vector3 target) =>
+        node.AllowFlying && ShouldUseFlyPath(target);
+
+    public static bool ShouldUseFlyApproachForNode(NodeLocation node, Vector3 target) =>
+        node.AllowFlying && ShouldUseFlyPath(target) && !Svc.Condition[ConditionFlag.Diving];
+
     public static bool IsNearGameObject(IGameObject gameObject, float distance) =>
-        Player.DistanceTo(gameObject) < distance;
+        Player.DistanceTo(gameObject) <= distance;
 
     public static IGameObject? GetNearestGatheringNode(uint baseId) =>
         Svc.Objects

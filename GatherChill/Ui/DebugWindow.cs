@@ -232,6 +232,7 @@ internal class DebugWindow : Window
         ImGui.Text($"Current task running: {currentTask}");
         ImGui.Text($"Current State: {SchedulerMain.State}");
         ImGui.Text($"ItemId set: {SchedulerMain.ItemId}");
+        ImGui.Text($"Player job: {Player.ClassJob.RowId} | Auto-swap class: {C.AutoSwapGatheringClass}");
         ImGui.Text($"Task Count: {P.taskManager.Tasks.Count}");
     }
     private static void DestinationLogViewer()

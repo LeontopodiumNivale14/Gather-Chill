@@ -6,6 +6,7 @@ using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.GatheringHelpers;
@@ -22,39 +23,124 @@ namespace GatherChill.Scheduler.Tasks
         private static GatheringRoute selectedRoute = null;
         private static readonly Random _random = new Random();
 
-        private static uint LoadedRouteId = 0;
+        private static uint loadedRouteId;
+        private static bool pendingRouteChange;
         private static int RouteIndex = 0;
         private static List<GatheringNode> GatherRoute = new();
         private static Vector3? TargetFanPoint = null;
         private static uint? TargetNodeId = null;
         private static int NodeCheckIndex = 0;
 
+        public static void Reset()
+        {
+            selectedRoute = null;
+            loadedRouteId = 0;
+            pendingRouteChange = false;
+            RouteIndex = 0;
+            GatherRoute.Clear();
+            TargetFanPoint = null;
+            TargetNodeId = null;
+            NodeCheckIndex = 0;
+        }
+
+        public static void OnRouteTargetChanged(bool routeChanged)
+        {
+            if (routeChanged)
+                pendingRouteChange = true;
+
+            if (!IsGatheringSessionActive())
+                TryApplyPendingRouteChange();
+        }
+
         public static void Enqueue(uint routeId, uint itemId)
         {
-            if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
-            {
-                P.taskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
-            }
+            if (SchedulerMain.QueueActive)
+                P.taskManager.Enqueue(EnsureQueueTerritory, "Ensure queue territory", TaskConfig);
+
+            if (!IsGatheringSessionActive())
+                P.taskManager.Enqueue(EnsureGatheringJob, "Ensure gathering class", TaskConfig);
+
+            if (IsGatheringSessionActive())
+                P.taskManager.Enqueue(GatheringInteraction, "Gathering Interaction", TaskConfig);
             else
-            {
-                P.taskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
-            }
+                P.taskManager.Enqueue(TravelFarCheck, "Traveling to node group", TaskConfig);
+        }
+
+        private static bool EnsureQueueTerritory()
+        {
+            if (!SchedulerMain.QueueActive || !SchedulerMain.RouteId.HasValue)
+                return true;
+
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            if (route == null)
+                return true;
+
+            return GatherZoneTravel.TryEnsureTerritory(route.TerritoryId, route.ZoneName);
+        }
+
+        private static bool EnsureGatheringJob()
+        {
+            if (!C.AutoSwapGatheringClass || IsGatheringSessionActive())
+                return true;
+
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            if (route == null)
+                return true;
+
+            return Utils.TrySwapToGatheringJob(route.GatheringJobId);
+        }
+
+        private static bool IsGatheringSessionActive()
+        {
+            if (Svc.Condition[ConditionFlag.Gathering])
+                return true;
+
+            if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
+                return true;
+
+            if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
+                return true;
+
+            return false;
+        }
+
+        private static void TryApplyPendingRouteChange()
+        {
+            if (!pendingRouteChange || !SchedulerMain.RouteId.HasValue)
+                return;
+
+            LoadRoute(SchedulerMain.RouteId.Value);
+            pendingRouteChange = false;
+        }
+
+        private static void LoadRoute(uint routeId)
+        {
+            var route = P.routeEditor.GetRoute(routeId);
+            if (route == null)
+                return;
+
+            selectedRoute = route;
+            loadedRouteId = routeId;
+            RouteIndex = 0;
+            NodeCheckIndex = 0;
+            TargetFanPoint = null;
+            TargetNodeId = null;
+            GatherRoute.Clear();
+            foreach (var group in route.NodeInfo)
+                GatherRoute.Add(group);
         }
 
 
 
         private static bool TravelFarCheck()
         {
+            TryApplyPendingRouteChange();
+
             var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
-            if (route != null && selectedRoute != route)
+            if (route != null && loadedRouteId != route.RouteId)
             {
-                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current");
-                selectedRoute = route;
-                GatherRoute.Clear();
-                foreach (var group in route.NodeInfo)
-                {
-                    GatherRoute.Add(group);
-                }
+                IceLogging.Verbose("Route target changed, reloading gather route");
+                LoadRoute(route.RouteId);
             }
 
             if (GatherRoute.Count == 0)
@@ -64,11 +150,20 @@ namespace GatherChill.Scheduler.Tasks
             }
 
             if (!GatherRouteNavigation.IsCorrectTerritory(selectedRoute))
-                return true;
+                return SchedulerMain.QueueActive ? false : true;
 
             if (RouteIndex >= GatherRoute.Count)
             {
-                // We've hit a higher index than we should for these, so going to just immediately reset it back to 0
+                if (SchedulerMain.QueueActive)
+                {
+                    if (GatherQueueSession.IsCurrentTargetQuantityMet())
+                        SchedulerMain.CompleteCurrentTarget();
+                    else
+                        RouteIndex = 0;
+
+                    return true;
+                }
+
                 RouteIndex = 0;
             }
 
@@ -202,9 +297,14 @@ namespace GatherChill.Scheduler.Tasks
 
             return false;
         }
-        private static bool GatheringInteraction(uint itemId)
+        private static bool GatheringInteraction()
         {
             P.navmesh.StopIfOwned();
+
+            if (!SchedulerMain.ItemId.HasValue)
+                return true;
+
+            var itemId = SchedulerMain.ItemId.Value;
 
             if (Svc.Condition[ConditionFlag.Gathering])
             {
@@ -236,8 +336,9 @@ namespace GatherChill.Scheduler.Tasks
                             else if (Basic_BuffCheck())
                                 return false;
 
-                            if (EzThrottler.Throttle($"Gathering Item: {itemId}"))
-                                gather.GatheredItems.Where(x => x.ItemID == itemId).FirstOrDefault().Gather();
+                            var gatherTarget = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId);
+                            if (gatherTarget != null && EzThrottler.Throttle($"Gathering Item: {itemId}"))
+                                gatherTarget.Gather();
 
                             return false;
                         }
@@ -245,7 +346,10 @@ namespace GatherChill.Scheduler.Tasks
                 }
             }
             else
+            {
+                TryApplyPendingRouteChange();
                 return true;
+            }
 
             return false;
         }

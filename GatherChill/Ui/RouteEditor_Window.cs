@@ -53,6 +53,12 @@ namespace GatherChill.Ui
                     ImGui.EndTabItem();
                 }
 
+                if (ImGui.BeginTabItem("Gather List"))
+                {
+                    Route_GatherList.Draw();
+                    ImGui.EndTabItem();
+                }
+
                 if (ImGui.BeginTabItem($"Route Editor [{Route_Editor.SelectedRoute}]"))
                 {
                     CurrentTab = tabSelector.RouteEditor;

@@ -13,9 +13,14 @@ namespace GatherChill.Scheduler.Tasks;
 
 internal static class GatherRouteNavigation
 {
-    private static int _interactRetries;
+    private static uint _gatherFanNodeId;
+    private static Vector3? _gatherFanPoint;
 
-    public static void ResetInteractRetries() => _interactRetries = 0;
+    public static void ResetInteractRetries()
+    {
+        _gatherFanNodeId = 0;
+        _gatherFanPoint = null;
+    }
 
     public static bool IsCorrectTerritory(GatheringRoute route)
     {
@@ -33,7 +38,7 @@ internal static class GatherRouteNavigation
         var fanPoint = NavmeshMovement.ResolvePathPoint(
             NodeLocationExtensions.GetRandomFlightPosition(location, Player.Position));
 
-        if (NavmeshMovement.CanUseFlyMovement())
+        if (location.AllowFlying && NavmeshMovement.CanUseFlyMovement())
             return Task_NavmeshMove.Task_FlyTo(fanPoint, waitForBusy: false, closeRange, stayMounted) == true;
 
         return Task_NavmeshMove.Task_GroundTo(fanPoint, waitForBusy: false, closeRange, stayMounted) == true;
@@ -47,25 +52,28 @@ internal static class GatherRouteNavigation
 
     public static void EnqueueApproach(IGameObject node, GatheringNode group, NodeLocation targetLocation)
     {
-        var fanPoint = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
-        var walkPoint = GetWalkPoint(targetLocation, fanPoint);
+        var flightFan = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
+        var gatherFan = NavmeshMovement.ResolvePathPoint(GetGatherFanPoint(targetLocation, flightFan));
 
-        if (NavmeshMovement.ShouldUseFlyPath(node.Position) && !Svc.Condition[ConditionFlag.Diving])
+        _gatherFanNodeId = node.BaseId;
+        _gatherFanPoint = gatherFan;
+
+        if (NavmeshMovement.ShouldUseFlyApproachForNode(targetLocation, node.Position))
         {
-            IceLogging.Debug("Approach: fly then ground");
+            IceLogging.Debug("Approach: fly then ground to gather fan");
             P.taskManager.EnqueueMulti
             (
-                new(() => Task_NavmeshMove.Task_FlyTo(fanPoint, true, NavmeshMovement.FinalApproachCloseRange, true), "Fly to fan", TaskConfig),
-                new(() => Task_NavmeshMove.Task_GroundTo(walkPoint, true, NavmeshMovement.NodePathCloseRange), "Ground to node", TaskConfig),
+                new(() => Task_NavmeshMove.Task_FlyTo(flightFan, true, NavmeshMovement.FinalApproachCloseRange, true), "Fly to fan", TaskConfig),
+                new(() => Task_NavmeshMove.Task_GroundTo(gatherFan, true, NavmeshMovement.GatherFanCloseRange), "Ground to gather fan", TaskConfig),
                 new(() => Task_GatherRoute.InteractWithNode(node.BaseId), "Interact with node", TaskConfig)
             );
         }
         else
         {
-            IceLogging.Debug("Approach: ground only");
+            IceLogging.Debug("Approach: ground to gather fan");
             P.taskManager.EnqueueMulti
             (
-                new(() => Task_NavmeshMove.Task_GroundTo(walkPoint, true, NavmeshMovement.NodePathCloseRange), "Ground to node", TaskConfig),
+                new(() => Task_NavmeshMove.Task_GroundTo(gatherFan, true, NavmeshMovement.GatherFanCloseRange), "Ground to gather fan", TaskConfig),
                 new(() => Task_GatherRoute.InteractWithNode(node.BaseId), "Interact with node", TaskConfig)
             );
         }
@@ -91,39 +99,41 @@ internal static class GatherRouteNavigation
             return true;
         }
 
-        P.navmesh.StopIfOwned();
-
-        if (P.navmesh.TickArrival(targetNode.Position, NavmeshMovement.NodePathCloseRange) ||
-            NavmeshMovement.IsNearGatheringNode(nodeId, NavmeshMovement.InteractDistance))
+        if (_gatherFanPoint is { } fan && _gatherFanNodeId == nodeId && !IsAtGatherFan(fan))
         {
-            if (!Player.IsJumping && EzThrottler.Throttle("Target + Interaction throttle"))
+            P.navmesh.StopIfOwned();
+
+            if (Player.Mounted)
             {
-                Utils.TargetgameObject(targetNode);
-                Utils.InteractWithObject(targetNode);
+                Utils.Dismount();
+                return false;
             }
 
-            return false;
+            if (P.navmesh.TryMoveTo(fan, fly: false, NavmeshMovement.GatherFanCloseRange))
+                return false;
         }
 
-        if (_interactRetries < C.NavmeshInteractRetries &&
-            NavmeshMovement.HorizontalDistance(targetNode.Position) > NavmeshMovement.NodePathCloseRange + NavmeshMovement.InteractRetrySlack &&
-            EzThrottler.Throttle("Gather interact nav retry", 2000))
+        if (Player.Mounted)
+            Utils.Dismount();
+
+        if (!Player.Mounted && !Player.IsJumping && EzThrottler.Throttle("Target + Interaction throttle"))
         {
-            _interactRetries++;
-            var walkPoint = NavmeshMovement.ResolvePathPoint(targetNode.Position);
-            if (P.navmesh.TryMoveTo(walkPoint, Player.Mounted && NavmeshMovement.CanUseFlyMovement(), NavmeshMovement.NodePathCloseRange))
-                return false;
+            Utils.TargetgameObject(targetNode);
+            Utils.InteractWithObject(targetNode);
         }
 
         return false;
     }
 
-    private static Vector3 GetWalkPoint(NodeLocation targetLocation, Vector3 fanPoint)
+    private static bool IsAtGatherFan(Vector3 fan) =>
+        Player.DistanceTo(fan) <= NavmeshMovement.GatherFanCloseRange + NavmeshMovement.InteractRetrySlack;
+
+    private static Vector3 GetGatherFanPoint(NodeLocation targetLocation, Vector3 flightFanPoint)
     {
         if (targetLocation.UseSpecificWalkingSpots && targetLocation.WalkablePositions.Count > 0)
         {
             return targetLocation.WalkablePositions
-                .OrderBy(x => Vector3.Distance(fanPoint, x))
+                .OrderBy(x => Vector3.Distance(flightFanPoint, x))
                 .First();
         }
 

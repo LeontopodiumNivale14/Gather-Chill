@@ -31,6 +31,12 @@ internal class SettingsWindow : Window
                 ImGui.EndTabItem();
             }
 
+            if (ImGui.BeginTabItem("Route"))
+            {
+                DrawRouteSettings();
+                ImGui.EndTabItem();
+            }
+
             ImGui.EndTabBar();
         }
     }
@@ -46,12 +52,30 @@ internal class SettingsWindow : Window
             C.NavmeshVerboseLogging = verbose;
 
         var interact = C.NavmeshInteractDistance;
-        if (ImGui.SliderFloat("Interact distance", ref interact, 2f, 12f))
+        if (ImGui.SliderFloat("Interact distance (y)", ref interact, 2f, 8f))
             C.NavmeshInteractDistance = interact;
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("Reserved for future interact checks. Movement stops on the route gather fan, not at this distance from the node.");
 
         var retries = C.NavmeshInteractRetries;
         if (ImGui.SliderInt("Interact move retries", ref retries, 0, 6))
             C.NavmeshInteractRetries = retries;
+
+        if (ImGui.Button("Save"))
+            C.Save();
+    }
+
+    private static void DrawRouteSettings()
+    {
+        var autoSwap = C.AutoSwapGatheringClass;
+        if (ImGui.Checkbox("Auto-swap to route gathering class", ref autoSwap))
+            C.AutoSwapGatheringClass = autoSwap;
+
+        ImGui.TextWrapped("When starting a route, equips the first matching gearset for that job (Miner, Botanist, or Fisher) if you are on a different class.");
+
+        var skipTimed = C.SkipInactiveTimedNodes;
+        if (ImGui.Checkbox("Skip timed nodes outside their ET window (gather queue)", ref skipTimed))
+            C.SkipInactiveTimedNodes = skipTimed;
 
         if (ImGui.Button("Save"))
             C.Save();

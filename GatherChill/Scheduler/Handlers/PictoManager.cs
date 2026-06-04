@@ -1,4 +1,5 @@
-﻿using ECommons.GameHelpers;
+﻿using Dalamud.Bindings.ImGui;
+using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using GatherChill.GatheringInfo;
@@ -31,38 +32,55 @@ internal static partial class PictoManager
         }
     }
 
+    private static void ClearDrawCommands()
+    {
+        lock (lockObject)
+            drawCommands.Clear();
+    }
+
+    /// <summary>World overlays need a loaded character and scene; avoid Pictomancy's internal ImGui window during plugin UI.</summary>
+    public static bool CanDrawWorldOverlay()
+        => Player.Available && Svc.ClientState.IsLoggedIn;
+
     // Main draw function - call this every frame
     public static void DrawPicto()
     {
+        if (!CanDrawWorldOverlay())
+        {
+            ClearDrawCommands();
+            return;
+        }
+
         try
         {
-            using (var pictoDraw = PctService.Draw())
+            // Pass background draw list so Pictomancy does not ImGui.Begin a nested window during route editor UI.
+            using var pictoDraw = PctService.Draw(ImGui.GetBackgroundDrawList());
+            if (pictoDraw == null)
             {
-                if (pictoDraw == null)
-                    return;
+                ClearDrawCommands();
+                return;
+            }
 
-                lock (lockObject)
+            lock (lockObject)
+            {
+                foreach (var command in drawCommands)
                 {
-                    // Execute all queued draw commands
-                    foreach (var command in drawCommands)
+                    try
                     {
-                        try
-                        {
-                            command(pictoDraw);
-                        }
-                        catch (Exception ex)
-                        {
-                            IceLogging.Error($"Error executing draw command: {ex}");
-                        }
+                        command(pictoDraw);
                     }
-
-                    // Clear the queue for next frame
-                    drawCommands.Clear();
+                    catch (Exception ex)
+                    {
+                        IceLogging.Error($"Error executing draw command: {ex}");
+                    }
                 }
+
+                drawCommands.Clear();
             }
         }
         catch (Exception ex)
         {
+            ClearDrawCommands();
             IceLogging.Error($"Error in DrawPicto: {ex}");
         }
     }
@@ -96,10 +114,9 @@ internal static partial class PictoManager
     }
     public static void DrawVfxCircle(string id, Vector3 origin, Vector4 color)
     {
-        AddDrawCommand(pictoDraw =>
+        AddDrawCommand(_ =>
         {
-            PctService.VfxRenderer.AddCircle(id, origin, 3, color);
-            // PictoService.VfxRenderer.AddOmen(id, $"{id}_Omen", origin, color:color);
+            PctService.VfxRenderer?.AddCircle(id, origin, 3, color);
         });
     }
     public static void DrawGatheringFan(NodeLocation location, Vector3 selectedNode)
