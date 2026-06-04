@@ -203,7 +203,10 @@ internal class DebugWindow : Window
         ImGui.Text($"Mount allowed here: {NavmeshMovement.CanMountInCurrentTerritory()}");
         ImGui.Text($"Can use fly movement: {NavmeshMovement.CanUseFlyMovement()}");
         ImGui.Text($"Ready: {(P.navmesh.Installed ? P.navmesh.IsReady() : false)}");
-        ImGui.Text($"Build progress: {P.navmesh.GetBuildProgress():N2}");
+        var buildProgress = P.navmesh.Installed ? P.navmesh.GetBuildProgress() : -1f;
+        ImGui.Text(buildProgress < 0f
+            ? "Mesh: idle (vnavmesh loads on zone change when auto-load is on)"
+            : $"Build progress: {buildProgress:P0}");
         ImGui.Text($"Path running: {(P.navmesh.Installed ? P.navmesh.IsRunning() : false)}");
         ImGui.Text($"Pathfind in progress: {(P.navmesh.Installed ? P.navmesh.IsPathfindInProgress() : false)}");
         ImGui.Text($"Owns path: {NavmeshRuntime.OwnsPath}");

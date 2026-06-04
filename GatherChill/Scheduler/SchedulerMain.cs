@@ -54,10 +54,17 @@ namespace GatherChill.Scheduler
 
         internal static void Tick()
         {
-            if (P.taskManager.NumQueuedTasks == 0 && State != IceState.Idle && RouteId.HasValue && ItemId.HasValue)
-            {
+            if (State == IceState.Idle || !RouteId.HasValue || !ItemId.HasValue)
+                return;
+
+            // NumQueuedTasks ignores the in-flight task; re-enqueueing every tick stacked travel while gathering.
+            if (P.taskManager.NumQueuedTasks != 0 || P.taskManager.CurrentTask != null)
+                return;
+
+            if (NavmeshMovement.IsGatheringSessionActive())
+                Task_GatherRoute.EnqueueGatheringSession();
+            else
                 Task_GatherRoute.Enqueue(RouteId.Value, ItemId.Value);
-            }
         }
     }
 }

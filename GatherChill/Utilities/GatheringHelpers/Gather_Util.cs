@@ -124,9 +124,6 @@ public static partial class Gather_Util
                     }
                 }
 
-                if (type == 18)
-                    IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
-
                 if (itemIds.Count == 0)
                     continue;
             }
@@ -208,6 +205,8 @@ public static partial class Gather_Util
                 });
             }
         }
+
+        IceLogging.Verbose($"Gather sheet cache loaded: {SheetInfo.Count} routes.");
 
         foreach (var route in SheetInfo)
         {

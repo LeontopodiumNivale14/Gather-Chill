@@ -1,5 +1,6 @@
 ﻿using ECommons.EzIpcManager;
 using ECommons.GameHelpers;
+using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,24 @@ public class NavmeshIPC
     public const string Name = "vnavmesh";
     public const string Repo = "https://puni.sh/api/repository/veyn";
 
-    public NavmeshIPC() => EzIPC.Init(this, Name);
+    private static uint _lastTerritoryId;
+    private static bool _reloadRequestedForTerritory;
+    private static DateTime _lastReloadAttempt = DateTime.MinValue;
+
+    public NavmeshIPC()
+    {
+        EzIPC.Init(this, Name);
+        TryEnableAutoLoad();
+    }
+
     public bool Installed => Utils.HasPlugin(Name);
 
     [EzIPC("Nav.%m")] public readonly Func<bool> IsReady;
     [EzIPC("Nav.%m")] public readonly Func<float> BuildProgress;
     [EzIPC("Nav.%m")] public readonly Func<bool> Reload;
     [EzIPC("Nav.%m")] public readonly Func<bool> Rebuild;
+    [EzIPC("Nav.IsAutoLoad")] public readonly Func<bool> IsAutoLoad;
+    [EzIPC("Nav.SetAutoLoad")] public readonly Action<bool> SetAutoLoad;
     [EzIPC("Nav.PathfindCancelAll")] public readonly Action NavPathfindCancelAll;
     [EzIPC("Nav.PathfindInProgress")] public readonly Func<bool> NavPathfindInProgress;
     [EzIPC("Nav.%m")] public readonly Func<Vector3, Vector3, bool, Vector3> Pathfind;
@@ -53,20 +65,66 @@ public class NavmeshIPC
 
     public float GetBuildProgress() => Installed ? BuildProgress() : -1f;
 
+    /// <summary>vnavmesh reports -1 when idle; [0, 1) while loading from cache or building.</summary>
     public bool IsBuildInProgress()
     {
         var progress = GetBuildProgress();
         return progress >= 0f && progress < 1f;
     }
 
+    private void TryEnableAutoLoad()
+    {
+        if (!Installed || IsAutoLoad == null || SetAutoLoad == null)
+            return;
+
+        try
+        {
+            if (IsAutoLoad() == false)
+                SetAutoLoad(true);
+        }
+        catch (Exception ex)
+        {
+            IceLogging.Verbose($"Could not enable vnavmesh auto-load: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Nudge vnavmesh to load the current zone once. Repeated Reload() cancels in-progress builds (Mesh stuck at 0%).
+    /// </summary>
     public void TryEnsureNavMeshLoading()
     {
-        if (!Installed || IsReady())
+        if (!Installed)
             return;
+
+        // Never poke vnavmesh load/reload during harvest — Reload() clears mesh (Mesh: 0%).
+        if (NavmeshMovement.IsGatheringSessionActive())
+            return;
+
+        if (IsReady())
+        {
+            _reloadRequestedForTerritory = false;
+            return;
+        }
 
         if (IsBuildInProgress())
             return;
 
+        var territoryId = Player.Territory.RowId;
+        if (_lastTerritoryId != territoryId)
+        {
+            _lastTerritoryId = territoryId;
+            _reloadRequestedForTerritory = false;
+        }
+
+        if (_reloadRequestedForTerritory)
+            return;
+
+        var now = DateTime.UtcNow;
+        if ((now - _lastReloadAttempt).TotalSeconds < 10)
+            return;
+
+        _reloadRequestedForTerritory = true;
+        _lastReloadAttempt = now;
         Reload?.Invoke();
     }
 

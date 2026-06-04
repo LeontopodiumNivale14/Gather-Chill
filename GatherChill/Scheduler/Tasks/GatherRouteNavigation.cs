@@ -16,6 +16,10 @@ internal static class GatherRouteNavigation
     private static uint _gatherFanNodeId;
     private static Vector3? _gatherFanPoint;
 
+    public static bool IsGatheringSessionActive() => NavmeshMovement.IsGatheringSessionActive();
+
+    public static void StopMovementForGathering() => NavmeshMovement.HaltNavmeshForGathering();
+
     public static void ResetInteractRetries()
     {
         _gatherFanNodeId = 0;
@@ -79,14 +83,15 @@ internal static class GatherRouteNavigation
         }
     }
 
-    public static bool TryCompleteInteract(uint nodeId)
+    public static bool TryCompleteInteract(uint nodeId, out bool gatheringWindowOpen)
     {
+        gatheringWindowOpen = false;
         var targetNode = NavmeshMovement.GetNearestGatheringNode(nodeId);
 
-        if (Svc.Condition[ConditionFlag.Gathering] &&
-            (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady ||
-             GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady))
+        if (IsGatheringSessionActive())
         {
+            gatheringWindowOpen = true;
+            StopMovementForGathering();
             ResetInteractRetries();
             IceLogging.Info("Gathering window visible, continuing");
             return true;
@@ -94,15 +99,14 @@ internal static class GatherRouteNavigation
 
         if (targetNode == null)
         {
-            ResetInteractRetries();
-            IceLogging.Debug("No targetable gathering node found, skipping");
-            return true;
+            if (EzThrottler.Throttle("No targetable gathering node", 2000))
+                IceLogging.Debug("No targetable gathering node at fan, retrying interact");
+
+            return false;
         }
 
         if (_gatherFanPoint is { } fan && _gatherFanNodeId == nodeId && !IsAtGatherFan(fan))
         {
-            P.navmesh.StopIfOwned();
-
             if (Player.Mounted)
             {
                 Utils.Dismount();

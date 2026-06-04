@@ -31,6 +31,12 @@ namespace GatherChill.Scheduler.Tasks
 
         private static bool? MoveTo(Vector3 pos, bool forceFly, bool waitForBusy, float closeRange, bool stayMounted)
         {
+            if (NavmeshMovement.IsGatheringSessionActive())
+            {
+                NavmeshMovement.HaltNavmeshForGathering();
+                return true;
+            }
+
             var useFly = NavmeshMovement.WantsFlyPath(forceFly, pos);
             var context = useFly ? "FlyTo" : "GroundTo";
 
@@ -173,12 +179,14 @@ namespace GatherChill.Scheduler.Tasks
 
             if (!P.navmesh.IsReady())
             {
-                P.navmesh.TryEnsureNavMeshLoading();
+                if (!NavmeshMovement.IsGatheringSessionActive())
+                    P.navmesh.TryEnsureNavMeshLoading();
 
                 if (EzThrottler.Throttle($"Waiting on navmesh ({context})", 1000))
                 {
                     var navProgress = P.navmesh.GetBuildProgress();
-                    LogNav($"Waiting for navmesh ({context}), build {navProgress:N2}", false);
+                    var progressLabel = navProgress < 0f ? "idle (enable vnavmesh auto-load or wait)" : $"{navProgress:P0}";
+                    LogNav($"Waiting for navmesh ({context}), mesh {progressLabel}", false);
                 }
 
                 return false;

@@ -1,4 +1,5 @@
 ﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -20,7 +21,6 @@ internal static partial class PictoManager
     // Storage for draw commands - initialize inline to avoid any timing issues
     private static readonly List<Action<PctDrawList>> drawCommands = new();
     private static readonly object lockObject = new();
-
     // Add a draw command to be executed this frame
     public static void AddDrawCommand(Action<PctDrawList> drawAction)
     {
@@ -40,9 +40,48 @@ internal static partial class PictoManager
 
     /// <summary>World overlays need a loaded character and scene; avoid Pictomancy's internal ImGui window during plugin UI.</summary>
     public static bool CanDrawWorldOverlay()
-        => Player.Available && Svc.ClientState.IsLoggedIn;
+    {
+        if (!Svc.ClientState.IsLoggedIn || Svc.Objects.LocalPlayer == null)
+            return false;
 
-    // Main draw function - call this every frame
+        if (!Player.Available || Player.Territory.RowId == 0)
+            return false;
+
+        if (Svc.Condition[ConditionFlag.BetweenAreas] ||
+            Svc.Condition[ConditionFlag.BetweenAreas51] ||
+            Svc.Condition[ConditionFlag.LoggingOut])
+            return false;
+
+        return true;
+    }
+
+    private static bool HasPendingDrawCommands()
+    {
+        lock (lockObject)
+            return drawCommands.Count > 0;
+    }
+
+    private static PctDrawList? TryBeginDrawList()
+    {
+        // Prefer background draw list during route editor UI; fall back if scene nodes are not ready yet.
+        try
+        {
+            return PctService.Draw(ImGui.GetBackgroundDrawList());
+        }
+        catch (NullReferenceException)
+        {
+            try
+            {
+                return PctService.Draw();
+            }
+            catch (NullReferenceException)
+            {
+                return null;
+            }
+        }
+    }
+
+    // Main draw function - call this every frame (after UI has queued commands)
     public static void DrawPicto()
     {
         if (!CanDrawWorldOverlay())
@@ -51,10 +90,13 @@ internal static partial class PictoManager
             return;
         }
 
+        if (!HasPendingDrawCommands())
+            return;
+
+        PctDrawList? pictoDraw = null;
         try
         {
-            // Pass background draw list so Pictomancy does not ImGui.Begin a nested window during route editor UI.
-            using var pictoDraw = PctService.Draw(ImGui.GetBackgroundDrawList());
+            pictoDraw = TryBeginDrawList();
             if (pictoDraw == null)
             {
                 ClearDrawCommands();
@@ -71,7 +113,8 @@ internal static partial class PictoManager
                     }
                     catch (Exception ex)
                     {
-                        IceLogging.Error($"Error executing draw command: {ex}");
+                        if (EzThrottler.Throttle("Picto draw command error", 2000))
+                            IceLogging.Error($"Error executing draw command: {ex}");
                     }
                 }
 
@@ -81,7 +124,12 @@ internal static partial class PictoManager
         catch (Exception ex)
         {
             ClearDrawCommands();
-            IceLogging.Error($"Error in DrawPicto: {ex}");
+            if (EzThrottler.Throttle("Error in DrawPicto", 2000))
+                IceLogging.Error($"Error in DrawPicto: {ex}");
+        }
+        finally
+        {
+            pictoDraw?.Dispose();
         }
     }
 

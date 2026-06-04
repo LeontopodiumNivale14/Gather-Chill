@@ -57,11 +57,17 @@ internal static class GatherQueueSession
             return false;
         }
 
+        var activeCount = Batches.Sum(b => b.Targets.Count);
+        var skipped = PendingTargets.Count - activeCount;
+        if (skipped > 0)
+            IceLogging.Info($"Gather queue: {activeCount} active target(s), {skipped} skipped (Want = 0, invalid route, or timed off).");
+
         BatchIndex = 0;
         TargetIndex = 0;
         Active = true;
+        SnapshotBaselines();
         ApplyCurrentTarget();
-        IceLogging.Info($"Started gather queue: {Batches.Count} zone(s), {Batches.Sum(b => b.Targets.Count)} target(s).");
+        IceLogging.Info($"Started gather queue: {Batches.Count} zone(s), {activeCount} target(s).");
         return true;
     }
 
@@ -73,19 +79,27 @@ internal static class GatherQueueSession
         TargetIndex = 0;
     }
 
+    private static void SnapshotBaselines()
+    {
+        foreach (var target in Batches.SelectMany(b => b.Targets))
+            target.BaselineCount = Utils.GetItemCount(target.ItemId, out var count) ? count : 0;
+    }
+
     public static void CompleteCurrentTarget()
     {
         if (!Active || Batches.Count == 0)
             return;
 
         var batch = Batches[BatchIndex];
-        var finished = CurrentTarget();
-        if (finished != null && finished.TargetQuantity > 0 && Utils.GetItemCount(finished.ItemId, out var have))
-            IceLogging.Info($"Finished {finished.ItemId} in {batch.ZoneName} ({have}/{finished.TargetQuantity}).");
-        else
-            IceLogging.Info($"Finished route {SchedulerMain.RouteId} item {SchedulerMain.ItemId} in {batch.ZoneName}.");
+        LogTargetFinished(CurrentTarget(), batch.ZoneName);
 
         TargetIndex++;
+        while (TargetIndex < batch.Targets.Count && IsInventoryGoalMet(batch.Targets[TargetIndex]))
+        {
+            LogTargetFinished(batch.Targets[TargetIndex], batch.ZoneName, skipped: true);
+            TargetIndex++;
+        }
+
         if (TargetIndex < batch.Targets.Count)
         {
             ApplyCurrentTarget();
@@ -125,10 +139,31 @@ internal static class GatherQueueSession
         if (target == null)
             return true;
 
-        if (target.TargetQuantity <= 0)
-            return true;
+        return IsInventoryGoalMet(target);
+    }
 
-        return Utils.GetItemCount(target.ItemId, out var count) && count >= target.TargetQuantity;
+    private static bool IsInventoryGoalMet(GatherTarget target)
+    {
+        if (target.TargetQuantity <= 0)
+            return false;
+
+        if (!Utils.GetItemCount(target.ItemId, out var count))
+            return false;
+
+        var baseline = target.BaselineCount ?? count;
+        return count >= baseline + target.TargetQuantity;
+    }
+
+    private static void LogTargetFinished(GatherTarget? target, string zoneName, bool skipped = false)
+    {
+        if (target == null)
+            return;
+
+        var prefix = skipped ? "Skipped" : "Finished";
+        if (target.TargetQuantity > 0 && target.TryGetGatherProgress(out var gathered, out var goal))
+            IceLogging.Info($"{prefix} item {target.ItemId} in {zoneName} (gathered {gathered}/{goal}).");
+        else
+            IceLogging.Info($"{prefix} route {target.RouteId} item {target.ItemId} in {zoneName}.");
     }
 
     public static string ProgressLabel
@@ -140,8 +175,8 @@ internal static class GatherQueueSession
 
             var batch = Batches[BatchIndex];
             var target = batch.Targets[TargetIndex];
-            var qty = target.TargetQuantity > 0 && Utils.GetItemCount(target.ItemId, out var have)
-                ? $" — {have}/{target.TargetQuantity}"
+            var qty = target.TryGetGatherProgress(out var gathered, out var goal)
+                ? $" — {gathered}/{goal}"
                 : string.Empty;
 
             return $"Zone {BatchIndex + 1}/{Batches.Count} ({batch.ZoneName}) — target {TargetIndex + 1}/{batch.Targets.Count}{qty}";

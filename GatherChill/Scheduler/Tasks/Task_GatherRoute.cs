@@ -30,6 +30,7 @@ namespace GatherChill.Scheduler.Tasks
         private static Vector3? TargetFanPoint = null;
         private static uint? TargetNodeId = null;
         private static int NodeCheckIndex = 0;
+        private static bool _openedGatheringWindowThisNode;
 
         public static void Reset()
         {
@@ -41,15 +42,27 @@ namespace GatherChill.Scheduler.Tasks
             TargetFanPoint = null;
             TargetNodeId = null;
             NodeCheckIndex = 0;
+            _openedGatheringWindowThisNode = false;
         }
 
         public static void OnRouteTargetChanged(bool routeChanged)
         {
             if (routeChanged)
                 pendingRouteChange = true;
+            else if (SchedulerMain.QueueActive)
+                ResetRouteProgress();
 
-            if (!IsGatheringSessionActive())
+            if (!GatherRouteNavigation.IsGatheringSessionActive())
                 TryApplyPendingRouteChange();
+        }
+
+        private static void ResetRouteProgress()
+        {
+            RouteIndex = 0;
+            NodeCheckIndex = 0;
+            TargetFanPoint = null;
+            TargetNodeId = null;
+            _openedGatheringWindowThisNode = false;
         }
 
         public static void Enqueue(uint routeId, uint itemId)
@@ -57,14 +70,17 @@ namespace GatherChill.Scheduler.Tasks
             if (SchedulerMain.QueueActive)
                 P.taskManager.Enqueue(EnsureQueueTerritory, "Ensure queue territory", TaskConfig);
 
-            if (!IsGatheringSessionActive())
+            if (!GatherRouteNavigation.IsGatheringSessionActive())
                 P.taskManager.Enqueue(EnsureGatheringJob, "Ensure gathering class", TaskConfig);
 
-            if (IsGatheringSessionActive())
-                P.taskManager.Enqueue(GatheringInteraction, "Gathering Interaction", TaskConfig);
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                EnqueueGatheringSession();
             else
                 P.taskManager.Enqueue(TravelFarCheck, "Traveling to node group", TaskConfig);
         }
+
+        public static void EnqueueGatheringSession() =>
+            P.taskManager.Enqueue(GatheringInteraction, "Gathering Interaction", TaskConfig);
 
         private static bool EnsureQueueTerritory()
         {
@@ -80,7 +96,7 @@ namespace GatherChill.Scheduler.Tasks
 
         private static bool EnsureGatheringJob()
         {
-            if (!C.AutoSwapGatheringClass || IsGatheringSessionActive())
+            if (!C.AutoSwapGatheringClass || GatherRouteNavigation.IsGatheringSessionActive())
                 return true;
 
             var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
@@ -88,20 +104,6 @@ namespace GatherChill.Scheduler.Tasks
                 return true;
 
             return Utils.TrySwapToGatheringJob(route.GatheringJobId);
-        }
-
-        private static bool IsGatheringSessionActive()
-        {
-            if (Svc.Condition[ConditionFlag.Gathering])
-                return true;
-
-            if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
-                return true;
-
-            if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
-                return true;
-
-            return false;
         }
 
         private static void TryApplyPendingRouteChange()
@@ -125,6 +127,7 @@ namespace GatherChill.Scheduler.Tasks
             NodeCheckIndex = 0;
             TargetFanPoint = null;
             TargetNodeId = null;
+            _openedGatheringWindowThisNode = false;
             GatherRoute.Clear();
             foreach (var group in route.NodeInfo)
                 GatherRoute.Add(group);
@@ -134,6 +137,13 @@ namespace GatherChill.Scheduler.Tasks
 
         private static bool TravelFarCheck()
         {
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+            {
+                GatherRouteNavigation.StopMovementForGathering();
+                // End travel task so Tick can run Gathering Interaction instead of blocking here.
+                return true;
+            }
+
             TryApplyPendingRouteChange();
 
             var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
@@ -212,6 +222,12 @@ namespace GatherChill.Scheduler.Tasks
         }
         private static bool IndividualNodeCheck()
         {
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+            {
+                GatherRouteNavigation.StopMovementForGathering();
+                return true;
+            }
+
             var currentNode = GatherRoute[RouteIndex];
             TargetNodeId = currentNode.NodeId;
 
@@ -273,6 +289,9 @@ namespace GatherChill.Scheduler.Tasks
         }
         private static bool CheckTravelKind(IGameObject node)
         {
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                return true;
+
             var currentNode = GatherRoute[RouteIndex];
             var targetLocation = currentNode.Locations.FirstOrDefault(x => x.Position == node.Position);
             if (targetLocation == null)
@@ -289,25 +308,36 @@ namespace GatherChill.Scheduler.Tasks
 
         internal static bool InteractWithNode(uint nodeId)
         {
-            if (GatherRouteNavigation.TryCompleteInteract(nodeId))
-            {
-                RouteIndex += 1;
-                return true;
-            }
+            if (!GatherRouteNavigation.TryCompleteInteract(nodeId, out var gatheringOpen))
+                return false;
 
-            return false;
+            if (gatheringOpen)
+                _openedGatheringWindowThisNode = true;
+
+            return true;
         }
         private static bool GatheringInteraction()
         {
-            P.navmesh.StopIfOwned();
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                NavmeshMovement.HaltNavmeshForGathering();
 
             if (!SchedulerMain.ItemId.HasValue)
                 return true;
 
             var itemId = SchedulerMain.ItemId.Value;
+            if (SchedulerMain.QueueActive)
+            {
+                var queueTarget = GatherQueueSession.CurrentTarget();
+                if (queueTarget == null || queueTarget.TargetQuantity <= 0)
+                    return true;
+
+                itemId = queueTarget.ItemId;
+            }
 
             if (Svc.Condition[ConditionFlag.Gathering])
             {
+                _openedGatheringWindowThisNode = true;
+
                 if (!Svc.Condition[ConditionFlag.ExecutingGatheringAction])
                 {
                     if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
@@ -326,6 +356,18 @@ namespace GatherChill.Scheduler.Tasks
                                 14, 15, 16, 17, 18, 19
                             };
 
+                            var gatherTarget = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId);
+                            if (gatherTarget == null)
+                            {
+                                if (EzThrottler.Throttle($"Missing gather slot for {itemId}", 3000))
+                                    IceLogging.Warning($"Item {itemId} not in gathering window; check queue item vs node.");
+                                return false;
+                            }
+
+                            // Select the queue item before buffs so default slot (often tomato) is not gathered.
+                            if (EzThrottler.Throttle($"Select gather item: {itemId}", 200))
+                                gatherTarget.Gather();
+
                             if (Crystals.Contains(itemId))
                             {
                                 bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
@@ -336,8 +378,7 @@ namespace GatherChill.Scheduler.Tasks
                             else if (Basic_BuffCheck())
                                 return false;
 
-                            var gatherTarget = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId);
-                            if (gatherTarget != null && EzThrottler.Throttle($"Gathering Item: {itemId}"))
+                            if (EzThrottler.Throttle($"Gathering Item: {itemId}", 200))
                                 gatherTarget.Gather();
 
                             return false;
@@ -347,7 +388,17 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
             {
-                TryApplyPendingRouteChange();
+                if (GatherRouteNavigation.IsGatheringSessionActive())
+                    return false;
+
+                NavmeshMovement.ResetGatheringNavHalt();
+                if (_openedGatheringWindowThisNode)
+                {
+                    _openedGatheringWindowThisNode = false;
+                    RouteIndex += 1;
+                    TryApplyPendingRouteChange();
+                }
+
                 return true;
             }
 

@@ -5,6 +5,7 @@ using GatherChill.Scheduler;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
+using static GatherChill.Utilities.GatheringHelpers.EorzeaTimeUtil;
 using static GatherChill.Utilities.GatheringHelpers.Gather_Util;
 
 namespace GatherChill.Ui.RouteWindowTabs;
@@ -21,7 +22,7 @@ internal static class Route_GatherList
             ImGui.Separator();
         }
 
-        ImGui.TextWrapped("Build a list, then start. Items are gathered per zone (current zone first). Timed windows open now are prioritized.");
+        ImGui.TextWrapped("Build a list, then start. Want = 0 skips that row (not gathered). Want > 0 = how many more to collect. Zones run in order (current zone first); open timed windows are prioritized.");
 
         var skipInactive = C.SkipInactiveTimedNodes;
         if (ImGui.Checkbox("Skip timed nodes outside their window", ref skipInactive))
@@ -57,7 +58,7 @@ internal static class Route_GatherList
 
         if (GatherQueueSession.PendingTargets.Count > 0 &&
             GatherQueuePlanner.Plan(GatherQueueSession.PendingTargets, C.SkipInactiveTimedNodes).Count == 0)
-            ImGui.TextDisabled("No valid entries (need routes with node data).");
+            ImGui.TextDisabled("No queued entries (set Want > 0, routes need node data, or timed rows are inactive).");
     }
 
     private static void DrawTargetTable(List<GatherTarget> targets, bool skipInactiveTimed)
@@ -68,26 +69,27 @@ internal static class Route_GatherList
             return;
         }
 
-        var planned = GatherQueuePlanner.Plan(targets, skipInactiveTimed);
-        var plannedSet = planned.SelectMany(b => b.Targets).ToHashSet();
-
-        if (ImGui.BeginTable("GatherListPlan", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp))
+        if (ImGui.BeginTable("GatherListPlan", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp))
         {
             ImGui.TableSetupColumn("Zone");
             ImGui.TableSetupColumn("Route");
             ImGui.TableSetupColumn("Item");
             ImGui.TableSetupColumn("Have");
             ImGui.TableSetupColumn("Want");
+            ImGui.TableSetupColumn("Got");
             ImGui.TableSetupColumn("Timed");
             ImGui.TableSetupColumn("");
             ImGui.TableHeadersRow();
 
-            foreach (var target in targets)
+            foreach (var target in targets.ToList())
             {
                 ImGui.TableNextRow();
-                var inPlan = plannedSet.Contains(target);
-                if (!inPlan)
-                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.5f, 0.2f, 0.2f, 0.35f)));
+                var (missingRoute, skipped) = ClassifyRow(target, skipInactiveTimed);
+                if (missingRoute)
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.55f, 0.15f, 0.15f, 0.45f)));
+
+                if (skipped && !missingRoute)
+                    ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().Alpha * 0.45f);
 
                 ImGui.TableSetColumnIndex(0);
                 var zoneName = "-";
@@ -123,7 +125,29 @@ internal static class Route_GatherList
                 }
                 ImGui.PopID();
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Inventory count to reach. 0 = one route pass only.");
+                    ImGui.SetTooltip("How many more to gather this run. 0 = skip (remove row or set a number). Rows with 0 are dimmed and not queued.");
+
+                ImGui.TableNextColumn();
+                if (target.TargetQuantity <= 0)
+                    ImGui.TextDisabled("skip");
+                else if (target.TryGetGatherProgress(out var gathered, out var goal))
+                {
+                    var done = gathered >= goal;
+                    if (done)
+                        ImGui.TextColored(new Vector4(0.5f, 1f, 0.5f, 1f), $"{gathered}/{goal}");
+                    else
+                        ImGui.Text($"{gathered}/{goal}");
+                }
+                else
+                    ImGui.Text("-");
+
+                if (ImGui.IsItemHovered() && target.TargetQuantity > 0)
+                {
+                    if (target.BaselineCount is { } baseline)
+                        ImGui.SetTooltip($"Gathered since queue start (baseline {baseline}).");
+                    else
+                        ImGui.SetTooltip("Progress counts from inventory when you start the queue.");
+                }
 
                 ImGui.TableNextColumn();
                 if (SheetInfo.TryGetValue(target.RouteId, out var sheet) && sheet.TimedInfo.Count > 0)
@@ -139,9 +163,36 @@ internal static class Route_GatherList
                 if (ImGui.SmallButton("Remove"))
                     targets.Remove(target);
                 ImGui.PopID();
+
+                if (skipped && !missingRoute)
+                    ImGui.PopStyleVar();
             }
 
             ImGui.EndTable();
         }
+    }
+
+    private static (bool missingRoute, bool skipped) ClassifyRow(GatherTarget target, bool skipInactiveTimed)
+    {
+        var route = P.routeEditor.GetRoute(target.RouteId);
+        if (route == null || route.NodeInfo.Count == 0)
+            return (true, false);
+
+        if (Ignore_Routes.Contains(target.RouteId))
+            return (false, true);
+
+        if (target.TargetQuantity <= 0)
+            return (false, true);
+
+        if (SheetInfo.TryGetValue(target.RouteId, out var sheet))
+        {
+            if (!sheet.ItemIds.Contains(target.ItemId))
+                return (false, true);
+
+            if (skipInactiveTimed && GetTimedPriority(sheet) == TimedPriority.TimedInactive)
+                return (false, true);
+        }
+
+        return (false, false);
     }
 }

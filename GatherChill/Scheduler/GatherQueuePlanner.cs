@@ -28,6 +28,10 @@ internal static class GatherQueuePlanner
             if (sheet != null && !sheet.ItemIds.Contains(target.ItemId))
                 continue;
 
+            // Want 0 = listed but not part of this queue run (see Gather List tooltip).
+            if (target.TargetQuantity <= 0)
+                continue;
+
             var priority = GetTimedPriority(sheet);
             if (skipInactiveTimed && priority == TimedPriority.TimedInactive)
                 continue;
@@ -43,7 +47,7 @@ internal static class GatherQueuePlanner
                     .OrderByDescending(x => (int)x.priority)
                     .ThenBy(x => x.route.RouteId)
                     .ThenBy(x => x.target.ItemId)
-                    .Select(x => x.target)
+                    .Select(x => new GatherTarget(x.target.RouteId, x.target.ItemId, x.target.TargetQuantity))
                     .ToList();
 
                 var zoneName = g.First().route.ZoneName ?? g.First().sheet?.ZoneName ?? $"Territory {g.Key}";

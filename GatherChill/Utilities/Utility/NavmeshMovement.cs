@@ -2,11 +2,13 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
+using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GatherChill.ConfigFiles;
 using GatherChill.GatheringInfo;
 using GatherChill.IPC;
 using Lumina.Excel.Sheets;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Utilities.Utility;
 
@@ -23,6 +25,37 @@ internal static unsafe class NavmeshMovement
     public static float InteractDistance => C.NavmeshInteractDistance;
 
     public const float GatherFanCloseRange = FinalApproachCloseRange;
+
+    private static bool _haltedNavForGathering;
+
+    /// <summary>True while a gather session is actually in progress (not merely addon memory).</summary>
+    public static bool IsGatheringSessionActive()
+    {
+        if (Svc.Condition[ConditionFlag.Gathering])
+            return true;
+
+        if (Svc.Condition[ConditionFlag.ExecutingGatheringAction])
+            return true;
+
+        if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
+            return true;
+
+        return false;
+    }
+
+    /// <summary>Stop path following once per gather session. Do not call StopCompletely/PathfindCancelAll — that can reset vnavmesh.</summary>
+    public static void HaltNavmeshForGathering()
+    {
+        if (_haltedNavForGathering)
+            return;
+
+        _haltedNavForGathering = true;
+        P.navmesh.StopPath();
+        if (NavmeshRuntime.OwnsPath)
+            NavmeshRuntime.SetOwnsPath(false);
+    }
+
+    public static void ResetGatheringNavHalt() => _haltedNavForGathering = false;
 
     public static bool IsWithinHorizontalRange(Vector3 destination, float range) =>
         P.navmesh.IsWithinHorizontalRange(destination, range);
