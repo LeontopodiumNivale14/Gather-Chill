@@ -56,8 +56,11 @@ internal static class GatherRouteNavigation
 
     public static void EnqueueApproach(IGameObject node, GatheringNode group, NodeLocation targetLocation)
     {
-        var flightFan = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
-        var gatherFan = NavmeshMovement.ResolvePathPoint(GetGatherFanPoint(targetLocation, flightFan));
+        var nodePos = node.Position;
+        var flightFan = NavmeshMovement.ResolvePathPoint(
+            NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position, nodePos));
+        var gatherFan = NavmeshMovement.ResolvePathPoint(
+            NavmeshMovement.ApplyNodeStandoff(GetGatherFanPoint(targetLocation, flightFan, nodePos), nodePos));
 
         _gatherFanNodeId = node.BaseId;
         _gatherFanPoint = gatherFan;
@@ -132,7 +135,7 @@ internal static class GatherRouteNavigation
     private static bool IsAtGatherFan(Vector3 fan) =>
         Player.DistanceTo(fan) <= NavmeshMovement.GatherFanCloseRange + NavmeshMovement.InteractRetrySlack;
 
-    private static Vector3 GetGatherFanPoint(NodeLocation targetLocation, Vector3 flightFanPoint)
+    private static Vector3 GetGatherFanPoint(NodeLocation targetLocation, Vector3 flightFanPoint, Vector3 nodeWorldPos)
     {
         if (targetLocation.UseSpecificWalkingSpots && targetLocation.WalkablePositions.Count > 0)
         {
@@ -141,6 +144,6 @@ internal static class GatherRouteNavigation
                 .First();
         }
 
-        return NodeLocationExtensions.GetRandomGatherPosition(targetLocation, Player.Position);
+        return NodeLocationExtensions.GetRandomGatherPosition(targetLocation, Player.Position, nodeWorldPos);
     }
 }

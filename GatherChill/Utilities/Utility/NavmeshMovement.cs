@@ -26,6 +26,9 @@ internal static unsafe class NavmeshMovement
 
     public const float GatherFanCloseRange = FinalApproachCloseRange;
 
+    /// <summary>Keep approach points off node centers embedded in walls/cliffs.</summary>
+    public const float GatherNodeStandoff = 3f;
+
     private static bool _haltedNavForGathering;
 
     /// <summary>True while a gather session is actually in progress (not merely addon memory).</summary>
@@ -108,6 +111,24 @@ internal static unsafe class NavmeshMovement
     {
         var node = GetNearestGatheringNode(baseId);
         return node != null && IsNearGameObject(node, distance);
+    }
+
+    public static Vector3 ApplyNodeStandoff(Vector3 approachPoint, Vector3 nodePos, float minHorizontalDistance = GatherNodeStandoff)
+    {
+        var offset = approachPoint - nodePos;
+        offset.Y = 0;
+        if (offset.Length() >= minHorizontalDistance)
+            return approachPoint;
+
+        var towardPlayer = Player.Position - nodePos;
+        towardPlayer.Y = 0;
+        if (towardPlayer.LengthSquared() < 0.01f)
+            towardPlayer = new Vector3(0, 0, 1f);
+
+        towardPlayer = Vector3.Normalize(towardPlayer);
+        var standoff = nodePos + towardPlayer * minHorizontalDistance;
+        standoff.Y = approachPoint.Y;
+        return standoff;
     }
 
     public static Vector3 ResolvePathPoint(Vector3 position)

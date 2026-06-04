@@ -82,8 +82,24 @@ internal static class GatherQueueSession
     private static void SnapshotBaselines()
     {
         foreach (var target in Batches.SelectMany(b => b.Targets))
-            target.BaselineCount = Utils.GetItemCount(target.ItemId, out var count) ? count : 0;
+        {
+            var baseline = Utils.GetItemCount(target.ItemId, out var count) ? count : 0;
+            target.BaselineCount = baseline;
+            SyncBaselineToPending(target.RouteId, target.ItemId, baseline);
+        }
     }
+
+    private static void SyncBaselineToPending(uint routeId, uint itemId, int baseline)
+    {
+        var pending = PendingTargets.FirstOrDefault(t => t.RouteId == routeId && t.ItemId == itemId);
+        if (pending != null)
+            pending.BaselineCount = baseline;
+    }
+
+    public static GatherTarget? FindBatchTarget(uint routeId, uint itemId) =>
+        Active
+            ? Batches.SelectMany(b => b.Targets).FirstOrDefault(t => t.RouteId == routeId && t.ItemId == itemId)
+            : null;
 
     public static void CompleteCurrentTarget()
     {

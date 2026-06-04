@@ -128,9 +128,10 @@ internal static class Route_GatherList
                     ImGui.SetTooltip("How many more to gather this run. 0 = skip (remove row or set a number). Rows with 0 are dimmed and not queued.");
 
                 ImGui.TableNextColumn();
+                var progressTarget = GatherQueueSession.FindBatchTarget(target.RouteId, target.ItemId) ?? target;
                 if (target.TargetQuantity <= 0)
                     ImGui.TextDisabled("skip");
-                else if (target.TryGetGatherProgress(out var gathered, out var goal))
+                else if (progressTarget.TryGetGatherProgress(out var gathered, out var goal))
                 {
                     var done = gathered >= goal;
                     if (done)
@@ -143,7 +144,7 @@ internal static class Route_GatherList
 
                 if (ImGui.IsItemHovered() && target.TargetQuantity > 0)
                 {
-                    if (target.BaselineCount is { } baseline)
+                    if (progressTarget.BaselineCount is { } baseline)
                         ImGui.SetTooltip($"Gathered since queue start (baseline {baseline}).");
                     else
                         ImGui.SetTooltip("Progress counts from inventory when you start the queue.");
