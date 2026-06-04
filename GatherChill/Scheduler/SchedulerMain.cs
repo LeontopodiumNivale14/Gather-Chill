@@ -3,6 +3,7 @@
 #nullable disable
 using GatherChill.Enums;
 using GatherChill.Scheduler.Tasks;
+using GatherChill.Utilities.Utility;
 
 namespace GatherChill.Scheduler
 {
@@ -15,6 +16,8 @@ namespace GatherChill.Scheduler
         internal static bool DisablePlugin()
         {
             P.navmesh.SmartStop();
+            Task_NavmeshMove.ReleaseOwnedPath();
+            NavmeshRuntime.Reset();
             P.taskManager.Abort();
 
             RouteId = null;

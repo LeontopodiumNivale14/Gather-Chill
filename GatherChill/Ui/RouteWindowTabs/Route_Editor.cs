@@ -481,7 +481,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 if (ImGui.Button("Stop Navmesh"))
                 {
-                    P.navmesh.PathStop();
+                    P.navmesh.StopCompletely();
                 }
 
                 // Validate selectedNodeId — fall back to first if missing

@@ -3,6 +3,7 @@ using ECommons.GameHelpers;
 using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using GatherChill.ConfigFiles;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 
@@ -10,264 +11,253 @@ namespace GatherChill.Scheduler.Tasks
 {
     internal class Task_NavmeshMove
     {
-        private static Vector3? _pointOnGround = null;
+        private const float PathTolerance = 0.25f;
+        private const float StuckDistanceThreshold = 1.0f;
+        private const int StuckTimeThresholdMs = 3000;
+        private const int MaxStuckRecoveries = 3;
+        private const float GroundDismountDistance = 3f;
 
-        public static void Enqueue()
+        private static Vector3 _lastPosition;
+        private static DateTime _lastPositionChange = DateTime.Now;
+        private static int _stuckAttempts;
+
+        public static bool? Task_FlyTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false) =>
+            MoveTo(pos, forceFly: true, waitForBusy, distance, stayMounted);
+
+        public static bool? Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false) =>
+            MoveTo(pos, forceFly: false, waitForBusy, distance, stayMounted);
+
+        public static void ReleaseOwnedPath() => P.navmesh.StopIfOwned();
+
+        private static bool? MoveTo(Vector3 pos, bool forceFly, bool waitForBusy, float closeRange, bool stayMounted)
         {
+            var useFly = NavmeshMovement.WantsFlyPath(forceFly, pos);
+            var context = useFly ? "FlyTo" : "GroundTo";
 
-        }
-
-        public static bool? Task_FlyTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
-        {
-            bool isFlying = Svc.Condition[ConditionFlag.InFlight];
-            bool mounted = Player.Mounted;
-
-            bool JumpIfStuck = true;
-
-            if (!P.navmesh.Installed)
-                return true;
-
-            else if (!P.navmesh.IsReady())
+            if (!C.NavmeshMovementEnabled)
             {
-                if (EzThrottler.Throttle("Waiting on navmesh", 1000))
-                {
-                    var navProgress = P.navmesh.BuildProgress();
-                }
+                if (NavmeshMovement.IsWithinHorizontalRange(pos, closeRange))
+                    return true;
+
+                NavmeshRuntime.SetFailure("Navmesh movement disabled in config");
+                return false;
             }
-            else if (P.navmesh.IsRunning())
-            {
-                if (JumpIfStuck)
-                {
-                    if (CheckAndHandleStuck())
-                    {
-                        return false;
-                    }
-                }
 
-                if (!mounted)
+            if (!TryEnsureNavmeshReady(context))
+                return false;
+
+            pos = NavmeshMovement.ResolvePathPoint(pos);
+            NavmeshRuntime.SetMoveAttempt(context, pos, closeRange);
+
+            if (P.navmesh.TickArrival(pos, closeRange))
+                return HandleArrival(stayMounted, context);
+
+            if (P.navmesh.IsMoving())
+            {
+                NavmeshRuntime.SetOwnsPath(true);
+
+                if (CheckAndHandleStuck(context))
+                    return false;
+
+                if (useFly && !Player.Mounted)
                 {
-                    // We should never be not mounting here, so going to just stop the current navmesh and restart it
                     if (EzThrottler.Throttle("Emergency Navmesh Stop | Fly"))
-                        P.navmesh.PathStop();
+                        StopOwned();
 
                     return false;
+                }
+
+                if (!useFly && !Player.Mounted && Player.DistanceTo(pos) > NavmeshMovement.LongMoveMountDistance)
+                {
+                    if (EzThrottler.Throttle("Using mount"))
+                        Utils.MountAction();
+                }
+
+                if (!useFly && Player.DistanceTo(pos) <= GroundDismountDistance && !stayMounted)
+                {
+                    if (EzThrottler.Throttle("Dismounting the mount"))
+                        Utils.Dismount();
                 }
 
                 if (Player.IsMoving && waitForBusy)
-                {
-                    // We were told to wait for us to stop moving, so we're going to do so
                     return false;
-                }
-                else if (!waitForBusy && Player.DistanceTo(pos) <= distance)
-                {
-                    if (EzThrottler.Throttle("Telling navmesh to stop"))
-                    {
-                        P.navmesh.PathStop();
-                    }
-                }
 
+                return false;
             }
-            else if (!P.navmesh.IsRunning())
+
+            if (!useFly && Player.DistanceTo(pos) >= NavmeshMovement.LongMoveMountDistance)
             {
-                if (Player.DistanceTo(new Vector2(pos.X, pos.Z)) < distance)
-                // if (Player.DistanceTo(pos) < distance)
+                if (!Player.Mounted)
                 {
-                    // We're close enough to the area, time to check for mounting/flying
-                    if (mounted && !stayMounted)
-                    {
-                        Utils.Dismount();
-                        return false;
-                    }
-                    else if (Player.IsJumping)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        ResetInfo();
-                        return true;
-                    }
-                }
-                else if (!Player.Mounted)
-                {
-                    // We have fly set to true, but not mounted to actually fly so, starting with that
-                    if (EzThrottler.Throttle("Telling us to mount"))
+                    if (EzThrottler.Throttle("Mounting for long ground move"))
                         Utils.MountAction();
 
                     return false;
                 }
-                else
-                {
-                    // All other conditions have been met to start navmesh moving
-                    // And we're not close enough to the point, so starting to move now
-                    if (EzThrottler.Throttle("Commence Navmesh Movement"))
-                    {
-                        P.navmesh.SetTolerance(0.25f);
-                        IceLogging.DestinationLogs.Log(pos);
-                        P.navmesh.PathfindAndMoveTo(pos, true);
-                    }
-                }
+            }
+            else if (useFly && !Player.Mounted)
+            {
+                if (EzThrottler.Throttle("Telling us to mount"))
+                    Utils.MountAction();
+
+                return false;
             }
 
-            return false;
-        }
-
-        public static bool? Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
-        {
-            bool mounted = Player.Mounted;
-            float minMountDistance = 15;
-            float dismountDistance = 3;
-
-            if (!P.navmesh.Installed)
+            if (EzThrottler.Throttle($"Commence Navmesh Movement ({context})"))
             {
-                PluginLog.Information("We seem to be missing navmesh... so we're just going to exit here");
-                return true;
-            }
-            else if (P.navmesh.IsRunning())
-            {
-                // TODO: FIX THIS
-                if (true)
-                {
-                    if (CheckAndHandleStuck())
-                    {
-                        return false; // Let the stuck handler take control
-                    }
-                }
+                if (forceFly && !useFly && EzThrottler.Throttle("Fly not unlocked, using ground", 5000))
+                    LogNav("Flight not unlocked in this zone; using ground movement.", false);
 
-                if (!mounted && Player.DistanceTo(pos) > minMountDistance)
+                P.navmesh.SetTolerance(PathTolerance);
+                IceLogging.DestinationLogs.Log(pos);
+                BeginStuckTracking();
+                if (!TryStartMove(pos, useFly, closeRange) &&
+                    useFly &&
+                    !TryStartMove(pos, fly: false, closeRange))
                 {
-                    if (true)
-                    {
-                        if (EzThrottler.Throttle("Using mount"))
-                            Utils.MountAction();
-                    }
-                }
-
-                if (Player.DistanceTo(pos) <= dismountDistance && !stayMounted)
-                {
-                    if (EzThrottler.Throttle("Dismounting the mount"))
-                    {
-                        Utils.Dismount();
-                    }
-                }
-
-                if (Player.IsMoving && waitForBusy)
-                {
-                    if (EzThrottler.Throttle("Throttle message tehe"))
-                        PluginLog.Verbose("We're currently moving, and we were told to wait for us to NOT be moving so... yeah, we waiting");
+                    var msg = $"Could not start movement to {pos}";
+                    NavmeshRuntime.SetFailure(msg);
+                    if (EzThrottler.Throttle($"Navmesh pathfind failed ({context})", 2000))
+                        LogNav(msg, true);
 
                     return false;
                 }
-                else if (!waitForBusy && Player.DistanceTo(new Vector2(pos.X, pos.Z)) <= distance)
+
+                if (!P.navmesh.IsMoving())
                 {
-                    if (EzThrottler.Throttle("Telling navmesh to stop"))
-                    {
-                        PluginLog.Debug("We're within stopping distance, so stopping navmesh");
-                        P.navmesh.PathStop();
-                    }
+                    var msg = $"Movement did not start for {pos}";
+                    NavmeshRuntime.SetFailure(msg);
+                    if (EzThrottler.Throttle($"Navmesh did not start ({context})", 2000))
+                        LogNav(msg, true);
+
+                    return false;
                 }
-            }
-            else if (!P.navmesh.IsReady())
-            {
-                if (EzThrottler.Throttle("Waiting on navmesh", 1000))
-                {
-                    var navProgress = P.navmesh.BuildProgress();
-                    PluginLog.Debug($"Waiting for navmesh to finish building. Currently at: {navProgress:N2}");
-                }
-            }
-            else if (!P.navmesh.IsRunning())
-            {
-                if (Player.DistanceTo(new Vector2(pos.X, pos.Z)) < distance)
-                {
-                    if (mounted && !stayMounted)
-                    {
-                        if (EzThrottler.Throttle("Dismounting the mount"))
-                        {
-                            Utils.Dismount();
-                        }
-                        return false;
-                    }
-                    else if (Player.IsJumping)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        PluginLog.Debug("We've met the distance threshold, continuing on");
-                        ResetInfo();
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (EzThrottler.Throttle("Telling navmesh to start"))
-                    {
-                        P.navmesh.SetTolerance(0.25f);
-                        PluginLog.Debug("We're setting the tolerance to 0.25f here");
-                        IceLogging.DestinationLogs.Log(pos);
-                        P.navmesh.PathfindAndMoveTo(pos, false);
-                    }
-                }
+
+                NavmeshRuntime.SetOwnsPath(true);
             }
 
             return false;
         }
 
-        private static Vector3 _lastPosition = Vector3.Zero;
-        private static DateTime _lastPositionChange = DateTime.Now;
-        private static int _stuckAttempts = 0;
-        private const float STUCK_DISTANCE_THRESHOLD = 1.0f; // Consider stuck if moved less than this
-        private const int STUCK_TIME_THRESHOLD = 3000; // Time in ms before considering stuck
+        private static bool TryStartMove(Vector3 pos, bool fly, float closeRange) =>
+            P.navmesh.TryMoveTo(pos, fly, closeRange);
 
-        private static unsafe bool CheckAndHandleStuck()
+        private static bool? HandleArrival(bool stayMounted, string context)
+        {
+            if (Player.Mounted && !stayMounted)
+            {
+                Utils.Dismount();
+                return false;
+            }
+
+            if (Player.IsJumping)
+                return false;
+
+            ClearStuckTracking();
+            NavmeshRuntime.SetOwnsPath(false);
+            LogNav($"Arrived ({context})", false);
+            return true;
+        }
+
+        private static bool TryEnsureNavmeshReady(string context)
+        {
+            if (!P.navmesh.Installed)
+            {
+                var msg = "vnavmesh is not installed";
+                NavmeshRuntime.SetFailure(msg);
+                if (EzThrottler.Throttle($"Navmesh missing ({context})", 5000))
+                    IceLogging.Error(msg);
+
+                return false;
+            }
+
+            if (!P.navmesh.IsReady())
+            {
+                P.navmesh.TryEnsureNavMeshLoading();
+
+                if (EzThrottler.Throttle($"Waiting on navmesh ({context})", 1000))
+                {
+                    var navProgress = P.navmesh.GetBuildProgress();
+                    LogNav($"Waiting for navmesh ({context}), build {navProgress:N2}", false);
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private static unsafe bool CheckAndHandleStuck(string context)
         {
             var currentPos = Player.Position;
             var timeSinceLastChange = (DateTime.Now - _lastPositionChange).TotalMilliseconds;
 
-            // Check if we've moved significantly
-            if (Vector3.Distance(currentPos, _lastPosition) > STUCK_DISTANCE_THRESHOLD)
+            if (Vector3.Distance(currentPos, _lastPosition) > StuckDistanceThreshold)
             {
-                // We moved, reset tracking
-                ResetInfo();
+                BeginStuckTracking();
+                NavmeshRuntime.SetStuckAttempts(_stuckAttempts);
                 return false;
             }
 
-            // We haven't moved much, check if we've been stuck long enough
-            if (timeSinceLastChange > STUCK_TIME_THRESHOLD)
-            {
-                _stuckAttempts++;
+            if (timeSinceLastChange <= StuckTimeThresholdMs)
+                return false;
 
-                if (_stuckAttempts == 1)
-                {
-                    // First attempt: try jumping
-                    if (EzThrottler.Throttle("Stuck - attempting jump", 1000))
-                    {
-                        ActionManager.Instance()->UseAction(ActionType.GeneralAction, 2);
-                        _lastPositionChange = DateTime.Now; // Give it time to work
-                    }
-                    return true;
-                }
-                else if (_stuckAttempts >= 2)
-                {
-                    // Second attempt: stop navmesh after jump had time to execute
-                    if (EzThrottler.Throttle("Stuck - stopping navmesh", 1000))
-                    {
-                        P.navmesh.PathStop();
-                        _stuckAttempts = 0; // Reset for next time
-                        _lastPositionChange = DateTime.Now;
-                    }
-                    return true;
-                }
+            _stuckAttempts++;
+            NavmeshRuntime.SetStuckAttempts(_stuckAttempts);
+
+            if (_stuckAttempts > MaxStuckRecoveries)
+            {
+                var msg = $"Stuck too many times ({context})";
+                NavmeshRuntime.SetFailure(msg);
+                StopOwned();
+                if (EzThrottler.Throttle($"Navmesh stuck give up ({context})", 3000))
+                    LogNav(msg, true);
+
+                return false;
             }
 
-            return false;
+            if (_stuckAttempts == 1)
+            {
+                if (EzThrottler.Throttle("Stuck - attempting jump", 1000))
+                {
+                    ActionManager.Instance()->UseAction(ActionType.GeneralAction, 2);
+                    _lastPositionChange = DateTime.Now;
+                    LogNav($"Stuck, jumping ({context})", false);
+                }
+
+                return true;
+            }
+
+            if (EzThrottler.Throttle("Stuck - stopping navmesh", 1000))
+            {
+                StopOwned();
+                BeginStuckTracking();
+                LogNav($"Stuck, restarting path ({context})", false);
+            }
+
+            return true;
         }
 
-        public static void ResetInfo()
+        private static void StopOwned() => P.navmesh.StopIfOwned();
+
+        private static void LogNav(string message, bool warning)
         {
-            _lastPosition = Vector3.Zero;
+            if (warning)
+                IceLogging.Warning(message);
+            else if (C.NavmeshVerboseLogging)
+                IceLogging.Debug(message);
+        }
+
+        private static void BeginStuckTracking()
+        {
+            _lastPosition = Player.Position;
             _lastPositionChange = DateTime.Now;
             _stuckAttempts = 0;
+            NavmeshRuntime.SetStuckAttempts(0);
         }
+
+        public static void ClearStuckTracking() => BeginStuckTracking();
+
+        public static void ResetInfo() => BeginStuckTracking();
     }
 }
