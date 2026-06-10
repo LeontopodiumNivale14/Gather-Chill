@@ -184,6 +184,7 @@ namespace GatherChill.Scheduler.Tasks
                 IceLogging.Verbose("Currently in travel check mode");
 
             // bool allNodesInRange = currentNode.Locations.All(x => Player.DistanceTo(x.Position.ToVector3()) <= loadRange);
+            // Outside load range: fly/ground toward the node's flight fan (GatherRouteNavigation).
             if (Player.DistanceTo(currentNode.Locations[0].Position) > NavmeshMovement.LoadRange)
             {
                 TargetFanPoint = null;
@@ -306,6 +307,7 @@ namespace GatherChill.Scheduler.Tasks
             return true;
         }
 
+        // Scheduler step after EnqueueApproach — targets node and opens gathering window.
         internal static bool InteractWithNode(uint nodeId)
         {
             if (!GatherRouteNavigation.TryCompleteInteract(nodeId, out var gatheringOpen))
@@ -318,6 +320,7 @@ namespace GatherChill.Scheduler.Tasks
         }
         private static bool GatheringInteraction()
         {
+            // Stop path following once gathering starts; ResetGatheringNavHalt when node is done.
             if (GatherRouteNavigation.IsGatheringSessionActive())
                 NavmeshMovement.HaltNavmeshForGathering();
 

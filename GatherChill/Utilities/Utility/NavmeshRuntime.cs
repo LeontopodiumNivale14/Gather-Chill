@@ -2,8 +2,13 @@ using System.Numerics;
 
 namespace GatherChill.Utilities.Utility;
 
+/// <summary>
+/// Lightweight state for the debug window and stuck-recovery logging.
+/// Not persisted — reset when movement stops or the scheduler clears tasks.
+/// </summary>
 internal static class NavmeshRuntime
 {
+    /// <summary>True when GatherChill started the current vnavmesh path (so we only stop paths we own).</summary>
     public static bool OwnsPath { get; private set; }
     public static string LastMoveContext { get; private set; } = "";
     public static Vector3 LastDestination { get; private set; }

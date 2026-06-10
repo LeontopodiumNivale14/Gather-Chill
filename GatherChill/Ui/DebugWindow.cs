@@ -196,6 +196,7 @@ internal class DebugWindow : Window
             ImGui.EndTable();
         }
     }
+    // Live vnavmesh + NavmeshRuntime state — useful when pathing stalls or mesh shows idle at 0%.
     private static void DrawNavmeshDebug()
     {
         ImGui.Text($"Installed: {P.navmesh.Installed}");

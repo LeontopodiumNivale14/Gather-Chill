@@ -9,6 +9,11 @@ using GatherChill.Utilities.Utility;
 
 namespace GatherChill.Scheduler.Tasks
 {
+    /// <summary>
+    /// Scheduler-facing movement task. Talks to vnavmesh via <see cref="IPC.NavmeshIPC"/>,
+    /// handles mount/dismount, stuck recovery (jump → restart path), and arrival detection.
+    /// Route gathering should call <see cref="GatherRouteNavigation"/> instead of this directly.
+    /// </summary>
     internal class Task_NavmeshMove
     {
         private const float PathTolerance = 0.25f;
@@ -21,16 +26,20 @@ namespace GatherChill.Scheduler.Tasks
         private static DateTime _lastPositionChange = DateTime.Now;
         private static int _stuckAttempts;
 
+        /// <summary>Fly path when unlocked; falls back to ground inside MoveTo.</summary>
         public static bool? Task_FlyTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false) =>
             MoveTo(pos, forceFly: true, waitForBusy, distance, stayMounted);
 
+        /// <summary>Ground path; may auto-mount for long distances.</summary>
         public static bool? Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false) =>
             MoveTo(pos, forceFly: false, waitForBusy, distance, stayMounted);
 
         public static void ReleaseOwnedPath() => P.navmesh.StopIfOwned();
 
+        /// <returns>true when arrived, false on failure/timeout, null while still moving.</returns>
         private static bool? MoveTo(Vector3 pos, bool forceFly, bool waitForBusy, float closeRange, bool stayMounted)
         {
+            // Gathering UI open: halt path once and let Task_GatherRoute handle interact — never PathfindCancelAll.
             if (NavmeshMovement.IsGatheringSessionActive())
             {
                 NavmeshMovement.HaltNavmeshForGathering();
@@ -195,6 +204,7 @@ namespace GatherChill.Scheduler.Tasks
             return true;
         }
 
+        /// <summary>Stuck ladder: wait → jump → stop and restart path → give up after MaxStuckRecoveries.</summary>
         private static unsafe bool CheckAndHandleStuck(string context)
         {
             var currentPos = Player.Position;

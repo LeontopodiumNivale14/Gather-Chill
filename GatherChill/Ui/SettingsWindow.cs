@@ -41,6 +41,7 @@ internal class SettingsWindow : Window
         }
     }
 
+    // vnavmesh movement options (Config_Navmesh). See NavmeshIPC / Task_NavmeshMove for behavior.
     private static void DrawNavigationSettings()
     {
         var enabled = C.NavmeshMovementEnabled;

@@ -11,8 +11,14 @@ using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Scheduler.Tasks;
 
+/// <summary>
+/// Gathering-specific navigation layered on <see cref="Task_NavmeshMove"/>.
+/// Implements the two-stage "fan" approach: fly to a flight fan (optional), ground walk to a gather fan,
+/// then interact. <see cref="TryCompleteInteract"/> retries targeting when the node didn't open.
+/// </summary>
 internal static class GatherRouteNavigation
 {
+    // Remember which gather fan we walked to so interact retries can re-path if we're still short.
     private static uint _gatherFanNodeId;
     private static Vector3? _gatherFanPoint;
 
@@ -54,6 +60,10 @@ internal static class GatherRouteNavigation
     public static bool TryFlyToPoint(Vector3 point, float closeRange, bool stayMounted = false) =>
         Task_NavmeshMove.Task_FlyTo(NavmeshMovement.ResolvePathPoint(point), waitForBusy: true, closeRange, stayMounted) == true;
 
+    /// <summary>
+    /// Queue fly→ground→interact (or ground→interact) based on node flight settings and distance.
+    /// Flight and gather fans come from route NodeLocation fan points, with standoff applied to gather fan.
+    /// </summary>
     public static void EnqueueApproach(IGameObject node, GatheringNode group, NodeLocation targetLocation)
     {
         var nodePos = node.Position;
@@ -86,6 +96,10 @@ internal static class GatherRouteNavigation
         }
     }
 
+    /// <summary>
+    /// Called each tick while waiting for the gathering window. Returns true when gathering started.
+    /// Re-targets and re-walks to gather fan if interact failed but the node is still targetable.
+    /// </summary>
     public static bool TryCompleteInteract(uint nodeId, out bool gatheringWindowOpen)
     {
         gatheringWindowOpen = false;
@@ -135,6 +149,7 @@ internal static class GatherRouteNavigation
     private static bool IsAtGatherFan(Vector3 fan) =>
         Player.DistanceTo(fan) <= NavmeshMovement.GatherFanCloseRange + NavmeshMovement.InteractRetrySlack;
 
+    /// <summary>Prefer explicit walk spots from the route editor; otherwise random gather fan around the node.</summary>
     private static Vector3 GetGatherFanPoint(NodeLocation targetLocation, Vector3 flightFanPoint, Vector3 nodeWorldPos)
     {
         if (targetLocation.UseSpecificWalkingSpots && targetLocation.WalkablePositions.Count > 0)

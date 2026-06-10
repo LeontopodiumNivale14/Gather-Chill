@@ -8,6 +8,11 @@ using System.Collections.Generic;
 #nullable disable
 namespace GatherChill.IPC;
 
+/// <summary>
+/// IPC bridge to the vnavmesh plugin. Higher-level movement lives in
+/// <see cref="Scheduler.Tasks.Task_NavmeshMove"/>; this class wraps EzIPC calls,
+/// mesh loading, and safe stop helpers (StopIfOwned vs StopCompletely).
+/// </summary>
 public class NavmeshIPC
 {
     public const string Name = "vnavmesh";
@@ -25,6 +30,7 @@ public class NavmeshIPC
 
     public bool Installed => Utils.HasPlugin(Name);
 
+    // --- Nav: mesh build / reload ---
     [EzIPC("Nav.%m")] public readonly Func<bool> IsReady;
     [EzIPC("Nav.%m")] public readonly Func<float> BuildProgress;
     [EzIPC("Nav.%m")] public readonly Func<bool> Reload;
@@ -35,16 +41,19 @@ public class NavmeshIPC
     [EzIPC("Nav.PathfindInProgress")] public readonly Func<bool> NavPathfindInProgress;
     [EzIPC("Nav.%m")] public readonly Func<Vector3, Vector3, bool, Vector3> Pathfind;
 
+    // --- SimpleMove: one-shot pathfind + follow (used by Task_NavmeshMove) ---
     [EzIPC("SimpleMove.%m")] public readonly Func<Vector3, bool, bool> PathfindAndMoveTo;
     [EzIPC("SimpleMove.PathfindAndMoveCloseTo")] public readonly Func<Vector3, bool, float, bool> PathfindAndMoveCloseTo;
     [EzIPC("SimpleMove.%m")] public readonly Func<bool> PathfindInProgress;
 
+    // --- Path: ongoing path control ---
     [EzIPC("Path.%m")] public readonly Action<List<Vector3>, bool> MoveTo;
     [EzIPC("Path.Stop")] public readonly Action PathStop;
     [EzIPC("Path.%m")] public readonly Action<bool> SetAlignCamera;
     [EzIPC("Path.%m")] public readonly Func<bool> IsRunning;
     [EzIPC("Path.%m")] public readonly Action<float> SetTolerance;
 
+    // --- Query.Mesh: snap editor points onto walkable mesh ---
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float, Vector3?> NearestPoint;
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, bool, float, Vector3?> PointOnFloor;
     [EzIPC("Query.Mesh.%m")] public readonly Func<Vector3, float, float, Vector3?> NearestPointReachable;
@@ -145,6 +154,7 @@ public class NavmeshIPC
     public bool TryPathfindAndMoveCloseTo(Vector3 destination, bool fly, float range) =>
         Installed && IsReady() && PathfindAndMoveCloseTo(destination, fly, range);
 
+    /// <summary>Pathfind toward destination; optional horizontal closeRange treats arrival as success.</summary>
     public bool TryMoveTo(Vector3 destination, bool fly, float closeRange = 0f)
     {
         if (closeRange > 0f && IsWithinHorizontalRange(destination, closeRange))
@@ -183,6 +193,10 @@ public class NavmeshIPC
         NavPathfindCancelAll?.Invoke();
     }
 
+    /// <summary>
+    /// Stop only when we started the path. Avoids cancelling unrelated vnavmesh usage
+    /// (manual /other plugins) and is safer than StopCompletely during gathering.
+    /// </summary>
     public void StopIfOwned()
     {
         if (!NavmeshRuntime.OwnsPath)

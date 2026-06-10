@@ -12,15 +12,21 @@ using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Utilities.Utility;
 
+/// <summary>
+/// Shared navmesh helpers used by route gathering and the route editor.
+/// Keeps movement constants, fly/mount eligibility, node standoff math, and gathering-session guards
+/// in one place so <see cref="Scheduler.Tasks.Task_NavmeshMove"/> and <see cref="Scheduler.Tasks.GatherRouteNavigation"/> stay thin.
+/// </summary>
 internal static unsafe class NavmeshMovement
 {
-    public const float LoadRange = 75f;
-    public const float FanApproachCloseRange = 50f;
+    // Distance thresholds for the gather-route approach pipeline (see GatherRouteNavigation).
+    public const float LoadRange = 75f;              // Skip nav if already within node load range
+    public const float FanApproachCloseRange = 50f;  // Close enough to switch from fly fan to ground fan
     public const float FinalApproachCloseRange = 0.5f;
-    public const float LongMoveMountDistance = 30f;
-    public const float PreferFlyDistance = 25f;
+    public const float LongMoveMountDistance = 30f; // Ground moves beyond this auto-mount
+    public const float PreferFlyDistance = 25f;       // Auto-fly when target is farther than this
     public const float NearbyObjectCullDistance = 30f;
-    public const float InteractRetrySlack = 0.5f;
+    public const float InteractRetrySlack = 0.5f;     // Extra tolerance when re-walking to gather fan after failed interact
 
     public static float InteractDistance => C.NavmeshInteractDistance;
 
@@ -29,6 +35,7 @@ internal static unsafe class NavmeshMovement
     /// <summary>Keep approach points off node centers embedded in walls/cliffs.</summary>
     public const float GatherNodeStandoff = 3f;
 
+    // One-shot flag: we only StopPath() once per gather window so vnavmesh keeps its loaded mesh.
     private static bool _haltedNavForGathering;
 
     /// <summary>True while a gather session is actually in progress (not merely addon memory).</summary>
@@ -113,6 +120,10 @@ internal static unsafe class NavmeshMovement
         return node != null && IsNearGameObject(node, distance);
     }
 
+    /// <summary>
+    /// Route fan points can land on the node center; many nodes sit in cliffs/walls.
+    /// Push the standoff horizontally toward the player so pathfinding targets walkable ground.
+    /// </summary>
     public static Vector3 ApplyNodeStandoff(Vector3 approachPoint, Vector3 nodePos, float minHorizontalDistance = GatherNodeStandoff)
     {
         var offset = approachPoint - nodePos;
@@ -131,6 +142,10 @@ internal static unsafe class NavmeshMovement
         return standoff;
     }
 
+    /// <summary>
+    /// Snap editor/route coordinates onto vnavmesh floor before pathfind. Handles indoor territories
+    /// and elevated points (flying fans) without dropping the player below intended height.
+    /// </summary>
     public static Vector3 ResolvePathPoint(Vector3 position)
     {
         if (!P.navmesh.Installed || !P.navmesh.IsReady())

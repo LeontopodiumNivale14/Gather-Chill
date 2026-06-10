@@ -8,6 +8,10 @@ using GatherChill.Utilities.Utility;
 
 namespace GatherChill.Scheduler.Tasks;
 
+/// <summary>
+/// Route editor helpers: enqueue a single pathfind step so the player walks to a fan point
+/// while editing routes ("Pathfind to gather fan" / "Pathfind to flight fan" buttons).
+/// </summary>
 internal static class NavmeshEditorPath
 {
     private static bool _active;
