@@ -4,7 +4,7 @@
   "zoneName": "The Ruby Sea",
   "placeName": "Eastern Barrier Isle",
   "expansionId": 2,
-  "gatheringJobId": 18,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     34326,
@@ -18,23 +18,23 @@
       "locations": [
         {
           "position": {
-            "x": 833.6738,
-            "y": -103.1547,
-            "z": 462.7366
+            "x": 899.823,
+            "y": 0,
+            "z": 519.275
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -43,82 +43,58 @@
       ]
     },
     {
-      "groupId": 1,
-      "nodeId": 34328,
-      "locations": [
-        {
-          "position": {
-            "x": 923.993,
-            "y": -58.83629,
-            "z": 612.2087
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        },
-        {
-          "position": {
-            "x": 875.3557,
-            "y": -75.18928,
-            "z": 606.2865
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        }
-      ]
-    },
-    {
-      "groupId": 2,
+      "groupId": 0,
       "nodeId": 34327,
       "locations": [
         {
           "position": {
-            "x": 966.2717,
-            "y": -133.7495,
-            "z": 395.8695
+            "x": 899.823,
+            "y": 0,
+            "z": 519.275
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 0,
+      "nodeId": 34328,
+      "locations": [
+        {
+          "position": {
+            "x": 899.823,
+            "y": 0,
+            "z": 519.275
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,

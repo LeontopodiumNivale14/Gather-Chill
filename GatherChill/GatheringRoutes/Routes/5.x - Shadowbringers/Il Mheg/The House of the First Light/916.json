@@ -4,7 +4,7 @@
   "zoneName": "Il Mheg",
   "placeName": "The House of the First Light",
   "expansionId": 3,
-  "gatheringJobId": 18,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     34397,
@@ -14,57 +14,27 @@
   "nodeInfo": [
     {
       "groupId": 0,
-      "nodeId": 34399,
-      "locations": [
-        {
-          "position": {
-            "x": -263.429,
-            "y": -54.38746,
-            "z": -280.991
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        }
-      ]
-    },
-    {
-      "groupId": 1,
       "nodeId": 34397,
       "locations": [
         {
           "position": {
-            "x": -363.3878,
-            "y": -53.68729,
-            "z": -249.7197
+            "x": -297.802,
+            "y": 0,
+            "z": -230.836
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -73,28 +43,58 @@
       ]
     },
     {
-      "groupId": 2,
+      "groupId": 0,
       "nodeId": 34398,
       "locations": [
         {
           "position": {
-            "x": -266.5897,
-            "y": -66.62037,
-            "z": -161.7976
+            "x": -297.802,
+            "y": 0,
+            "z": -230.836
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 0,
+      "nodeId": 34399,
+      "locations": [
+        {
+          "position": {
+            "x": -297.802,
+            "y": 0,
+            "z": -230.836
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,

@@ -4,7 +4,7 @@
   "zoneName": "The Lochs",
   "placeName": "Loch Seld Southwestern Lakebed",
   "expansionId": 2,
-  "gatheringJobId": 18,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     34341,
@@ -14,81 +14,27 @@
   "nodeInfo": [
     {
       "groupId": 0,
-      "nodeId": 34343,
-      "locations": [
-        {
-          "position": {
-            "x": -73.39954,
-            "y": -352.219,
-            "z": 336.6609
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        }
-      ]
-    },
-    {
-      "groupId": 1,
       "nodeId": 34341,
       "locations": [
         {
           "position": {
-            "x": -75.3989,
-            "y": -290.3842,
-            "z": 420.0961
+            "x": -54.4207,
+            "y": 0,
+            "z": 409.333
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        },
-        {
-          "position": {
-            "x": -71.65501,
-            "y": -285.6449,
-            "z": 446.5057
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -97,28 +43,58 @@
       ]
     },
     {
-      "groupId": 2,
+      "groupId": 0,
       "nodeId": 34342,
       "locations": [
         {
           "position": {
-            "x": 2.770859,
-            "y": -297.8714,
-            "z": 434.07
+            "x": -54.4207,
+            "y": 0,
+            "z": 409.333
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    },
+    {
+      "groupId": 0,
+      "nodeId": 34343,
+      "locations": [
+        {
+          "position": {
+            "x": -54.4207,
+            "y": 0,
+            "z": 409.333
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,

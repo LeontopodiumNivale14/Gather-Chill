@@ -4,12 +4,43 @@
   "zoneName": "The Diadem",
   "placeName": "",
   "expansionId": 1,
-  "gatheringJobId": 17,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     33232
   ],
-  "nodeInfo": [],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 33232,
+      "locations": [
+        {
+          "position": {
+            "x": 393.411,
+            "y": 0,
+            "z": 587.416
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 0,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    }
+  ],
   "groupCount": 3,
   "requiresFolklore": false,
   "folkloreBook": null,

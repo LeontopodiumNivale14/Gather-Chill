@@ -4,7 +4,7 @@
   "zoneName": "Thavnair",
   "placeName": "The Font of Maya",
   "expansionId": 4,
-  "gatheringJobId": 18,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     34320,
@@ -18,24 +18,24 @@
       "locations": [
         {
           "position": {
-            "x": 79.35259,
-            "y": -50.70914,
-            "z": 152.9944
+            "x": 146.095,
+            "y": 0,
+            "z": 163.509
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0.2
+            "fan_DistanceMax": 3,
+            "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
@@ -43,82 +43,58 @@
       ]
     },
     {
-      "groupId": 1,
-      "nodeId": 34322,
-      "locations": [
-        {
-          "position": {
-            "x": 80.31419,
-            "y": -46.2483,
-            "z": 204.5186
-          },
-          "allowFlying": true,
-          "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0.6
-          },
-          "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0.6
-          },
-          "useSpecificWalkingSpots": false,
-          "walkablePositions": []
-        }
-      ]
-    },
-    {
-      "groupId": 2,
+      "groupId": 0,
       "nodeId": 34321,
       "locations": [
         {
           "position": {
-            "x": 210.102,
-            "y": -56.94125,
-            "z": 128.0859
+            "x": 146.095,
+            "y": 0,
+            "z": 163.509
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
-        },
+        }
+      ]
+    },
+    {
+      "groupId": 0,
+      "nodeId": 34322,
+      "locations": [
         {
           "position": {
-            "x": 214.6107,
-            "y": -56.52457,
-            "z": 168.4375
+            "x": 146.095,
+            "y": 0,
+            "z": 163.509
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,

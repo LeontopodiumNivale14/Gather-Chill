@@ -4,7 +4,7 @@
   "zoneName": "Kozama\u0027uka",
   "placeName": "Marsh Ligaka Depths",
   "expansionId": 5,
-  "gatheringJobId": 18,
+  "gatheringJobId": 0,
   "levelRequirement": 0,
   "nodeIds": [
     34956
@@ -16,23 +16,23 @@
       "locations": [
         {
           "position": {
-            "x": 180.9756,
-            "y": 3.582431,
-            "z": 488.9696
+            "x": 180.976,
+            "y": 0,
+            "z": 488.97
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
+            "fan_DistanceMax": 3,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -41,7 +41,7 @@
       ]
     }
   ],
-  "groupCount": 1,
+  "groupCount": 3,
   "requiresFolklore": false,
   "folkloreBook": null,
   "author": null,
