@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
+using GatherChill.Scheduler;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
 using Lumina.Excel.Sheets;
@@ -112,6 +113,15 @@ namespace GatherChill.Ui.RouteWindowTabs
                             {
                                 Route_Editor.UpdateRoute(route.Key);
                             }
+                            if (ImGui.IsItemHovered())
+                                ImGui.SetTooltip("Open route in editor");
+                            ImGui.SameLine();
+                            if (ImGui.SmallButton("List+"))
+                            {
+                                GatherQueueSession.AddRouteItems(route.Key);
+                            }
+                            if (ImGui.IsItemHovered())
+                                ImGui.SetTooltip("Add all items from this route to the Gather List");
 
                             ImGui.TableNextColumn();
                             var job = route.Value.GatheringJobId;

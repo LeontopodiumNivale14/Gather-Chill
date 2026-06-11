@@ -4,6 +4,7 @@ using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
+using GatherChill.Scheduler.Tasks;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
@@ -260,9 +261,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             {
                                 if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, new(24, 24)))
                                 {
-                                    SchedulerMain.State = Enums.IceState.Start;
-                                    SchedulerMain.RouteId = SelectedRoute;
-                                    SchedulerMain.ItemId = item;
+                                    SchedulerMain.SetRouteTarget(SelectedRoute, item);
                                 }
                             }
 
@@ -275,9 +274,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             ImGui.TableNextColumn();
                             if (ImGui.Button($"{itemInfo.Name}"))
                             {
-                                SchedulerMain.State = Enums.IceState.Start;
-                                SchedulerMain.RouteId = SelectedRoute;
-                                SchedulerMain.ItemId = item;
+                                SchedulerMain.SetRouteTarget(SelectedRoute, item);
                             }
                         }
                     }
@@ -481,43 +478,36 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 if (ImGui.Button("Stop Navmesh"))
                 {
-                    P.navmesh.PathStop();
+                    NavmeshEditorPath.Stop();
                 }
 
-                // Validate selectedNodeId — fall back to first if missing
                 if (routeInfo.NodeInfo.Count == 0)
                 {
                     ImGui.TextDisabled("No nodes added yet.");
-                    ImGui.EndTable();
-                    return;
                 }
-
-                if (selectedNodeId == 0 || routeInfo.NodeInfo.All(x => x.NodeId != selectedNodeId))
+                else
                 {
-                    selectedNodeId = routeInfo.NodeInfo[0].NodeId;
-                    selectedLocationIndex = 0;
-                }
-
-                // Single lookup — no nested foreach
-                var selectedNode = routeInfo.NodeInfo.FirstOrDefault(x => x.NodeId == selectedNodeId);
-                if (selectedNode != null)
-                {
-
-
-                    // Clamp index in case locations changed
-                    if (selectedLocationIndex >= selectedNode.Locations.Count)
-                        selectedLocationIndex = Math.Max(0, selectedNode.Locations.Count - 1);
-
-                    ImGui.Text($"Node: {selectedNodeId}");
-
-                    for (int i = 0; i < selectedNode.Locations.Count; i++)
+                    if (selectedNodeId == 0 || routeInfo.NodeInfo.All(x => x.NodeId != selectedNodeId))
                     {
-                        var loc = selectedNode.Locations[i];
-                        bool isSelected = selectedLocationIndex == i;
+                        selectedNodeId = routeInfo.NodeInfo[0].NodeId;
+                        selectedLocationIndex = 0;
+                    }
 
-                        if (ImGui.Selectable($"{loc.Position.X:N2} {loc.Position.Y:N2} {loc.Position.Z:N2}##loc{i}", isSelected))
+                    var selectedNode = routeInfo.NodeInfo.FirstOrDefault(x => x.NodeId == selectedNodeId);
+                    if (selectedNode != null)
+                    {
+                        if (selectedLocationIndex >= selectedNode.Locations.Count)
+                            selectedLocationIndex = Math.Max(0, selectedNode.Locations.Count - 1);
+
+                        ImGui.Text($"Node: {selectedNodeId}");
+
+                        for (int i = 0; i < selectedNode.Locations.Count; i++)
                         {
-                            selectedLocationIndex = i;
+                            var loc = selectedNode.Locations[i];
+                            bool isSelected = selectedLocationIndex == i;
+
+                            if (ImGui.Selectable($"{loc.Position.X:N2} {loc.Position.Y:N2} {loc.Position.Z:N2}##loc{i}", isSelected))
+                                selectedLocationIndex = i;
                         }
                     }
                 }
@@ -527,18 +517,39 @@ namespace GatherChill.Ui.RouteWindowTabs
                 #region Node Editor Itself
 
                 ImGui.TableNextColumn();
-                var editorNode = selectedNode.Locations[selectedLocationIndex];
-                if (editorNode != null)
+                if (routeInfo.NodeInfo.Count == 0)
+                {
+                    ImGui.TextDisabled("Add nodes from the world or route setup first.");
+                }
+                else if (routeInfo.NodeInfo.FirstOrDefault(x => x.NodeId == selectedNodeId) is not { } selectedNodeForEdit
+                         || selectedNodeForEdit.Locations.Count == 0)
+                {
+                    ImGui.TextDisabled("Select a node with at least one location.");
+                }
+                else if (selectedNodeForEdit.Locations[Math.Clamp(selectedLocationIndex, 0, selectedNodeForEdit.Locations.Count - 1)] is { } editorNode)
                 {
                     selectedNodePos = editorNode.Position;
                     PictoManager.DrawArrowToward(selectedNodePos, 0.606f, 0.05f, 2.952f, 0.7f, 0.33f, ToUintABGR(C.Picto_SelectedFan), 3.5f);
 
                     ImGui.Text($"Node Position: {editorNode.Position.X:N2}, {editorNode.Position.Y:N2}, {editorNode.Position.Z:N2}");
+
+                    var canFlyInZone = NavmeshMovement.CanUseFlyMovement();
+                    ImGui.TextDisabled($"Zone flight: {(canFlyInZone ? "available" : "unavailable")}");
+
                     bool fly = editorNode.AllowFlying;
-                    if (ImGui.Checkbox("Flying Allowed", ref fly))
+                    using (var disabled = ImRaii.Disabled(!canFlyInZone))
                     {
-                        editorNode.AllowFlying = fly;
+                        if (ImGui.Checkbox("Flying Allowed", ref fly))
+                            editorNode.AllowFlying = fly;
                     }
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    {
+                        ImGui.SetTooltip(canFlyInZone
+                            ? "Route automation and editor pathfind may use flight for this location when far enough."
+                            : "Flight is not unlocked or mounts are not allowed in this territory.");
+                    }
+                    if (!canFlyInZone && editorNode.AllowFlying)
+                        ImGui.TextDisabled("Saved as flying allowed; paths will use ground until flight is available.");
 
                     #region Gathering Fan Info
 
@@ -595,15 +606,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.Button("Pathfind to fan"))
+                    using (var disabled = ImRaii.Disabled(!C.NavmeshMovementEnabled))
                     {
-                        var randomPos = NodeLocationExtensions.GetRandomGatherPosition(editorNode, Player.Position);
-                        IceLogging.Verbose($"Node Position: {randomPos:N2}", "Route Editor");
-                        bool flying = false;
-                        if (Player.Mounted)
-                            flying = true;
-
-                        P.navmesh.PathfindAndMoveTo(randomPos, flying);
+                        if (ImGui.Button("Pathfind to fan"))
+                            NavmeshEditorPath.TryEnqueueGatherFan(editorNode);
+                    }
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    {
+                        ImGui.SetTooltip(C.NavmeshMovementEnabled
+                            ? "Same movement task as routes. Flies only if Flying Allowed, zone flight is available, and target is >25y."
+                            : "Enable navmesh movement in /gatherchill s → Navigation.");
                     }
 
                     ImGui.SameLine();
@@ -681,10 +693,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.Button("Pathfind to fan"))
+                    using (var disabled = ImRaii.Disabled(!C.NavmeshMovementEnabled))
                     {
-                        var randomPos = NodeLocationExtensions.GetRandomFlightPosition(editorNode, Player.Position);
-                        P.navmesh.PathfindAndMoveTo(randomPos, true);
+                        if (ImGui.Button("Pathfind to fan"))
+                            NavmeshEditorPath.TryEnqueueFlightFan(editorNode);
+                    }
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    {
+                        ImGui.SetTooltip(C.NavmeshMovementEnabled
+                            ? "Same movement task as routes. Flies only if Flying Allowed, zone flight is available, and target is >25y."
+                            : "Enable navmesh movement in /gatherchill s → Navigation.");
                     }
 
                     ImGui.SameLine();

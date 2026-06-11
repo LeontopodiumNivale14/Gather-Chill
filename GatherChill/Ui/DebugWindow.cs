@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Enums;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
+using GatherChill.Scheduler.Tasks;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
@@ -44,6 +45,12 @@ internal class DebugWindow : Window
             if (ImGui.BeginTabItem("Task Info"))
             {
                 TaskInfoDetails();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Navmesh"))
+            {
+                DrawNavmeshDebug();
                 ImGui.EndTabItem();
             }
 
@@ -189,6 +196,39 @@ internal class DebugWindow : Window
             ImGui.EndTable();
         }
     }
+    // Live vnavmesh + NavmeshRuntime state — useful when pathing stalls or mesh shows idle at 0%.
+    private static void DrawNavmeshDebug()
+    {
+        ImGui.Text($"Installed: {P.navmesh.Installed}");
+        ImGui.Text($"Fly unlocked: {NavmeshMovement.IsFlyingUnlocked()}");
+        ImGui.Text($"Mount allowed here: {NavmeshMovement.CanMountInCurrentTerritory()}");
+        ImGui.Text($"Can use fly movement: {NavmeshMovement.CanUseFlyMovement()}");
+        ImGui.Text($"Ready: {(P.navmesh.Installed ? P.navmesh.IsReady() : false)}");
+        var buildProgress = P.navmesh.Installed ? P.navmesh.GetBuildProgress() : -1f;
+        ImGui.Text(buildProgress < 0f
+            ? "Mesh: idle (vnavmesh loads on zone change when auto-load is on)"
+            : $"Build progress: {buildProgress:P0}");
+        ImGui.Text($"Path running: {(P.navmesh.Installed ? P.navmesh.IsRunning() : false)}");
+        ImGui.Text($"Pathfind in progress: {(P.navmesh.Installed ? P.navmesh.IsPathfindInProgress() : false)}");
+        ImGui.Text($"Owns path: {NavmeshRuntime.OwnsPath}");
+        ImGui.Text($"Last move: {NavmeshRuntime.LastMoveContext}");
+        ImGui.Text($"Last destination: {NavmeshRuntime.LastDestination}");
+        ImGui.Text($"Last close range: {NavmeshRuntime.LastCloseRange:N2}");
+        ImGui.Text($"Stuck attempts: {NavmeshRuntime.StuckAttempts}");
+        if (!string.IsNullOrEmpty(NavmeshRuntime.LastFailure))
+            ImGui.TextColored(ImGuiColors.DalamudRed, $"Last failure: {NavmeshRuntime.LastFailure}");
+
+        if (NavmeshRuntime.LastDestination != default)
+            ImGui.Text($"Horizontal dist: {NavmeshMovement.HorizontalDistance(NavmeshRuntime.LastDestination):N2}");
+
+        if (ImGui.Button("Stop owned path"))
+            Task_NavmeshMove.ReleaseOwnedPath();
+
+        ImGui.SameLine();
+        if (ImGui.Button("Stop all navmesh"))
+            P.navmesh.StopCompletely();
+    }
+
     public void TaskInfoDetails()
     {
         ImGui.Text($"Running task: {P.taskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.taskManager.NumQueuedTasks}");
@@ -196,6 +236,7 @@ internal class DebugWindow : Window
         ImGui.Text($"Current task running: {currentTask}");
         ImGui.Text($"Current State: {SchedulerMain.State}");
         ImGui.Text($"ItemId set: {SchedulerMain.ItemId}");
+        ImGui.Text($"Player job: {Player.ClassJob.RowId} | Auto-swap class: {C.AutoSwapGatheringClass}");
         ImGui.Text($"Task Count: {P.taskManager.Tasks.Count}");
     }
     private static void DestinationLogViewer()

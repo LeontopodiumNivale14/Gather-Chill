@@ -7,9 +7,9 @@ namespace GatherChill.Utilities.GatheringHelpers
     {
         private static readonly Random _random = new Random();
 
-        public static Vector3 GetRandomFlightPosition(this NodeLocation nodeLocation, Vector3 playerPosition, float sectionSize = 15f)
+        public static Vector3 GetRandomFlightPosition(this NodeLocation nodeLocation, Vector3 playerPosition, Vector3? nodeCenter = null, float sectionSize = 15f)
         {
-            Vector3 nodePos = nodeLocation.Position;
+            Vector3 nodePos = nodeCenter ?? nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
             var (sectionMin, sectionMax) = GetNearestSection(
@@ -24,12 +24,12 @@ namespace GatherChill.Utilities.GatheringHelpers
             return CalculateFanPosition(nodePos, selectedAngle, selectedDistance, nodeLocation.Flight_FanInfo.Fan_Height);
         }
 
-        public static Vector3 GetRandomGatherPosition(this NodeLocation nodeLocation, Vector3 playerPosition, float sectionSize = 15f)
+        public static Vector3 GetRandomGatherPosition(this NodeLocation nodeLocation, Vector3 playerPosition, Vector3? nodeCenter = null, float sectionSize = 15f)
         {
             if (nodeLocation.UseSpecificWalkingSpots && nodeLocation.WalkablePositions.Count > 0)
                 return GetNearestWalkablePosition(nodeLocation.WalkablePositions, playerPosition);
 
-            Vector3 nodePos = nodeLocation.Position;
+            Vector3 nodePos = nodeCenter ?? nodeLocation.Position;
             float angleToPlayer = CalculateAngleToPlayer(nodePos, playerPosition);
 
             var (sectionMin, sectionMax) = GetNearestSection(
