@@ -1,5 +1,4 @@
 ﻿using ECommons.Automation.LegacyTaskManager;
-using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -12,6 +11,7 @@ namespace GatherChill.Scheduler.Handlers
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
+        private static bool _pausedPandoraForRequest;
         private static bool? ConfirmOrAbort(AddonRequest* addon)
         {
             if (addon->HandOverButton != null && addon->HandOverButton->IsEnabled)
@@ -47,44 +47,46 @@ namespace GatherChill.Scheduler.Handlers
 
         internal static void Tick()
         {
-            // if (SchedulerMain.AreWeTicking)
+            // Port of Pandora AutoSelectTurnin — only run while the Request (turn-in) addon is open.
+            // https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
+            if (!P.pandora.Installed)
+                return;
+
+            if (!TryGetAddonByName<AddonRequest>("Request", out var addon))
             {
-                //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
-
-                var featureEnabled = (P.pandora.GetFeatureEnabled("Auto-select Turn-ins") ?? false);
-                var configEnabled = (P.pandora.GetConfigEnabled("Auto-select Turn-ins", "AutoSelect") ?? false);
-
-                var isenabled = featureEnabled && configEnabled;
-
-                if (!isenabled)
+                _pausedPandoraForRequest = false;
+                if (SlotsFilled.Count > 0)
                 {
-                    if (featureEnabled && !configEnabled)
-                    {
-                        if (EzThrottler.Throttle("Enabling AutoSelect", 1000))
-                        {
-                            P.pandora.PauseFeature("Auto-select Turn-ins", 1100);
-                        }
-                    }
-
-                    if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
-                    {
-                        for (var i = 1; i <= addon3->EntryCount; i++)
-                        {
-                            if (SlotsFilled.Contains(addon3->EntryCount)) ConfirmOrAbort(addon3);
-                            if (SlotsFilled.Contains(i)) return;
-                            var val = i;
-                            TaskManager.DelayNext($"ClickTurnin{val}", 10);
-                            TaskManager.Enqueue(() => TryClickItem(addon3, val));
-                        }
-                    }
-                    else
-                    {
-                        SlotsFilled.Clear();
-                        TaskManager.Abort();
-                    }
+                    SlotsFilled.Clear();
+                    TaskManager.Abort();
                 }
+                return;
             }
 
+            var featureEnabled = P.pandora.GetFeatureEnabled("Auto-select Turn-ins") ?? false;
+            var configEnabled = P.pandora.GetConfigEnabled("Auto-select Turn-ins", "AutoSelect") ?? false;
+            var pandoraHandlingTurnins = featureEnabled && configEnabled;
+
+            if (pandoraHandlingTurnins)
+                return;
+
+            // Feature on but AutoSelect off: pause Pandora once for this Request session (not every second).
+            if (featureEnabled && !configEnabled && !_pausedPandoraForRequest)
+            {
+                P.pandora.PauseFeature("Auto-select Turn-ins", 60_000);
+                _pausedPandoraForRequest = true;
+            }
+
+            for (var i = 1; i <= addon->EntryCount; i++)
+            {
+                if (SlotsFilled.Contains(addon->EntryCount))
+                    ConfirmOrAbort(addon);
+                if (SlotsFilled.Contains(i))
+                    return;
+                var val = i;
+                TaskManager.DelayNext($"ClickTurnin{val}", 10);
+                TaskManager.Enqueue(() => TryClickItem(addon, val));
+            }
         }
     }
 }

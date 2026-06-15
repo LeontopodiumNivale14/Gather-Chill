@@ -36,9 +36,10 @@ namespace GatherChill.Ui
         public static void Draw_Debug()
         {
             if (ImGui.Button("Copy logs to clipboard"))
-            {
                 LogSystem.CopyToClipboard();
-            }
+            ImGui.SameLine();
+            if (ImGui.Button("Clear logs"))
+                LogSystem.Clear();
             LogHelperViewer();
         }
 
@@ -50,9 +51,10 @@ namespace GatherChill.Ui
 
             ImGui.SameLine();
             if (ImGui.Button("Copy Logs"))
-            {
                 LogSystem.CopyToClipboard();
-            }
+            ImGui.SameLine();
+            if (ImGui.Button("Clear Logs"))
+                LogSystem.Clear();
 
             ImGui.Spacing();
 

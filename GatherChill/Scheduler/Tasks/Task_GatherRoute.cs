@@ -6,6 +6,7 @@ using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.GatheringHelpers;
@@ -13,6 +14,7 @@ using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
+using System.Linq;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Scheduler.Tasks
@@ -22,39 +24,194 @@ namespace GatherChill.Scheduler.Tasks
         private static GatheringRoute selectedRoute = null;
         private static readonly Random _random = new Random();
 
-        private static uint LoadedRouteId = 0;
+        private static uint loadedRouteId;
+        private static uint? loadedItemId;
+        private static bool pendingRouteChange;
         private static int RouteIndex = 0;
         private static List<GatheringNode> GatherRoute = new();
-        private static Vector3? TargetFanPoint = null;
         private static uint? TargetNodeId = null;
         private static int NodeCheckIndex = 0;
+        private static bool _openedGatheringWindowThisNode;
+
+        public static void Reset()
+        {
+            selectedRoute = null;
+            loadedRouteId = 0;
+            loadedItemId = null;
+            pendingRouteChange = false;
+            RouteIndex = 0;
+            GatherRoute.Clear();
+            TargetNodeId = null;
+            NodeCheckIndex = 0;
+            _openedGatheringWindowThisNode = false;
+            GatherRouteNavigation.ResetValidationApproach();
+        }
+
+        public static void OnRouteTargetChanged(bool routeChanged)
+        {
+            if (routeChanged)
+                pendingRouteChange = true;
+            else if (SchedulerMain.QueueActive)
+            {
+                ResetRouteProgress();
+                pendingRouteChange = true;
+            }
+
+            if (!GatherRouteNavigation.IsGatheringSessionActive())
+                TryApplyPendingRouteChange();
+        }
+
+        private static void ResetRouteProgress()
+        {
+            RouteIndex = 0;
+            NodeCheckIndex = 0;
+            TargetNodeId = null;
+            _openedGatheringWindowThisNode = false;
+            GatherRouteNavigation.ResetValidationApproach();
+        }
 
         public static void Enqueue(uint routeId, uint itemId)
         {
-            if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
-            {
-                P.taskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
-            }
+            if (SchedulerMain.QueueActive)
+                P.taskManager.Enqueue(EnsureQueueTerritory, "Ensure queue territory", TaskConfig);
+
+            if (!GatherRouteNavigation.IsGatheringSessionActive())
+                P.taskManager.Enqueue(EnsureGatheringJob, "Ensure gathering class", TaskConfig);
+
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                EnqueueGatheringSession();
             else
+                P.taskManager.Enqueue(TravelFarCheck, "Traveling to node group", TaskConfig);
+        }
+
+        public static void EnqueueGatheringSession() =>
+            P.taskManager.Enqueue(GatheringInteraction, "Gathering Interaction", TaskConfig);
+
+        private static bool EnsureQueueTerritory()
+        {
+            if (!SchedulerMain.QueueActive || !SchedulerMain.RouteId.HasValue)
+                return true;
+
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            if (route == null)
+                return true;
+
+            return GatherZoneTravel.TryEnsureTerritory(route.TerritoryId, route.ZoneName);
+        }
+
+        private static bool EnsureGatheringJob()
+        {
+            if (!C.AutoSwapGatheringClass || GatherRouteNavigation.IsGatheringSessionActive())
+                return true;
+
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            if (route == null)
+                return true;
+
+            return Utils.TrySwapToGatheringJob(route.GatheringJobId);
+        }
+
+        private static void TryApplyPendingRouteChange()
+        {
+            if (!pendingRouteChange || !SchedulerMain.RouteId.HasValue)
+                return;
+
+            LoadRoute(SchedulerMain.RouteId.Value);
+            pendingRouteChange = false;
+        }
+
+        private static void LoadRoute(uint routeId)
+        {
+            var route = P.routeEditor.GetRoute(routeId);
+            if (route == null)
+                return;
+
+            selectedRoute = route;
+            loadedRouteId = routeId;
+            loadedItemId = SchedulerMain.ItemId;
+            RouteIndex = 0;
+            NodeCheckIndex = 0;
+            TargetNodeId = null;
+            _openedGatheringWindowThisNode = false;
+            GatherRoute.Clear();
+
+            var groups = FilterNodeGroups(route.NodeInfo, SchedulerMain.ItemId)
+                .OrderByDescending(g => NavmeshMovement.FindSpawnedNodeInGroup(g) != null)
+                .ThenBy(NearestLocationDistance)
+                .ToList();
+
+            if (groups.Count == 0)
             {
-                P.taskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
+                IceLogging.Warning(
+                    SchedulerMain.ItemId is { } itemId
+                        ? $"Route {routeId} has no node group for item {itemId}."
+                        : $"Route {routeId} has no node groups.");
+                return;
+            }
+
+            foreach (var group in groups)
+                GatherRoute.Add(group);
+
+            if (SchedulerMain.ItemId is { } targetItem)
+            {
+                var itemLabel = $"item {targetItem}";
+                if (Svc.Data.GetExcelSheet<Item>().TryGetRow(targetItem, out var itemRow))
+                    itemLabel = itemRow.Name.ToString();
+
+                IceLogging.Info(
+                    $"Route {routeId} targeting {itemLabel}: {GatherRoute.Count} node group(s), first node {GatherRoute[0].NodeId}.");
             }
         }
+
+        private static void PrioritizeNearestSpawnedGroup()
+        {
+            var nearest = NavmeshMovement.FindNearestSpawnedGroup(GatherRoute);
+            if (nearest == null)
+                return;
+
+            if (nearest.Value.index == RouteIndex)
+                return;
+
+            var previous = GatherRoute[RouteIndex].NodeId;
+            var next = nearest.Value.group.NodeId;
+            var dist = Player.DistanceTo(nearest.Value.node.Position);
+            IceLogging.Info($"Active spawn is node {next} ({dist:N1}y away) — switching from node {previous}.");
+            RouteIndex = nearest.Value.index;
+            NodeCheckIndex = 0;
+            GatherRouteNavigation.ResetValidationApproach();
+        }
+
+        private static IEnumerable<GatheringNode> FilterNodeGroups(IEnumerable<GatheringNode> groups, uint? itemId)
+        {
+            if (!itemId.HasValue)
+                return groups;
+
+            return groups.Where(g => Gather_Util.NodeYieldsItem(g.NodeId, itemId.Value));
+        }
+
+        private static float NearestLocationDistance(GatheringNode group) =>
+            group.Locations.Count == 0
+                ? float.MaxValue
+                : group.Locations.Min(loc => Player.DistanceTo(loc.Position));
 
 
 
         private static bool TravelFarCheck()
         {
-            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
-            if (route != null && selectedRoute != route)
+            if (GatherRouteNavigation.IsGatheringSessionActive())
             {
-                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current");
-                selectedRoute = route;
-                GatherRoute.Clear();
-                foreach (var group in route.NodeInfo)
-                {
-                    GatherRoute.Add(group);
-                }
+                GatherRouteNavigation.StopMovementForGathering();
+                // End travel task so Tick can run Gathering Interaction instead of blocking here.
+                return true;
+            }
+
+            TryApplyPendingRouteChange();
+
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            if (route != null && (loadedRouteId != route.RouteId || loadedItemId != SchedulerMain.ItemId))
+            {
+                IceLogging.Verbose("Route or item target changed, reloading gather route");
+                LoadRoute(route.RouteId);
             }
 
             if (GatherRoute.Count == 0)
@@ -63,225 +220,187 @@ namespace GatherChill.Scheduler.Tasks
                 return true;
             }
 
-            var playerPos = Player.Position;
-            const float loadRange = 75f;
+            if (!GatherRouteNavigation.IsCorrectTerritory(selectedRoute))
+                return SchedulerMain.QueueActive ? false : true;
+
+            // Check the queue goal before approaching the next node. PrioritizeNearestSpawnedGroup keeps
+            // RouteIndex on a live group every tick, so for always-up nodes (crystals) RouteIndex never
+            // reaches the end and the exhaustion-time check below would never fire — overshooting the goal.
+            if (SchedulerMain.QueueActive && GatherQueueSession.IsCurrentTargetQuantityMet())
+            {
+                SchedulerMain.CompleteCurrentTarget();
+                return true;
+            }
+
+            AdvancePastUnavailableNodeGroups();
+            PrioritizeNearestSpawnedGroup();
 
             if (RouteIndex >= GatherRoute.Count)
             {
-                // We've hit a higher index than we should for these, so going to just immediately reset it back to 0
+                if (SchedulerMain.QueueActive)
+                {
+                    if (GatherQueueSession.IsCurrentTargetQuantityMet())
+                        SchedulerMain.CompleteCurrentTarget();
+                    else
+                        RouteIndex = 0;
+
+                    return true;
+                }
+
                 RouteIndex = 0;
             }
 
             var currentNode = GatherRoute[RouteIndex];
             TargetNodeId = currentNode.NodeId;
 
+            if (EzThrottler.Throttle("Approach target"))
+                IceLogging.Debug($"Approaching node {currentNode.NodeId} (group {RouteIndex + 1}/{GatherRoute.Count})");
+
+            if (currentNode.Locations.Count == 0)
+            {
+                RouteIndex += 1;
+                NodeCheckIndex = 0;
+                return false;
+            }
+
+            if (NodeCheckIndex >= currentNode.Locations.Count)
+            {
+                IceLogging.Debug($"Node {currentNode.NodeId} unavailable at all locations, moving to next group");
+                RouteIndex += 1;
+                NodeCheckIndex = 0;
+                GatherRouteNavigation.ResetValidationApproach();
+                return false;
+            }
+
+            var spawned = NavmeshMovement.FindSpawnedNodeInGroup(currentNode);
+            var approachLocation = spawned?.location ?? currentNode.Locations[NodeCheckIndex];
+            var liveNode = spawned?.node;
+            if (spawned != null)
+            {
+                var spawnedIndex = currentNode.Locations.IndexOf(spawned.Value.location);
+                if (spawnedIndex >= 0)
+                    NodeCheckIndex = spawnedIndex;
+            }
+
             if (EzThrottler.Throttle("Travel Check throttle message"))
                 IceLogging.Verbose("Currently in travel check mode");
 
-            // bool allNodesInRange = currentNode.Locations.All(x => Player.DistanceTo(x.Position.ToVector3()) <= loadRange);
-            if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
+            if (!GatherRouteNavigation.TryTravelWithinLoadRange(approachLocation))
             {
-                TargetFanPoint = null;
-
-                var firstNode = currentNode.Locations[0];
-                var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(firstNode, Player.Position);
-                if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
-                {
-                    if (EzThrottler.Throttle("Throttle message"))
-                    {
-                        IceLogging.Verbose($"To far from all nodes to check. Distance: {Player.DistanceTo(randomFanPoint)}");
-                    }
-                }
+                if (EzThrottler.Throttle("Throttle message"))
+                    IceLogging.Verbose($"Traveling to node. Distance: {Player.DistanceTo(approachLocation.Position):N1}");
                 return false;
             }
-            else
+
+            liveNode ??= NavmeshMovement.GetAvailableNodeAtLocation(currentNode.NodeId, approachLocation.Position)
+                ?? NavmeshMovement.FindSpawnedNodeInGroup(currentNode)?.node;
+
+            if (EzThrottler.Throttle("IsNodeValid"))
+                IceLogging.Debug($"Node available at location {NodeCheckIndex} (within {NavmeshMovement.SpawnMatchDistance}y of anchor): {liveNode != null}");
+
+            if (liveNode == null)
             {
-                IceLogging.Debug("We're within range of all nodes, continuing on");
-                P.navmesh.PathStop();
-
-                var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
-                           .Where(obj => obj.IsTargetable)
-                           .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
-                           .FirstOrDefault();
-
-                if (EzThrottler.Throttle("IsNodeValid"))
-                {
-                    IceLogging.Debug($"Is Node Valid: {validNode != null}");
-                }
-
-                if (validNode == null)
-                {
-                    NodeCheckIndex = 0;
-                    P.taskManager.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
-                    return true;
-                }
-                else
-                {
-                    IceLogging.Debug("we're within range, checking travel kind now");
-                    P.taskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
-                    return true;
-                }
+                IceLogging.Debug($"Node not up at location {NodeCheckIndex}, trying next location");
+                GatherRouteNavigation.ResetValidationApproach();
+                NodeCheckIndex += 1;
+                return false;
             }
+
+            if (EzThrottler.Throttle("Spawn anchor drift", 3000))
+            {
+                var drift = NavmeshMovement.HorizontalDistanceBetween(approachLocation.Position, liveNode.Position);
+                IceLogging.Debug(
+                    $"Node {currentNode.NodeId} spawn drift from anchor: {drift:N1}y (anchor {approachLocation.Position}, object {liveNode.Position})");
+            }
+
+            if (!GatherRouteNavigation.TryApproachGatherFan(approachLocation, liveNode))
+                return false;
+
+            P.navmesh.StopIfOwned();
+
+            var confirmedNode = NavmeshMovement.ResolveInteractNode(currentNode.NodeId, approachLocation.Position, liveNode);
+            if (confirmedNode == null)
+            {
+                IceLogging.Debug("No interactable node after gather-fan approach, rescanning");
+                GatherRouteNavigation.ResetValidationApproach();
+                NodeCheckIndex += 1;
+                return false;
+            }
+
+            GatherRouteNavigation.ResetValidationApproach();
+            NodeCheckIndex = 0;
+            IceLogging.Debug($"In interact range ({Player.DistanceTo(confirmedNode):N2}y), enqueueing interact for node {currentNode.NodeId}");
+            var approachTarget = approachLocation;
+            var nodeForApproach = confirmedNode;
+            P.taskManager.Enqueue(() => CheckTravelKind(approachTarget, nodeForApproach), "Checking Travel Kind");
+            return true;
         }
-        private static bool IndividualNodeCheck()
+
+        private static void AdvancePastUnavailableNodeGroups()
         {
-            var currentNode = GatherRoute[RouteIndex];
-            TargetNodeId = currentNode.NodeId;
-
-            // if we're doing this, that means that all nodes aren't within a close 75 yalms of each other. So going to check each individually
-            if (NodeCheckIndex < currentNode.Locations.Count)
+            while (RouteIndex < GatherRoute.Count && NavmeshMovement.IsGroupConfirmedUnavailable(GatherRoute[RouteIndex]))
             {
-                IceLogging.Verbose($"Checking location: {NodeCheckIndex}");
-                var location = currentNode.Locations[NodeCheckIndex];
-                var distanceToLoc = Player.DistanceTo(location.Position);
-                if (EzThrottler.Throttle("Location message throttle"))
-                    IceLogging.Debug($"Distance to location: {distanceToLoc:N2}");
-
-                if (distanceToLoc > 75)
-                {
-                    var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(location, Player.Position);
-                    if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
-                    {
-                        if (EzThrottler.Throttle("Throttle message"))
-                        {
-                            IceLogging.Verbose("Too far from node to check");
-                        }
-                    }
-                    return false; // Still need to reach this location
-                }
-                else
-                {
-                    if (P.navmesh.IsRunning())
-                        P.navmesh.PathStop();
-
-                    // If we're here, that means that we're within load range. 
-                    var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
-                                               .Where(obj => obj.IsTargetable)
-                                               .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
-                                               .FirstOrDefault();
-
-                    if (validNode != null)
-                    {
-                        IceLogging.Debug("We've found a valid node! Time to pathfind/interact with it");
-                        NodeCheckIndex = 0; // Reset for next time
-                        P.taskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
-                        return true;
-                    }
-                    else
-                    {
-                        IceLogging.Debug($"No valid node at location {NodeCheckIndex}, moving to next location");
-                        NodeCheckIndex += 1;
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                // We've checked all locations and found no valid nodes
-                IceLogging.Debug("Checked all locations for this node group, moving to next route index");
-                TargetFanPoint = null;
-                TargetNodeId = null;
+                IceLogging.Debug($"Node group {GatherRoute[RouteIndex].NodeId} not available, skipping");
                 RouteIndex += 1;
                 NodeCheckIndex = 0;
-                if (EzThrottler.Throttle("Else statement"))
-                {
-                    IceLogging.Debug($"Gather route count: {GatherRoute.Count}");
-                    IceLogging.Debug("Moving to the next node");
-                    IceLogging.Debug($"Route Index: {RouteIndex}");
-                }
-                return true;
+                GatherRouteNavigation.ResetValidationApproach();
             }
         }
-        private static bool CheckTravelKind(IGameObject node)
+        private static bool CheckTravelKind(NodeLocation targetLocation, IGameObject node)
         {
-            float minFlyDistance = 25;
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                return true;
 
             var currentNode = GatherRoute[RouteIndex];
-            var targetLocation = currentNode.Locations.Where(x => x.Position == node.Position).FirstOrDefault();
-            if (targetLocation == null)
+            var liveNode = NavmeshMovement.ResolveInteractNode(currentNode.NodeId, targetLocation.Position, node)
+                ?? NavmeshMovement.GetAvailableNodeAtLocation(currentNode.NodeId, targetLocation.Position)
+                ?? node;
+            if (liveNode == null || !liveNode.IsTargetable)
             {
-                IceLogging.Error("We're getting an invalid node location");
+                IceLogging.Debug("Node no longer available at route anchor, rescanning");
+                GatherRouteNavigation.ResetValidationApproach();
                 return true;
             }
 
-            TargetFanPoint = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
+            GatherRouteNavigation.ResetInteractRetries();
+            GatherRouteNavigation.EnqueueApproach(liveNode, currentNode, targetLocation);
+            return true;
+        }
 
-            var closestWalkPoint = Vector3.Zero;
-            if (targetLocation.UseSpecificWalkingSpots)
-            {
-                var walkPointSpecific = targetLocation.WalkablePositions.OrderBy(x => Vector3.Distance(TargetFanPoint.Value, x)).FirstOrDefault();
-                closestWalkPoint = walkPointSpecific;
-            }
-            else
-            {
-                closestWalkPoint = NodeLocationExtensions.GetRandomGatherPosition(targetLocation, Player.Position);
-            }
+        // Scheduler step after EnqueueApproach — targets node and opens gathering window.
+        internal static bool InteractWithNode(uint nodeId)
+        {
+            if (!GatherRouteNavigation.TryCompleteInteract(nodeId, out var gatheringOpen))
+                return false;
 
-            if (Player.DistanceTo(node.Position) >= minFlyDistance && !Svc.Condition[ConditionFlag.Diving])
-            {
-                IceLogging.Debug("We're moving onto the next set via flying");
-
-                P.taskManager.EnqueueMulti
-                (
-                    new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, true), "True Fly Task", TaskConfig),
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
-                    new(() => InteractWithNode(node.BaseId), "Interact with node")
-                );
-            }
-            else
-            {
-                IceLogging.Debug("We're moving onto the next set via ground movement");
-                P.taskManager.EnqueueMulti
-                (
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
-                    new(() => InteractWithNode(node.BaseId), "Interact with node")
-                );
-            }
+            if (gatheringOpen)
+                _openedGatheringWindowThisNode = true;
 
             return true;
         }
-        private static bool InteractWithNode(uint nodeId)
+        private static bool GatheringInteraction()
         {
-            var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
-                                        .Where(x => x.IsTargetable)
-                                        .FirstOrDefault();
-            if (Svc.Condition[ConditionFlag.Gathering] && GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady || GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
-            {
-                IceLogging.Info($"Gathering window is now visible, continuing onto GatheringInteraction Task");
-                RouteIndex += 1;
-                return true;
-            }
-            else if (targetNode != null)
-            {
-                if (!Player.IsJumping)
-                {
-                    if (EzThrottler.Throttle("Target + Interaction throttle"))
-                    {
-                        Utils.TargetgameObject(targetNode);
-                        Utils.InteractWithObject(targetNode);
-                    }
-                }
-            }
-            else
-            {
-                IceLogging.Debug("Somehow we've gotten here, and we shouldn't be here. Adding 1 to the counter and returning");
-                RouteIndex += 1;
-                return true;
-            }
+            // Stop path following once gathering starts; ResetGatheringNavHalt when node is done.
+            if (GatherRouteNavigation.IsGatheringSessionActive())
+                NavmeshMovement.HaltNavmeshForGathering();
 
+            if (!SchedulerMain.ItemId.HasValue)
+                return true;
 
-            return false;
-        }
-        private static bool GatheringInteraction(uint itemId)
-        {
-            if (P.navmesh.IsRunning())
+            var itemId = SchedulerMain.ItemId.Value;
+            if (SchedulerMain.QueueActive)
             {
-                if (EzThrottler.Throttle("Stopping navmesh, cause we shouldn't be running"))
-                    P.navmesh.PathStop();
+                var queueTarget = GatherQueueSession.CurrentTarget();
+                if (queueTarget == null || queueTarget.TargetQuantity <= 0)
+                    return true;
+
+                itemId = queueTarget.ItemId;
             }
 
             if (Svc.Condition[ConditionFlag.Gathering])
             {
+                _openedGatheringWindowThisNode = true;
+
                 if (!Svc.Condition[ConditionFlag.ExecutingGatheringAction])
                 {
                     if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
@@ -300,6 +419,18 @@ namespace GatherChill.Scheduler.Tasks
                                 14, 15, 16, 17, 18, 19
                             };
 
+                            var gatherTarget = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId);
+                            if (gatherTarget == null)
+                            {
+                                if (EzThrottler.Throttle($"Missing gather slot for {itemId}", 3000))
+                                    IceLogging.Warning($"Item {itemId} not in gathering window; check queue item vs node.");
+                                return false;
+                            }
+
+                            // Select the queue item before buffs so default slot (often tomato) is not gathered.
+                            if (EzThrottler.Throttle($"Select gather item: {itemId}", 200))
+                                gatherTarget.Gather();
+
                             if (Crystals.Contains(itemId))
                             {
                                 bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
@@ -310,8 +441,8 @@ namespace GatherChill.Scheduler.Tasks
                             else if (Basic_BuffCheck())
                                 return false;
 
-                            if (EzThrottler.Throttle($"Gathering Item: {itemId}"))
-                                gather.GatheredItems.Where(x => x.ItemID == itemId).FirstOrDefault().Gather();
+                            if (EzThrottler.Throttle($"Gathering Item: {itemId}", 200))
+                                gatherTarget.Gather();
 
                             return false;
                         }
@@ -319,7 +450,20 @@ namespace GatherChill.Scheduler.Tasks
                 }
             }
             else
+            {
+                if (GatherRouteNavigation.IsGatheringSessionActive())
+                    return false;
+
+                NavmeshMovement.ResetGatheringNavHalt();
+                if (_openedGatheringWindowThisNode)
+                {
+                    _openedGatheringWindowThisNode = false;
+                    RouteIndex += 1;
+                    TryApplyPendingRouteChange();
+                }
+
                 return true;
+            }
 
             return false;
         }

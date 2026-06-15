@@ -1,4 +1,5 @@
 ﻿using Dalamud.Interface.Textures;
+using GatherChill.GatheringInfo;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Pictomancy;
@@ -61,6 +62,55 @@ public static partial class Gather_Util
     public static Dictionary<uint, ISharedImmediateTexture> JobIcons = new();
 
     public static Dictionary<uint, GatherPointInfo> SheetInfo = new();
+
+    public static List<uint> GetItemIdsForGatheringNode(uint gatheringPointRowId)
+    {
+        var items = new List<uint>();
+        if (!ExcelHelper.Sheet_GatherPoint.TryGetRow(gatheringPointRowId, out var gatherPoint))
+            return items;
+
+        var gatherPointBase = gatherPoint.GatheringPointBase.Value;
+        if (gatherPointBase.GatheringLevel == 0)
+            return items;
+
+        for (int i = 0; i <= 7; i++)
+        {
+            var gatheringItemId = gatherPointBase.Item[i].RowId;
+            if (ExcelHelper.Sheet_GatheringItem.TryGetRow(gatheringItemId, out var gatherItem))
+            {
+                var itemId = gatherItem.Item.RowId;
+                if (itemId != 0)
+                    items.Add(itemId);
+            }
+            else if (ExcelHelper.Sheet_SpearfishingItem.TryGetRow(gatheringItemId, out var spearfishItem))
+            {
+                var itemId = spearfishItem.Item.RowId;
+                if (itemId != 0)
+                    items.Add(itemId);
+            }
+        }
+
+        return items;
+    }
+
+    public static List<uint> GetItemIdsForRoute(GatheringRoute route)
+    {
+        var items = new HashSet<uint>();
+        foreach (var nodeId in route.NodeIds)
+        {
+            foreach (var itemId in GetItemIdsForGatheringNode(nodeId))
+                items.Add(itemId);
+        }
+
+        return items.ToList();
+    }
+
+    public static bool RouteContainsItem(GatheringRoute route, uint itemId) =>
+        GetItemIdsForRoute(route).Contains(itemId);
+
+    public static bool NodeYieldsItem(uint gatheringPointRowId, uint itemId) =>
+        GetItemIdsForGatheringNode(gatheringPointRowId).Contains(itemId);
+
     public static void UpdateSheetInfo()
     {
         var sheet_gatherPoint = ExcelHelper.Sheet_GatherPoint;
@@ -106,26 +156,7 @@ public static partial class Gather_Util
                     type = 18;
 
                 level = gatherPointBase.GatheringLevel; // Column 2
-
-                for (int i = 0; i <= 7; i++) // Items 0-7
-                {
-                    var gatheringItemId = gatherPointBase.Item[i].RowId;
-                    if (ExcelHelper.Sheet_GatheringItem.TryGetRow(gatheringItemId, out var gatherItem))
-                    {
-                        var itemId = gatherItem.Item.RowId;
-                        if (itemId != 0)
-                            itemIds.Add(itemId);
-                    }
-                    else if (ExcelHelper.Sheet_SpearfishingItem.TryGetRow(gatheringItemId, out var spearfishItem))
-                    {
-                        var itemId = spearfishItem.Item.RowId;
-                        if (itemId != 0)
-                            itemIds.Add(itemId);
-                    }
-                }
-
-                if (type == 18)
-                    IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
+                itemIds = GetItemIdsForGatheringNode(nodeId);
 
                 if (itemIds.Count == 0)
                     continue;
@@ -189,6 +220,11 @@ public static partial class Gather_Util
                 if (placeName != "???")
                     routeInfo.PlaceName = placeName;
                 routeInfo.NodeIds.Add(nodeId);
+                foreach (var itemId in itemIds)
+                {
+                    if (!routeInfo.ItemIds.Contains(itemId))
+                        routeInfo.ItemIds.Add(itemId);
+                }
             }
             else
             {
@@ -208,6 +244,8 @@ public static partial class Gather_Util
                 });
             }
         }
+
+        IceLogging.Verbose($"Gather sheet cache loaded: {SheetInfo.Count} routes.");
 
         foreach (var route in SheetInfo)
         {

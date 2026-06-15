@@ -5,9 +5,9 @@ using GatherChill.ConfigFiles;
 using GatherChill.GatheringInfo;
 using GatherChill.IPC;
 using GatherChill.Scheduler;
+using GatherChill.Utilities.Tools;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
-using GatherChill.Utilities.Tools;
 using Pictomancy;
 
 namespace GatherChill;
@@ -80,6 +80,10 @@ public sealed class GatherChill : IDalamudPlugin
         };
         EzCmd.Add("/gatherchill", OnCommand, """
             Open plugin interface
+            /gatherchill stop — halt routes, tasks, and navmesh movement
+            /gatherchill r — route editor
+            /gatherchill s — settings
+            /gatherchill d — debug
             """);
         EzCmd.Add("/icegather", OnCommand);
         Svc.Framework.Update += Tick;
@@ -102,10 +106,7 @@ public sealed class GatherChill : IDalamudPlugin
 
     public void OnDraw()
     {
-        if (Player.Available)
-        {
-            PictoManager.DrawPicto();
-        }
+        PictoManager.DrawPicto();
     }
 
     public void Dispose()
@@ -144,6 +145,12 @@ public sealed class GatherChill : IDalamudPlugin
         else if (firstArg.ToLower() == "r" || firstArg.ToLower() == "routes")
         {
             routeWindow.IsOpen = true;
+            return;
+        }
+        else if (firstArg.ToLower() == "stop" || firstArg.ToLower() == "halt")
+        {
+            SchedulerMain.Stop();
+            IceLogging.Info("Stopped all Gather-Chill automation.");
             return;
         }
     }
