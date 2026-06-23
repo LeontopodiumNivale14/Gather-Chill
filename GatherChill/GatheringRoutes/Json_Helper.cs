@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GatherChill.GatheringInfo;
+namespace GatherChill.GatheringRoutes;
 
 public class Vector3Converter : JsonConverter<Vector3>
 {

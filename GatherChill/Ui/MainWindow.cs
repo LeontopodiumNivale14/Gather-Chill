@@ -1,10 +1,11 @@
-﻿using Lumina.Excel.Sheets;
-using System.Collections.Generic;
+﻿using GatherChill.Ui.Tabs_MainWindow;
 
 namespace GatherChill.Ui
-{
+{ 
     internal class MainWindow : Window
     {
+        private readonly Item_Menu ItemMenu = new();
+
         /// <summary>
         /// Constructor for the main window. Adjusts window size, flags, and initializes data.
         /// </summary>
@@ -38,7 +39,23 @@ namespace GatherChill.Ui
         /// </summary>
         public override void Draw()
         {
-
+            if (ImGui.BeginTabBar("Main Window: Tab Bar"))
+            {
+                if (ImGui.BeginTabItem("Items"))
+                {
+                    ItemMenu.Draw();
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("Gather Lists"))
+                {
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("Settings"))
+                {
+                    ImGui.EndTabItem();
+                }
+            }
+            ImGui.EndTabBar();
         }
     }
 }

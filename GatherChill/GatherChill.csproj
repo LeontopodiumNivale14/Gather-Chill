@@ -23,14 +23,15 @@
 		<EmbeddedResource Include="GatheringRoutes\Routes\**\*.json" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Include="GatherChill.json" />
-	</ItemGroup>
+    <ItemGroup>
+	    <Content Include="GatherChill.json" />
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ECommons" Version="3.2.0.18" />
     <PackageReference Include="Pictomancy" Version="1.0.6" />
     <PackageReference Include="YamlDotNet" Version="17.1.0" />
+	<ProjectReference Include="..\OtterGui\OtterGui.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
-using GatherChill.GatheringInfo;
+using GatherChill.GatheringRoutes;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
 using Lumina.Excel.Sheets;
