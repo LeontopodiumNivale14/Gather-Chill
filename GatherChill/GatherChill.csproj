@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="GatheringRoutes\Routes\**\*.json" />
+		<EmbeddedResource Include="Resources\*.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="ECommons" Version="3.2.0.18" />
-    <PackageReference Include="Pictomancy" Version="1.0.6" />
+    <PackageReference Include="Pictomancy" Version="1.0.9" />
     <PackageReference Include="YamlDotNet" Version="17.1.0" />
   </ItemGroup>
 

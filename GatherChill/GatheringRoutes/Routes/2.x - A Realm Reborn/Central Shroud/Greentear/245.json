@@ -9,8 +9,87 @@
   "nodeIds": [
     31053
   ],
-  "nodeInfo": [],
-  "groupCount": 3,
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 31053,
+      "locations": [
+        {
+          "position": {
+            "x": 440.3295,
+            "y": 31.85231,
+            "z": -14.63871
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 320,
+            "fan_EndAngle": 86,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 320,
+            "fan_EndAngle": 86,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 453.4795,
+            "y": 19.32409,
+            "z": -70.09693
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 342,
+            "fan_EndAngle": 94,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 342,
+            "fan_EndAngle": 94,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 468.1901,
+            "y": 24.69732,
+            "z": -113.0331
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 77,
+            "fan_EndAngle": 218,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 77,
+            "fan_EndAngle": 218,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    }
+  ],
+  "groupCount": 1,
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "Ice",

@@ -2,6 +2,7 @@
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using GatherChill.GatheringInfo;
+using GatherChill.Gui;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;
@@ -92,6 +93,13 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         private static void RouteDetails(GatheringRoute routeInfo)
         {
+            Dictionary<uint, string> JobInfo = new()
+            {
+                [16] = "Miner",
+                [17] = "Botanist",
+                [18] = "Fisher",
+            };
+
             if (ImGui.BeginTable($"Route Details: {routeInfo.RouteId}", 2, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
             {
                 #region ID
@@ -144,14 +152,24 @@ namespace GatherChill.Ui.RouteWindowTabs
                 ImGui.Text($"Job");
 
                 ImGui.TableNextColumn();
-                string Job = routeInfo.GatheringJobId switch
+                string selectedJob = JobInfo.ContainsKey(routeInfo.GatheringJobId) ? JobInfo[routeInfo.GatheringJobId] : $"{routeInfo.GatheringJobId}";
+
+                if (ImGui.BeginCombo($"##JobName", selectedJob))
                 {
-                    16 => "Miner",
-                    17 => "Botanist",
-                    18 => "Fisher",
-                    _ => $"{routeInfo.GatheringJobId}"
-                };
-                ImGui.Text($"{Job}");
+                    foreach (var job in JobInfo)
+                    {
+                        var jobId = job.Key;
+                        var jobName = job.Value;
+
+                        var selected = routeInfo.GatheringJobId == jobId;
+                        if (ImGui.Selectable($"{jobName}", selected))
+                        {
+                            routeInfo.GatheringJobId = jobId;
+                        }
+                    }
+
+                    ImGui.EndCombo();
+                }
 
                 #endregion
 

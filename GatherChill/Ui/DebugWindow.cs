@@ -8,11 +8,11 @@ using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Enums;
+using GatherChill.Gui;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
-using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
@@ -74,15 +74,16 @@ internal class DebugWindow : Window
             if (ImGui.BeginTabItem("Crazy Arrow Test"))
             {
                 DrawArrowDebugWindow();
+                ImGui.EndTabItem();
             }
 
             ImGui.EndTabBar();
         }
     }
 
-    private uint _NodeIdSearch = 0;
+    private static uint _NodeIdSearch = 0;
 
-    public void DrawGatherPointTable()
+    public static void DrawGatherPointTable()
     {
         if (ImGui.BeginTable("GatherPointTable", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Sortable |  ImGuiTableFlags.SizingFixedFit))
         {
@@ -189,7 +190,7 @@ internal class DebugWindow : Window
             ImGui.EndTable();
         }
     }
-    public void TaskInfoDetails()
+    public static void TaskInfoDetails()
     {
         ImGui.Text($"Running task: {P.taskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.taskManager.NumQueuedTasks}");
         string currentTask = P.taskManager.CurrentTask?.Name ?? "";
@@ -252,13 +253,13 @@ internal class DebugWindow : Window
             ImGui.EndTable();
         }
     }
-    private void BuffViewer()
+    private static void BuffViewer()
     {
         var gatherDict = Gather_Util.GathActionDict[GatherBuffId.GivingLand];
 
         ImGui.Text($"Giving land CD: MIN: {BuffCD(gatherDict.ClassAction[Job.MIN])} | BTN: {BuffCD(gatherDict.ClassAction[Job.BTN]):N1}");
     }
-    private unsafe float BuffCD(uint actionId)
+    private unsafe static float BuffCD(uint actionId)
     {
         // Get the recast time for an action
         var recastGroup = ActionManager.Instance()->GetRecastGroupDetail(ActionManager.Instance()->GetRecastGroup(1, actionId));
@@ -277,7 +278,6 @@ internal class DebugWindow : Window
             return 0;
         }
     }
-
     private static void DrawArrowDebugWindow()
     {
         if (ImGui.Button("Set to player Pos"))

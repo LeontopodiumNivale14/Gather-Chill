@@ -228,6 +228,14 @@ namespace GatherChill.Scheduler.Tasks
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
                 );
             }
+            else if (Svc.Condition[ConditionFlag.Diving])
+            {
+                P.taskManager.EnqueueMulti
+                (
+                    new(() => Task_NavmeshMove.Task_FlyTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
+                    new(() => InteractWithNode(node.BaseId), "Interact with node")
+                );
+            }
             else
             {
                 IceLogging.Debug("We're moving onto the next set via ground movement");

@@ -4,7 +4,7 @@
   "zoneName": "Coerthas Western Highlands",
   "placeName": "Coerthas River",
   "expansionId": 1,
-  "gatheringJobId": 0,
+  "gatheringJobId": 17,
   "levelRequirement": 0,
   "nodeIds": [
     33631,
@@ -18,23 +18,23 @@
       "locations": [
         {
           "position": {
-            "x": 188.514,
-            "y": 0,
-            "z": -472.41
+            "x": 110.4504,
+            "y": 130.6704,
+            "z": -409.728
           },
           "allowFlying": true,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_StartAngle": 178,
+            "fan_EndAngle": 305,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_StartAngle": 178,
+            "fan_EndAngle": 305,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -43,28 +43,28 @@
       ]
     },
     {
-      "groupId": 0,
+      "groupId": 1,
       "nodeId": 33632,
       "locations": [
         {
           "position": {
-            "x": 188.514,
-            "y": 0,
-            "z": -472.41
+            "x": 240.7256,
+            "y": 133.1933,
+            "z": -396.7932
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_EndAngle": 359,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -73,28 +73,28 @@
       ]
     },
     {
-      "groupId": 0,
+      "groupId": 2,
       "nodeId": 33633,
       "locations": [
         {
           "position": {
-            "x": 188.514,
-            "y": 0,
-            "z": -472.41
+            "x": 214.3664,
+            "y": 138.1042,
+            "z": -610.7087
           },
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_EndAngle": 359,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,

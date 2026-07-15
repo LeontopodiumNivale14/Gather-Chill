@@ -1,5 +1,7 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using GatherChill.Ui.RouteWindowTabs;
+using GatherChill.Utilities.Tools;
+using System.Collections.Generic;
 
 namespace GatherChill.Ui
 {
@@ -30,6 +32,11 @@ namespace GatherChill.Ui
         public tabSelector PreviousTab = tabSelector.RouteSelector;
         public tabSelector CurrentTab = tabSelector.RouteSelector;
 
+        private RouteInfo.RouteTable? RouteTable = null;
+        private List<RouteInfo.RouteItem> TableItems = [];
+        private int ItemCount = 0;
+
+
         public override void Draw()
         {
             if (PreviousTab == tabSelector.RouteEditor && CurrentTab == tabSelector.RouteSelector)
@@ -50,6 +57,35 @@ namespace GatherChill.Ui
                 {
                     CurrentTab = tabSelector.RouteSelector;
                     Route_Selector.Draw();
+                    ImGui.EndTabItem();
+                }
+
+                if (ImGui.BeginTabItem("Route Selector V2"))
+                {
+                    try
+                    {
+                        if (RouteTable == null && P.routeEditor.Routes.Count > 0)
+                        {
+                            foreach (var route in P.routeEditor.Routes)
+                            {
+                                RouteInfo.RouteItem routeItem = new() { RouteId = route.Key };
+                                TableItems.Add(routeItem);
+                            }
+                            ItemCount = TableItems.Count();
+                            RouteTable = new(TableItems);
+                        }
+                        ImGui.Text($"Count: {ItemCount:N0}");
+                        if (RouteTable != null)
+                        {
+                            ImGui.SameLine();
+                            ImGui.Text($"{RouteTable?.FilteredRows?.Count():N0}");
+                        }
+                        RouteTable?.Draw();
+                    }
+                    catch (Exception ex)
+                    {
+                        IceLogging.Error(ex.Message, "Drawing Mission Table");
+                    }
                     ImGui.EndTabItem();
                 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GatherChill.Utilities.Tools
+namespace GatherChill.Gui
 {
     internal class ImGui_Util
     {

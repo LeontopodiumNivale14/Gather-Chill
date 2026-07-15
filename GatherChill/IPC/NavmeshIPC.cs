@@ -49,7 +49,8 @@ public class NavmeshIPC
 
     public bool NavRunning()
     {
-        return SmartIsRunning() || IsRunning();
+        return IsRunning();
+            // || SmartIsRunning();
     }
 
     public void SmartPath(uint territory, Vector3? position = null)
@@ -64,7 +65,7 @@ public class NavmeshIPC
     {
         if (IsRunning())
             P.navmesh.PathStop();
-        else if (SmartIsRunning())
-            P.navmesh.SmartNavStop();
+        //else if (SmartIsRunning())
+          //  P.navmesh.SmartNavStop();
     }
 }

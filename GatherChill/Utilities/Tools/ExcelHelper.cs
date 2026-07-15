@@ -15,7 +15,9 @@ internal static class ExcelHelper
 
     internal static ExcelSheet<TerritoryType> Sheet_TerritoryType;
     internal static ExcelSheet<PlaceName> Sheet_PlaceName;
+    internal static ExcelSheet<ExVersion> Sheet_Expansion;
 
+    internal static ExcelSheet<Item> Sheet_Item;
     public static void Init()
     {
         Svc.Data.GameData.Options.PanicOnSheetChecksumMismatch = false;
@@ -29,6 +31,9 @@ internal static class ExcelHelper
 
         Sheet_TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>();
         Sheet_PlaceName = Svc.Data.GetExcelSheet<PlaceName>();
+        Sheet_Expansion = Svc.Data.GetExcelSheet<ExVersion>();
+
+        Sheet_Item = Svc.Data.GetExcelSheet<Item>();
     }
 
     public static string GetTerritoryName(uint territoryid)

@@ -1,8 +1,11 @@
 ﻿using Dalamud.Interface.Textures;
+using Dalamud.Interface.Textures.TextureWraps;
+using GatherChill.Enums;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Pictomancy;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace GatherChill.Utilities.GatheringHelpers;
 
@@ -52,6 +55,7 @@ public static partial class Gather_Util
             Utils.SetGatheringRing(TerritoryId, X, Y, Radius, tooltip);
         }
     }
+
     public static Dictionary<uint, uint> Job_IconIds = new()
     {
         [16] = 62510, // MIN
@@ -59,6 +63,15 @@ public static partial class Gather_Util
         [18] = 62512, // FSH
     };
     public static Dictionary<uint, ISharedImmediateTexture> JobIcons = new();
+
+    public class ExpacIcon
+    {
+        public string ExpacName { get; set; } = "";
+        public int IconId { get; set; } = 0;
+        public IDalamudTextureWrap? Icon => Svc.Texture.GetFromGameIcon(IconId).GetWrapOrEmpty();
+    }
+
+    public static Dictionary<uint, ExpacIcon> ExpansionInfo = new();
 
     public static Dictionary<uint, GatherPointInfo> SheetInfo = new();
     public static void UpdateSheetInfo()
@@ -250,6 +263,19 @@ public static partial class Gather_Util
         {
             if (Svc.Texture.TryGetFromGameIcon(jobIcon.Value, out var texture))
                 JobIcons.TryAdd(jobIcon.Key, texture);
+        }
+
+        foreach (var expac in ExcelHelper.Sheet_Expansion)
+        {
+            var id = expac.RowId;
+            var name = expac.Name.ToString();
+            var iconId = (int)expac.Icon;
+
+            ExpansionInfo[id] = new()
+            {
+                ExpacName = name,
+                IconId = iconId
+            };
         }
     }
 }

@@ -9,8 +9,63 @@
   "nodeIds": [
     31495
   ],
-  "nodeInfo": [],
-  "groupCount": 3,
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 31495,
+      "locations": [
+        {
+          "position": {
+            "x": 524.3884,
+            "y": 17.75531,
+            "z": 28.48951
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 83,
+            "fan_EndAngle": 151,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 83,
+            "fan_EndAngle": 151,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        },
+        {
+          "position": {
+            "x": 573.1776,
+            "y": -66.27242,
+            "z": -172.8156
+          },
+          "allowFlying": true,
+          "flight_FanInfo": {
+            "fan_StartAngle": 191,
+            "fan_EndAngle": 273,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 191,
+            "fan_EndAngle": 273,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ]
+    }
+  ],
+  "groupCount": 1,
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev",
