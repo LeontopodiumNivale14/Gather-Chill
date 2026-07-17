@@ -23,10 +23,10 @@
           "allowFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_EndAngle": 359,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
-            "fan_Height": 0
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.86
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
@@ -46,17 +46,17 @@
           },
           "allowFlying": true,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_StartAngle": 305,
+            "fan_EndAngle": 70,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_StartAngle": 305,
+            "fan_EndAngle": 70,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
@@ -70,26 +70,27 @@
           },
           "allowFlying": true,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_StartAngle": 306,
+            "fan_EndAngle": 49,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 0,
+            "fan_StartAngle": 306,
+            "fan_EndAngle": 49,
             "fan_DistanceMin": 1,
-            "fan_DistanceMax": 3,
+            "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
-  "groupCount": 3,
+  "groupCount": 1,
   "requiresFolklore": false,
   "folkloreBook": "",
   "author": "alydev",

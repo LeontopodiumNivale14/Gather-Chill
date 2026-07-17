@@ -1,5 +1,6 @@
 ﻿using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.GameHelpers;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Gui.ImGuiTable;
@@ -7,6 +8,7 @@ using GatherChill.Utilities.Tools;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Channels;
 
 namespace GatherChill.Ui.RouteWindowTabs;
 
@@ -32,19 +34,20 @@ internal class RouteInfo
         private readonly RouteId _routeId = new();
         private readonly Position _position = new();
         private readonly Expansion _expansion = new();
-        private readonly TerritoryName _territory = new();
+        private readonly TerritoryName _terName = new();
+        private readonly Territory _terId = new();
         private readonly ItemInfo _items = new();
         private readonly TimedWindowColumn _times = new();
 
         public RouteTable(List<RouteItem> itemList)
         {
-            List<Column<RouteItem>> headers = [_routeId, _expansion, _territory, _position, _items, _times];
+            List<Column<RouteItem>> headers = [_routeId, _expansion, _terName, _terId, _position, _items, _times];
 
             Id = "RouteTable_V2";
             Columns = headers;
             Rows = itemList;
             Sortable = true;
-            Flags |= ImGuiTableFlags.Resizable;
+            Flags |= ImGuiTableFlags.Resizable | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollX;
         }
 
         public override float CalculateLineHeight()
@@ -60,6 +63,7 @@ internal class RouteInfo
             LabelKey = "Id";
             var size = ImGui.CalcTextSize("XXXX").X;
             SetFixedWidth(size);
+            Flags = ImGuiTableColumnFlags.WidthFixed;
         }
 
         public override int ToValue(RouteItem row) => (int)row.RouteId;
@@ -151,6 +155,7 @@ internal class RouteInfo
             SetFixedWidth(50);
             AllFlags = Enum.GetValues<ExpansionEnum>().Aggregate((a, b) => a | b);
             _filterValue = AllFlags;
+            Flags = ImGuiTableColumnFlags.WidthFixed;
         }
 
         public override string NameKeySpace => "ImGuiTable.ColumnExpansion";
@@ -214,6 +219,7 @@ internal class RouteInfo
         public TerritoryName()
         {
             Label = "Territory";
+            Flags = ImGuiTableColumnFlags.None;
         }
 
         public override string ToName(RouteItem row)
@@ -238,15 +244,49 @@ internal class RouteInfo
             }
             else
             {
-                ImGui.Text($"{route.ZoneName}");
+                ImGui.Button($"{route.ZoneName}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+
+                    ImGui.Text($"Node Count: {route.NodeIds.Count():N0}");
+                    ImGui.Text($"Locations Mapped: {route.NodeInfo.Count():N0}");
+                    var maxGroupId = route.NodeInfo.Count > 0 ? route.NodeInfo.Max(x => x.GroupId) : 0;
+                    ImGui.Text($"Max Group Id: {maxGroupId}");
+
+                    ImGui.EndTooltip();
+                }
             }
         }
     }
     public sealed class ItemInfo : ColumnString<RouteItem>
     {
+        private const int MaxIconsPerRow = 8;
+        private bool _widthCalculated;
+
         public ItemInfo()
         {
             Label = "Items";
+            Flags = ImGuiTableColumnFlags.NoResize;
+        }
+
+        private void EnsureWidth()
+        {
+            if (_widthCalculated)
+                return;
+
+            var iconSize = ImGui.GetFrameHeight();
+            var spacing = ImGui.GetStyle().ItemSpacing.X;
+
+            var width = (iconSize * MaxIconsPerRow) + (spacing * (MaxIconsPerRow - 1)) + ImGui.GetStyle().CellPadding.X * 2;
+            SetFixedWidth(width);
+            _widthCalculated = true;
+        }
+
+        public override bool DrawFilter()
+        {
+            EnsureWidth();
+            return base.DrawFilter();
         }
 
         private static IReadOnlyList<uint> GetItemIds(RouteItem row)
@@ -309,7 +349,7 @@ internal class RouteInfo
         public TimedWindowColumn()
         {
             Label = "Time";
-            Flags = ImGuiTableColumnFlags.None;
+            Flags = ImGuiTableColumnFlags.WidthStretch;
         }
 
         public override bool DrawFilter()
@@ -397,6 +437,53 @@ internal class RouteInfo
                 return int.MaxValue; // push "Always" rows to the end
 
             return windows.Min(w => w.Start);
+        }
+    }
+    public sealed class Territory : Column<RouteItem>
+    {
+        private bool _filterEnabled = false;
+        public Territory()
+        {
+            Label = "Ter. Id";
+            Width = ImGui.CalcTextSize($"XXXXX").X;
+            Flags = ImGuiTableColumnFlags.WidthFixed;
+        }
+
+        public override bool DrawFilter()
+        {
+            using var id = ImRaii.PushId("##TerritoryFilter");
+            var changed = false;
+
+            if (ImGui.Checkbox("##CurrentTerritory", ref _filterEnabled))
+                changed = true;
+
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Enable this to set to current territory");
+
+            return changed;
+        }
+
+        public override bool ShouldShow(RouteItem row)
+        {
+            if (!_filterEnabled)
+                return true;
+
+            var territoryId = row.GatherPoint?.TerritoryId;
+            if (territoryId == null || territoryId == 0)
+                return false;
+
+            return Player.Territory.RowId == territoryId;
+        }
+
+        public override int Compare(RouteItem lhs, RouteItem rhs)
+        {
+            return lhs.RouteInfo.TerritoryId.CompareTo(rhs.RouteInfo.TerritoryId);
+        }
+
+        public override void DrawColumn(RouteItem row)
+        {
+            ImGui.AlignTextToFramePadding();
+            ImGui.Text($"{row.RouteInfo.TerritoryId:N0}");
         }
     }
 }

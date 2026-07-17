@@ -318,6 +318,7 @@ namespace GatherChill.Ui.RouteWindowTabs
         private static int _dragTargetGroupId = -1;
 
         private static bool AutoUpdateMissing = true;
+        private static NodeLocation nodeToRemove = null;
 
         private static unsafe void NodeDetails(GatheringRoute routeInfo)
         {
@@ -345,7 +346,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                     if (AutoUpdateMissing)
                     {
                         var gatheringNodes = Svc.Objects.Where(x => routeInfo.NodeIds.Contains(x.BaseId))
-                     .Where(x => x.ObjectKind == ObjectKind.GatheringPoint);
+                            .Where(x => x.ObjectKind == ObjectKind.GatheringPoint);
 
                         foreach (var node in gatheringNodes)
                             P.routeEditor.AddNodeLocationIfMissing(routeInfo, node.BaseId, node.Position);
@@ -520,8 +521,6 @@ namespace GatherChill.Ui.RouteWindowTabs
                 var selectedNode = routeInfo.NodeInfo.FirstOrDefault(x => x.NodeId == selectedNodeId);
                 if (selectedNode != null)
                 {
-
-
                     // Clamp index in case locations changed
                     if (selectedLocationIndex >= selectedNode.Locations.Count)
                         selectedLocationIndex = Math.Max(0, selectedNode.Locations.Count - 1);
@@ -537,6 +536,27 @@ namespace GatherChill.Ui.RouteWindowTabs
                         {
                             selectedLocationIndex = i;
                         }
+                        if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && ImGui.IsItemHovered())
+                        {
+                            nodeToRemove = selectedNode.Locations[i];
+                            ImGui.OpenPopup("Remove Node Location");
+                        }
+                    }
+                    if (ImGui.BeginPopup("Remove Node Location"))
+                    {
+                        if (ImGui.Button("Remove Node"))
+                        {
+                            selectedNode.BlacklistNode.Add(nodeToRemove);
+                            selectedNode.Locations.Remove(nodeToRemove);
+
+                            if (selectedLocationIndex >= selectedNode.Locations.Count)
+                                selectedLocationIndex = Math.Max(0, selectedNode.Locations.Count - 1);
+
+                            nodeToRemove = null;
+                            ImGui.CloseCurrentPopup();
+                        }
+
+                        ImGui.EndPopup();
                     }
                 }
 

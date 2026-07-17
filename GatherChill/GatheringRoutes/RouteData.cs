@@ -68,6 +68,9 @@ namespace GatherChill.GatheringInfo
         public int GroupId { get; set; } = 0;
         public uint NodeId { get; set; }
         public List<NodeLocation> Locations { get; set; } = new();
+        // There are some nodes that just... exist in the object scanner but don't ACTUALLY exist.
+        // So using this to add as a blacklist -> Ignore re-adding
+        public List<NodeLocation> BlacklistNode { get; set; } = new();
     }
 
     /// <summary>

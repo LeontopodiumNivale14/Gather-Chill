@@ -53,13 +53,6 @@ namespace GatherChill.Ui
 
             if (ImGui.BeginTabBar("Route Editor: Tab Bar"))
             {
-                if (ImGui.BeginTabItem("Route Selector"))
-                {
-                    CurrentTab = tabSelector.RouteSelector;
-                    Route_Selector.Draw();
-                    ImGui.EndTabItem();
-                }
-
                 if (ImGui.BeginTabItem("Route Selector V2"))
                 {
                     try

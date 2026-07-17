@@ -227,11 +227,21 @@ namespace GatherChill.GatheringInfo
                             return true;
             return false;
         }
+        public bool BlacklistContainsNode(GatheringRoute route, uint nodeId, Vector3 position)
+        {
+            foreach (var node in route.NodeInfo)
+                if (node.NodeId == nodeId)
+                    foreach (var location in node.BlacklistNode)
+                        if (location.Position == position)
+                            return true;
+            return false;
+        }
 
         public void AddNodeLocationIfMissing(GatheringRoute route, uint nodeId, Vector3 position)
         {
             if (ContainsSpecificNode(route, nodeId, position)) return;
             if (!route.NodeIds.Contains(nodeId)) return;
+            if (BlacklistContainsNode(route, nodeId, position)) return;
 
             var newLocation = new NodeLocation { Position = position };
 
