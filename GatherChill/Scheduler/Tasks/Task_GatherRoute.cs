@@ -33,11 +33,11 @@ namespace GatherChill.Scheduler.Tasks
         {
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
             {
-                P.taskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
+                P.TM.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
             }
             else
             {
-                P.taskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
+                P.TM.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
             }
         }
 
@@ -112,13 +112,13 @@ namespace GatherChill.Scheduler.Tasks
                 if (validNode == null)
                 {
                     NodeCheckIndex = 0;
-                    P.taskManager.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
+                    P.TM.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
                     return true;
                 }
                 else
                 {
                     IceLogging.Debug("we're within range, checking travel kind now");
-                    P.taskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
+                    P.TM.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
                     return true;
                 }
             }
@@ -164,7 +164,7 @@ namespace GatherChill.Scheduler.Tasks
                     {
                         IceLogging.Debug("We've found a valid node! Time to pathfind/interact with it");
                         NodeCheckIndex = 0; // Reset for next time
-                        P.taskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
+                        P.TM.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
                         return true;
                     }
                     else
@@ -221,7 +221,7 @@ namespace GatherChill.Scheduler.Tasks
             {
                 IceLogging.Debug("We're moving onto the next set via flying");
 
-                P.taskManager.EnqueueMulti
+                P.TM.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, true), "True Fly Task", TaskConfig),
                     new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
@@ -230,7 +230,7 @@ namespace GatherChill.Scheduler.Tasks
             }
             else if (Svc.Condition[ConditionFlag.Diving])
             {
-                P.taskManager.EnqueueMulti
+                P.TM.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_FlyTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
@@ -239,7 +239,7 @@ namespace GatherChill.Scheduler.Tasks
             else
             {
                 IceLogging.Debug("We're moving onto the next set via ground movement");
-                P.taskManager.EnqueueMulti
+                P.TM.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
@@ -336,9 +336,10 @@ namespace GatherChill.Scheduler.Tasks
             var actionInfo = Gather_Util.GathActionDict[GatherBuffId.BYII];
             bool hasBuff = Utils.HasStatusId(actionInfo.StatusId) || Utils.HasStatusId(actionInfo.StatusId2);
             bool hasGp = Utils.GetGp() >= actionInfo.RequiredGp;
+            bool isLevel = Player.Level >= actionInfo.RequiredLv;
             var actionId = actionInfo.ClassAction[Player.Job];
 
-            if (!hasBuff && hasGp)
+            if (!hasBuff && hasGp && isLevel)
             {
                 ActionManager.Instance()->UseAction(ActionType.Action, actionId);
                 return true;

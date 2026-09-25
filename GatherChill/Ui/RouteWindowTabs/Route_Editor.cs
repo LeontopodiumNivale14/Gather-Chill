@@ -11,6 +11,7 @@ using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static GatherChill.Ui.RouteWindowTabs.RouteInfo;
 
 namespace GatherChill.Ui.RouteWindowTabs
 {
@@ -177,7 +178,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui_Util.Table_VertCenterText($"Lv.");
+                ImGui_Ice.Table_VertCenterText($"Lv.");
 
                 ImGui.TableNextColumn();
                 var level = routeInfo.LevelRequirement;
@@ -209,46 +210,46 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 #endregion
 
-                #region Settings
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.Text($"Folklore Required");
-
-                ImGui.TableNextColumn();
-                bool folklore = routeInfo.RequiresFolklore;
-                if (ImGui.Checkbox($"##FolkloreReq", ref folklore))
-                    routeInfo.RequiresFolklore = folklore;
-
-                if (folklore)
-                {
-                    string reqBook = routeInfo.FolkloreBook;
-                    if (ImGui.InputText("Name", ref reqBook))
-                        routeInfo.FolkloreBook = reqBook;
-                }
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.Text($"Timed Node?");
-
-                ImGui.TableNextColumn();
-                bool timedNode = routeInfo.TimedNode;
-                if (ImGui.Checkbox("##timedNode", ref timedNode))
-                    routeInfo.TimedNode = timedNode;
-
-                #endregion
-
                 #region Details
 
                 string authors = routeInfo.Author;
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui_Util.Table_VertCenterText("Author(s)");
+                ImGui_Ice.Table_VertCenterText("Author(s)");
 
                 ImGui.TableNextColumn();
                 ImGui.SetNextItemWidth(200);
                 if (ImGui.InputText("##authors", ref authors))
                     routeInfo.Author = authors;
+
+                #endregion
+
+                #region
+
+                if (Sheet_RouteInfo.TryGetValue(SelectedRoute, out var sheetInfo))
+                {
+                    var folklore = sheetInfo.Folklore;
+                    if (folklore != null && folklore.ItemId != 0)
+                    {
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui_Ice.ImageButtonWithText(folklore.IconId, $"{folklore.Name}", $"{folklore.Name}_Button");
+
+                        ImGui.TableNextColumn();
+                        bool isUnlocked = Svc.UnlockState.IsItemUnlocked(folklore.SheetInfo);
+                        var icon = isUnlocked ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
+                        var color = isUnlocked ? EColor.Green : EColor.Red;
+
+                        ImGui.AlignTextToFramePadding();
+                        ImGuiEx.Icon(color, icon);
+                    }
+                }
+                else
+                {
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"No Folklore: {SelectedRoute}");
+                }
 
                 #endregion
 
@@ -266,7 +267,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                 ImGui.TableHeadersRow();
 
-                if (Gather_Util.SheetInfo.TryGetValue(SelectedRoute, out var sheetInfo))
+                if (Gather_Util.Sheet_RouteInfo.TryGetValue(SelectedRoute, out var sheetInfo))
                 {
                     foreach (var item in sheetInfo.ItemIds)
                     {
@@ -287,7 +288,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             ImGui.TableNextColumn();
                             if (Utils.GetItemCount(item, out var count))
                             {
-                                ImGui_Util.Table_VertCenterText($"{count}");
+                                ImGui_Ice.Table_VertCenterText($"{count}");
                             }
 
                             ImGui.TableNextColumn();
@@ -482,7 +483,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             }
 
                             ImGui.TableNextColumn();
-                            ImGui_Util.Table_VertCenterText($"{nodeGroup.Locations.Count}");
+                            ImGui_Ice.Table_VertCenterText($"{nodeGroup.Locations.Count}");
 
                             ImGui.PopID();
                         }

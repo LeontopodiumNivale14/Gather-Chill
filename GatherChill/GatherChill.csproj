@@ -29,14 +29,14 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ECommons" Version="3.2.0.18" />
+    <PackageReference Include="ECommons" Version="3.2.1.18" />
     <PackageReference Include="Pictomancy" Version="1.0.9" />
-    <PackageReference Include="YamlDotNet" Version="17.1.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Update="DalamudPackager" Version="15.0.0" />
-    <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.2" />
+    <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.5" />
   </ItemGroup>
   
   

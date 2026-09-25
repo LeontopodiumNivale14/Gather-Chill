@@ -1,20 +1,13 @@
-﻿using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Utility.Raii;
-using ECommons.ExcelServices;
+﻿using ECommons.ExcelServices;
 using ECommons.GameHelpers;
-using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
-using GatherChill.Utilities;
+using GatherChill.Ui.Tabs_Debug;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
-using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Text;
 using static GatherChill.Utilities.Tools.IceLogging;
@@ -77,6 +70,11 @@ internal class DebugWindow : Window
                 ImGui.EndTabItem();
             }
 
+            if (ImGui.BeginTabItem("Shard Editor"))
+            {
+                AethernetEditor.Draw();
+            }
+
             ImGui.EndTabBar();
         }
     }
@@ -101,7 +99,7 @@ internal class DebugWindow : Window
 
             // Get sorting specs
             var sortSpecs = ImGui.TableGetSortSpecs();
-            IEnumerable<KeyValuePair<uint, GatherPointInfo>> sortedData = SheetInfo;
+            IEnumerable<KeyValuePair<uint, GatherPointInfo>> sortedData = Sheet_RouteInfo;
 
             if (sortSpecs.SpecsCount > 0)
             {
@@ -109,27 +107,27 @@ internal class DebugWindow : Window
                 sortedData = spec.ColumnIndex switch
                 {
                     0 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Key)
-                        : SheetInfo.OrderByDescending(x => x.Key),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Key)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Key),
                     1 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.NodeIds?.FirstOrDefault() ?? 0)
-                        : SheetInfo.OrderByDescending(x => x.Value.NodeIds?.FirstOrDefault() ?? 0),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.NodeIds?.FirstOrDefault() ?? 0)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.NodeIds?.FirstOrDefault() ?? 0),
                     2 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.Type)
-                        : SheetInfo.OrderByDescending(x => x.Value.Type),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Type)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Type),
                     3 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.Level)
-                        : SheetInfo.OrderByDescending(x => x.Value.Level),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Level)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Level),
                     4 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.ZoneName)
-                        : SheetInfo.OrderByDescending(x => x.Value.ZoneName),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.ZoneName)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.ZoneName),
                     5 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.PlaceName)
-                        : SheetInfo.OrderByDescending(x => x.Value.PlaceName),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.PlaceName)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.PlaceName),
                     6 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? SheetInfo.OrderBy(x => x.Value.ExpId)
-                        : SheetInfo.OrderByDescending(x => x.Value.ExpId),
-                    _ => SheetInfo
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.ExpId)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.ExpId),
+                    _ => Sheet_RouteInfo
                 };
             }
 
@@ -174,7 +172,10 @@ internal class DebugWindow : Window
                 ImGui.TableNextColumn();
                 ImGui.TextDisabled($"{kvp.Value.ExpId}");
                 ImGui.SameLine();
-                ImGui.Text(kvp.Value.ExpansionName);
+                if (Gather_Util.Sheet_Expansion.TryGetValue((ExpansionEnum)kvp.Value.ExpId, out var expansionInfo))
+                {
+                    ImGui.Text($"{expansionInfo.ExpacName}");
+                }
 
                 ImGui.TableNextColumn();
                 if (kvp.Value.ItemIds != null && kvp.Value.ItemIds.Count > 0)
@@ -192,12 +193,12 @@ internal class DebugWindow : Window
     }
     public static void TaskInfoDetails()
     {
-        ImGui.Text($"Running task: {P.taskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.taskManager.NumQueuedTasks}");
-        string currentTask = P.taskManager.CurrentTask?.Name ?? "";
+        ImGui.Text($"Running task: {P.TM.NumQueuedTasks != 0} | Amount of queue'd task: {P.TM.NumQueuedTasks}");
+        string currentTask = P.TM.CurrentTask?.Name ?? "";
         ImGui.Text($"Current task running: {currentTask}");
         ImGui.Text($"Current State: {SchedulerMain.State}");
         ImGui.Text($"ItemId set: {SchedulerMain.ItemId}");
-        ImGui.Text($"Task Count: {P.taskManager.Tasks.Count}");
+        ImGui.Text($"Task Count: {P.TM.Tasks.Count}");
     }
     private static void DestinationLogViewer()
     {
@@ -225,16 +226,16 @@ internal class DebugWindow : Window
                 ImGui.PushID($"{log.PlayerDestination}_{entryNumber}");
 
                 ImGui.TableSetColumnIndex(0);
-                ImGui_Util.Table_VertCenterText(log.Timestamp.ToString("HH:mm:ss"));
+                ImGui_Ice.Table_VertCenterText(log.Timestamp.ToString("HH:mm:ss"));
 
                 ImGui.TableNextColumn();
-                ImGui_Util.Table_VertCenterText($"X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
+                ImGui_Ice.Table_VertCenterText($"X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
 
                 ImGui.TableNextColumn();
-                ImGui_Util.Table_VertCenterText($"X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
+                ImGui_Ice.Table_VertCenterText($"X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
 
                 ImGui.TableNextColumn();
-                ImGui_Util.Table_VertCenterText($"{log.Distance}");
+                ImGui_Ice.Table_VertCenterText($"{log.Distance}");
 
                 ImGui.TableNextColumn();
                 if (ImGui.Button("Copy Info"))

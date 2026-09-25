@@ -115,7 +115,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                             ImGui.TableNextColumn();
                             var job = route.Value.GatheringJobId;
-                            if (Gather_Util.JobIcons.TryGetValue(job, out var jobIcon))
+                            if (Gather_Util.Sheet_JobInfo.TryGetValue(job, out var jobIcon))
                             {
                                 ImGui.Image(jobIcon.GetWrapOrEmpty().Handle, new(24, 24));
                             }
@@ -126,7 +126,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             {
                                 ImGui.SetTooltip($"ID: {route.Value.TerritoryId}");
                             }
-                            if (SheetInfo.TryGetValue(route.Key, out var gatherPointInfo))
+                            if (Sheet_RouteInfo.TryGetValue(route.Key, out var gatherPointInfo))
                             {
                                 ImGui.SameLine();
                                 if (ImGuiEx.IconButton(FontAwesomeIcon.Flag, $"{route.Key}_Map"))
@@ -250,7 +250,7 @@ namespace GatherChill.Ui.RouteWindowTabs
         }
         private static Vector2? GetFlagPos(uint routeId)
         {
-            if (!SheetInfo.TryGetValue(routeId, out var info)) return null;
+            if (!Sheet_RouteInfo.TryGetValue(routeId, out var info)) return null;
             return new Vector2(info.Map.X, info.Map.Y);
         }
         private static float GetFlagDistance(uint routeId, Vector2 from)

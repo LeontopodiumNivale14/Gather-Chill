@@ -1,14 +1,12 @@
-﻿using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
+using GatherChill.Gui;
 using GatherChill.Gui.ImGuiTable;
+using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Channels;
 
 namespace GatherChill.Ui.RouteWindowTabs;
 
@@ -19,7 +17,7 @@ internal class RouteInfo
         public uint RouteId { get; set; } = 0;
 
         public GatherPointInfo? GatherPoint =>
-            SheetInfo.TryGetValue(RouteId, out var info) ? info : null;
+            Sheet_RouteInfo.TryGetValue(RouteId, out var info) ? info : null;
 
         public GatheringRoute? RouteInfo =>
             P.routeEditor.Routes.TryGetValue(RouteId, out var route) ? route : null;
@@ -38,10 +36,11 @@ internal class RouteInfo
         private readonly Territory _terId = new();
         private readonly ItemInfo _items = new();
         private readonly TimedWindowColumn _times = new();
+        private readonly Folklore _folklore = new();
 
         public RouteTable(List<RouteItem> itemList)
         {
-            List<Column<RouteItem>> headers = [_routeId, _expansion, _terName, _terId, _position, _items, _times];
+            List<Column<RouteItem>> headers = [_routeId, _expansion, _terName, _terId, _position, _items, _folklore, _times];
 
             Id = "RouteTable_V2";
             Columns = headers;
@@ -113,7 +112,7 @@ internal class RouteInfo
 
         private static Vector2? GetFlagPos(uint routeId)
         {
-            if (!SheetInfo.TryGetValue(routeId, out var info))
+            if (!Sheet_RouteInfo.TryGetValue(routeId, out var info))
                 return null;
             return new Vector2(info.Map.X, info.Map.Y);
         }
@@ -188,7 +187,7 @@ internal class RouteInfo
         public override void DrawColumn(RouteItem row)
         {
             var route = row.RouteInfo;
-            if (route == null || !ExpansionInfo.TryGetValue(route.ExpansionId, out var expacInfo))
+            if (route == null || !Sheet_Expansion.TryGetValue((ExpansionEnum)route.ExpansionId, out var expacInfo))
             {
                 ImGui.TextDisabled("N/A");
                 if (ImGui.IsItemHovered())
@@ -484,6 +483,85 @@ internal class RouteInfo
         {
             ImGui.AlignTextToFramePadding();
             ImGui.Text($"{row.RouteInfo.TerritoryId:N0}");
+        }
+    }
+    public sealed class Folklore : ColumnFlags<FolkloreEnum, RouteItem>
+    {
+        private FolkloreEnum _filterValue;
+
+        public Folklore()
+        {
+            Label = "Folklore";
+            SetFixedWidth(50);
+            AllFlags = Enum.GetValues<FolkloreEnum>().Aggregate((a, b) => a | b);
+            _filterValue = AllFlags;
+            Flags = ImGuiTableColumnFlags.WidthFixed;
+        }
+
+        public override string NameKeySpace => "ImGuiTable.ColumnExpansion";
+        public override FolkloreEnum FilterValue => _filterValue;
+
+        public override void SetValue(FolkloreEnum value, bool enable)
+        {
+            if (enable)
+                _filterValue |= value;
+            else
+                _filterValue &= ~value;
+        }
+
+        public override bool ShouldShow(RouteItem row)
+        {
+            var sheetInfo = row.GatherPoint;
+
+            // Making sure that it's not null / it actually has a folklore ID
+            bool hasFolklore = sheetInfo?.Folklore != null && sheetInfo.Folklore.ItemId != 0;
+
+            if (hasFolklore)
+                return FilterValue.HasFlag(FolkloreEnum.Has);
+            else
+                return FilterValue.HasFlag(FolkloreEnum.None);
+        }
+
+        public override void DrawColumn(RouteItem row)
+        {
+            var sheetInfo = row.GatherPoint;
+            if (sheetInfo?.Folklore == null || sheetInfo.Folklore.ItemId == 0)
+            {
+                return;
+            }
+
+            var folklore = sheetInfo.Folklore;
+            float scale = ImGui.GetTextLineHeightWithSpacing() - 1;
+
+            ImGui.Image(folklore.Icon.GetWrapOrEmpty().Handle, new(scale));
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                if (ImGui.BeginTable("Folklore Info", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
+                {
+                    ImGui.TableSetupColumn("Name");
+                    ImGui.TableSetupColumn("Unlocked");
+                    ImGui.TableHeadersRow();
+
+                    ImGui.TableNextRow();
+
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"{folklore.Name}");
+
+                    ImGui.TableNextColumn();
+                    bool isUnlocked = Svc.UnlockState.IsItemUnlocked(folklore.SheetInfo);
+                    var icon = isUnlocked ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
+                    var color = isUnlocked ? EColor.Green : EColor.Red;
+                    ImGuiEx.Icon(color, icon);
+
+
+
+                    ImGui.EndTable();
+                }
+
+                ImGui.EndTooltip();
+            }
         }
     }
 }

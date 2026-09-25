@@ -220,6 +220,7 @@ public static partial class Gather_Util
         },
     };
 
+    // Old Dictionaries before I swapped to enums to NOT hate myself
     public static Dictionary<string, GatheringActions> GathCollectableBuffs = new()
     {
         ["Scrutiny"] = new GatheringActions

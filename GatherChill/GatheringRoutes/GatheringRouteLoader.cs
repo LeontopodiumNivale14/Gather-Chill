@@ -168,7 +168,7 @@ namespace GatherChill.GatheringInfo
         /// </summary>
         public void CreateStubsForMissingRoutes(string outputDirectory, bool dryRun = false)
         {
-            var sheetInfo = Gather_Util.SheetInfo;
+            var sheetInfo = Gather_Util.Sheet_RouteInfo;
             var missing = FindMissingRoutes(sheetInfo);
 
             if (missing.Count == 0)

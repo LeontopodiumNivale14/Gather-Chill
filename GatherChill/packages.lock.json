@@ -10,15 +10,15 @@
       },
       "DotNet.ReproducibleBuilds": {
         "type": "Direct",
-        "requested": "[2.0.2, )",
-        "resolved": "2.0.2",
-        "contentHash": "VaHoEN6YHp0jXucxm67vfuRy8zo9ufiKSuaZ4ZudRi8xmWcEFMKxfCsg2nvYNvdISFTURDu+IHqADGh53+Bamw=="
+        "requested": "[2.0.5, )",
+        "resolved": "2.0.5",
+        "contentHash": "8LrlvI1KpjjJ4VGSqZ16yoOCKlQnYS+Y8rYNifNrscmVh5anJcF9E4e0NiDP30BHBMUbkoJ5KdcxoRWM7Pz9Aw=="
       },
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.2.0.18, )",
-        "resolved": "3.2.0.18",
-        "contentHash": "esPIjfuveuw05c4PI7gqpRcifaUaUZ9sf7JnN90CBM1Ah2emxTBrKQl6A+ghHobwQOOe+yflN03TJnv32NEkVw=="
+        "requested": "[3.2.1.18, )",
+        "resolved": "3.2.1.18",
+        "contentHash": "7yudYdKsg6TMki8+vekCbnOf4JdG/JFAcMFzMC77uv8E9WF87Cln6TL+OvFYUbqatfyFiMwXwJOEs/P7LcCjPQ=="
       },
       "Pictomancy": {
         "type": "Direct",
@@ -33,11 +33,11 @@
           "SharpDX.Mathematics": "4.2.0"
         }
       },
-      "YamlDotNet": {
+      "SixLabors.ImageSharp": {
         "type": "Direct",
-        "requested": "[17.1.0, )",
-        "resolved": "17.1.0",
-        "contentHash": "AhsNXgeAs3Ugt653t8LC44xXDuldFfwBpWbWX9pN3e4Yg8U5Bk8jLn8eXtGv5HV2V2nHu7F46fqsPC+tpcTGAA=="
+        "requested": "[3.1.12, )",
+        "resolved": "3.1.12",
+        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
       },
       "KamiToolKit": {
         "type": "Transitive",
@@ -114,11 +114,6 @@
           "NETStandard.Library": "1.6.1",
           "SharpDX": "4.2.0"
         }
-      },
-      "SixLabors.ImageSharp": {
-        "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
       }
     }
   }

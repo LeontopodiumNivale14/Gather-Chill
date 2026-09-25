@@ -13,4 +13,10 @@ namespace GatherChill.Enums
         EW = 1 << 4,
         DT = 1 << 5,
     }
+
+    public enum FolkloreEnum
+    {
+        None = 1 << 0,
+        Has = 1 << 1,
+    }
 }

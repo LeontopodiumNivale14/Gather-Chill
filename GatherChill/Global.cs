@@ -20,6 +20,7 @@ global using static ECommons.GenericHelpers;
 global using static GatherChill.GatherChill;
 global using static GatherChill.Utilities.Utility.Utils;
 global using static GatherChill.Utilities.GatheringHelpers.Gather_Util;
+global using static GatherChill.Gui.ImGui_Ice;
 
 // tables being used acrossed the plugin
 global using Dalamud.Plugin.Services;

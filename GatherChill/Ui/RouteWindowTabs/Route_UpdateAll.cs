@@ -32,7 +32,7 @@ namespace GatherChill.Ui.RouteWindowTabs
             {
                 foreach (var route in P.routeEditor.Routes)
                 {
-                    if (SheetInfo.TryGetValue(route.Key, out var sheetInfo))
+                    if (Sheet_RouteInfo.TryGetValue(route.Key, out var sheetInfo))
                     {
                         var routeInfo = route.Value;
                         routeInfo.ExpansionId = sheetInfo.ExpId;

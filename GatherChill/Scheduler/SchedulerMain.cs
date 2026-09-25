@@ -15,7 +15,7 @@ namespace GatherChill.Scheduler
         internal static bool DisablePlugin()
         {
             P.navmesh.SmartStop();
-            P.taskManager.Abort();
+            P.TM.Abort();
 
             RouteId = null;
             ItemId = null;
@@ -30,7 +30,7 @@ namespace GatherChill.Scheduler
 
         internal static void Tick()
         {
-            if (P.taskManager.NumQueuedTasks == 0 && State != IceState.Idle)
+            if (P.TM.NumQueuedTasks == 0 && State != IceState.Idle)
             {
                 Task_GatherRoute.Enqueue(RouteId.Value, ItemId.Value);
             }

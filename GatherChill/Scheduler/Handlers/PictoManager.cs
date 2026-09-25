@@ -1,8 +1,10 @@
-﻿using ECommons.GameHelpers;
+﻿using Dalamud.Bindings.ImPlot;
+using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.Tools;
+using GatherChill.Utilities.Traveling;
 using GatherChill.Utilities.Utility;
 using Pictomancy;
 using System.Collections.Generic;
@@ -186,6 +188,102 @@ internal static partial class PictoManager
                     DegreesToRadians(flight_PictoEnd),
                     Utils.ToUintABGR(fanColor_Flight));
             });
+        }
+    }
+    public static void DrawAethernetFan(TravelUtil.AethershardInfo shard, uint selectedShard)
+    {
+        var fanColor_Gather = shard.ShardId == selectedShard ? C.Picto_SelectedFan : C.Picto_GatherFanColor;
+        var fanColor_Flight = shard.ShardId == selectedShard ? C.Picto_SelectedFan : C.Picto_FlightFanColor;
+
+        var location = shard.Shard_Position;
+        var fanInfo = shard.DestinationFan;
+        Vector3 shardFanLocation = new(location.X, location.Y + fanInfo.Fan_Height, location.Z);
+
+        float pictoStart = (fanInfo.Fan_StartAngle + 180f) % 360f;
+        float pictoEnd = (fanInfo.Fan_EndAngle + 180f) % 360f;
+
+        if (pictoStart > pictoEnd)
+        {
+            AddDrawCommand(pictoDraw =>
+            {
+                pictoDraw.AddFanFilled(
+                    shardFanLocation,
+                    fanInfo.Fan_DistanceMin,
+                    fanInfo.Fan_DistanceMax,
+                    DegreesToRadians(pictoStart),
+                    DegreesToRadians(360),
+                    Utils.ToUintABGR(fanColor_Gather));
+
+                pictoDraw.AddFanFilled(
+                    shardFanLocation,
+                    fanInfo.Fan_DistanceMin,
+                    fanInfo.Fan_DistanceMax,
+                    DegreesToRadians(0),
+                    DegreesToRadians(pictoEnd),
+                    Utils.ToUintABGR(fanColor_Gather));
+            });
+        }
+        else
+        {
+            AddDrawCommand(pictoDraw =>
+            {
+                pictoDraw.AddFanFilled(
+                    shardFanLocation,
+                    fanInfo.Fan_DistanceMin,
+                    fanInfo.Fan_DistanceMax,
+                    DegreesToRadians(pictoStart),
+                    DegreesToRadians(pictoEnd),
+                    Utils.ToUintABGR(fanColor_Gather));
+            });
+        }
+    }
+    public static void DrawAethernetMultiFan(TravelUtil.AethershardInfo shard, uint selectedShard, int index)
+    {
+        var location = shard.Shard_Position;
+        for (int i = 0; i < shard.Multi_Destinations.Count; i++)
+        {
+            bool isSelected = shard.ShardId == selectedShard && i == index;
+            var fanColor_Gather = isSelected ? C.Picto_SelectedFan : C.Picto_GatherFanColor;
+            var fanInfo = shard.Multi_Destinations[i];
+            Vector3 shardFanLocation = new(location.X, location.Y + fanInfo.Fan_Height, location.Z);
+
+            float pictoStart = (fanInfo.Fan_StartAngle + 180f) % 360f;
+            float pictoEnd = (fanInfo.Fan_EndAngle + 180f) % 360f;
+
+            if (pictoStart > pictoEnd)
+            {
+                AddDrawCommand(pictoDraw =>
+                {
+                    pictoDraw.AddFanFilled(
+                        shardFanLocation,
+                        fanInfo.Fan_DistanceMin,
+                        fanInfo.Fan_DistanceMax,
+                        DegreesToRadians(pictoStart),
+                        DegreesToRadians(360),
+                        Utils.ToUintABGR(fanColor_Gather));
+
+                    pictoDraw.AddFanFilled(
+                        shardFanLocation,
+                        fanInfo.Fan_DistanceMin,
+                        fanInfo.Fan_DistanceMax,
+                        DegreesToRadians(0),
+                        DegreesToRadians(pictoEnd),
+                        Utils.ToUintABGR(fanColor_Gather));
+                });
+            }
+            else
+            {
+                AddDrawCommand(pictoDraw =>
+                {
+                    pictoDraw.AddFanFilled(
+                        shardFanLocation,
+                        fanInfo.Fan_DistanceMin,
+                        fanInfo.Fan_DistanceMax,
+                        DegreesToRadians(pictoStart),
+                        DegreesToRadians(pictoEnd),
+                        Utils.ToUintABGR(fanColor_Gather));
+                });
+            }
         }
     }
     public static void DrawSphere(NodeLocation location, Vector3 selectedNode)
