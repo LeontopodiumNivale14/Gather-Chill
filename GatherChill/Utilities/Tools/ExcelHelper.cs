@@ -12,6 +12,7 @@ internal static class ExcelHelper
     internal static ExcelSheet<ExportedGatheringPoint> Sheet_ExportedGatherPoints;
     internal static ExcelSheet<SpearfishingNotebook> Sheet_SpearfishingNotebook;
     internal static ExcelSheet<SpearfishingItem> Sheet_SpearfishingItem;
+    internal static ExcelSheet<GatheringType> Sheet_GatheringType;
 
     internal static ExcelSheet<TerritoryType> Sheet_TerritoryType;
     internal static ExcelSheet<PlaceName> Sheet_PlaceName;
@@ -26,7 +27,6 @@ internal static class ExcelHelper
 
     public static void Init()
     {
-        Svc.Data.GameData.Options.PanicOnSheetChecksumMismatch = false;
         Sheet_GatherPoint = Svc.Data.GetExcelSheet<GatheringPoint>();
         Sheet_GatherPointTransient = Svc.Data.GetExcelSheet<GatheringPointTransient>();
         Sheet_GatherTimeTable = Svc.Data.GetExcelSheet<GatheringRarePopTimeTable>();
@@ -34,6 +34,7 @@ internal static class ExcelHelper
         Sheet_ExportedGatherPoints = Svc.Data.GetExcelSheet<ExportedGatheringPoint>();
         Sheet_SpearfishingNotebook = Svc.Data.GetExcelSheet<SpearfishingNotebook>();
         Sheet_SpearfishingItem = Svc.Data.GetExcelSheet<SpearfishingItem>();
+        Sheet_GatheringType = Svc.Data.GetExcelSheet<GatheringType>();
 
         Sheet_TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>();
         Sheet_PlaceName = Svc.Data.GetExcelSheet<PlaceName>();

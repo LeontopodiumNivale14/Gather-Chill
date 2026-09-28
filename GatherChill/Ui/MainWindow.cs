@@ -96,7 +96,7 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.Route,
                 Label = "Route Editor",
-                Draw = () => { }
+                Draw = () => RouteEditor.Draw()
             },
             [WindowSelection.Logs] = new()
             {

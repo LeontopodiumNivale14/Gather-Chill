@@ -38,7 +38,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                         ImGui_Ice.ImageButton(exp.IconId, $"Exp");
                         if (ImGui.IsItemHovered())
                         {
-                            ImGui.SetTooltip($"{exp.ExpacName}");
+                            ImGui.SetTooltip($"{exp.Name}");
                         }
 
                         ImGui.TableNextColumn();

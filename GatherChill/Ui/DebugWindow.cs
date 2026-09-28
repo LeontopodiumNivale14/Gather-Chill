@@ -113,8 +113,8 @@ internal class DebugWindow : Window
                         ? Sheet_RouteInfo.OrderBy(x => x.Value.NodeIds?.FirstOrDefault() ?? 0)
                         : Sheet_RouteInfo.OrderByDescending(x => x.Value.NodeIds?.FirstOrDefault() ?? 0),
                     2 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Type)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Type),
+                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Job)
+                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Job),
                     3 => spec.SortDirection == ImGuiSortDirection.Ascending
                         ? Sheet_RouteInfo.OrderBy(x => x.Value.Level)
                         : Sheet_RouteInfo.OrderByDescending(x => x.Value.Level),
@@ -158,7 +158,7 @@ internal class DebugWindow : Window
                 }
 
                 ImGui.TableNextColumn();
-                ImGui.Text(kvp.Value.Type.ToString());
+                ImGui.Text(kvp.Value.Job.ToString());
 
                 ImGui.TableNextColumn();
                 ImGui.Text(kvp.Value.Level.ToString());
@@ -174,7 +174,7 @@ internal class DebugWindow : Window
                 ImGui.SameLine();
                 if (Gather_Util.Sheet_Expansion.TryGetValue((ExpansionEnum)kvp.Value.ExpId, out var expansionInfo))
                 {
-                    ImGui.Text($"{expansionInfo.ExpacName}");
+                    ImGui.Text($"{expansionInfo.Name}");
                 }
 
                 ImGui.TableNextColumn();

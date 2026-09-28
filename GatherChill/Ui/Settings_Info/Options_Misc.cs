@@ -1,4 +1,7 @@
-﻿namespace GatherChill.Ui.Settings_Info;
+﻿using ECommons.Logging;
+using GatherChill.Ui.RouteWindowTabs;
+
+namespace GatherChill.Ui.Settings_Info;
 
 public static partial class SettingsUi
 {

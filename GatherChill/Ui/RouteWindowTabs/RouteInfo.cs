@@ -200,7 +200,7 @@ internal class RouteInfo
             ImGui.Image(expacInfo.Icon.Handle, new(scale));
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip($"{expacInfo.ExpacName}");
+                ImGui.SetTooltip($"{expacInfo.Name}");
             }
         }
 

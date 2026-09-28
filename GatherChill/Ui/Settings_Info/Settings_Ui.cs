@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.ImGuiFileDialog;
+using Dalamud.Interface.Utility.Raii;
 using GatherChill.Gui;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,9 @@ public static partial class SettingsUi
     public static List<SettingEntry> BuildRegistry() => new()
     {
         ColorTheme,
+        Route_SaveLoc, 
+        Route_UpdateAll, 
+        LoadExternal
     };
 
     private static List<SettingEntry>? _allSettings;
@@ -32,6 +36,14 @@ public static partial class SettingsUi
     private static string _searchQuery = string.Empty;
     private static List<SettingEntry> _filtered = new();
     private static bool _filterDirty = true;
+
+    private static FileDialogManager fileDialogManager = new FileDialogManager();
+    private static bool _TestExport = false;
+
+    // For some joke ideas on what to put in the search bar
+    // 67 -> "You're stupid"
+    // 69 -> "See, you got class"
+
 
     public static void Draw()
     {
@@ -58,6 +70,8 @@ public static partial class SettingsUi
                     DrawGrouped(_filtered);
             }
         }
+
+        fileDialogManager.Draw();
     }
 
     private static void DrawSearchBar()

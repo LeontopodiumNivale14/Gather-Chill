@@ -1,11 +1,13 @@
 ﻿using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GatherChill.Gui;
 using GatherChill.Gui.ImGuiTable;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace GatherChill.Ui.Tables;
 
@@ -20,6 +22,7 @@ internal class Table_Items
         public string Name => ItemInfo.Name;
         public int Level => ItemInfo.Level;
         public int Stars => ItemInfo.Star;
+        public List<uint> NodeTypes => ItemInfo.NodeTypes;
         public List<EorzeaTimeWindow> TimeSlot => ItemInfo.TimedSlots;
     }
     public class ItemTable : Table<GatherItems>, IDisposable
@@ -29,10 +32,11 @@ internal class Table_Items
         private readonly ItemId _id = new();
         private readonly Folklore _folklore = new();
         private readonly Uptime _uptime = new();
+        private readonly Type _nodeTypes = new();
 
         public ItemTable(List<GatherItems> itemList)
         {
-            List<Column<GatherItems>> headers = [_id, _itemName, _level, _folklore, _uptime];
+            List<Column<GatherItems>> headers = [_id, _itemName, _level, _nodeTypes, _folklore, _uptime];
             Id = "ItemInfo_V1";
             Columns = headers;
             Rows = itemList;
@@ -76,6 +80,14 @@ internal class Table_Items
         Always = 1 << 0,
         Currently = 1 << 1,
         Unavailable = 1 << 2,
+    }
+    [Flags]
+    public enum NodeTypes
+    {
+        Mining = 1 << 0,
+        Quarrying = 1 << 1,
+        Logging = 1 << 2,
+        Harvesting = 1 << 3,
     }
 
     public sealed class ItemNameColumn : ColumnString<GatherItems>
@@ -720,5 +732,46 @@ internal class Table_Items
             }
         }
 
+    }
+    public sealed class Type : ColumnFlags<NodeTypes, GatherItems>
+    {
+        private NodeTypes _filterValues;
+        public override NodeTypes FilterValue => _filterValues;
+        public Type()
+        {
+            LabelKey = "Type";
+            AllFlags = Enum.GetValues<NodeTypes>().Aggregate((a, b) => a | b);
+            _filterValues = AllFlags;
+            Flags = ImGuiTableColumnFlags.None;
+        }
+
+        public override bool ShouldShow(GatherItems row)
+        {
+            return (FilterValue.HasFlag(NodeTypes.Mining) && row.NodeTypes.Contains(0))
+                || (FilterValue.HasFlag(NodeTypes.Quarrying) && row.NodeTypes.Contains(1))
+                || (FilterValue.HasFlag(NodeTypes.Logging) && row.NodeTypes.Contains(2))
+                || (FilterValue.HasFlag(NodeTypes.Harvesting) && row.NodeTypes.Contains(3));
+        }
+
+        public override void DrawColumn(GatherItems row)
+        {
+            var iconDict = Gather_Util.Icons_AssignmentType;
+            for (int i = 0; i < row.NodeTypes.Count; i++)
+            {
+                if (i != 0)
+                    ImGui.SameLine(0, 0.5f);
+
+                var type = row.NodeTypes[i];
+                ImGui_Ice.ImageButton(iconDict[type].IconId, $"IconType_{i}", sidePadding: 0.1f);
+            }
+        }
+
+        public override void SetValue(NodeTypes value, bool enable)
+        {
+            if (enable)
+                _filterValues |= value;
+            else
+                _filterValues &= ~value;
+        }
     }
 }
