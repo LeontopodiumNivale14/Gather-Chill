@@ -27,7 +27,7 @@ public static partial class Gather_Util
         public uint NormalItemId { get; set; } = 0;
         public uint PrimeItemId { get; set; } = 0;
         public uint SublimeItemId { get; set; } = 0;
-        public ExpansionEnum Expansion { get; set; } = ExpansionEnum.ARR;
+        public ExpansionIds Expansion { get; set; } = ExpansionIds.ARR;
         public List<ReduceClass> ResultItems { get; set; } = new();
 
         public IEnumerable<uint> AllItemIds()
@@ -45,7 +45,7 @@ public static partial class Gather_Util
         new() // Granular Clay
         {
             NormalItemId = 12968,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
@@ -56,7 +56,7 @@ public static partial class Gather_Util
         new() // Lightning Moraine
         {
             NormalItemId = 5218,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
@@ -67,7 +67,7 @@ public static partial class Gather_Util
         new() // Pot Marjoram
         {
             NormalItemId = 33148,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
@@ -78,7 +78,7 @@ public static partial class Gather_Util
         new() // Fire Moraine
         {
             NormalItemId = 5214,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
@@ -89,7 +89,7 @@ public static partial class Gather_Util
         new() // Peat Moss
         {
             NormalItemId = 12969,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
@@ -100,7 +100,7 @@ public static partial class Gather_Util
         new() // Bright Lightning Rock
         {
             NormalItemId = 12967,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
@@ -111,7 +111,7 @@ public static partial class Gather_Util
         new() // Water Mint
         {
             NormalItemId = 33149,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
@@ -122,7 +122,7 @@ public static partial class Gather_Util
         new() // Bright Fire Rock
         {
             NormalItemId = 12966,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
@@ -133,7 +133,7 @@ public static partial class Gather_Util
         new() // Humic Soil
         {
             NormalItemId = 33147,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12939 }, // Leafborne Aethersand
@@ -144,7 +144,7 @@ public static partial class Gather_Util
         new() // Radiant Lightning Moraine
         {
             NormalItemId = 5224,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12938 }, // Landborne Aethersand
@@ -155,7 +155,7 @@ public static partial class Gather_Util
         new() // Wild Sage
         {
             NormalItemId = 33150,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12939 }, // Leafborne Aethersand
@@ -166,7 +166,7 @@ public static partial class Gather_Util
         new() // Radiant Fire Moraine
         {
             NormalItemId = 5220,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 12938 }, // Landborne Aethersand
@@ -177,7 +177,7 @@ public static partial class Gather_Util
         new() // Lover's Laurel
         {
             NormalItemId = 15948,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 15648 }, // Light-kissed Aethersand
@@ -188,7 +188,7 @@ public static partial class Gather_Util
         new() // Radiant Astral Moraine
         {
             NormalItemId = 15949,
-            Expansion = ExpansionEnum.HW,
+            Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
                 new() { ItemId = 15648 }, // Light-kissed Aethersand
@@ -199,7 +199,7 @@ public static partial class Gather_Util
         new() // Dacite
         {
             NormalItemId = 33152,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20015 }, // Everbright Aethersand
@@ -210,7 +210,7 @@ public static partial class Gather_Util
         new() // Doman Yellow
         {
             NormalItemId = 20012,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20013 }, // Dusklight Aethersand
@@ -221,7 +221,7 @@ public static partial class Gather_Util
         new() // Schorl
         {
             NormalItemId = 20009,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20014 }, // Dawnlight Aethersand
@@ -232,7 +232,7 @@ public static partial class Gather_Util
         new() // Countess Tea Leaves
         {
             NormalItemId = 33151,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20014 }, // Dawnlight Aethersand
@@ -243,7 +243,7 @@ public static partial class Gather_Util
         new() // Torreya Branch
         {
             NormalItemId = 19937,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20016 }, // Everborn Aethersand
@@ -254,7 +254,7 @@ public static partial class Gather_Util
         new() // Rhodolite
         {
             NormalItemId = 33153,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 20013 }, // Dusklight Aethersand
@@ -265,7 +265,7 @@ public static partial class Gather_Util
         new() // Yanxian Verbena
         {
             NormalItemId = 23221,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 23182 }, // Duskglow Aethersand
@@ -276,7 +276,7 @@ public static partial class Gather_Util
         new() // Yanxian Soil
         {
             NormalItemId = 23220,
-            Expansion = ExpansionEnum.StB,
+            Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
                 new() { ItemId = 23182 }, // Duskglow Aethersand
@@ -287,7 +287,7 @@ public static partial class Gather_Util
         new() // Voeburt Bichir
         {
             NormalItemId = 27542,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
@@ -298,7 +298,7 @@ public static partial class Gather_Util
         new() // Poecilia
         {
             NormalItemId = 27543,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
@@ -309,7 +309,7 @@ public static partial class Gather_Util
         new() // Gale Rock
         {
             NormalItemId = 27805,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
@@ -320,7 +320,7 @@ public static partial class Gather_Util
         new() // White Clay
         {
             NormalItemId = 27808,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
@@ -331,7 +331,7 @@ public static partial class Gather_Util
         new() // Solarite
         {
             NormalItemId = 27806,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
@@ -342,7 +342,7 @@ public static partial class Gather_Util
         new() // Sweet Marjoram
         {
             NormalItemId = 27809,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
@@ -353,7 +353,7 @@ public static partial class Gather_Util
         new() // Bog Sage
         {
             NormalItemId = 27810,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27814 }, // Agewood Aethersand
@@ -364,7 +364,7 @@ public static partial class Gather_Util
         new() // Shade Quartz
         {
             NormalItemId = 27807,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 27813 }, // Agedeep Aethersand
@@ -375,7 +375,7 @@ public static partial class Gather_Util
         new() // Fuchsia Bloom
         {
             NormalItemId = 30593,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
@@ -386,7 +386,7 @@ public static partial class Gather_Util
         new() // Thunder Rock
         {
             NormalItemId = 30591,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
@@ -397,7 +397,7 @@ public static partial class Gather_Util
         new() // Levin Mint
         {
             NormalItemId = 30592,
-            Expansion = ExpansionEnum.ShB,
+            Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
@@ -408,7 +408,7 @@ public static partial class Gather_Util
         new() // Lunar Quartz
         {
             NormalItemId = 36285,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
@@ -419,7 +419,7 @@ public static partial class Gather_Util
         new() // Ewer Clay
         {
             NormalItemId = 36287,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
@@ -430,7 +430,7 @@ public static partial class Gather_Util
         new() // Gilled Topknot
         {
             NormalItemId = 36525,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
@@ -441,7 +441,7 @@ public static partial class Gather_Util
         new() // Verdigris Guppy
         {
             NormalItemId = 38939,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
@@ -452,7 +452,7 @@ public static partial class Gather_Util
         new() // Othardian Lumpsucker
         {
             NormalItemId = 36577,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36226 }, // Endtide Aethersand
@@ -463,7 +463,7 @@ public static partial class Gather_Util
         new() // Ghostly Umbral Rock
         {
             NormalItemId = 36286,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36224 }, // Endstone Aethersand
@@ -474,7 +474,7 @@ public static partial class Gather_Util
         new() // Palm Chippings
         {
             NormalItemId = 36288,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 36225 }, // Endwood Aethersand
@@ -485,7 +485,7 @@ public static partial class Gather_Util
         new() // Phyllinos
         {
             NormalItemId = 39240,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39241 }, // Pure Aqueous Glioaether
@@ -497,7 +497,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 37694,
             SublimeItemId = 37695,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 37696 }, // Igneous Glioaether
@@ -508,7 +508,7 @@ public static partial class Gather_Util
         new() // Earthen Quartz
         {
             NormalItemId = 38937,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
@@ -520,7 +520,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 37691,
             SublimeItemId = 37692,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 37693 }, // Verdurous Glioaether
@@ -531,7 +531,7 @@ public static partial class Gather_Util
         new() // Sophora Roots
         {
             NormalItemId = 38938,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
@@ -542,7 +542,7 @@ public static partial class Gather_Util
         new() // Mayashell
         {
             NormalItemId = 37697,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 37698 }, // Aqueous Glioaether
@@ -554,7 +554,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 39234,
             SublimeItemId = 39235,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39236 }, // Pure Verdurous Glioaether
@@ -565,7 +565,7 @@ public static partial class Gather_Util
         new() // Connoisseur's Miracle Apple
         {
             NormalItemId = 39807,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39818 }, // Customized Botanist's Component
@@ -577,7 +577,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 39237,
             SublimeItemId = 39238,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39239 }, // Pure Igneous Glioaether
@@ -588,7 +588,7 @@ public static partial class Gather_Util
         new() // Connoisseur's Soiled Femur
         {
             NormalItemId = 39805,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39817 }, // Customized Miner's Component
@@ -600,7 +600,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 39909,
             SublimeItemId = 39910,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39908 }, // Concentrated Verdurous Glioaether
@@ -612,7 +612,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 39906,
             SublimeItemId = 39907,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39911 }, // Concentrated Igneous Glioaether
@@ -623,7 +623,7 @@ public static partial class Gather_Util
         new() // The Fury's Aegis
         {
             NormalItemId = 39912,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39913 }, // Concentrated Aqueous Glioaether
@@ -635,7 +635,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 41416,
             SublimeItemId = 41417,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 41415 }, // Potent Verdurous Glioaether
@@ -647,7 +647,7 @@ public static partial class Gather_Util
         {
             PrimeItemId = 41413,
             SublimeItemId = 41414,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 41418 }, // Potent Igneous Glioaether
@@ -658,7 +658,7 @@ public static partial class Gather_Util
         new() // Stargilt Lobster
         {
             NormalItemId = 41419,
-            Expansion = ExpansionEnum.EW,
+            Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 41420 }, // Potent Aqueous Glioaether
@@ -669,7 +669,7 @@ public static partial class Gather_Util
         new() // Electrocoal
         {
             NormalItemId = 43931,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
@@ -680,7 +680,7 @@ public static partial class Gather_Util
         new() // Goldbranch
         {
             NormalItemId = 43933,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
@@ -691,7 +691,7 @@ public static partial class Gather_Util
         new() // Longnose Gar
         {
             NormalItemId = 43847,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44038 }, // Mythbrine Aethersand
@@ -702,7 +702,7 @@ public static partial class Gather_Util
         new() // Sunlit Prism
         {
             NormalItemId = 43829,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
@@ -713,7 +713,7 @@ public static partial class Gather_Util
         new() // Brightwind Ore
         {
             NormalItemId = 43932,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44036 }, // Mythloam Aethersand
@@ -724,7 +724,7 @@ public static partial class Gather_Util
         new() // Volcanic Grass
         {
             NormalItemId = 43934,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 44037 }, // Mythroot Aethersand
@@ -735,7 +735,7 @@ public static partial class Gather_Util
         new() // Purple Palate
         {
             NormalItemId = 46249,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand
@@ -746,7 +746,7 @@ public static partial class Gather_Util
         new() // Levin Quartz
         {
             NormalItemId = 46247,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand
@@ -757,7 +757,7 @@ public static partial class Gather_Util
         new() // Calamus Root
         {
             NormalItemId = 46248,
-            Expansion = ExpansionEnum.DT,
+            Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand

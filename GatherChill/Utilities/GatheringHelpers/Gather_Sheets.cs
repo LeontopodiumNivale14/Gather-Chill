@@ -20,7 +20,7 @@ public static partial class Gather_Util
         public uint TerritoryId { get; set; }
         public string ZoneName { get; set; }
         public string PlaceName { get; set; }
-        public uint ExpId { get; set; }
+        public ExpansionIds ExpId { get; set; }
         public string ExpansionName { get; set; }
         public SortedSet<uint> NodeIds { get; set; }
         public List<uint> ItemIds { get; set; }
@@ -111,7 +111,7 @@ public static partial class Gather_Util
         public int Level { get; set; } = 1;
         public int Star { get; set; } = 0;
         public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
-        public uint Expansion { get; set; } = 0;
+        public ExpansionIds Expansion { get; set; } = ExpansionIds.Unk;
     }
     public class FolkloreInfo
     {
@@ -133,7 +133,7 @@ public static partial class Gather_Util
     public static Dictionary<uint, IconInfo> Icons_AssignmentType = new();
 
     public static Dictionary<uint, ISharedImmediateTexture> Sheet_JobInfo = new();
-    public static Dictionary<ExpansionEnum, IconInfo> Sheet_Expansion = new();
+    public static Dictionary<ExpansionIds, IconInfo> Sheet_Expansion = new();
     public static Dictionary<uint, GatherPointInfo> Sheet_RouteInfo = new();
     public static Dictionary<uint, ItemClass> Sheet_ItemInfo = new();
 
@@ -197,7 +197,7 @@ public static partial class Gather_Util
             uint routeType = 0;
             uint level = gatherPointBase.GatheringLevel;
             uint territoryId = 0;
-            uint expansion = 0;
+            ExpansionIds expansion = 0;
             string expansionName = "ARealmReborn";
             string zoneName = "???";
             string placeName = "???";
@@ -272,7 +272,7 @@ public static partial class Gather_Util
                     if (zoneName == string.Empty)
                         continue;
 
-                    expansion = territoryType.ExVersion.Value.RowId;
+                    expansion = (ExpansionIds)territoryType.ExVersion.Value.RowId;
                 }
 
                 if (firstNode.PlaceName.IsValid)
@@ -284,12 +284,12 @@ public static partial class Gather_Util
 
             switch (expansion)
             {
-                case 0: expansionName = "ARealmReborn"; break;
-                case 1: expansionName = "Heavensward"; break;
-                case 2: expansionName = "Stormblood"; break;
-                case 3: expansionName = "Shadowbringers"; break;
-                case 4: expansionName = "Endwalker"; break;
-                case 5: expansionName = "Dawntrail"; break;
+                case ExpansionIds.ARR: expansionName = "ARealmReborn"; break;
+                case ExpansionIds.HW: expansionName = "Heavensward"; break;
+                case ExpansionIds.StB: expansionName = "Stormblood"; break;
+                case ExpansionIds.ShB: expansionName = "Shadowbringers"; break;
+                case ExpansionIds.EW: expansionName = "Endwalker"; break;
+                case ExpansionIds.DT: expansionName = "Dawntrail"; break;
                 default: expansionName = "???"; break;
             }
 
@@ -499,13 +499,13 @@ public static partial class Gather_Util
         {
             var id = expac.RowId switch
             {
-                0 => ExpansionEnum.ARR,
-                1 => ExpansionEnum.HW,
-                2 => ExpansionEnum.StB,
-                3 => ExpansionEnum.ShB,
-                4 => ExpansionEnum.EW,
-                5 => ExpansionEnum.DT,
-                _ => ExpansionEnum.ARR,
+                0 => ExpansionIds.ARR,
+                1 => ExpansionIds.HW,
+                2 => ExpansionIds.StB,
+                3 => ExpansionIds.ShB,
+                4 => ExpansionIds.EW,
+                5 => ExpansionIds.DT,
+                _ => ExpansionIds.Unk,
             };
             var name = expac.Name.ToString();
             var iconId = expac.Icon;
@@ -599,19 +599,5 @@ public static partial class Gather_Util
             var firstRoute = Sheet_RouteInfo.Where(x => x.Value.ItemIds.Contains(item.Key)).FirstOrDefault();
             item.Value.Expansion = firstRoute.Value.ExpId;
         }
-    }
-
-    private static ExpansionEnum ExpansionConverter(uint Ex)
-    {
-        return Ex switch
-        {
-            0 => ExpansionEnum.ARR,
-            1 => ExpansionEnum.HW,
-            2 => ExpansionEnum.StB,
-            3 => ExpansionEnum.ShB,
-            4 => ExpansionEnum.EW,
-            5 => ExpansionEnum.DT,
-            _ => ExpansionEnum.ARR,
-        };
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using GatherChill.Enums;
+using System.Collections.Generic;
 
 namespace GatherChill.GatheringInfo
 {
-    /// <summary>
-    /// Contains all the info for the gathering route
-    /// </summary>
     public class GatheringRoute
     {
         /// <summary>
@@ -28,7 +26,7 @@ namespace GatherChill.GatheringInfo
         /// This is to make sure that it just gets sorted into the right folder<br></br>
         /// 0 = ARR, 1 = HW, 2 = Stb, 3 = ShB, 4 = EW, 5 = DT
         /// </summary>
-        public uint ExpansionId { get; set; }
+        public ExpansionIds ExpansionId { get; set; } = ExpansionIds.Unk;
         /// <summary>
         /// JobIds tied to that gathering point
         /// 16 = MIN, 17 = BTN, 18 = FSH
@@ -47,16 +45,11 @@ namespace GatherChill.GatheringInfo
         /// </summary>
         public List<GatheringNode> NodeInfo { get; set; } = new();
         public int GroupCount { get; set; } = 3;
-        public bool RequiresFolklore { get; set; }
-        public string FolkloreBook { get; set; }
         public string Author { get; set; }
         public string LastUpdated { get; set; }
         public bool TimedNode { get; set; } = false;
     }
 
-    /// <summary>
-    /// The node info itself, contains the nodeId + all the locations it's in
-    /// </summary>
     public class GatheringNode
     {
         public int GroupId { get; set; } = 0;
@@ -67,9 +60,6 @@ namespace GatherChill.GatheringInfo
         public List<NodeLocation> BlacklistNode { get; set; } = new();
     }
 
-    /// <summary>
-    /// Specific info about the node, position, landing angles... etc
-    /// </summary>
     public class NodeLocation
     {
         public Vector3 Position { get; set; }

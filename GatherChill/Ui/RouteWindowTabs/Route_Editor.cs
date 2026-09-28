@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
+using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Gui;
 using GatherChill.Scheduler;
@@ -134,12 +135,12 @@ namespace GatherChill.Ui.RouteWindowTabs
                 ImGui.TableNextColumn();
                 string expansion = routeInfo.ExpansionId switch
                 {
-                    0 => "ARR",
-                    1 => "Heavensword",
-                    2 => "Stormblood",
-                    3 => "Shadowbringers",
-                    4 => "Endwalker",
-                    5 => "Dawntrail",
+                    ExpansionIds.ARR => "ARR",
+                    ExpansionIds.HW => "Heavensword",
+                    ExpansionIds.StB => "Stormblood",
+                    ExpansionIds.ShB => "Shadowbringers",
+                    ExpansionIds.EW => "Endwalker",
+                    ExpansionIds.DT => "Dawntrail",
                     _ => "New/???"
                 };
                 ImGui.Text(expansion);

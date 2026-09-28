@@ -172,7 +172,7 @@ internal class DebugWindow : Window
                 ImGui.TableNextColumn();
                 ImGui.TextDisabled($"{kvp.Value.ExpId}");
                 ImGui.SameLine();
-                if (Gather_Util.Sheet_Expansion.TryGetValue((ExpansionEnum)kvp.Value.ExpId, out var expansionInfo))
+                if (Gather_Util.Sheet_Expansion.TryGetValue(kvp.Value.ExpId, out var expansionInfo))
                 {
                     ImGui.Text($"{expansionInfo.Name}");
                 }

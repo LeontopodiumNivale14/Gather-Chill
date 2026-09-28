@@ -1,4 +1,5 @@
 ﻿using ECommons.Logging;
+using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
@@ -27,14 +28,14 @@ namespace GatherChill.GatheringInfo
             Converters = { new Vector3Converter() }
         };
 
-        private static readonly Dictionary<uint, string> ExpansionNames = new()
+        private static readonly Dictionary<ExpansionIds, string> ExpansionNames = new()
         {
-            { 0, "2.x - A Realm Reborn" },
-            { 1, "3.x - Heavensward" },
-            { 2, "4.x - Stormblood" },
-            { 3, "5.x - Shadowbringers" },
-            { 4, "6.x - Endwalker" },
-            { 5, "7.x - Dawntrail" }
+            { ExpansionIds.ARR, "2.x - A Realm Reborn" },
+            { ExpansionIds.HW, "3.x - Heavensward" },
+            { ExpansionIds.StB, "4.x - Stormblood" },
+            { ExpansionIds.ShB, "5.x - Shadowbringers" },
+            { ExpansionIds.EW, "6.x - Endwalker" },
+            { ExpansionIds.DT, "7.x - Dawntrail" }
         };
 
         // Loading Routes
@@ -214,7 +215,7 @@ namespace GatherChill.GatheringInfo
 
         public List<GatheringRoute> GetRoutesForJob(uint jobId) => Routes.Values.Where(r => r.GatheringJobId == jobId).ToList();
 
-        public List<GatheringRoute> GetRoutesForExpansion(uint expansionId) => Routes.Values.Where(r => r.ExpansionId == expansionId).ToList();
+        public List<GatheringRoute> GetRoutesForExpansion(ExpansionIds expansionId) => Routes.Values.Where(r => r.ExpansionId == expansionId).ToList();
 
         // Node Helpers 
 

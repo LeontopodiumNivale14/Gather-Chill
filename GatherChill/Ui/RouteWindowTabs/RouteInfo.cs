@@ -54,7 +54,6 @@ internal class RouteInfo
             return ImGui.GetFrameHeightWithSpacing();
         }
     }
-
     public sealed class RouteId : ColumnNumber<RouteItem>
     {
         public RouteId()
@@ -172,12 +171,12 @@ internal class RouteInfo
         {
             var expansionFlag = row.RouteInfo.ExpansionId switch
             {
-                0 => ExpansionEnum.ARR,
-                1 => ExpansionEnum.HW,
-                2 => ExpansionEnum.StB,
-                3 => ExpansionEnum.ShB,
-                4 => ExpansionEnum.EW,
-                5 => ExpansionEnum.DT,
+                ExpansionIds.ARR => ExpansionEnum.ARR,
+                ExpansionIds.HW => ExpansionEnum.HW,
+                ExpansionIds.StB => ExpansionEnum.StB,
+                ExpansionIds.ShB => ExpansionEnum.ShB,
+                ExpansionIds.EW => ExpansionEnum.EW,
+                ExpansionIds.DT => ExpansionEnum.DT,
                 _ => ExpansionEnum.ARR,
             };
 
@@ -187,7 +186,7 @@ internal class RouteInfo
         public override void DrawColumn(RouteItem row)
         {
             var route = row.RouteInfo;
-            if (route == null || !Sheet_Expansion.TryGetValue((ExpansionEnum)route.ExpansionId, out var expacInfo))
+            if (route == null || !Sheet_Expansion.TryGetValue(route.ExpansionId, out var expacInfo))
             {
                 ImGui.TextDisabled("N/A");
                 if (ImGui.IsItemHovered())

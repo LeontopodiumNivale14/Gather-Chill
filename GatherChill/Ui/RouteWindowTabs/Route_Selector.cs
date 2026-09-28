@@ -1,5 +1,6 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
+using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
@@ -15,7 +16,7 @@ namespace GatherChill.Ui.RouteWindowTabs
         public static bool Filter_Expansion = false;
         public static bool Filter_Zone = false;
 
-        public static uint FilterExpansionId = 0;
+        public static ExpansionIds FilterExpansionId = ExpansionIds.ARR;
         public static uint FilterTerritoryId = 0;
         public static uint FilterJob = 0;
 
@@ -26,7 +27,11 @@ namespace GatherChill.Ui.RouteWindowTabs
             [17] = "BTN",
             [18] = "FSH",
         };
-        
+
+        private static readonly ExpansionIds[] ExpansionValues = Enum.GetValues<ExpansionIds>().Where(e => e != ExpansionIds.Unk).ToArray();
+
+        private static readonly string[] ExpansionNames = ExpansionValues.Select(e => e.ToString()).ToArray();
+
 
         public enum RouteSortMode
         {
@@ -42,12 +47,11 @@ namespace GatherChill.Ui.RouteWindowTabs
             if (Filter_Expansion)
             {
                 ImGui.SameLine();
-                // Expansion names matching your ExpansionId values
-                string[] expansionNames = ["ARR", "HW", "StB", "ShB", "EW", "DT"];
-                int expansionIndex = (int)FilterExpansionId;
+
+                var expansionIndex = Math.Max(0, Array.IndexOf(ExpansionValues, FilterExpansionId));
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.Combo("##ExpansionFilter", ref expansionIndex, expansionNames, expansionNames.Length))
-                    FilterExpansionId = (uint)expansionIndex;
+                if (ImGui.Combo("##ExpansionFilter", ref expansionIndex, ExpansionNames, ExpansionNames.Length))
+                    FilterExpansionId = ExpansionValues[expansionIndex];
             }
 
             ImGui.Checkbox("Filter by current Zone", ref Filter_Zone);

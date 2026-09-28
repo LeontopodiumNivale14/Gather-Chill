@@ -27,7 +27,7 @@ namespace GatherChill.Ui.Tabs_Debug
         private static bool _showExport = false;
         private static string _exportText = string.Empty;
 
-        private static readonly ExpansionEnum[] AllExpansions = Enum.GetValues<ExpansionEnum>();
+        private static readonly ExpansionIds[] AllExpansions = Enum.GetValues<ExpansionIds>();
 
         public static void Draw()
         {
@@ -202,7 +202,7 @@ namespace GatherChill.Ui.Tabs_Debug
             });
         }
 
-        private static void DrawExpansionPickerPopup(string popupId, System.Action<ExpansionEnum> onSelected)
+        private static void DrawExpansionPickerPopup(string popupId, Action<ExpansionIds> onSelected)
         {
             if (!ImGui.BeginPopup(popupId))
                 return;
