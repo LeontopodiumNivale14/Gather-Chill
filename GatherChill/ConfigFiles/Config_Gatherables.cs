@@ -12,8 +12,7 @@ public partial class Config
 
     public class RouteSelection
     {
-        public List<uint> Timed_RouteIds { get; set; } = new();
-        public uint Normal_RouteIds { get; set; } = 0;
+        public HashSet<uint> EnabledRoutes { get; set; } = new();
     }
 
     public List<ItemInfo> GatherList { get; set; } = new();

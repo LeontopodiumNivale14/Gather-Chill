@@ -1,10 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.Types;
-using ECommons.Automation.NeoTaskManager;
 using ECommons.DalamudServices.Legacy;
-using ECommons.GameHelpers;
-using ECommons.Reflection;
 using ECommons.Throttlers;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;

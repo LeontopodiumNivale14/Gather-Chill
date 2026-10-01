@@ -12,12 +12,9 @@ namespace GatherChill.Scheduler.Tasks
     {
         private static Vector3? _pointOnGround = null;
 
-        public static void Enqueue()
-        {
 
-        }
 
-        public static bool? Task_FlyTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
+        public static bool Task_FlyTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
         {
             bool isFlying = Svc.Condition[ConditionFlag.InFlight];
             bool mounted = Player.Mounted;
@@ -112,7 +109,7 @@ namespace GatherChill.Scheduler.Tasks
             return false;
         }
 
-        public static bool? Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
+        public static bool Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
         {
             bool mounted = Player.Mounted;
             float minMountDistance = 15;

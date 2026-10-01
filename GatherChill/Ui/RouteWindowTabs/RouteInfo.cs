@@ -37,10 +37,11 @@ internal class RouteInfo
         private readonly ItemInfo _items = new();
         private readonly TimedWindowColumn _times = new();
         private readonly Folklore _folklore = new();
+        private readonly NodeKind _nodeKind = new();
 
         public RouteTable(List<RouteItem> itemList)
         {
-            List<Column<RouteItem>> headers = [_routeId, _expansion, _terName, _terId, _position, _items, _folklore, _times];
+            List<Column<RouteItem>> headers = [_routeId, _expansion, _terName, _terId, _position, _items, _folklore, _nodeKind, _times];
 
             Id = "RouteTable_V2";
             Columns = headers;
@@ -561,6 +562,53 @@ internal class RouteInfo
 
                 ImGui.EndTooltip();
             }
+        }
+    }
+    public sealed class NodeKind : ColumnFlags<GatherNodeKind, RouteItem>
+    {
+        private GatherNodeKind _filterValue;
+
+        public NodeKind()
+        {
+            Label = "Kind";
+            SetFixedWidth(90);
+            AllFlags = Enum.GetValues<GatherNodeKind>().Aggregate((a, b) => a | b);
+            _filterValue = AllFlags;
+            Flags = ImGuiTableColumnFlags.WidthFixed;
+        }
+
+        public override string NameKeySpace => "ImGuiTable.ColumnNodeKind";
+        public override GatherNodeKind FilterValue => _filterValue;
+
+        public override void SetValue(GatherNodeKind value, bool enable)
+        {
+            if (enable)
+                _filterValue |= value;
+            else
+                _filterValue &= ~value;
+        }
+
+        private static GatherNodeKind GetKind(RouteItem row)
+            => row.GatherPoint?.Kind ?? GatherNodeKind.Regular;
+
+        public override bool ShouldShow(RouteItem row)
+            => FilterValue.HasFlag(GetKind(row));
+
+        public override int Compare(RouteItem lhs, RouteItem rhs)
+            => ((int)GetKind(lhs)).CompareTo((int)GetKind(rhs));
+
+        public override void DrawColumn(RouteItem row)
+        {
+            ImGui.AlignTextToFramePadding();
+
+            var sheetInfo = row.GatherPoint;
+            if (sheetInfo == null)
+            {
+                ImGui.TextDisabled("N/A");
+                return;
+            }
+
+            ImGui.Text(sheetInfo.Kind.ToString());
         }
     }
 }

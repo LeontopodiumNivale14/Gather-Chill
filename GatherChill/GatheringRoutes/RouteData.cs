@@ -44,6 +44,7 @@ namespace GatherChill.GatheringInfo
         /// Node Groups/Node Position info. This contains the exact info of all the different nodes
         /// </summary>
         public List<GatheringNode> NodeInfo { get; set; } = new();
+        public bool RequiresFlying { get; set; } = false;
         public int GroupCount { get; set; } = 3;
         public string Author { get; set; }
         public string LastUpdated { get; set; }
@@ -63,7 +64,7 @@ namespace GatherChill.GatheringInfo
     public class NodeLocation
     {
         public Vector3 Position { get; set; }
-        public bool AllowFlying { get; set; } = true;
+        public bool Flying_Required { get; set; } = false;
         public FanInfo Flight_FanInfo { get; set; } = new();
         public FanInfo Gathering_FanInfo { get; set; } = new();
         // Bool to choose whether we're doing fan position finder

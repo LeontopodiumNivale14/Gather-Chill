@@ -574,10 +574,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                     PictoManager.DrawArrowToward(selectedNodePos, 0.606f, 0.05f, 2.952f, 0.7f, 0.33f, ToUintABGR(C.Picto_SelectedFan), 3.5f);
 
                     ImGui.Text($"Node Position: {editorNode.Position.X:N2}, {editorNode.Position.Y:N2}, {editorNode.Position.Z:N2}");
-                    bool fly = editorNode.AllowFlying;
-                    if (ImGui.Checkbox("Flying Allowed", ref fly))
+                    bool fly = editorNode.Flying_Required;
+                    if (ImGui.Checkbox("Flying Required", ref fly))
                     {
-                        editorNode.AllowFlying = fly;
+                        editorNode.Flying_Required = fly;
                     }
 
                     #region Gathering Fan Info
@@ -635,15 +635,20 @@ namespace GatherChill.Ui.RouteWindowTabs
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.Button("Pathfind to fan"))
+                    if (ImGuiEx.IconButton(FontAwesomeIcon.Feather, "Pathfind Fly: Fly"))
                     {
                         var randomPos = NodeLocationExtensions.GetRandomGatherPosition(editorNode, Player.Position);
                         IceLogging.Verbose($"Node Position: {randomPos:N2}", "Route Editor");
-                        bool flying = false;
-                        if (Player.Mounted)
-                            flying = true;
 
-                        P.navmesh.PathfindAndMoveTo(randomPos, flying);
+                        P.navmesh.PathfindAndMoveTo(randomPos, true);
+                    }
+                    ImGui.SameLine();
+                    if (ImGuiEx.IconButton(FontAwesomeIcon.Running, "Pathfind Fly: Ground"))
+                    {
+                        var randomPos = NodeLocationExtensions.GetRandomGatherPosition(editorNode, Player.Position);
+                        IceLogging.Verbose($"Node Position: {randomPos:N2}", "Route Editor");
+
+                        P.navmesh.PathfindAndMoveTo(randomPos, false);
                     }
 
                     ImGui.SameLine();
@@ -721,10 +726,16 @@ namespace GatherChill.Ui.RouteWindowTabs
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.Button("Pathfind to fan"))
+                    if (ImGuiEx.IconButton(FontAwesomeIcon.Feather, "Pathfind Ground: Fly"))
                     {
-                        var randomPos = NodeLocationExtensions.GetRandomFlightPosition(editorNode, Player.Position);
+                        var randomPos = NodeLocationExtensions.GetRandomGatherPosition(editorNode, Player.Position);
                         P.navmesh.PathfindAndMoveTo(randomPos, true);
+                    }
+                    ImGui.SameLine();
+                    if (ImGuiEx.IconButton(FontAwesomeIcon.Running, "Pathfind Ground: Ground"))
+                    {
+                        var randomPos = NodeLocationExtensions.GetRandomGatherPosition(editorNode, Player.Position);
+                        P.navmesh.PathfindAndMoveTo(randomPos, false);
                     }
 
                     ImGui.SameLine();

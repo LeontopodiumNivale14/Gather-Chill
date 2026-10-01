@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Utilities.Utility;
 
@@ -55,6 +56,23 @@ public static partial class Utils
             count = 0;
             return false;
         }
+    }
+    public static unsafe int GetItemCount(uint itemID, bool includeHq = true, bool includeNq = true)
+    {
+        var inventory = InventoryManager.Instance();
+        if (inventory == null)
+            return 0;
+
+        itemID = itemID >= 1_000_000 ? itemID - 1_000_000 : itemID;
+
+        var count = 0;
+        if (includeHq)
+            count += inventory->GetInventoryItemCount(itemID, true);
+        if (includeNq)
+            count += inventory->GetInventoryItemCount(itemID, false);
+
+        count += inventory->GetInventoryItemCount(itemID + 500_000);
+        return count;
     }
     public static IPlayerCharacter? LocalPlayer => Svc.Objects.LocalPlayer;
     public static bool HasStatusId(params uint[] statusIDs)

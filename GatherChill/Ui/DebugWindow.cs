@@ -193,12 +193,12 @@ internal class DebugWindow : Window
     }
     public static void TaskInfoDetails()
     {
-        ImGui.Text($"Running task: {P.TM.NumQueuedTasks != 0} | Amount of queue'd task: {P.TM.NumQueuedTasks}");
-        string currentTask = P.TM.CurrentTask?.Name ?? "";
+        ImGui.Text($"Running task: {P.TaskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.TaskManager.NumQueuedTasks}");
+        string currentTask = P.TaskManager.CurrentTask?.Name ?? "";
         ImGui.Text($"Current task running: {currentTask}");
         ImGui.Text($"Current State: {SchedulerMain.State}");
         ImGui.Text($"ItemId set: {SchedulerMain.ItemId}");
-        ImGui.Text($"Task Count: {P.TM.Tasks.Count}");
+        ImGui.Text($"Task Count: {P.TaskManager.Tasks.Count}");
     }
     private static void DestinationLogViewer()
     {

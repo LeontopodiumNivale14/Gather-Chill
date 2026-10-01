@@ -7,6 +7,7 @@ using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using SharpDX.Direct3D11;
 using System.Collections.Generic;
+using static GatherChill.ConfigFiles.Config;
 
 namespace GatherChill.Utilities.GatheringHelpers;
 
@@ -28,6 +29,7 @@ public static partial class Gather_Util
         public List<EorzeaTimeWindow> TimedInfo { get; set; } = new();
         public MapInfo Map { get; set; } = new();
         public FolkloreInfo Folklore { get; set; } = new();
+        public GatherNodeKind Kind { get; set; } = GatherNodeKind.Regular;
     }
     public readonly struct EorzeaTimeWindow
     {
@@ -112,6 +114,40 @@ public static partial class Gather_Util
         public int Star { get; set; } = 0;
         public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
         public ExpansionIds Expansion { get; set; } = ExpansionIds.Unk;
+        public List<uint> NormalRoutes => GetRoutes(false);
+        public List<uint> TimedRoutes => GetRoutes(true);
+        public List<uint> ReducedFromItemIds { get; set; } = new();
+        public uint ReducesIntoItemId { get; set; } = 0;
+
+        public bool IsReduceResult => ReducedFromItemIds.Count > 0;
+        public bool IsReduceSource => ReducesIntoItemId != 0;
+        public List<uint> Territories()
+        {
+            List<uint> territories = new();
+            foreach (var route in RouteInfo)
+            {
+                var routeInfo = Sheet_RouteInfo[route];
+                territories.AddIfNotExist(routeInfo.TerritoryId);
+            }
+            return territories;
+        }
+
+        private List<uint> GetRoutes(bool timed)
+        {
+            var result = new List<uint>();
+            foreach (var routeId in RouteInfo.OrderBy(x => x))
+            {
+                if (!Sheet_RouteInfo.TryGetValue(routeId, out var info))
+                    continue;
+
+                var isTimed = info.Kind is not GatherNodeKind.Regular;
+                if (isTimed != timed)
+                    continue;
+
+                result.Add(routeId);
+            }
+            return result;
+        }
     }
     public class FolkloreInfo
     {
@@ -148,8 +184,13 @@ public static partial class Gather_Util
         UpdateExpansionIcon();
         UpdateGatheringTypes();
         UpdateFolklore();
+        UpdateNodeKinds();
         UpdateItemTimeSlots();
         UpdateItemExpansions();
+        IncludeReducables();
+
+        // Config Update
+        Update_NodeConfig();
     }
 
     // TO WHOEVER MIGHT BE READING THIS (including future you)
@@ -213,6 +254,9 @@ public static partial class Gather_Util
             else if (baseType is 4 or 5)
                 job = 18;
             routeType = baseType;
+
+            if (job is 18)
+                continue;
 
             // Adding the base items 
             for (int i = 0; i <= 7; i++)
@@ -576,9 +620,11 @@ public static partial class Gather_Util
             if (ignoreList.Contains(item.Key))
                 continue;
 
-            List<EorzeaTimeWindow> uptimes = new();
             var validRoutes = Sheet_RouteInfo.Where(x => x.Value.ItemIds.Contains(item.Key)).ToList();
+            if (validRoutes.Count == 0)
+                continue;
 
+            List<EorzeaTimeWindow> uptimes = new();
             foreach (var route in validRoutes)
             {
                 foreach (var time in route.Value.TimedInfo)
@@ -586,8 +632,151 @@ public static partial class Gather_Util
                     if (!uptimes.Contains(time))
                         uptimes.Add(time);
                 }
+            }
 
-                item.Value.TimedSlots = uptimes;
+            item.Value.TimedSlots = uptimes;
+        }
+    }
+    private enum TimeSource
+    {
+        None,
+        Ephemeral,
+        RarePop,
+    }
+    private static TimeSource GetTimeSource(uint nodeId)
+    {
+        if (!ExcelHelper.Sheet_GatherPointTransient.TryGetRow(nodeId, out var timedInfo))
+            return TimeSource.None;
+
+        var start = timedInfo.EphemeralStartTime;
+        var end = timedInfo.EphemeralEndTime;
+
+        // Must match the check in GetTimeWindows()
+        var hasEphemeral = start != 65535 && end != 65535 && start != end && start <= 2400 && end <= 2400;
+        if (hasEphemeral)
+            return TimeSource.Ephemeral;
+
+        if (timedInfo.GatheringRarePopTimeTable.RowId != 0)
+            return TimeSource.RarePop;
+
+        return TimeSource.None;
+    }
+    private static void UpdateNodeKinds()
+    {
+        foreach (var route in Sheet_RouteInfo)
+        {
+            var source = TimeSource.None;
+
+            foreach (var nodeId in route.Value.NodeIds)
+            {
+                source = GetTimeSource(nodeId);
+                if (source != TimeSource.None)
+                    break;
+            }
+
+            if (source == TimeSource.None)
+            {
+                route.Value.Kind = GatherNodeKind.Regular;
+                continue;
+            }
+
+            if (source == TimeSource.Ephemeral)
+            {
+                route.Value.Kind = GatherNodeKind.Ephemeral;
+                continue;
+            }
+
+            route.Value.Kind = route.Value.Folklore.ItemId != 0
+                ? GatherNodeKind.Legendary
+                : GatherNodeKind.Unspoiled;
+        }
+    }
+
+    private static void IncludeReducables()
+    {
+        bool TryCreateItemInfo(uint itemId, out ItemClass itemInfo)
+        {
+            itemInfo = null;
+            if (!ExcelHelper.Sheet_Item.TryGetRow(itemId, out var itemSheet))
+                return false;
+
+            itemInfo = new ItemClass
+            {
+                Icon = Svc.Texture.GetFromGameIcon((int)itemSheet.Icon),
+                IconId = itemSheet.Icon,
+                Name = itemSheet.Name.ToString(),
+            };
+            return true;
+        }
+
+        foreach (var reduce in ReducableItems)
+        {
+            if (reduce.ResultItems.Count == 0)
+                continue;
+
+            var resultId = reduce.ResultItems[0].ItemId;
+
+            // Only sources that actually made it into the dictionary
+            // (i.e. they have a non-ignored route)
+            var sources = new List<ItemClass>();
+            foreach (var sourceId in reduce.AllItemIds())
+            {
+                if (!Sheet_ItemInfo.TryGetValue(sourceId, out var sourceInfo))
+                    continue;
+
+                sourceInfo.ReducesIntoItemId = resultId;
+                sources.Add(sourceInfo);
+            }
+
+            // Nothing gatherable feeds this result, so don't add an orphan entry
+            if (sources.Count == 0)
+                continue;
+
+            if (!Sheet_ItemInfo.TryGetValue(resultId, out var resultInfo))
+            {
+                if (!TryCreateItemInfo(resultId, out resultInfo))
+                    continue;
+
+                Sheet_ItemInfo[resultId] = resultInfo;
+            }
+
+            if (resultInfo.Expansion == ExpansionIds.Unk)
+                resultInfo.Expansion = reduce.Expansion;
+
+            // Level/Star from the first source found.
+            // Level <= 1 means "still at the default", so a later entry won't overwrite it.
+            var firstSource = sources[0];
+            if (resultInfo.Level <= 1)
+                resultInfo.Level = firstSource.Level;
+
+            if (resultInfo.Star == 0)
+                resultInfo.Star = firstSource.Star;
+
+            foreach (var sourceId in reduce.AllItemIds())
+            {
+                if (!resultInfo.ReducedFromItemIds.Contains(sourceId))
+                    resultInfo.ReducedFromItemIds.Add(sourceId);
+            }
+
+            foreach (var source in sources)
+            {
+                foreach (var routeId in source.RouteInfo)
+                {
+                    if (!resultInfo.RouteInfo.Contains(routeId))
+                        resultInfo.RouteInfo.Add(routeId);
+                }
+
+                foreach (var nodeType in source.NodeTypes)
+                {
+                    if (!resultInfo.NodeTypes.Contains(nodeType))
+                        resultInfo.NodeTypes.Add(nodeType);
+                }
+
+                foreach (var slot in source.TimedSlots)
+                {
+                    if (!resultInfo.TimedSlots.Contains(slot))
+                        resultInfo.TimedSlots.Add(slot);
+                }
             }
         }
     }
@@ -596,8 +785,38 @@ public static partial class Gather_Util
         // Updating this to assign each item an expansion when it first appeared
         foreach (var item in Sheet_ItemInfo)
         {
-            var firstRoute = Sheet_RouteInfo.Where(x => x.Value.ItemIds.Contains(item.Key)).FirstOrDefault();
+            var firstRoute = Sheet_RouteInfo.FirstOrDefault(x => x.Value.ItemIds.Contains(item.Key));
+            if (firstRoute.Value == null)
+                continue;
+
             item.Value.Expansion = firstRoute.Value.ExpId;
         }
+    }
+
+    // Config stuff
+    private static void Update_NodeConfig()
+    {
+        foreach (var item in Sheet_ItemInfo)
+        {
+            if (!C.ItemRoutes.TryGetValue(item.Key, out var config))
+            {
+                config = new RouteSelection();
+                C.ItemRoutes.Add(item.Key, config);
+            }
+
+            if (item.Value.NormalRoutes.Count != 0)
+            {
+                // Single-select: only seed if nothing is set yet.
+                if (config.EnabledRoutes.Count == 0)
+                    config.EnabledRoutes.Add(item.Value.NormalRoutes.First());
+            }
+            else if (item.Value.TimedRoutes.Count != 0)
+            {
+                // Multi-select: default every timed route to enabled.
+                foreach (var timedRoute in item.Value.TimedRoutes)
+                    config.EnabledRoutes.Add(timedRoute);
+            }
+        }
+        C.SaveDebounced();
     }
 }

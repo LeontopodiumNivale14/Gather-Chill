@@ -80,7 +80,7 @@ namespace GatherChill.Ui.Tabs_Debug
                 {
                     Gather_Util.ReducableItems.Add(new Gather_Util.ReduceInfo
                     {
-                        NormalItemId = selectedId,
+                        ItemId = selectedId,
                         ResultItems = new() { new(), new(), new() }
                     });
                 }, excludeIds: existingSourceIds);
@@ -128,24 +128,34 @@ namespace GatherChill.Ui.Tabs_Debug
             DrawExportWindow();
         }
 
-        private enum SourceSlot { Normal, Prime, Sublime }
+        // "Item" covers both the normal and prime version of a source item
+        private enum SourceSlot { Item, Sublime }
+
+        private static uint GetSourceId(Gather_Util.ReduceInfo entry, SourceSlot slot) => slot switch
+        {
+            SourceSlot.Item => entry.ItemId,
+            SourceSlot.Sublime => entry.SublimeItemId,
+            _ => 0u
+        };
+
+        private static void SetSourceId(Gather_Util.ReduceInfo entry, SourceSlot slot, uint itemId)
+        {
+            switch (slot)
+            {
+                case SourceSlot.Item: entry.ItemId = itemId; break;
+                case SourceSlot.Sublime: entry.SublimeItemId = itemId; break;
+            }
+        }
 
         private static void DrawSourceItemCell(Gather_Util.ReduceInfo entry, int rowIdx)
         {
-            DrawSourceItemSlot(entry, rowIdx, SourceSlot.Normal);
-            DrawSourceItemSlot(entry, rowIdx, SourceSlot.Prime);
+            DrawSourceItemSlot(entry, rowIdx, SourceSlot.Item);
             DrawSourceItemSlot(entry, rowIdx, SourceSlot.Sublime);
         }
 
         private static void DrawSourceItemSlot(Gather_Util.ReduceInfo entry, int rowIdx, SourceSlot slot)
         {
-            var currentId = slot switch
-            {
-                SourceSlot.Normal => entry.NormalItemId,
-                SourceSlot.Prime => entry.PrimeItemId,
-                SourceSlot.Sublime => entry.SublimeItemId,
-                _ => 0u
-            };
+            var currentId = GetSourceId(entry, slot);
 
             var popupId = $"SourcePopup_{rowIdx}_{slot}";
             var label = currentId == 0
@@ -164,26 +174,11 @@ namespace GatherChill.Ui.Tabs_Debug
                 ImGui.OpenPopup(popupId);
             }
 
-            DrawItemPickerPopup(popupId, selectedId =>
-            {
-                switch (slot)
-                {
-                    case SourceSlot.Normal: entry.NormalItemId = selectedId; break;
-                    case SourceSlot.Prime: entry.PrimeItemId = selectedId; break;
-                    case SourceSlot.Sublime: entry.SublimeItemId = selectedId; break;
-                }
-            });
-
             // Right-click to clear this slot without opening the picker
             if (currentId != 0 && ImGui.IsItemClicked(ImGuiMouseButton.Right))
-            {
-                switch (slot)
-                {
-                    case SourceSlot.Normal: entry.NormalItemId = 0; break;
-                    case SourceSlot.Prime: entry.PrimeItemId = 0; break;
-                    case SourceSlot.Sublime: entry.SublimeItemId = 0; break;
-                }
-            }
+                SetSourceId(entry, slot, 0);
+
+            DrawItemPickerPopup(popupId, selectedId => SetSourceId(entry, slot, selectedId));
 
             ImGui.PopID();
         }
@@ -193,7 +188,7 @@ namespace GatherChill.Ui.Tabs_Debug
             var popupId = $"ExpansionPopup_{rowIdx}";
             var expansion = entry.Expansion;
 
-            if (ImGui_Ice.ImageButtonWithText(Sheet_Expansion[expansion].IconId, expansion.ToString(), $"{entry.NormalItemId}_{entry.PrimeItemId}_Expansion"))
+            if (ImGui_Ice.ImageButtonWithText(Sheet_Expansion[expansion].IconId, expansion.ToString(), $"{entry.ItemId}_{entry.SublimeItemId}_Expansion"))
                 ImGui.OpenPopup(popupId);
 
             DrawExpansionPickerPopup(popupId, selected =>
@@ -311,22 +306,18 @@ namespace GatherChill.Ui.Tabs_Debug
 
             foreach (var entry in Gather_Util.ReducableItems)
             {
-                var nameSource = entry.NormalItemId != 0 ? entry.NormalItemId
-                    : entry.PrimeItemId != 0 ? entry.PrimeItemId
-                    : entry.SublimeItemId;
+                var nameSource = entry.ItemId != 0 ? entry.ItemId : entry.SublimeItemId;
                 var comment = ValidItemsById.TryGetValue(nameSource, out var info) ? info.Name : "???";
 
                 sb.AppendLine($"    new() // {comment}");
                 sb.AppendLine("    {");
 
-                if (entry.NormalItemId != 0)
-                    sb.AppendLine($"        NormalItemId = {entry.NormalItemId},");
-                if (entry.PrimeItemId != 0)
-                    sb.AppendLine($"        PrimeItemId = {entry.PrimeItemId},");
+                if (entry.ItemId != 0)
+                    sb.AppendLine($"        ItemId = {entry.ItemId},");
                 if (entry.SublimeItemId != 0)
                     sb.AppendLine($"        SublimeItemId = {entry.SublimeItemId},");
 
-                sb.AppendLine($"        Expansion = ExpansionEnum.{entry.Expansion},");
+                sb.AppendLine($"        Expansion = ExpansionIds.{entry.Expansion},");
                 sb.AppendLine("        ResultItems = new()");
                 sb.AppendLine("        {");
 

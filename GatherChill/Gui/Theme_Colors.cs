@@ -57,6 +57,8 @@ internal static class Theme_Colors
 
     // Child
     public static readonly Vector4 ChildBg = WithAlpha(DarkSlate, 0.7f);
+    public static readonly Vector4 PopupBg = WithAlpha(DarkSlate, 1.0f);
+    public static readonly Vector4 PopupBorder = WithAlpha(DarkIceBlue, 0.9f);
 
     public static void CustomHeader(string text, float width, float height = 30f)
     {

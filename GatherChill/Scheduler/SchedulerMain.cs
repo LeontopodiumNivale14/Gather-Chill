@@ -15,24 +15,24 @@ namespace GatherChill.Scheduler
         internal static bool DisablePlugin()
         {
             P.navmesh.SmartStop();
-            P.TM.Abort();
+            P.TaskManager.Abort();
 
-            RouteId = null;
-            ItemId = null;
+            RouteId = 0;
+            ItemId = 0;
             State = IceState.Idle;
 
             return true;
         }
 
         internal static IceState State = IceState.Idle;
-        internal static uint? RouteId = 0;
-        internal static uint? ItemId = 0;
+        internal static uint RouteId = 0;
+        internal static uint ItemId = 0;
 
         internal static void Tick()
         {
-            if (P.TM.NumQueuedTasks == 0 && State != IceState.Idle)
+            if (P.TaskManager.NumQueuedTasks == 0 && State != IceState.Idle)
             {
-                Task_GatherRoute.Enqueue(RouteId.Value, ItemId.Value);
+                Task_GatherRoute.Enqueue(RouteId, ItemId);
             }
         }
     }

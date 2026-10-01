@@ -24,16 +24,15 @@ public static partial class Gather_Util
 
     public class ReduceInfo
     {
-        public uint NormalItemId { get; set; } = 0;
-        public uint PrimeItemId { get; set; } = 0;
+        // Normal or Prime item (an entry only ever has one of the two)
+        public uint ItemId { get; set; } = 0;
         public uint SublimeItemId { get; set; } = 0;
         public ExpansionIds Expansion { get; set; } = ExpansionIds.ARR;
         public List<ReduceClass> ResultItems { get; set; } = new();
 
         public IEnumerable<uint> AllItemIds()
         {
-            if (NormalItemId != 0) yield return NormalItemId;
-            if (PrimeItemId != 0) yield return PrimeItemId;
+            if (ItemId != 0) yield return ItemId;
             if (SublimeItemId != 0) yield return SublimeItemId;
         }
 
@@ -44,7 +43,7 @@ public static partial class Gather_Util
     {
         new() // Granular Clay
         {
-            NormalItemId = 12968,
+            ItemId = 12968,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -55,7 +54,7 @@ public static partial class Gather_Util
         },
         new() // Lightning Moraine
         {
-            NormalItemId = 5218,
+            ItemId = 5218,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -66,7 +65,7 @@ public static partial class Gather_Util
         },
         new() // Pot Marjoram
         {
-            NormalItemId = 33148,
+            ItemId = 33148,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -77,7 +76,7 @@ public static partial class Gather_Util
         },
         new() // Fire Moraine
         {
-            NormalItemId = 5214,
+            ItemId = 5214,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -88,7 +87,7 @@ public static partial class Gather_Util
         },
         new() // Peat Moss
         {
-            NormalItemId = 12969,
+            ItemId = 12969,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -99,7 +98,7 @@ public static partial class Gather_Util
         },
         new() // Bright Lightning Rock
         {
-            NormalItemId = 12967,
+            ItemId = 12967,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -110,7 +109,7 @@ public static partial class Gather_Util
         },
         new() // Water Mint
         {
-            NormalItemId = 33149,
+            ItemId = 33149,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -121,7 +120,7 @@ public static partial class Gather_Util
         },
         new() // Bright Fire Rock
         {
-            NormalItemId = 12966,
+            ItemId = 12966,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -132,7 +131,7 @@ public static partial class Gather_Util
         },
         new() // Humic Soil
         {
-            NormalItemId = 33147,
+            ItemId = 33147,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -143,7 +142,7 @@ public static partial class Gather_Util
         },
         new() // Radiant Lightning Moraine
         {
-            NormalItemId = 5224,
+            ItemId = 5224,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -154,7 +153,7 @@ public static partial class Gather_Util
         },
         new() // Wild Sage
         {
-            NormalItemId = 33150,
+            ItemId = 33150,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -165,7 +164,7 @@ public static partial class Gather_Util
         },
         new() // Radiant Fire Moraine
         {
-            NormalItemId = 5220,
+            ItemId = 5220,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -176,7 +175,7 @@ public static partial class Gather_Util
         },
         new() // Lover's Laurel
         {
-            NormalItemId = 15948,
+            ItemId = 15948,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -187,7 +186,7 @@ public static partial class Gather_Util
         },
         new() // Radiant Astral Moraine
         {
-            NormalItemId = 15949,
+            ItemId = 15949,
             Expansion = ExpansionIds.HW,
             ResultItems = new()
             {
@@ -198,7 +197,7 @@ public static partial class Gather_Util
         },
         new() // Dacite
         {
-            NormalItemId = 33152,
+            ItemId = 33152,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -209,7 +208,7 @@ public static partial class Gather_Util
         },
         new() // Doman Yellow
         {
-            NormalItemId = 20012,
+            ItemId = 20012,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -220,7 +219,7 @@ public static partial class Gather_Util
         },
         new() // Schorl
         {
-            NormalItemId = 20009,
+            ItemId = 20009,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -231,7 +230,7 @@ public static partial class Gather_Util
         },
         new() // Countess Tea Leaves
         {
-            NormalItemId = 33151,
+            ItemId = 33151,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -242,7 +241,7 @@ public static partial class Gather_Util
         },
         new() // Torreya Branch
         {
-            NormalItemId = 19937,
+            ItemId = 19937,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -253,7 +252,7 @@ public static partial class Gather_Util
         },
         new() // Rhodolite
         {
-            NormalItemId = 33153,
+            ItemId = 33153,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -264,7 +263,7 @@ public static partial class Gather_Util
         },
         new() // Yanxian Verbena
         {
-            NormalItemId = 23221,
+            ItemId = 23221,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -275,7 +274,7 @@ public static partial class Gather_Util
         },
         new() // Yanxian Soil
         {
-            NormalItemId = 23220,
+            ItemId = 23220,
             Expansion = ExpansionIds.StB,
             ResultItems = new()
             {
@@ -286,7 +285,7 @@ public static partial class Gather_Util
         },
         new() // Voeburt Bichir
         {
-            NormalItemId = 27542,
+            ItemId = 27542,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -297,7 +296,7 @@ public static partial class Gather_Util
         },
         new() // Poecilia
         {
-            NormalItemId = 27543,
+            ItemId = 27543,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -308,7 +307,7 @@ public static partial class Gather_Util
         },
         new() // Gale Rock
         {
-            NormalItemId = 27805,
+            ItemId = 27805,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -319,7 +318,7 @@ public static partial class Gather_Util
         },
         new() // White Clay
         {
-            NormalItemId = 27808,
+            ItemId = 27808,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -330,7 +329,7 @@ public static partial class Gather_Util
         },
         new() // Solarite
         {
-            NormalItemId = 27806,
+            ItemId = 27806,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -341,7 +340,7 @@ public static partial class Gather_Util
         },
         new() // Sweet Marjoram
         {
-            NormalItemId = 27809,
+            ItemId = 27809,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -352,7 +351,7 @@ public static partial class Gather_Util
         },
         new() // Bog Sage
         {
-            NormalItemId = 27810,
+            ItemId = 27810,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -363,7 +362,7 @@ public static partial class Gather_Util
         },
         new() // Shade Quartz
         {
-            NormalItemId = 27807,
+            ItemId = 27807,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -374,7 +373,7 @@ public static partial class Gather_Util
         },
         new() // Fuchsia Bloom
         {
-            NormalItemId = 30593,
+            ItemId = 30593,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -385,7 +384,7 @@ public static partial class Gather_Util
         },
         new() // Thunder Rock
         {
-            NormalItemId = 30591,
+            ItemId = 30591,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -396,7 +395,7 @@ public static partial class Gather_Util
         },
         new() // Levin Mint
         {
-            NormalItemId = 30592,
+            ItemId = 30592,
             Expansion = ExpansionIds.ShB,
             ResultItems = new()
             {
@@ -407,7 +406,7 @@ public static partial class Gather_Util
         },
         new() // Lunar Quartz
         {
-            NormalItemId = 36285,
+            ItemId = 36285,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -418,7 +417,7 @@ public static partial class Gather_Util
         },
         new() // Ewer Clay
         {
-            NormalItemId = 36287,
+            ItemId = 36287,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -429,7 +428,7 @@ public static partial class Gather_Util
         },
         new() // Gilled Topknot
         {
-            NormalItemId = 36525,
+            ItemId = 36525,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -440,7 +439,7 @@ public static partial class Gather_Util
         },
         new() // Verdigris Guppy
         {
-            NormalItemId = 38939,
+            ItemId = 38939,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -451,7 +450,7 @@ public static partial class Gather_Util
         },
         new() // Othardian Lumpsucker
         {
-            NormalItemId = 36577,
+            ItemId = 36577,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -462,7 +461,7 @@ public static partial class Gather_Util
         },
         new() // Ghostly Umbral Rock
         {
-            NormalItemId = 36286,
+            ItemId = 36286,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -473,7 +472,7 @@ public static partial class Gather_Util
         },
         new() // Palm Chippings
         {
-            NormalItemId = 36288,
+            ItemId = 36288,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -484,7 +483,7 @@ public static partial class Gather_Util
         },
         new() // Phyllinos
         {
-            NormalItemId = 39240,
+            ItemId = 39240,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -495,7 +494,7 @@ public static partial class Gather_Util
         },
         new() // Siderite
         {
-            PrimeItemId = 37694,
+            ItemId = 37694,
             SublimeItemId = 37695,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -507,7 +506,7 @@ public static partial class Gather_Util
         },
         new() // Earthen Quartz
         {
-            NormalItemId = 38937,
+            ItemId = 38937,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -518,7 +517,7 @@ public static partial class Gather_Util
         },
         new() // Crystalbloom
         {
-            PrimeItemId = 37691,
+            ItemId = 37691,
             SublimeItemId = 37692,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -530,7 +529,7 @@ public static partial class Gather_Util
         },
         new() // Sophora Roots
         {
-            NormalItemId = 38938,
+            ItemId = 38938,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -541,7 +540,7 @@ public static partial class Gather_Util
         },
         new() // Mayashell
         {
-            NormalItemId = 37697,
+            ItemId = 37697,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -552,7 +551,7 @@ public static partial class Gather_Util
         },
         new() // Sphongos
         {
-            PrimeItemId = 39234,
+            ItemId = 39234,
             SublimeItemId = 39235,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -564,7 +563,7 @@ public static partial class Gather_Util
         },
         new() // Connoisseur's Miracle Apple
         {
-            NormalItemId = 39807,
+            ItemId = 39807,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -575,7 +574,7 @@ public static partial class Gather_Util
         },
         new() // Achondrite
         {
-            PrimeItemId = 39237,
+            ItemId = 39237,
             SublimeItemId = 39238,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -587,7 +586,7 @@ public static partial class Gather_Util
         },
         new() // Connoisseur's Soiled Femur
         {
-            NormalItemId = 39805,
+            ItemId = 39805,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -598,7 +597,7 @@ public static partial class Gather_Util
         },
         new() // Chloroschist
         {
-            PrimeItemId = 39909,
+            ItemId = 39909,
             SublimeItemId = 39910,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -610,7 +609,7 @@ public static partial class Gather_Util
         },
         new() // Haritaki
         {
-            PrimeItemId = 39906,
+            ItemId = 39906,
             SublimeItemId = 39907,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -622,18 +621,18 @@ public static partial class Gather_Util
         },
         new() // The Fury's Aegis
         {
-            NormalItemId = 39912,
+            ItemId = 39912,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
                 new() { ItemId = 39913 }, // Concentrated Aqueous Glioaether
                 new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster (FIXED: was duplicated as ItemId 9 in the old data)
+                new() { ItemId = 15 },    // Ice Cluster
             },
         },
         new() // Fossilized Dragon's Scale
         {
-            PrimeItemId = 41416,
+            ItemId = 41416,
             SublimeItemId = 41417,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -645,7 +644,7 @@ public static partial class Gather_Util
         },
         new() // Kukuru Beans
         {
-            PrimeItemId = 41413,
+            ItemId = 41413,
             SublimeItemId = 41414,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
@@ -657,7 +656,7 @@ public static partial class Gather_Util
         },
         new() // Stargilt Lobster
         {
-            NormalItemId = 41419,
+            ItemId = 41419,
             Expansion = ExpansionIds.EW,
             ResultItems = new()
             {
@@ -668,7 +667,7 @@ public static partial class Gather_Util
         },
         new() // Electrocoal
         {
-            NormalItemId = 43931,
+            ItemId = 43931,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -679,7 +678,7 @@ public static partial class Gather_Util
         },
         new() // Goldbranch
         {
-            NormalItemId = 43933,
+            ItemId = 43933,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -690,7 +689,7 @@ public static partial class Gather_Util
         },
         new() // Longnose Gar
         {
-            NormalItemId = 43847,
+            ItemId = 43847,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -701,7 +700,7 @@ public static partial class Gather_Util
         },
         new() // Sunlit Prism
         {
-            NormalItemId = 43829,
+            ItemId = 43829,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -712,7 +711,7 @@ public static partial class Gather_Util
         },
         new() // Brightwind Ore
         {
-            NormalItemId = 43932,
+            ItemId = 43932,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -723,7 +722,7 @@ public static partial class Gather_Util
         },
         new() // Volcanic Grass
         {
-            NormalItemId = 43934,
+            ItemId = 43934,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -734,7 +733,7 @@ public static partial class Gather_Util
         },
         new() // Purple Palate
         {
-            NormalItemId = 46249,
+            ItemId = 46249,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -745,7 +744,7 @@ public static partial class Gather_Util
         },
         new() // Levin Quartz
         {
-            NormalItemId = 46247,
+            ItemId = 46247,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {
@@ -756,7 +755,7 @@ public static partial class Gather_Util
         },
         new() // Calamus Root
         {
-            NormalItemId = 46248,
+            ItemId = 46248,
             Expansion = ExpansionIds.DT,
             ResultItems = new()
             {

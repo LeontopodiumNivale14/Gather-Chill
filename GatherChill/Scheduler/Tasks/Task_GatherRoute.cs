@@ -2,16 +2,13 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
-using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
-using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
@@ -19,6 +16,7 @@ namespace GatherChill.Scheduler.Tasks
 {
     internal class Task_GatherRoute
     {
+
         private static GatheringRoute selectedRoute = null;
         private static readonly Random _random = new Random();
 
@@ -33,19 +31,66 @@ namespace GatherChill.Scheduler.Tasks
         {
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
             {
-                P.TM.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
+                P.TaskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
             }
             else
             {
-                P.TM.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
+                P.TaskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
             }
         }
 
+        private static bool TravelCheck()
+        {
+            const string tag = "Gather: Travel Check";
+            const float LoadRange = 75f; // "Safest" range to load nodes
 
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
+            if (route != null && selectedRoute != route)
+            {
+                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
+                selectedRoute = route;
+                GatherRoute.Clear();
+                foreach (var group in route.NodeInfo)
+                {
+                    GatherRoute.Add(group);
+                }
+            }
+
+            if (GatherRoute.Count == 0)
+            {
+                IceLogging.Error("This route didn't have any nodes... so we're reporting this", tag);
+                IceLogging.Error($"Route ID: {SchedulerMain.RouteId}", tag);
+
+                SchedulerMain.DisablePlugin();
+            }
+
+            if (RouteIndex >= GatherRoute.Count)
+            {
+                // Index has gotten higher than what we have, so resetting it back to 0'
+                // Happens if we go to less nodes being available typically (timed -> not, ARR ->... well not ARR
+                RouteIndex = 0;
+            }
+
+            var currentNode = GatherRoute[RouteIndex];
+            TargetNodeId = currentNode.NodeId;
+
+            if (!P.travel_TM.IsBusy)
+            {
+
+            }
+            else
+            {
+
+            }
+
+            return false;
+        }
+
+        #region Old Tasks
 
         private static bool TravelFarCheck()
         {
-            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId.Value);
+            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
             if (route != null && selectedRoute != route)
             {
                 IceLogging.Verbose("No route was loaded/old route did not match. Updating to current");
@@ -85,7 +130,7 @@ namespace GatherChill.Scheduler.Tasks
 
                 var firstNode = currentNode.Locations[0];
                 var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(firstNode, Player.Position);
-                if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
+                if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true))
                 {
                     if (EzThrottler.Throttle("Throttle message"))
                     {
@@ -112,13 +157,13 @@ namespace GatherChill.Scheduler.Tasks
                 if (validNode == null)
                 {
                     NodeCheckIndex = 0;
-                    P.TM.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
+                    P.TaskManager.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
                     return true;
                 }
                 else
                 {
                     IceLogging.Debug("we're within range, checking travel kind now");
-                    P.TM.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
+                    P.TaskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
                     return true;
                 }
             }
@@ -140,7 +185,7 @@ namespace GatherChill.Scheduler.Tasks
                 if (distanceToLoc > 75)
                 {
                     var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(location, Player.Position);
-                    if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true).Value)
+                    if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true))
                     {
                         if (EzThrottler.Throttle("Throttle message"))
                         {
@@ -164,7 +209,7 @@ namespace GatherChill.Scheduler.Tasks
                     {
                         IceLogging.Debug("We've found a valid node! Time to pathfind/interact with it");
                         NodeCheckIndex = 0; // Reset for next time
-                        P.TM.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
+                        P.TaskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
                         return true;
                     }
                     else
@@ -221,7 +266,7 @@ namespace GatherChill.Scheduler.Tasks
             {
                 IceLogging.Debug("We're moving onto the next set via flying");
 
-                P.TM.EnqueueMulti
+                P.TaskManager.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, true), "True Fly Task", TaskConfig),
                     new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
@@ -230,7 +275,7 @@ namespace GatherChill.Scheduler.Tasks
             }
             else if (Svc.Condition[ConditionFlag.Diving])
             {
-                P.TM.EnqueueMulti
+                P.TaskManager.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_FlyTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
@@ -239,7 +284,7 @@ namespace GatherChill.Scheduler.Tasks
             else
             {
                 IceLogging.Debug("We're moving onto the next set via ground movement");
-                P.TM.EnqueueMulti
+                P.TaskManager.EnqueueMulti
                 (
                     new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
                     new(() => InteractWithNode(node.BaseId), "Interact with node")
@@ -248,6 +293,8 @@ namespace GatherChill.Scheduler.Tasks
 
             return true;
         }
+
+        #endregion
         private static bool InteractWithNode(uint nodeId)
         {
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
@@ -418,9 +465,9 @@ namespace GatherChill.Scheduler.Tasks
 
             if (recastGroup != null)
             {
-                float total = recastGroup->Total;     // total cooldown duration
-                float elapsed = recastGroup->Elapsed; // how much has elapsed
-                float remaining = total - elapsed;    // time remaining
+                float total = recastGroup->Total;      // total cooldown duration
+                float elapsed = recastGroup->Elapsed;  // how much has elapsed
+                float remaining = total - elapsed;     // time remaining
                 bool isActive = recastGroup->IsActive; // Is Active (leaving these here because it's just nice to know/might use in future)
 
                 return remaining;

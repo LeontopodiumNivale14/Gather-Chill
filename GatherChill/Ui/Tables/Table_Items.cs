@@ -20,6 +20,8 @@ internal class Table_Items
         public string Name => ItemInfo.Name;
         public int Level => ItemInfo.Level;
         public int Stars => ItemInfo.Star;
+        public List<uint> Reduce_Sources => ItemInfo.ReducedFromItemIds;
+        public uint Reduce_Into => ItemInfo.ReducesIntoItemId;
         public List<uint> NodeTypes => ItemInfo.NodeTypes;
         public List<EorzeaTimeWindow> TimeSlot => ItemInfo.TimedSlots;
     }
@@ -31,10 +33,11 @@ internal class Table_Items
         private readonly Folklore _folklore = new();
         private readonly Uptime _uptime = new();
         private readonly Type _nodeTypes = new();
+        private readonly ReductionItems _reducableItems = new();
 
         public ItemTable(List<GatherItems> itemList)
         {
-            List<Column<GatherItems>> headers = [_id, _itemName, _level, _nodeTypes, _folklore, _uptime];
+            List<Column<GatherItems>> headers = [_id, _itemName, _level, _nodeTypes, _folklore, _uptime, _reducableItems];
             Id = "ItemInfo_V1";
             Columns = headers;
             Rows = itemList;
@@ -67,9 +70,6 @@ internal class Table_Items
 
         public override void DrawColumn(GatherItems row)
         {
-            var frameHeight = ImGui.GetFrameHeight();
-            var iconSize = new Vector2(frameHeight);
-
             ImGui_Ice.ImageButtonWithText(row.Icon, $"{row.Name}", $"{row.ItemId}_{row.Name}");
             if (ImGui.IsItemHovered())
             {
@@ -730,6 +730,73 @@ internal class Table_Items
                 _filterValues |= value;
             else
                 _filterValues &= ~value;
+        }
+    }
+    public sealed class ReductionItems : ColumnString<GatherItems>
+    {
+        public ReductionItems()
+        {
+            Label = "Reducable";
+        }
+
+        public override void DrawColumn(GatherItems row)
+        {
+            if (row.Reduce_Sources.Count != 0)
+            {
+                ImGui_Ice.ImageButton(121, "Reducable");
+                if (ImGui.IsItemHovered())
+                {
+                    using (var tooltip = ImRaii.Tooltip())
+                    {
+                        if (tooltip.Alive)
+                        {
+                            using (var table = ImRaii.Table("Reducable Tooltip Table", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
+                            {
+                                if (!table.Success)
+                                    return;
+
+                                ImGui.TableSetupColumn("Icon");
+                                ImGui.TableSetupColumn("Name");
+                                ImGui.TableSetupColumn("Job");
+
+                                foreach (var item in row.Reduce_Sources)
+                                {
+                                    if (Gather_Util.Sheet_ItemInfo.TryGetValue(item, out var info))
+                                    {
+                                        ImGui.TableNextRow();
+                                        ImGui.TableSetColumnIndex(0);
+                                        GameIcons.DrawInline(info.IconId, false);
+
+                                        ImGui.TableNextColumn();
+                                        ImGui.AlignTextToFramePadding();
+                                        ImGui.Text($"{info.Name}");
+
+                                        ImGui.TableNextColumn();
+                                        var iconDict = Gather_Util.Icons_AssignmentType;
+                                        var job = info.NodeTypes[0];
+                                        ImGui_Ice.ImageButton(iconDict[job].IconId, "Button", sidePadding: 0.1f);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (row.Reduce_Into != 0)
+            {
+                var reducableItem = Gather_Util.Sheet_ItemInfo[row.Reduce_Into];
+                ImGui_Ice.ImageButton(reducableItem.IconId, "Reduce Info");
+                if (ImGui.IsItemHovered())
+                {
+                    using (var tooltip = ImRaii.Tooltip())
+                    {
+                        if (tooltip.Alive)
+                        {
+                            ImGui.Text($"{reducableItem.Name}");
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -44,7 +44,6 @@ public static partial class SettingsUi
     // 67 -> "You're stupid"
     // 69 -> "See, you got class"
 
-
     public static void Draw()
     {
         var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;

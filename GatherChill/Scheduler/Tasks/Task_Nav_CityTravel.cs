@@ -100,11 +100,6 @@ namespace GatherChill.Scheduler.Tasks
             string tag = "Navmesh City: Aethernet";
             var territoryId = Player.Territory.RowId;
 
-            if (TravelUtil.AetherDictionary.TryGetValue(territoryId, out var aethernetInfo))
-            {
-                // var closestAethernet = 
-            }
-
             return false;
         }
 

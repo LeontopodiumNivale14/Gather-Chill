@@ -16,7 +16,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                 var list = Gather_Util.ReducableItems
                     .OrderBy(x => x.Expansion)
                     .ThenBy(x => x.ResultItems[0].ItemId)
-                    .ThenBy(x => x.NormalItemId != 0 ? x.NormalItemId : x.PrimeItemId);
+                    .ThenBy(x => x.SublimeItemId != 0 ? x.ItemId : x.SublimeItemId);
 
                 using (var table = ImRaii.Table("Reduction Table Viewer", 5, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollY))
                 {
@@ -42,14 +42,9 @@ namespace GatherChill.Ui.Tabs_MainWindow
                         }
 
                         ImGui.TableNextColumn();
-                        if (entry.NormalItemId != 0)
+                        var mainItem = entry.ItemInfo(entry.ItemId);
+                        if (entry.SublimeItemId != 0)
                         {
-                            var item = entry.ItemInfo(entry.NormalItemId);
-                            ImGui_Ice.ImageButtonWithText(item.Icon, item.Name.ToString(), $"{item.Name}");
-                        }
-                        else
-                        {
-                            var mainItem = entry.ItemInfo(entry.PrimeItemId);
                             var sublimeItem = entry.ItemInfo(entry.SublimeItemId);
                             ImGui_Ice.ImageButton(sublimeItem.Icon, $"{sublimeItem.Name.ToString()}");
                             if (ImGui.IsItemHovered())
@@ -57,8 +52,8 @@ namespace GatherChill.Ui.Tabs_MainWindow
                                 ImGui.SetTooltip($"{sublimeItem.Name}");
                             }
                             ImGui.SameLine();
-                            ImGui_Ice.ImageButtonWithText(mainItem.Icon, mainItem.Name.ToString(), mainItem.Name.ToString());
                         }
+                        ImGui_Ice.ImageButtonWithText(mainItem.Icon, mainItem.Name.ToString(), mainItem.Name.ToString());
 
                         for (int i = 0; i < entry.ResultItems.Count; i++)
                         {

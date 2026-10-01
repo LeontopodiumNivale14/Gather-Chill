@@ -66,7 +66,7 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.PlayCircle,
                 Label = "Gather Playlist",
-                Draw = () => { }
+                Draw = () => GatherPlaylist.Draw()
             },
             [WindowSelection.SavedList] = new()
             {
@@ -125,6 +125,7 @@ namespace GatherChill.Ui
                 colors.Push(ImGuiCol.FrameBgActive, Theme_Colors.FrameBgActive);
                 colors.Push(ImGuiCol.CheckMark, Theme_Colors.IceBlue);
                 colors.Push(ImGuiCol.Text, Theme_Colors.FrostWhite);
+                colors.Push(ImGuiCol.PopupBg, Theme_Colors.PopupBg);
             }
 
             using var style = C.UseIceTheme ? ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 4.0f) : default;
