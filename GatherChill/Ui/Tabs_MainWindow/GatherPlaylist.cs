@@ -172,59 +172,6 @@ namespace GatherChill.Ui.Tabs_MainWindow
             }
         }
 
-        private static uint ResolveGatherItemId(uint itemId)
-        {
-            var reduceInfo = Gather_Util.ReducableItems.FirstOrDefault(x =>
-                   x.ResultItems.Count != 0
-               && (x.ItemId == itemId || x.SublimeItemId == itemId || x.ResultItems[0].ItemId == itemId));
-
-            return reduceInfo?.ResultItems[0].ItemId ?? itemId;
-        }
-
-        private static bool IsItemInList(uint itemId)
-        {
-            var targetId = ResolveGatherItemId(itemId);
-            return C.GatherList.Any(x => x.ItemId == targetId);
-        }
-
-        private static void AddItem(uint itemId)
-        {
-            var targetId = ResolveGatherItemId(itemId);
-
-            if (C.GatherList.Any(x => x.ItemId == targetId))
-                return;
-
-            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(targetId, out var itemInfo))
-                return;
-
-            C.GatherList.Add(new Config.ItemInfo { ItemId = targetId, GatherAmount = 1 });
-
-            // Make sure the item has usable routes enabled
-            if (C.ItemRoutes.TryGetValue(targetId, out var itemConfig))
-            {
-                var enabled = itemConfig.EnabledRoutes;
-
-                // If both route types exist, only normal routes should be used
-                if (itemInfo.TimedRoutes.Count != 0 && itemInfo.NormalRoutes.Count != 0)
-                {
-                    foreach (var route in itemInfo.TimedRoutes)
-                        enabled.Remove(route);
-                }
-
-                // Nothing enabled: fall back to the first normal route, otherwise all timed routes
-                if (enabled.Count == 0)
-                {
-                    if (itemInfo.NormalRoutes.Count != 0)
-                        enabled.Add(itemInfo.NormalRoutes[0]);
-                    else
-                        foreach (var route in itemInfo.TimedRoutes)
-                            enabled.Add(route);
-                }
-            }
-
-            C.SaveDebounced();
-        }
-
         private static List<Config.ItemInfo> NodeList(bool timed)
         {
             var result = new List<Config.ItemInfo>();
@@ -477,7 +424,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
             foreach (var (itemId, item) in pageItems)
             {
-                var added = IsItemInList(itemId);
+                var added = GatherList_Util.IsInList(itemId);
                 var rowStart = ImGui.GetCursorScreenPos();
 
                 // Full-width selectable owns hover + click, icon and name are drawn on top
@@ -499,7 +446,8 @@ namespace GatherChill.Ui.Tabs_MainWindow
                 if (!clicked || added)
                     continue;
 
-                AddItem(itemId);
+                if (GatherList_Util.TryAdd(itemId, 1))
+                    C.SaveDebounced();
                 ImGui.CloseCurrentPopup();
                 return;
             }
