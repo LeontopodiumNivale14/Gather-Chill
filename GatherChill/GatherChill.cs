@@ -35,6 +35,9 @@ public sealed class GatherChill : IDalamudPlugin
     internal NavmeshIPC navmesh;
     internal PandoraIPC pandora;
 
+    // IPC that other plugins call into (RelicTracker, ...)
+    internal GatherChillProvider ipcProvider;
+
     // putting this here to initialize all the routes, instead of having to go a roundbout way of accessing it...
     internal GatheringRouteLoader routeEditor;
 
@@ -89,6 +92,9 @@ public sealed class GatherChill : IDalamudPlugin
 
         ExcelHelper.Init();
         UpdateSheetInfo();
+
+        // After the sheets load, so CanGather / AddToGatherList know every gatherable
+        ipcProvider = new();
     }
 
     private void Tick(object _)
