@@ -8,11 +8,11 @@ using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
+using GatherChill.Utilities.Traveling;
 using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static GatherChill.Ui.RouteWindowTabs.RouteInfo;
 
 namespace GatherChill.Ui.RouteWindowTabs
 {
@@ -25,6 +25,7 @@ namespace GatherChill.Ui.RouteWindowTabs
         private static Vector3 selectedNodePos = Vector3.Zero;
 
         public static string? LastSavedAt = null;
+        private static List<uint> ValidShards = new();
 
         public static void UpdateRoute(uint selectedRoute)
         {
@@ -62,6 +63,63 @@ namespace GatherChill.Ui.RouteWindowTabs
                 if (ImGui.Button("Stop Current"))
                 {
                     SchedulerMain.DisablePlugin();
+                }
+
+                ImGui.AlignTextToFramePadding();
+                ImGui.Text("Aetheryte:");
+                ImGui.SameLine();
+
+                var name = ExcelHelper.Sheet_Aetheryte.GetRow(routeInfo.AetheryteId).PlaceName.Value.Name.ToString();
+
+                if (ImGui.Button($"[{routeInfo.AetheryteId}] {name}"))
+                {
+                    ValidShards.Clear();
+                    var territory = routeInfo.TerritoryId;
+                    if (territory == 399)
+                        territory = 478;
+
+                    foreach (var shard in TravelUtil.Aethernet.Where(x => x.Value.TerritoryId == territory))
+                    {
+                        ValidShards.Add(shard.Key);
+                    }
+
+                    ImGui.OpenPopup("Select Shard");
+                }
+
+                using (var shardPopup = ImRaii.Popup("Select Shard"))
+                {
+                    if (shardPopup.Success)
+                    {
+                        if (ValidShards.Count > 0)
+                        {
+                            foreach (var shard in ValidShards)
+                            {
+                                bool isSelected = routeInfo.AetheryteId == shard;
+                                var position = TravelUtil.Aethernet[shard].Position;
+                                var territory = TravelUtil.Aethernet[shard].TerritoryId;
+
+                                var aetheryteName = ExcelHelper.Sheet_Aetheryte.GetRow(shard).PlaceName.Value.Name.ToString();
+                                if (Player.Territory.RowId == territory)
+                                {
+                                    aetheryteName += $" {Player.DistanceTo(position):N2}";
+                                }
+
+                                if (ImGui.Selectable($"[{shard}] {aetheryteName}##{shard}_ID", isSelected))
+                                {
+                                    routeInfo.AetheryteId = shard;
+                                    ImGui.CloseCurrentPopup();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ImGui.Text("Hey! You don't have any shards here");
+                            if (ImGui.Button("Close Popup"))
+                            {
+                                ImGui.CloseCurrentPopup();
+                            }
+                        }
+                    }
                 }
 
                 if (ImGui.BeginTabBar("Route Editor: Route Selection"))
@@ -574,10 +632,10 @@ namespace GatherChill.Ui.RouteWindowTabs
                     PictoManager.DrawArrowToward(selectedNodePos, 0.606f, 0.05f, 2.952f, 0.7f, 0.33f, ToUintABGR(C.Picto_SelectedFan), 3.5f);
 
                     ImGui.Text($"Node Position: {editorNode.Position.X:N2}, {editorNode.Position.Y:N2}, {editorNode.Position.Z:N2}");
-                    bool fly = editorNode.Flying_Required;
+                    bool fly = editorNode.RequiresFlying;
                     if (ImGui.Checkbox("Flying Required", ref fly))
                     {
-                        editorNode.Flying_Required = fly;
+                        editorNode.RequiresFlying = fly;
                     }
 
                     #region Gathering Fan Info

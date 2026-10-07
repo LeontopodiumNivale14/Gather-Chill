@@ -1,8 +1,6 @@
-﻿using ECommons.GameHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
+﻿using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GatherChill.Utilities.Traveling;
 

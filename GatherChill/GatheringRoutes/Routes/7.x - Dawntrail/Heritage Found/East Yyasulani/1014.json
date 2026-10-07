@@ -22,7 +22,7 @@
             "y": 87.11346,
             "z": -350.5845
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 336,
             "fan_EndAngle": 85,
@@ -40,7 +40,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 1,
@@ -52,7 +53,7 @@
             "y": 84.87339,
             "z": -545.386
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 209,
             "fan_EndAngle": 0,
@@ -65,12 +66,13 @@
             "fan_EndAngle": 0,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
-            "fan_Height": 0.89
+            "fan_Height": 0.19
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 2,
@@ -82,31 +84,32 @@
             "y": 51.40716,
             "z": -495.9732
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
+            "fan_StartAngle": 149,
+            "fan_EndAngle": 221,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
-            "fan_Height": 3.5
+            "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 188,
-            "fan_EndAngle": 137,
+            "fan_StartAngle": 149,
+            "fan_EndAngle": 222,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
-            "fan_Height": 2.1
+            "fan_Height": 0
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": "",
   "author": "alydev, Ice",
   "lastUpdated": "2025-12-24 22:28:45",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 211
 }

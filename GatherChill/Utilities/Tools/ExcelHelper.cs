@@ -18,6 +18,9 @@ internal static class ExcelHelper
     internal static ExcelSheet<PlaceName> Sheet_PlaceName;
     internal static ExcelSheet<ExVersion> Sheet_Expansion;
 
+    internal static ExcelSheet<Mount> Sheet_Mount;
+    internal static ExcelSheet<Town> Sheet_Town;
+
     internal static ExcelSheet<Item> Sheet_Item;
     internal static SubrowExcelSheet<GatheringItemPoint> Sheet_GatherItemPoint;
 
@@ -39,6 +42,9 @@ internal static class ExcelHelper
         Sheet_TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>();
         Sheet_PlaceName = Svc.Data.GetExcelSheet<PlaceName>();
         Sheet_Expansion = Svc.Data.GetExcelSheet<ExVersion>();
+
+        Sheet_Mount = Svc.Data.GetExcelSheet<Mount>();
+        Sheet_Town = Svc.Data.GetExcelSheet<Town>();
 
         Sheet_Item = Svc.Data.GetExcelSheet<Item>();
         Sheet_GatherItemPoint = Svc.Data.GetSubrowExcelSheet<GatheringItemPoint>();

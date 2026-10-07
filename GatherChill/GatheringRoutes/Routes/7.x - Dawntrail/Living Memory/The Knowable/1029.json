@@ -20,7 +20,7 @@
             "y": -4.549647,
             "z": -706.9849
           },
-          "flying_Required": false,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -44,7 +44,7 @@
             "y": -3.524841,
             "z": -677.0406
           },
-          "flying_Required": false,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 224,
             "fan_EndAngle": 100,
@@ -68,7 +68,7 @@
             "y": -4.368079,
             "z": -714.8772
           },
-          "flying_Required": false,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -94,5 +94,6 @@
   "groupCount": 1,
   "author": "alydev, Ice",
   "lastUpdated": "2025-12-31 11:49:29",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 215
 }

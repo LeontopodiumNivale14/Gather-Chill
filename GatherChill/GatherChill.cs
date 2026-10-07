@@ -28,7 +28,7 @@ public sealed class GatherChill : IDalamudPlugin
 
     // Taskmanager from Ecommons
     internal TaskManager TaskManager;
-    internal TaskManager travel_TM;
+    internal TaskManager navTask;
 
     // Internal IPC's that I use for... well plugins. 
     internal LifestreamIPC lifestream;
@@ -55,8 +55,8 @@ public sealed class GatherChill : IDalamudPlugin
         config = EzConfig.Init<Config>();
 
         //IPC's that are used
-        TaskManager = new();
-        travel_TM = new();
+        TaskManager = new(TaskConfig);
+        navTask = new(TaskConfig);
         lifestream = new();
         navmesh = new();
         pandora = new();
@@ -73,7 +73,6 @@ public sealed class GatherChill : IDalamudPlugin
         debugWindow = new();
         routeWindow = new();
 
-        TaskManager = new(new(abortOnTimeout: true, timeLimitMS: 20000, showDebug: false));
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         Svc.PluginInterface.UiBuilder.OpenMainUi += () =>
         {

@@ -8,6 +8,7 @@ using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
+using GatherChill.Utilities.Traveling;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
@@ -19,212 +20,168 @@ namespace GatherChill.Scheduler.Tasks
 
         private static GatheringRoute selectedRoute = null;
         private static readonly Random _random = new Random();
-
-        private static uint LoadedRouteId = 0;
         private static int RouteIndex = 0;
         private static List<GatheringNode> GatherRoute = new();
-        private static Vector3? TargetFanPoint = null;
         private static uint? TargetNodeId = null;
         private static int NodeCheckIndex = 0;
 
-        public static void Enqueue(uint routeId, uint itemId)
+        public static void NormalItem_Enqueue(uint routeId, uint itemId)
         {
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
             {
-                P.TaskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction", TaskConfig);
+                P.TaskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction");
             }
             else
             {
-                P.TaskManager.Enqueue(() => TravelFarCheck(), "Traveling to node group", TaskConfig);
+                P.TaskManager.Enqueue(() => Travel_FarCheck(), "Traveling to node group");
             }
         }
 
-        private static bool TravelCheck()
+        private static bool Travel_FarCheck()
         {
-            const string tag = "Gather: Travel Check";
-            const float LoadRange = 75f; // "Safest" range to load nodes
+            const string tag = "Task: Gather Travel";
 
-            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
-            if (route != null && selectedRoute != route)
+            // I want to keep the old way of telling if a node is good for a certain distance, then have it move to the next one if not...
+            // just need to incorporate the navmesh task properly. The one way I did it is *-minorly-* jank? Idk I don't like it
+            // So I think the general gameplan is to:
+            // 1: Do a far check on the nodes (stay mounted = true)
+            // 2: Once we're within range of all nodes, find node then travel to it
+            // 3: If we're already flying, do a fly -> ground fan location
+            // 3.1: If we're not flying, check to see if we should fly, then queue up fly -> ground or just ground
+            // 4: Once we're within range, queue up the node gathering task in the normal task
+
+            // 1st: Check the route to make sure it's even loaded right... if not then we need to clear it and start fresh
+
+            var navtask = P.navTask;
+            if (!navtask.IsBusy)
             {
-                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
-                selectedRoute = route;
-                GatherRoute.Clear();
-                foreach (var group in route.NodeInfo)
+                var playerPos = Player.Position;
+                const float loadRange = 75f;
+
+                // Checking to see if we even have a route to begin with
+                var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
+                if (route != null && selectedRoute != route)
                 {
-                    GatherRoute.Add(group);
+                    IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
+                    selectedRoute = route;
+
+                    GatherRoute.Clear();
+                    GatherRoute.AddRange(route.NodeInfo.OrderBy(n => n.GroupId));
+
+                    var order = string.Join(", ", GatherRoute.Select(n => $"{n.NodeId} (G{n.GroupId})"));
+                    IceLogging.Verbose($"GatherRoute order: {order}", tag);
                 }
-            }
 
-            if (GatherRoute.Count == 0)
-            {
-                IceLogging.Error("This route didn't have any nodes... so we're reporting this", tag);
-                IceLogging.Error($"Route ID: {SchedulerMain.RouteId}", tag);
+                if (GatherRoute.Count == 0)
+                {
+                    IceLogging.Warning("No nodes were in this route is loaded, which means that it doesn't know where tf to go. Please report the route/item", tag);
+                    return true;
+                }
 
-                SchedulerMain.DisablePlugin();
-            }
+                if (RouteIndex >= GatherRoute.Count)
+                {
+                    // We've hit a higher index than we should for these, so going to just immediately reset it back to 0
+                    RouteIndex = 0;
+                }
 
-            if (RouteIndex >= GatherRoute.Count)
-            {
-                // Index has gotten higher than what we have, so resetting it back to 0'
-                // Happens if we go to less nodes being available typically (timed -> not, ARR ->... well not ARR
-                RouteIndex = 0;
-            }
+                var currentNode = GatherRoute[RouteIndex];
+                TargetNodeId = currentNode.NodeId;
+                if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
+                {
+                    var node = currentNode.Locations[0];
+                    TravelUtil.Gathering_TravelCheck(node);
+                    return false;
+                }
+                else
+                {
+                    IceLogging.Debug("We're within range of all nodes, continuing on", tag);
+                    P.navmesh.PathStop();
 
-            var currentNode = GatherRoute[RouteIndex];
-            TargetNodeId = currentNode.NodeId;
+                    var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
+                               .Where(obj => obj.IsTargetable)
+                               .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
+                               .FirstOrDefault();
 
-            if (!P.travel_TM.IsBusy)
-            {
+                    if (EzThrottler.Throttle("IsNodeValid"))
+                    {
+                        IceLogging.Debug($"Is Node Valid: {validNode != null}");
+                    }
 
-            }
-            else
-            {
+                    if (validNode == null)
+                    {
+                        NodeCheckIndex = 0;
+                        IceLogging.Debug("We can't seem to find a node that is valid, so we're going to do an individual check in turn JUST to make sure");
+                        P.TaskManager.Enqueue(() => Travel_IndividualCheck(), "Checking individual nodes");
+                        return true;
+                    }
+                    else
+                    {
+                        IceLogging.Debug("we're within range, checking travel kind now");
+                        P.TaskManager.Enqueue(() => Travel_MoveAndInteract(validNode), "Checking Travel Kind");
+                        return true;
+                    }
+                }
+
+
 
             }
 
             return false;
         }
-
-        #region Old Tasks
-
-        private static bool TravelFarCheck()
+        private static bool Travel_IndividualCheck()
         {
-            var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
-            if (route != null && selectedRoute != route)
-            {
-                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current");
-                selectedRoute = route;
-                GatherRoute.Clear();
-                foreach (var group in route.NodeInfo)
-                {
-                    GatherRoute.Add(group);
-                }
-            }
-
-            if (GatherRoute.Count == 0)
-            {
-                IceLogging.Warning("No route is loaded, going to just immediately cancel here");
-                return true;
-            }
-
-            var playerPos = Player.Position;
-            const float loadRange = 75f;
-
-            if (RouteIndex >= GatherRoute.Count)
-            {
-                // We've hit a higher index than we should for these, so going to just immediately reset it back to 0
-                RouteIndex = 0;
-            }
+            string tag = "Travel: Individual Check";
 
             var currentNode = GatherRoute[RouteIndex];
             TargetNodeId = currentNode.NodeId;
+            var navtask = P.navTask;
 
-            if (EzThrottler.Throttle("Travel Check throttle message"))
-                IceLogging.Verbose("Currently in travel check mode");
-
-            // bool allNodesInRange = currentNode.Locations.All(x => Player.DistanceTo(x.Position.ToVector3()) <= loadRange);
-            if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
-            {
-                TargetFanPoint = null;
-
-                var firstNode = currentNode.Locations[0];
-                var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(firstNode, Player.Position);
-                if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true))
-                {
-                    if (EzThrottler.Throttle("Throttle message"))
-                    {
-                        IceLogging.Verbose($"To far from all nodes to check. Distance: {Player.DistanceTo(randomFanPoint)}");
-                    }
-                }
-                return false;
-            }
-            else
-            {
-                IceLogging.Debug("We're within range of all nodes, continuing on");
-                P.navmesh.PathStop();
-
-                var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
-                           .Where(obj => obj.IsTargetable)
-                           .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
-                           .FirstOrDefault();
-
-                if (EzThrottler.Throttle("IsNodeValid"))
-                {
-                    IceLogging.Debug($"Is Node Valid: {validNode != null}");
-                }
-
-                if (validNode == null)
-                {
-                    NodeCheckIndex = 0;
-                    P.TaskManager.Enqueue(() => IndividualNodeCheck(), "Checking individual nodes");
-                    return true;
-                }
-                else
-                {
-                    IceLogging.Debug("we're within range, checking travel kind now");
-                    P.TaskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
-                    return true;
-                }
-            }
-        }
-        private static bool IndividualNodeCheck()
-        {
-            var currentNode = GatherRoute[RouteIndex];
-            TargetNodeId = currentNode.NodeId;
-
-            // if we're doing this, that means that all nodes aren't within a close 75 yalms of each other. So going to check each individually
             if (NodeCheckIndex < currentNode.Locations.Count)
             {
-                IceLogging.Verbose($"Checking location: {NodeCheckIndex}");
-                var location = currentNode.Locations[NodeCheckIndex];
-                var distanceToLoc = Player.DistanceTo(location.Position);
-                if (EzThrottler.Throttle("Location message throttle"))
-                    IceLogging.Debug($"Distance to location: {distanceToLoc:N2}");
-
-                if (distanceToLoc > 75)
+                if (!navtask.IsBusy)
                 {
-                    var randomFanPoint = NodeLocationExtensions.GetRandomFlightPosition(location, Player.Position);
-                    if (!Task_NavmeshMove.Task_FlyTo(randomFanPoint, false, 50, true))
-                    {
-                        if (EzThrottler.Throttle("Throttle message"))
-                        {
-                            IceLogging.Verbose("Too far from node to check");
-                        }
-                    }
-                    return false; // Still need to reach this location
-                }
-                else
-                {
-                    if (P.navmesh.IsRunning())
-                        P.navmesh.PathStop();
+                    IceLogging.Verbose($"Checking location: {NodeCheckIndex}");
+                    var location = currentNode.Locations[NodeCheckIndex];
+                    var distanceToLoc = Player.DistanceTo(location.Position);
+                    if (EzThrottler.Throttle("Location message throttle"))
+                        IceLogging.Debug($"Distance to location: {distanceToLoc:N2}", tag);
 
-                    // If we're here, that means that we're within load range. 
-                    var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
-                                               .Where(obj => obj.IsTargetable)
-                                               .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
-                                               .FirstOrDefault();
-
-                    if (validNode != null)
+                    if (distanceToLoc > 75)
                     {
-                        IceLogging.Debug("We've found a valid node! Time to pathfind/interact with it");
-                        NodeCheckIndex = 0; // Reset for next time
-                        P.TaskManager.Enqueue(() => CheckTravelKind(validNode), "Checking Travel Kind");
-                        return true;
+                        TravelUtil.Gathering_TravelCheck(location);
+                        return false;
                     }
                     else
                     {
-                        IceLogging.Debug($"No valid node at location {NodeCheckIndex}, moving to next location");
-                        NodeCheckIndex += 1;
-                        return false;
+                        if (P.navmesh.IsRunning())
+                            P.navmesh.PathStop();
+
+                        // If we're here, that means that we're within load range. 
+                        var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
+                                                   .Where(obj => obj.IsTargetable)
+                                                   .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
+                                                   .FirstOrDefault();
+
+                        if (validNode != null)
+                        {
+                            IceLogging.Debug("We've found a valid node! Time to pathfind/interact with it", tag);
+                            NodeCheckIndex = 0; // Reset for next time
+                            P.TaskManager.Enqueue(() => Travel_MoveAndInteract(validNode), "Checking Travel Kind");
+                            return true;
+                        }
+                        else
+                        {
+                            IceLogging.Debug($"No valid node [ID: {currentNode.NodeId}] at location {NodeCheckIndex}, moving to next location", tag);
+                            NodeCheckIndex += 1;
+                            return false;
+                        }
                     }
                 }
             }
             else
             {
                 // We've checked all locations and found no valid nodes
-                IceLogging.Debug("Checked all locations for this node group, moving to next route index");
-                TargetFanPoint = null;
+                IceLogging.Debug("Checked all locations for this node group, moving to next route index", tag);
                 TargetNodeId = null;
                 RouteIndex += 1;
                 NodeCheckIndex = 0;
@@ -236,65 +193,45 @@ namespace GatherChill.Scheduler.Tasks
                 }
                 return true;
             }
+
+            return false;
         }
-        private static bool CheckTravelKind(IGameObject node)
+        private static bool Travel_MoveAndInteract(IGameObject node)
         {
-            float minFlyDistance = 25;
+            const string tag = "Travel: Move -> Interact";
+            var navTask = P.navTask;
 
             var currentNode = GatherRoute[RouteIndex];
             var targetLocation = currentNode.Locations.Where(x => x.Position == node.Position).FirstOrDefault();
-            if (targetLocation == null)
+            
+            if (!navTask.IsBusy)
             {
-                IceLogging.Error("We're getting an invalid node location");
-                return true;
+                if (targetLocation is null)
+                {
+                    IceLogging.Error("We seem to be getting an invalid node???", tag);
+                    IceLogging.Error($"Current node: {currentNode.NodeId} doesn't seem to have a valid location. Please report this and the item you were trying to gather", tag);
+                    SchedulerMain.DisablePlugin();
+                    return true;
+                }
+                else
+                {
+                    if (Player.DistanceTo(node) < 3.4)
+                    {
+                        P.TaskManager.Enqueue(() => InteractWithNode(currentNode.NodeId), "Interacting with node");
+                        return true;
+                    }
+                    else
+                    {
+                        // We still need to move closer to the node, so we're going to do that
+                        TravelUtil.Gathering_TravelToNode(targetLocation, currentNode.NodeId);
+                    }
+                }
+
             }
 
-            TargetFanPoint = NodeLocationExtensions.GetRandomFlightPosition(targetLocation, Player.Position);
-
-            var closestWalkPoint = Vector3.Zero;
-            if (targetLocation.UseSpecificWalkingSpots)
-            {
-                var walkPointSpecific = targetLocation.WalkablePositions.OrderBy(x => Vector3.Distance(TargetFanPoint.Value, x)).FirstOrDefault();
-                closestWalkPoint = walkPointSpecific;
-            }
-            else
-            {
-                closestWalkPoint = NodeLocationExtensions.GetRandomGatherPosition(targetLocation, Player.Position);
-            }
-
-            if (Player.DistanceTo(node.Position) >= minFlyDistance && !Svc.Condition[ConditionFlag.Diving])
-            {
-                IceLogging.Debug("We're moving onto the next set via flying");
-
-                P.TaskManager.EnqueueMulti
-                (
-                    new(() => Task_NavmeshMove.Task_FlyTo(TargetFanPoint.Value, true, 0.5f, true), "True Fly Task", TaskConfig),
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
-                    new(() => InteractWithNode(node.BaseId), "Interact with node")
-                );
-            }
-            else if (Svc.Condition[ConditionFlag.Diving])
-            {
-                P.TaskManager.EnqueueMulti
-                (
-                    new(() => Task_NavmeshMove.Task_FlyTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
-                    new(() => InteractWithNode(node.BaseId), "Interact with node")
-                );
-            }
-            else
-            {
-                IceLogging.Debug("We're moving onto the next set via ground movement");
-                P.TaskManager.EnqueueMulti
-                (
-                    new(() => Task_NavmeshMove.Task_GroundTo(closestWalkPoint, true, 0.5f), "Moving to the node", TaskConfig),
-                    new(() => InteractWithNode(node.BaseId), "Interact with node")
-                );
-            }
-
-            return true;
+            return false;
         }
 
-        #endregion
         private static bool InteractWithNode(uint nodeId)
         {
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
@@ -394,7 +331,6 @@ namespace GatherChill.Scheduler.Tasks
             else
                 return false;
         }
-
         private static unsafe bool Crystal_BuffCheck(bool MaxDurability)
         {
             var job = Player.Job;
@@ -458,7 +394,6 @@ namespace GatherChill.Scheduler.Tasks
 
             return false;
         }
-
         private static unsafe float BuffCooldown(uint ActionId)
         {
             var recastGroup = ActionManager.Instance()->GetRecastGroupDetail(ActionManager.Instance()->GetRecastGroup(1, ActionId));

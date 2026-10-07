@@ -24,7 +24,19 @@ public static partial class SettingsUi
 
     public static List<SettingEntry> BuildRegistry() => new()
     {
+        // Mount, Fly, and Fan Options
+        UseMount,
+        OptionalFly,
+        MountMinDistance,
+        MountDismountDistance,
+        FlyMinDistance,
+        MountSelection,
+        FanSelection,
+
+        // Misc
         ColorTheme,
+
+        // Route Editor
         Route_SaveLoc, 
         Route_UpdateAll, 
         LoadExternal

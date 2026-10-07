@@ -49,6 +49,7 @@ namespace GatherChill.GatheringInfo
         public string Author { get; set; }
         public string LastUpdated { get; set; }
         public bool TimedNode { get; set; } = false;
+        public uint AetheryteId { get; set; } = 0;
     }
 
     public class GatheringNode
@@ -64,7 +65,7 @@ namespace GatherChill.GatheringInfo
     public class NodeLocation
     {
         public Vector3 Position { get; set; }
-        public bool Flying_Required { get; set; } = false;
+        public bool RequiresFlying { get; set; } = false;
         public FanInfo Flight_FanInfo { get; set; } = new();
         public FanInfo Gathering_FanInfo { get; set; } = new();
         // Bool to choose whether we're doing fan position finder

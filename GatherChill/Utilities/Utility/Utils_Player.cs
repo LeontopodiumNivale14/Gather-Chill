@@ -1,6 +1,8 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using GatherChill.Utilities.Tools;
 using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Utilities.Utility;
@@ -9,8 +11,7 @@ public static partial class Utils
 {
     public static unsafe void MountAction()
     {
-        /*
-        // bool useMount = C.MountId != 0 && PlayerState.Instance()->IsMountUnlocked(C.MountId);
+        bool useMount = C.MountId != 0 && PlayerState.Instance()->IsMountUnlocked(C.MountId);
 
         if (!Player.IsCasting && !Player.Mounting)
         {
@@ -25,11 +26,12 @@ public static partial class Utils
                 IceLogging.Info($"Resorting to using the mount roulette");
             }
         }
-        */
+        /*
         if (!Player.IsCasting && !Player.Mounting)
         {
             ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
         }
+        */
     }
     public static unsafe void Dismount()
     {

@@ -3,9 +3,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using GatherChill.Enums;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
-using Lumina.Excel;
 using Lumina.Excel.Sheets;
-using SharpDX.Direct3D11;
 using System.Collections.Generic;
 using static GatherChill.ConfigFiles.Config;
 
