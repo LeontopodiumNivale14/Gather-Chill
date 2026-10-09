@@ -6,33 +6,33 @@ using GatherChill.Scheduler.Tasks;
 
 namespace GatherChill.Scheduler
 {
-    internal static unsafe class SchedulerMain
+    internal static class SchedulerMain
     {
-        internal static bool EnablePlugin()
+        internal static void DisablePlugin()
         {
-            return true;
-        }
-        internal static bool DisablePlugin()
-        {
-            State = IceState.Idle;
+            Gather_Helper.State = IceState.Idle;
             P.TaskManager.Abort();
             P.navTask.Abort();
+            P.navmesh.Stop();
 
-            RouteId = 0;
-            ItemId = 0;
+            Gather_Helper.GatherRoute = new();
 
-            return true;
         }
-
-        internal static IceState State = IceState.Idle;
         internal static uint RouteId = 0;
         internal static uint ItemId = 0;
 
         internal static void Tick()
         {
-            if (P.TaskManager.NumQueuedTasks == 0 && State != IceState.Idle)
+            if (P.TaskManager.NumQueuedTasks == 0 && Gather_Helper.State != IceState.Idle)
             {
-                Task_GatherRoute.NormalItem_Enqueue(RouteId, ItemId);
+                Action enqueue = Gather_Helper.State switch
+                {
+                    IceState.Start => Task_Start.Enqueue,
+                    IceState.Teleport => Task_Teleport.Enqueue,
+                    IceState.Gather => Task_GatherRoute.NormalItem_Enqueue,
+                    _ => DisablePlugin
+                };
+                enqueue();
             }
         }
     }

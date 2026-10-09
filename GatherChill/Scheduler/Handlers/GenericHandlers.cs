@@ -26,6 +26,12 @@ namespace GatherChill.Scheduler.Handlers
             }
             return false;
         }
+
+        internal static unsafe void CloseWindow(AtkUnitBase* addon)
+        {
+            if (EzThrottler.Throttle("Close Window"))
+                Callback.Fire(addon, true, -1);
+        }
     }
 }
 

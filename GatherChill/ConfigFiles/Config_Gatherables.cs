@@ -7,7 +7,7 @@ public partial class Config
     public class ItemInfo
     {
         public uint ItemId { get; set; } = 0;
-        public uint GatherAmount { get; set; } = 1;
+        public int GatherAmount { get; set; } = 1;
     }
 
     public class RouteSelection

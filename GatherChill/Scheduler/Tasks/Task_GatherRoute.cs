@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -19,22 +20,53 @@ namespace GatherChill.Scheduler.Tasks
     {
 
         private static GatheringRoute selectedRoute = null;
-        private static readonly Random _random = new Random();
         private static int RouteIndex = 0;
         private static List<GatheringNode> GatherRoute = new();
         private static uint? TargetNodeId = null;
         private static int NodeCheckIndex = 0;
 
-        public static void NormalItem_Enqueue(uint routeId, uint itemId)
+        public class ItemCatch
+        {
+            public uint ItemId { get; set; } = 0;
+            public int LastAmount { get; set; } = 0;
+        }
+
+        private static ItemCatch LastItemInfo = new();
+
+        public static void NormalItem_Enqueue()
         {
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
             {
+                var itemId = Gather_Helper.GatherRoute.itemId;
                 P.TaskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction");
             }
             else
             {
+                P.TaskManager.Enqueue(() => ChangeJob(), "Checking for job change");
                 P.TaskManager.Enqueue(() => Travel_FarCheck(), "Traveling to node group");
             }
+        }
+
+        private static bool ChangeJob()
+        {
+            string tag = "Task Gather: Change Job";
+
+            var routeId = Gather_Helper.GatherRoute.routeId;
+            var job = Gather_Util.Sheet_RouteInfo[routeId].Job;
+            if (Player.Job == (Job)job)
+            {
+                return true;
+            }
+            else
+            {
+                if (EzThrottler.Throttle("Swapping jobs", 2000))
+                {
+                    IceLogging.Verbose("We need to swap jobs to even be able to do this, so that's what we're going to do. *-I hope you have one unlocked-*", tag);
+                    Utils.TaskClassChange((Job)job);
+                }
+            }
+
+            return false;
         }
 
         private static bool Travel_FarCheck()
@@ -59,7 +91,7 @@ namespace GatherChill.Scheduler.Tasks
                 const float loadRange = 75f;
 
                 // Checking to see if we even have a route to begin with
-                var route = P.routeEditor.GetRoute(SchedulerMain.RouteId);
+                var route = P.routeEditor.GetRoute(Gather_Helper.GatherRoute.routeId);
                 if (route != null && selectedRoute != route)
                 {
                     IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
@@ -270,6 +302,43 @@ namespace GatherChill.Scheduler.Tasks
             {
                 if (EzThrottler.Throttle("Stopping navmesh, cause we shouldn't be running"))
                     P.navmesh.PathStop();
+            }
+
+            var currentAmount = Utils.GetItemCount(itemId);
+            if (LastItemInfo.ItemId != itemId)
+            {
+                LastItemInfo = new()
+                {
+                    ItemId = itemId,
+                    LastAmount = 0,
+                };
+            }
+
+            if (LastItemInfo.LastAmount == 0)
+            {
+                LastItemInfo.LastAmount = currentAmount;
+            }
+            else if (LastItemInfo.LastAmount != currentAmount)
+            {
+                IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", "Gathering Action");
+                var difference = currentAmount - LastItemInfo.LastAmount;
+                var config = C.GatherList.Where(x => x.ItemId == itemId).FirstOrDefault();
+
+                if (difference > 0)
+                {
+                    config.GatherAmount = config.GatherAmount - difference;
+                    if (config.GatherAmount < 0)
+                        config.GatherAmount = 0;
+                    C.SaveDebounced();
+                }
+                LastItemInfo.LastAmount = currentAmount;
+
+                if (config.GatherAmount == 0)
+                {
+                    Gather_Helper.State = IceState.Start;
+                    P.TaskManager.Tasks.Clear();
+                    return true;
+                }
             }
 
             if (Svc.Condition[ConditionFlag.Gathering])

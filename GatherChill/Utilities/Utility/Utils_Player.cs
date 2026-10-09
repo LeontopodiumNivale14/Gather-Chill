@@ -1,8 +1,12 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
+using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using GatherChill.Utilities.Tools;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Utilities.Utility;
@@ -98,5 +102,39 @@ public static partial class Utils
     {
         var maxGp = LocalPlayer.MaxGp;
         return (int)maxGp;
+    }
+    public unsafe static void TaskClassChange(Job job)
+    {
+        string tag = "Task: Equip Gearset";
+
+        if (job == Player.Job || !EzThrottler.Throttle("Gearset", 250) || Player.IsBusy)
+            return;
+        var gearsets = RaptureGearsetModule.Instance();
+        foreach (ref var gs in gearsets->Entries)
+        {
+            if (!RaptureGearsetModule.Instance()->IsValidGearset(gs.Id)) continue;
+            if ((Job)gs.ClassJob == job)
+            {
+                if (gs.Flags.HasFlag(RaptureGearsetModule.GearsetFlag.MainHandMissing))
+                {
+                    if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var select) && select.IsAddonReady)
+                    {
+                        select.Yes();
+                    }
+                    else
+                    {
+                        gearsets->EquipGearset(gs.Id);
+                    }
+                }
+
+                var result = gearsets->EquipGearset(gs.Id);
+                IceLogging.Debug($"Tried to equip gearset {gs.Id} for {job}, result={result}, flags={gs.Flags}", tag);
+                return;
+            }
+        }
+
+        if (EzThrottler.Throttle("No gearsets"))
+            IceLogging.Verbose($"Hewwo. We have gotten thiws faw, which means thawt the geawset fow {job.ToString()} doesn't exist. Pwease make owne", tag);
+        return;
     }
 }

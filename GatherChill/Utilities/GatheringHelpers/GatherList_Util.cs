@@ -40,7 +40,7 @@ internal static class GatherList_Util
     /// Adds an item to the gather list, or raises its amount if it's already there.
     /// Returns false if the item isn't a known gatherable.
     /// </summary>
-    public static bool TryAdd(uint itemId, uint amount)
+    public static bool TryAdd(uint itemId, int amount)
     {
         var targetId = ResolveGatherItemId(itemId);
 

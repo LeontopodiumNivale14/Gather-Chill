@@ -1,7 +1,9 @@
 ﻿using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using GatherChill.ConfigFiles;
+using GatherChill.Enums;
 using GatherChill.Gui;
+using GatherChill.Scheduler;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using System;
@@ -34,14 +36,14 @@ namespace GatherChill.Ui.Tabs_MainWindow
                     if (!child_Buttons.Success)
                         return;
 
-                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "Start Gathering"))
+                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "Start Gathering", Gather_Helper.State == IceState.Idle))
                     {
-
+                        Gather_Helper.State = IceState.Start;
                     }
                     ImGui.SameLine();
-                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Square, "Stop"))
+                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Square, "Stop", Gather_Helper.State != IceState.Idle))
                     {
-
+                        SchedulerMain.DisablePlugin();
                     }
 
                     if (ImGui.Button("Search for item"))
@@ -96,6 +98,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
+
                             _gatherDragDrop.NextRow();
                             _gatherDragDrop.SetRowColor(uniqueId);
                             _gatherDragDrop.DrawButtonDummy(uniqueId, gatherList, i);
@@ -106,7 +109,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                             ImGui.TableNextColumn();
                             var amount = item.GatherAmount;
                             ImGui.SetNextItemWidth(100);
-                            if (ImGui.InputUInt($"##GatherAmount_{sheetInfo.Name}_{item.ItemId}", ref amount, 1, 10))
+                            if (ImGui.InputInt($"##GatherAmount_{sheetInfo.Name}_{item.ItemId}", ref amount, 1, 10))
                             {
                                 item.GatherAmount = amount;
                                 C.SaveDebounced();
@@ -122,6 +125,18 @@ namespace GatherChill.Ui.Tabs_MainWindow
                                 var route = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
                                 ImGui.AlignTextToFramePadding();
                                 ImGui.Text($"{route}");
+
+                                var routeDetails = P.routeEditor.GetRoute(route);
+                                if (routeDetails.AetheryteId == 0)
+                                {
+                                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
+                                    if (ImGui.IsItemHovered())
+                                    {
+                                        ImGui.BeginTooltip();
+                                        ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
+                                        ImGui.EndTooltip();
+                                    }
+                                }
                             }
                             else if (sheetInfo.NormalRoutes.Count > 1)
                             {
@@ -133,6 +148,20 @@ namespace GatherChill.Ui.Tabs_MainWindow
                                 }
                                 if (ImGui.IsItemHovered())
                                     ImGui.SetTooltip("Select which route you would like to do");
+
+                                var routeDetails = P.routeEditor.GetRoute(route);
+                                if (routeDetails.AetheryteId == 0)
+                                {
+                                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
+                                    ImGui.SameLine();
+                                    ImGui_Ice.Icon(FontAwesomeIcon.ExclamationTriangle);
+                                    if (ImGui.IsItemHovered())
+                                    {
+                                        ImGui.BeginTooltip();
+                                        ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
+                                        ImGui.EndTooltip();
+                                    }
+                                }
                             }
                             else if (sheetInfo.TimedRoutes.Count > 1)
                             {
@@ -283,6 +312,19 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
                         ImGui.TableNextColumn();
                         ImGui.Text($"{route}");
+                        var routeDetails = P.routeEditor.GetRoute(route);
+                        if (routeDetails.AetheryteId == 0)
+                        {
+                            ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
+                            ImGui.SameLine();
+                            ImGui_Ice.Icon(FontAwesomeIcon.ExclamationTriangle);
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.Text("We are missing details for this (aetheryte probably) so this might not work");
+                                ImGui.EndTooltip();
+                            }
+                        }
 
                         if (!Gather_Util.Sheet_RouteInfo.TryGetValue(route, out var routeInfo))
                             continue;

@@ -22,7 +22,7 @@ public class GatherChillProvider
     /// True while Gather n Chill is gathering.
     /// </summary>
     [EzIPC]
-    public bool IsBusy() => SchedulerMain.State != IceState.Idle;
+    public bool IsBusy() => Gather_Helper.State != IceState.Idle;
 
     /// <summary>
     /// True if Gather n Chill has a route for the item, so callers only send what it can gather.
@@ -35,7 +35,7 @@ public class GatherChillProvider
     /// Items without a route are skipped. Returns how many items were added or updated.
     /// </summary>
     [EzIPC]
-    public int AddToGatherList((uint ItemId, uint Amount)[] items)
+    public int AddToGatherList((uint ItemId, int Amount)[] items)
     {
         var count = 0;
         foreach (var (itemId, amount) in items)

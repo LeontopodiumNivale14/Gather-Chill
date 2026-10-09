@@ -85,6 +85,12 @@ namespace GatherChill.Ui.RouteWindowTabs
 
                     ImGui.OpenPopup("Select Shard");
                 }
+                ImGui.SameLine();
+                var flyingRequired = routeInfo.RequiresFlying;
+                if (ImGui.Checkbox("Flying Req?", ref flyingRequired))
+                {
+                    routeInfo.RequiresFlying = flyingRequired;
+                }
 
                 using (var shardPopup = ImRaii.Popup("Select Shard"))
                 {
@@ -338,9 +344,8 @@ namespace GatherChill.Ui.RouteWindowTabs
                             {
                                 if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, new(24, 24)))
                                 {
-                                    SchedulerMain.State = Enums.IceState.Start;
-                                    SchedulerMain.RouteId = SelectedRoute;
-                                    SchedulerMain.ItemId = item;
+                                    Gather_Helper.State = IceState.Start;
+                                    Gather_Helper.GatherRoute = new() { itemId = item, routeId = SelectedRoute };
                                 }
                             }
 
@@ -353,9 +358,8 @@ namespace GatherChill.Ui.RouteWindowTabs
                             ImGui.TableNextColumn();
                             if (ImGui.Button($"{itemInfo.Name}"))
                             {
-                                SchedulerMain.State = Enums.IceState.Start;
-                                SchedulerMain.RouteId = SelectedRoute;
-                                SchedulerMain.ItemId = item;
+                                Gather_Helper.State = IceState.Start;
+                                Gather_Helper.GatherRoute = new() { itemId = item, routeId = SelectedRoute };
                             }
                         }
                     }
@@ -373,10 +377,7 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         private static bool _isGeneratingFan = false;
         private static string _fanGenStatus = string.Empty;
-
         private static uint _draggedNodeId = 0;
-        private static int _dragTargetGroupId = -1;
-
         private static bool AutoUpdateMissing = true;
         private static NodeLocation nodeToRemove = null;
 

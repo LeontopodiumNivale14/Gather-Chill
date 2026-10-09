@@ -1095,6 +1095,8 @@ public static partial class TravelUtil
 
         #endregion
 
+        // ShB
+
         #region Lakeland
 
         [132] = new()
@@ -1228,6 +1230,31 @@ public static partial class TravelUtil
 
         #endregion
 
+        #region Tempest
+
+        [147] = new()
+        {
+            ShardId = 147,
+            TerritoryId = 818,
+            ValidTerritories = new() { 818 },
+            Position = new(561.76f, 352.62f, -199.18f),
+            MoveTo = new(555.67f, 349.94f, -198.71f),
+        },
+
+        [148] = new()
+        {
+            ShardId = 148,
+            TerritoryId = 818,
+            ValidTerritories = new() { 818 },
+            Position = new(-141.74f, -280.54f, 218.01f),
+            MoveTo = new(-146.26f, -281.16f, 220.32f),
+        },
+
+
+        #endregion
+
+        // EW
+
         #region Labyrinthos
 
         [166] = new()
@@ -1314,6 +1341,95 @@ public static partial class TravelUtil
         },
 
         #endregion
+
+        #region Mare Lamentorum (Moon)
+
+        [174] = new()
+        {
+            ShardId = 174,
+            TerritoryId = 959,
+            ValidTerritories = new() { 959 },
+            Position = new(-566.25f, 134.66f, 650.63f),
+            MoveTo = new(-568.97f, 132.44f, 640.44f),
+        },
+
+        [175] = new()
+        {
+            ShardId = 175,
+            TerritoryId = 959,
+            ValidTerritories = new() { 959 },
+            Position = new(-0.02f, -128.83f, -512.02f),
+            MoveTo = new(-0.39f, -131.04f, -504.48f),
+        },
+
+
+        #endregion
+
+        #region Elpis
+
+        [176] = new()
+        {
+            ShardId = 176,
+            TerritoryId = 961,
+            ValidTerritories = new() { 961 },
+            Position = new(159.96f, 11.70f, 126.88f),
+            MoveTo = new(156.92f, 11.38f, 128.99f),
+        },
+
+        [177] = new()
+        {
+            ShardId = 177,
+            TerritoryId = 961,
+            ValidTerritories = new() { 961 },
+            Position = new(-633.72f, -19.82f, 542.56f),
+            MoveTo = new(-638.89f, -20.62f, 544.80f),
+        },
+
+
+        [178] = new()
+        {
+            ShardId = 178,
+            TerritoryId = 961,
+            ValidTerritories = new() { 961 },
+            Position = new(-529.90f, 161.24f, -222.28f),
+            MoveTo = new(-531.50f, 160.76f, -225.21f),
+        },
+
+
+
+        #endregion
+
+        #region Ultima Thule
+
+        [179] = new()
+        {
+            ShardId = 179,
+            TerritoryId = 960,
+            ValidTerritories = new() { 960 },
+            Position = new(-544.15f, 74.33f, 269.64f),
+            MoveTo = new(-546.34f, 71.81f, 267.89f),
+        },
+        [180] = new()
+        {
+            ShardId = 180,
+            TerritoryId = 960,
+            ValidTerritories = new() { 960 },
+            Position = new(64.29f, 272.48f, -657.50f),
+            MoveTo = new(61.52f, 270.34f, -657.06f),
+        },
+        [181] = new()
+        {
+            ShardId = 181,
+            TerritoryId = 960,
+            ValidTerritories = new() { 960 },
+            Position = new(489.28f, 437.58f, 333.64f),
+            MoveTo = new(488.74f, 437.27f, 331.30f),
+        },
+
+
+        #endregion
+
+        // DT
 
         #region Urqopacha
 

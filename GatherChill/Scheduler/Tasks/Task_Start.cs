@@ -1,6 +1,7 @@
 ﻿using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Tools;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace GatherChill.Scheduler.Tasks
     {
         public static void Enqueue()
         {
-
+            P.TaskManager.Enqueue(() => CheckList(), "Checking for items");
         }
 
         public enum GatherReason
@@ -22,14 +23,10 @@ namespace GatherChill.Scheduler.Tasks
             Regular,
         }
 
-        public class SelectedRoute
-        {
-            public uint itemId { get; set; }
-            public uint routeId { get; set; }
-        }
-
         private static bool CheckList()
         {
+            string tag = "Task Start: Check List";
+
             var itemList = C.GatherList.Where(x => x.GatherAmount != 0).ToList();
             if (itemList.Count != 0)
             {
@@ -37,9 +34,9 @@ namespace GatherChill.Scheduler.Tasks
                 var routeSheet = Gather_Util.Sheet_RouteInfo;
                 var itemConfig = C.ItemRoutes;
 
-                List<SelectedRoute> LegendaryItems = new();
-                List<SelectedRoute> EphemeralItems = new();
-                List<SelectedRoute> NormalItems = new();
+                List<Gather_Helper.SelectedRoute> LegendaryItems = new();
+                List<Gather_Helper.SelectedRoute> EphemeralItems = new();
+                List<Gather_Helper.SelectedRoute> NormalItems = new();
 
                 foreach (var item in itemList)
                 {
@@ -93,6 +90,12 @@ namespace GatherChill.Scheduler.Tasks
                     // Partially because we might wanna exit out of the gathering screen if we don't see the item we're gathering
                     var first = NormalItems.First();
 
+                    IceLogging.Debug("Found an item that we need to gather in the normal item route", tag);
+                    IceLogging.Debug($"Route: {first.routeId} | ItemID: {first.itemId}");
+
+                    Gather_Helper.GatherRoute = first;
+                    Gather_Helper.State = IceState.Teleport;
+                    return true;
                 }
             }
             
