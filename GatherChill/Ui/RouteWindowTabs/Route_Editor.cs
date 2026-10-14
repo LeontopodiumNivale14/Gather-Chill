@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
@@ -159,11 +160,11 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         private static void RouteDetails(GatheringRoute routeInfo)
         {
-            Dictionary<uint, string> JobInfo = new()
+            Dictionary<Job, string> JobInfo = new()
             {
-                [16] = "Miner",
-                [17] = "Botanist",
-                [18] = "Fisher",
+                [Job.MIN] = "Miner",
+                [Job.BTN] = "Botanist",
+                [Job.FSH] = "Fisher",
             };
 
             if (ImGui.BeginTable($"Route Details: {routeInfo.RouteId}", 2, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))

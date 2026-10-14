@@ -1,4 +1,5 @@
-﻿using GatherChill.Enums;
+﻿using ECommons.ExcelServices;
+using GatherChill.Enums;
 using System.Collections.Generic;
 
 namespace GatherChill.GatheringInfo
@@ -31,7 +32,7 @@ namespace GatherChill.GatheringInfo
         /// JobIds tied to that gathering point
         /// 16 = MIN, 17 = BTN, 18 = FSH
         /// </summary>
-        public uint GatheringJobId { get; set; }
+        public Job GatheringJobId { get; set; }
         /// <summary>
         /// Lv. Requirement to interact/see the node
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Dalamud.Interface.Utility.Raii;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
@@ -18,14 +19,14 @@ namespace GatherChill.Ui.RouteWindowTabs
 
         public static ExpansionIds FilterExpansionId = ExpansionIds.ARR;
         public static uint FilterTerritoryId = 0;
-        public static uint FilterJob = 0;
+        public static Job FilterJob = Job.ADV;
 
-        public static Dictionary<uint, string> Job_FilterOptions = new()
+        public static Dictionary<Job, string> Job_FilterOptions = new()
         {
-            [0] = "All",
-            [16] = "MIN",
-            [17] = "BTN",
-            [18] = "FSH",
+            [Job.ADV] = "All",
+            [Job.MIN] = "MIN",
+            [Job.BTN] = "BTN",
+            [Job.FSH] = "FSH",
         };
 
         private static readonly ExpansionIds[] ExpansionValues = Enum.GetValues<ExpansionIds>().Where(e => e != ExpansionIds.Unk).ToArray();

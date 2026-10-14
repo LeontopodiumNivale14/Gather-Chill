@@ -1,5 +1,6 @@
 ﻿using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
+using ECommons.ExcelServices;
 using GatherChill.Enums;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
@@ -13,7 +14,7 @@ public static partial class Gather_Util
 {
     public class GatherPointInfo
     {
-        public uint Job { get; set; }
+        public Job Job { get; set; }
         public uint NodeType { get; set; }
         public uint Level { get; set; }
         public uint TerritoryId { get; set; }
@@ -110,6 +111,9 @@ public static partial class Gather_Util
         public string Name { get; set; } = "";
         public int Level { get; set; } = 1;
         public int Star { get; set; } = 0;
+        public bool IsCollectable { get; set; } = false;
+        public bool IsReducable => IsReduceSource;
+
         public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
         public ExpansionIds Expansion { get; set; } = ExpansionIds.Unk;
         public List<uint> NormalRoutes => GetRoutes(false);
@@ -157,16 +161,16 @@ public static partial class Gather_Util
         public Item FolkloreSheet => ExcelHelper.Sheet_Item.GetRow(ItemId);
     }
 
-    public static Dictionary<uint, IconInfo> Job_IconIds = new()
+    public static Dictionary<Job, IconInfo> Job_IconIds = new()
     {
-        [16] = new() { IconId = 62510, Name = "MIN" }, // MIN
-        [17] = new() { IconId = 62511, Name = "BTN" }, // BTN,
-        [18] = new() { IconId = 62512, Name = "FSH" }, // FSH
+        [Job.MIN] = new() { IconId = 62510, Name = "MIN" },
+        [Job.BTN] = new() { IconId = 62511, Name = "BTN" },
+        [Job.FSH] = new() { IconId = 62512, Name = "FSH" },
     };
 
     public static Dictionary<uint, IconInfo> Icons_AssignmentType = new();
 
-    public static Dictionary<uint, ISharedImmediateTexture> Sheet_JobInfo = new();
+    public static Dictionary<Job, ISharedImmediateTexture> Sheet_JobInfo = new();
     public static Dictionary<ExpansionIds, IconInfo> Sheet_Expansion = new();
     public static Dictionary<uint, GatherPointInfo> Sheet_RouteInfo = new();
     public static Dictionary<uint, ItemClass> Sheet_ItemInfo = new();
@@ -189,6 +193,7 @@ public static partial class Gather_Util
 
         // Config Update
         Update_NodeConfig();
+        CollectableDatabase.Build();
     }
 
     // TO WHOEVER MIGHT BE READING THIS (including future you)
@@ -232,7 +237,7 @@ public static partial class Gather_Util
             if (gatherPointBase.GatheringLevel == 0)
                 continue;
 
-            uint job = 0;
+            Job job = 0;
             uint routeType = 0;
             uint level = gatherPointBase.GatheringLevel;
             uint territoryId = 0;
@@ -246,14 +251,14 @@ public static partial class Gather_Util
             // Map gathering type
             uint baseType = gatherPointBase.GatheringType.Value.RowId;
             if (baseType is 0 or 1)
-                job = 16;
+                job = Job.MIN;
             else if (baseType is 2 or 3)
-                job = 17;
+                job = Job.BTN;
             else if (baseType is 4 or 5)
-                job = 18;
+                job = Job.FSH;
             routeType = baseType;
 
-            if (job is 18)
+            if (job is Job.FSH)
                 continue;
 
             // Adding the base items 
@@ -297,7 +302,7 @@ public static partial class Gather_Util
             if (itemIds.Count == 0)
                 continue;
 
-            if (job == 18)
+            if (job is Job.FSH)
                 IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
 
             // Getting the associated territory info here
@@ -493,6 +498,8 @@ public static partial class Gather_Util
                     {
                         var icon = Svc.Texture.GetFromGameIcon((int)itemSheet.Icon);
                         var name = itemSheet.Name.ToString();
+                        bool collectable = itemSheet.IsCollectable;
+                        bool reducable = itemSheet.AetherialReduce != 0;
 
                         Sheet_ItemInfo[item] = new()
                         {

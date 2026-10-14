@@ -33,7 +33,7 @@ internal class Table_Items
         private readonly Folklore _folklore = new();
         private readonly Uptime _uptime = new();
         private readonly Type _nodeTypes = new();
-        private readonly ReductionItems _reducableItems = new();
+        private readonly Notes _reducableItems = new();
 
         public ItemTable(List<GatherItems> itemList)
         {
@@ -732,15 +732,53 @@ internal class Table_Items
                 _filterValues &= ~value;
         }
     }
-    public sealed class ReductionItems : ColumnString<GatherItems>
+    public sealed class Notes : ColumnString<GatherItems>
     {
-        public ReductionItems()
+        public Notes()
         {
-            Label = "Reducable";
+            Label = "Notes";
         }
 
         public override void DrawColumn(GatherItems row)
         {
+            if (CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
+            {
+                ImGui_Ice.ImageButton(109, "Collectable");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+
+                    ImGui.Text("Collectable");
+                    ImGui.Text($"Level: {collectableInfo.LevelMin} - {collectableInfo.LevelMax}");
+
+                    using (var table = ImRaii.Table("Collectable Info", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
+                    {
+                        ImGui.TableSetupColumn("Quality");
+                        ImGui.TableSetupColumn("Exp");
+                        ImGui.TableSetupColumn("Scripts");
+
+                        ImGui.TableHeadersRow();
+
+                        foreach (var reward in collectableInfo.Rewards)
+                        {
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            string rewardText = reward.MaxQuality != null ? $"{reward.MinQuality:N0} - {reward.MaxQuality}" : $"{reward.MinQuality:N0}";
+
+                            ImGui.Text(rewardText);
+
+                            ImGui.TableNextColumn();
+                            ImGui.Text($"{reward.Experience:N0}");
+
+                            ImGui.TableNextColumn();
+                            ImGui.Text($"{reward.Scrips}");
+                        }
+                    }
+
+                    ImGui.EndTooltip();
+                }
+            }
+
             if (row.Reduce_Sources.Count != 0)
             {
                 ImGui_Ice.ImageButton(121, "Reducable");

@@ -1,4 +1,5 @@
-﻿using ECommons.Logging;
+﻿using ECommons.ExcelServices;
+using ECommons.Logging;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
@@ -213,7 +214,7 @@ namespace GatherChill.GatheringInfo
 
         public List<GatheringRoute> GetRoutesForTerritory(uint territoryId) => Routes.Values.Where(r => r.TerritoryId == territoryId).ToList();
 
-        public List<GatheringRoute> GetRoutesForJob(uint jobId) => Routes.Values.Where(r => r.GatheringJobId == jobId).ToList();
+        public List<GatheringRoute> GetRoutesForJob(Job jobId) => Routes.Values.Where(r => r.GatheringJobId == jobId).ToList();
 
         public List<GatheringRoute> GetRoutesForExpansion(ExpansionIds expansionId) => Routes.Values.Where(r => r.ExpansionId == expansionId).ToList();
 
