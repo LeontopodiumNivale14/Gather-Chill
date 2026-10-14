@@ -25,7 +25,7 @@
             "y": 89.12781,
             "z": 376.3942
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -43,7 +43,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 0,
@@ -55,7 +56,7 @@
             "y": 90.2876,
             "z": 387.0145
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 246,
@@ -79,7 +80,7 @@
             "y": 88.91431,
             "z": 386.2516
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -97,7 +98,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 1,
@@ -109,17 +111,17 @@
             "y": 86.46171,
             "z": 416.8848
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 100,
-            "fan_EndAngle": 308,
+            "fan_StartAngle": 145,
+            "fan_EndAngle": 278,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
-            "fan_Height": 0.84
+            "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 86,
-            "fan_EndAngle": 320,
+            "fan_StartAngle": 145,
+            "fan_EndAngle": 278,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0.6
@@ -127,7 +129,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 1,
@@ -139,20 +142,20 @@
             "y": 86.94159,
             "z": 409.91
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 179,
-            "fan_EndAngle": 50,
+            "fan_StartAngle": 221,
+            "fan_EndAngle": 12,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
-            "fan_Height": 1.01
+            "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 179,
-            "fan_EndAngle": 50,
+            "fan_StartAngle": 221,
+            "fan_EndAngle": 12,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
-            "fan_Height": 1.11
+            "fan_Height": 0.2
           },
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
@@ -163,7 +166,7 @@
             "y": 85.80447,
             "z": 419.2493
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 31,
             "fan_EndAngle": 288,
@@ -181,7 +184,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 2,
@@ -193,7 +197,7 @@
             "y": 85.40466,
             "z": 268.635
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -211,7 +215,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 2,
@@ -223,7 +228,7 @@
             "y": 86.1927,
             "z": 279.9735
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -247,7 +252,7 @@
             "y": 85.09949,
             "z": 273.7621
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -265,13 +270,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": "",
   "author": "alydev, Ice",
   "lastUpdated": "2025-12-29 16:07:27",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 179
 }

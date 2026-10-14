@@ -119,62 +119,29 @@ namespace GatherChill.Ui.Tabs_MainWindow
                             ImGui.Text($"{Utils.GetItemCount(item.ItemId):N0}");
 
                             ImGui.TableNextColumn();
-                            if (sheetInfo.NormalRoutes.Count == 1 || sheetInfo.TimedRoutes.Count == 1)
+                            var count = C.ItemRoutes[item.ItemId].EnabledRoutes.Count();
+                            var firstRoute = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
+                            string routeText = count > 1 ? $"{firstRoute} + {count - 1}" : $"{firstRoute}";
+                            if (ImGui.Button(routeText))
                             {
-                                // IDEALLY... this will only show the one route that a user can do. 
-                                var route = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
-                                ImGui.AlignTextToFramePadding();
-                                ImGui.Text($"{route}");
-
-                                var routeDetails = P.routeEditor.GetRoute(route);
-                                if (routeDetails.AetheryteId == 0)
-                                {
-                                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
-                                    if (ImGui.IsItemHovered())
-                                    {
-                                        ImGui.BeginTooltip();
-                                        ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
-                                        ImGui.EndTooltip();
-                                    }
-                                }
+                                RouteSelector_OpenPopup(item.ItemId);
                             }
-                            else if (sheetInfo.NormalRoutes.Count > 1)
+                            if (ImGui.IsItemHovered())
                             {
-                                // We have multiple routes that can be selected, so we need to select which one we wanna do
-                                var route = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
-                                if (ImGui.Button($"{route}"))
-                                {
-                                    RouteSelector_OpenPopup(item.ItemId);
-                                }
-                                if (ImGui.IsItemHovered())
-                                    ImGui.SetTooltip("Select which route you would like to do");
-
-                                var routeDetails = P.routeEditor.GetRoute(route);
-                                if (routeDetails.AetheryteId == 0)
-                                {
-                                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
-                                    ImGui.SameLine();
-                                    ImGui_Ice.Icon(FontAwesomeIcon.ExclamationTriangle);
-                                    if (ImGui.IsItemHovered())
-                                    {
-                                        ImGui.BeginTooltip();
-                                        ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
-                                        ImGui.EndTooltip();
-                                    }
-                                }
+                                ImGui.BeginTooltip();
+                                ImGui.Text("Select which routes you would like to do");
+                                ImGui.EndTooltip();
                             }
-                            else if (sheetInfo.TimedRoutes.Count > 1)
+                            var routeDetails = P.routeEditor.GetRoute(firstRoute);
+                            if (routeDetails.AetheryteId == 0)
                             {
-                                var firstRoute = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
-                                var count = C.ItemRoutes[item.ItemId].EnabledRoutes.Count();
-
-                                string text = count > 1 ? $"{firstRoute} + {count - 1}" : $"{firstRoute}";
-                                if (ImGui.Button(text))
-                                {
-                                    RouteSelector_OpenPopup(item.ItemId);
-                                }
+                                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
                                 if (ImGui.IsItemHovered())
-                                    ImGui.SetTooltip("Select which routes you would like to run");
+                                {
+                                    ImGui.BeginTooltip();
+                                    ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
+                                    ImGui.EndTooltip();
+                                }
                             }
 
                             ImGui.TableNextColumn();
@@ -277,6 +244,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
                     var config = C.ItemRoutes[_routeSelector_itemId].EnabledRoutes;
                     bool isNormal = itemInfo.NormalRoutes.Count != 0;
+                    bool timedMulti = itemInfo.TimedRoutes.Count > 1;
 
                     foreach (var route in pageRoutes)
                     {
@@ -296,14 +264,16 @@ namespace GatherChill.Ui.Tabs_MainWindow
                                 ImGui.CloseCurrentPopup();
                             }
                         }
-                        else
+                        else if (timedMulti)
                         {
                             var isEnabled = config.Contains(route);
                             if (ImGui.Checkbox($"##{route}", ref isEnabled))
                             {
+                                bool multiEnabled = config.Count > 1;
+
                                 if (isEnabled)
                                     config.Add(route);
-                                else
+                                else if (multiEnabled)
                                     config.Remove(route);
 
                                 C.Save();
@@ -311,6 +281,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                         }
 
                         ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
                         ImGui.Text($"{route}");
                         var routeDetails = P.routeEditor.GetRoute(route);
                         if (routeDetails.AetheryteId == 0)
@@ -330,6 +301,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                             continue;
 
                         ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
                         ImGui.Text($"{routeInfo.ZoneName}");
 
                         ImGui.TableNextColumn();

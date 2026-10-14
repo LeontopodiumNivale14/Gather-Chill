@@ -20,7 +20,7 @@
             "y": 16.39526,
             "z": 34.16671
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 58,
             "fan_EndAngle": 126,
@@ -44,7 +44,7 @@
             "y": 15.60621,
             "z": 50.29741
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 57,
             "fan_EndAngle": 132,
@@ -68,7 +68,7 @@
             "y": 14.15115,
             "z": 73.84262
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 291,
             "fan_EndAngle": 29,
@@ -86,13 +86,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": true,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
   "author": "liza",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 106
 }

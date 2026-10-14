@@ -20,7 +20,7 @@
             "y": 15.67376,
             "z": -236.4765
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 258,
             "fan_EndAngle": 15,
@@ -44,17 +44,17 @@
             "y": 14.3098,
             "z": -234.057
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 158,
+            "fan_StartAngle": 20,
+            "fan_EndAngle": 144,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 360,
-            "fan_EndAngle": 158,
+            "fan_StartAngle": 20,
+            "fan_EndAngle": 144,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -68,17 +68,17 @@
             "y": 15.32319,
             "z": -150.6417
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 190,
-            "fan_EndAngle": 291,
+            "fan_StartAngle": 198,
+            "fan_EndAngle": 284,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 190,
-            "fan_EndAngle": 291,
+            "fan_StartAngle": 198,
+            "fan_EndAngle": 284,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -86,13 +86,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-29 16:15:24",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 173
 }

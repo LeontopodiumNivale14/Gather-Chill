@@ -1,11 +1,10 @@
-﻿using ECommons.Automation;
-using ECommons.Throttlers;
+﻿using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Callback = ECommons.Automation.Callback;
 
 namespace GatherChill.Scheduler.Handlers
 {
-    internal class GenericHandlers
+    internal class Ecom_Handler
     {
         internal static bool? Throttle(string name, int ms)
         {

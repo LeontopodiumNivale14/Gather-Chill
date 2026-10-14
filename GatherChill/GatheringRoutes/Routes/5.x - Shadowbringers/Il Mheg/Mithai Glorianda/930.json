@@ -22,7 +22,7 @@
             "y": 34.42758,
             "z": -64.52328
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 248,
             "fan_EndAngle": 20,
@@ -46,7 +46,7 @@
             "y": 33.56721,
             "z": -88.34363
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 255,
             "fan_EndAngle": 15,
@@ -64,7 +64,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 2,
@@ -76,7 +77,7 @@
             "y": 13.37645,
             "z": -7.450152
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 331,
             "fan_EndAngle": 100,
@@ -100,7 +101,7 @@
             "y": 18.15316,
             "z": -25.37068
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 65,
             "fan_EndAngle": 168,
@@ -118,7 +119,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 0,
@@ -130,7 +132,7 @@
             "y": 57.66441,
             "z": -273.729
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 274,
             "fan_EndAngle": 38,
@@ -154,7 +156,7 @@
             "y": 58.27215,
             "z": -283.5104
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 217,
             "fan_EndAngle": 332,
@@ -172,13 +174,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": "",
   "author": "alydev",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 146
 }

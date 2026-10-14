@@ -973,6 +973,8 @@ public static partial class TravelUtil
 
         #endregion
 
+        // Stb
+
         #region Fringes
 
         [98] = new()
@@ -1092,6 +1094,28 @@ public static partial class TravelUtil
             MoveTo = new(-760.27f, 127.92f, 123.32f),
         },
 
+
+        #endregion
+
+        #region The Lochs
+
+        [102] = new()
+        {
+            ShardId = 102,
+            TerritoryId = 621,
+            ValidTerritories = new() { 621 },
+            Position = new(-652.03f, 53.39f, -16.01f),
+            MoveTo = new(-649.11f, 50.50f, -15.42f),
+        },
+
+        [103] = new()
+        {
+            ShardId = 103,
+            TerritoryId = 621,
+            ValidTerritories = new() { 621 },
+            Position = new(612.45f, 84.46f, 656.82f),
+            MoveTo = new(612.73f, 81.39f, 652.25f),
+        },
 
         #endregion
 

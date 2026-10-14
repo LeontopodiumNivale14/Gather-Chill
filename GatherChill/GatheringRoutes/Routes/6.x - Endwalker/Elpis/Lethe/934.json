@@ -20,17 +20,17 @@
             "y": 139.8586,
             "z": -159.1732
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 80,
-            "fan_EndAngle": 204,
+            "fan_StartAngle": 91,
+            "fan_EndAngle": 172,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 80,
-            "fan_EndAngle": 204,
+            "fan_StartAngle": 91,
+            "fan_EndAngle": 172,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -44,17 +44,17 @@
             "y": 139.7597,
             "z": -134.0291
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 253,
-            "fan_EndAngle": 13,
+            "fan_StartAngle": 266,
+            "fan_EndAngle": 346,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 253,
-            "fan_EndAngle": 13,
+            "fan_StartAngle": 266,
+            "fan_EndAngle": 346,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -68,17 +68,17 @@
             "y": 139.4495,
             "z": -187.277
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 34,
-            "fan_EndAngle": 148,
+            "fan_StartAngle": 44,
+            "fan_EndAngle": 131,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 34,
-            "fan_EndAngle": 148,
+            "fan_StartAngle": 44,
+            "fan_EndAngle": 131,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -86,13 +86,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": true,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
   "author": "alydev",
   "lastUpdated": "2025-12-29 17:40:55",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 176
 }

@@ -5,8 +5,10 @@ using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
+using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Traveling;
@@ -38,7 +40,7 @@ namespace GatherChill.Scheduler.Tasks
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
             {
                 var itemId = Gather_Helper.GatherRoute.itemId;
-                P.TaskManager.Enqueue(() => GatheringInteraction(itemId), "Gathering Interaction");
+                P.TaskManager.Enqueue(() => GatheringInteraction(), "Gathering Interaction");
             }
             else
             {
@@ -46,7 +48,6 @@ namespace GatherChill.Scheduler.Tasks
                 P.TaskManager.Enqueue(() => Travel_FarCheck(), "Traveling to node group");
             }
         }
-
         private static bool ChangeJob()
         {
             string tag = "Task Gather: Change Job";
@@ -263,7 +264,6 @@ namespace GatherChill.Scheduler.Tasks
 
             return false;
         }
-
         private static bool InteractWithNode(uint nodeId)
         {
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
@@ -279,10 +279,17 @@ namespace GatherChill.Scheduler.Tasks
             {
                 if (!Player.IsJumping)
                 {
-                    if (EzThrottler.Throttle("Target + Interaction throttle"))
+                    if (UseCordial())
                     {
-                        Utils.TargetgameObject(targetNode);
-                        Utils.InteractWithObject(targetNode);
+                        return false;
+                    }
+                    else
+                    {
+                        if (EzThrottler.Throttle("Target + Interaction throttle"))
+                        {
+                            Utils.TargetgameObject(targetNode);
+                            Utils.InteractWithObject(targetNode);
+                        }
                     }
                 }
             }
@@ -296,8 +303,13 @@ namespace GatherChill.Scheduler.Tasks
 
             return false;
         }
-        private static bool GatheringInteraction(uint itemId)
+        private static unsafe bool GatheringInteraction()
         {
+            string tag = "Gather Route: Interaction";
+            var routeSelected = Gather_Helper.GatherRoute;
+            var itemId = routeSelected.itemId;
+            var routeId = routeSelected.routeId;
+
             if (P.navmesh.IsRunning())
             {
                 if (EzThrottler.Throttle("Stopping navmesh, cause we shouldn't be running"))
@@ -330,6 +342,7 @@ namespace GatherChill.Scheduler.Tasks
                     if (config.GatherAmount < 0)
                         config.GatherAmount = 0;
                     C.SaveDebounced();
+                    IceLogging.Verbose($"Updated count for: {itemId}. Took off: {difference}", tag);
                 }
                 LastItemInfo.LastAmount = currentAmount;
 
@@ -345,8 +358,31 @@ namespace GatherChill.Scheduler.Tasks
             {
                 if (!Svc.Condition[ConditionFlag.ExecutingGatheringAction])
                 {
-                    if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
+                    bool correctRoute()
                     {
+                        var currentTarget = Svc.Objects.LocalPlayer.TargetObject;
+                        if (currentTarget != null)
+                        {
+                            var nodeId = currentTarget.BaseId;
+                            var currentRoute = Gather_Util.Sheet_RouteInfo.Where(x => x.Value.NodeIds.Contains(nodeId)).FirstOrDefault();
+
+                            return currentRoute.Key == routeId;
+                        }
+                        return true;
+                    }
+
+                    if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
+                    {                        
+                        if (!correctRoute())
+                        {
+                            if (EzThrottler.Throttle("Exiting Wrong Route"))
+                            {
+                                IceLogging.Verbose("We seem to be in a gathering window that doesn't contain this item, so we're just gonna get out of this...", tag);
+                                Ecom_Handler.CloseWindow(gather.Base);
+                            }
+                            return false;
+                        }
+
                         if (gather.CurrentIntegrity != 0)
                         {
                             List<uint> Crystals = new()
@@ -367,9 +403,12 @@ namespace GatherChill.Scheduler.Tasks
 
                                 if (Crystal_BuffCheck(maxInteg))
                                     return false;
+
+
                             }
                             else if (Basic_BuffCheck())
                                 return false;
+
 
                             if (EzThrottler.Throttle($"Gathering Item: {itemId}"))
                                 gather.GatheredItems.Where(x => x.ItemID == itemId).FirstOrDefault().Gather();
@@ -480,6 +519,107 @@ namespace GatherChill.Scheduler.Tasks
             {
                 return 0;
             }
+        }
+        private static unsafe bool UseCordial()
+        {
+            string tag = "Gather: Cordial Check";
+
+            var autoCordial = C.Cordial_Auto;
+            var useCordialBelow = C.Cordial_Amount;
+            var reversePriority = C.Cordial_Inverse;
+            var preventOvercap = C.Cordial_PreventOvercap;
+
+            var currentGp = Utils.GetGp();
+            var maxGp = Utils.MaxGp();
+
+            bool WillOvercap(int recoveryGP)
+            {
+                bool WillOvercap = (currentGp + recoveryGP) > maxGp;
+                if (WillOvercap)
+                {
+                    IceLogging.Verbose("Not going to be using a cordial because we'll overcap", tag);
+                    IceLogging.Verbose($"Recovered GP: {currentGp + recoveryGP} | Max GP: {maxGp}", tag);
+                }
+
+                return WillOvercap;
+            }
+
+            if (C.Cordial_Auto)
+            {
+                if (EzThrottler.Throttle($"Use Cordial At"))
+                {
+                    IceLogging.Verbose($"Reporting GP: {currentGp:N0} | Minimum GP: {useCordialBelow:N0}");
+                }
+
+                if (currentGp <= useCordialBelow)
+                {
+                    Dictionary<uint, (string Name, int GpGain)> cordials = new()
+                    {
+                        [12669] = ("Hi-Cordial", 400),
+                        [1006141] = ("HQ Regular Cordial", 350),
+                        [6141] = ("NQ Regular Cordial", 300),
+                        [1016911] = ("HQ Watered Cordial", 200),
+                        [16911] = ("NQ Watered Cordial", 150),
+                    };
+
+                    if (ActionManager.Instance()->GetActionStatus(ActionType.Item, 12669) == 0)
+                    {
+                        foreach (var cordial in reversePriority ? cordials.Reverse() : cordials)
+                        {
+                            IceLogging.Verbose($"Checking Cordial: {cordial.Value.Name}", tag);
+                            bool hq = cordial.Key >= 1_000_000;
+                            uint baseId = hq ? cordial.Key - 1_000_000 : cordial.Key;
+
+                            var count = Utils.GetItemCount(cordial.Key);
+                            if (count > 0)
+                            {
+                                if (!preventOvercap || !WillOvercap(cordial.Value.GpGain))
+                                {
+                                    // Find the actual inventory slot and use it directly
+                                    var inventoryManager = InventoryManager.Instance();
+                                    var inventoryTypes = new[]
+                                    {
+                                            InventoryType.Inventory1, InventoryType.Inventory2,
+                                            InventoryType.Inventory3, InventoryType.Inventory4
+                                        };
+
+                                    foreach (var invType in inventoryTypes)
+                                    {
+                                        var container = inventoryManager->GetInventoryContainer(invType);
+                                        if (container == null) continue;
+
+                                        for (int i = 0; i < container->Size; i++)
+                                        {
+                                            var item = container->GetInventorySlot(i);
+                                            if (item == null) continue;
+                                            if (item->ItemId == baseId && (hq == false || item->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality)))
+                                            {
+                                                if (EzThrottler.Throttle("Cordial Usage"))
+                                                {
+                                                    IceLogging.Verbose($"We're using a cordial: ID: {cordial.Key} | Name: {cordial.Value.Name}", tag);
+                                                    AgentInventoryContext.Instance()->UseItem(cordial.Key, invType, (uint)i, 0);
+                                                }
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // We currently have the cordial on cd, so we're just going to ignore it entirely
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
     }
 }

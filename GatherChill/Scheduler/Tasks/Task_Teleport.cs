@@ -30,7 +30,7 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     if (GenericHelpers.TryGetAddonMaster<Gathering>(out var gatherItem) && gatherItem.IsAddonReady)
                     {
-                        GenericHandlers.CloseWindow(gatherItem.Base);
+                        Ecom_Handler.CloseWindow(gatherItem.Base);
                     }
                     else
                     {

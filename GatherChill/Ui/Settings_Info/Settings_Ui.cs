@@ -33,8 +33,15 @@ public static partial class SettingsUi
         MountSelection,
         FanSelection,
 
+        // Cordial settings (BLEH)
+        Cordial_Use,
+        Cordial_MinGp,
+        Cordial_Inverse,
+        Cordial_Overcap,
+
         // Misc
         ColorTheme,
+        CompactOverlay,
 
         // Route Editor
         Route_SaveLoc, 

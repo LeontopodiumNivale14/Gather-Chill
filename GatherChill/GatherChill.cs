@@ -153,5 +153,14 @@ public sealed class GatherChill : IDalamudPlugin
             routeWindow.IsOpen = true;
             return;
         }
+        else if (firstArg.ToLower() == "start")
+        {
+            Gather_Helper.State = Enums.IceState.Start;
+            return;
+        }
+        else if (firstArg.ToLower() == "stop")
+        {
+            SchedulerMain.DisablePlugin();
+        }
     }
 }

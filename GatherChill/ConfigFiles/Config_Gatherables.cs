@@ -17,4 +17,10 @@ public partial class Config
 
     public List<ItemInfo> GatherList { get; set; } = new();
     public Dictionary<uint, RouteSelection> ItemRoutes { get; set; } = new();
+
+    // Cordial Specific
+    public bool Cordial_Auto { get; set; } = false;
+    public int Cordial_Amount { get; set; } = 300;
+    public bool Cordial_Inverse { get; set; } = false;
+    public bool Cordial_PreventOvercap { get; set; } = true;
 }

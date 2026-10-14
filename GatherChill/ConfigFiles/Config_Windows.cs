@@ -9,4 +9,5 @@ public partial class Config
 {
     public WindowSelection SelectedTab { get; set; } = WindowSelection.ItemViewer;
     public bool UseIceTheme { get; set; } = true;
+    public bool Compact_Ui { get; set; } = false;
 }

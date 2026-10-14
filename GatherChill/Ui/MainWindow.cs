@@ -165,7 +165,10 @@ namespace GatherChill.Ui
 
                     foreach (var item in TabItems)
                     {
-                        DrawSelectable_Icon(item.Value.Icon, item.Value.Label, item.Key, compact);
+                        if (C.Compact_Ui)
+                            DrawSelectable_Icon_Small(item.Value.Icon, item.Value.Label, item.Key, compact);
+                        else
+                            DrawSelectable_Icon(item.Value.Icon, item.Value.Label, item.Key, compact);
                     }
                 }
             }
@@ -206,26 +209,27 @@ namespace GatherChill.Ui
             ImGui.Separator();
             ImGui.Dummy(new Vector2(0, 5));
         }
-        public static bool RowSelectable(string id, bool isSelected, float height = 0f)
-        {
-            ImGui.PushStyleColor(ImGuiCol.Header, new Vector4(0, 0, 0, 0));
-            ImGui.PushStyleColor(ImGuiCol.HeaderHovered, new Vector4(0, 0, 0, 0));
-            ImGui.PushStyleColor(ImGuiCol.HeaderActive, new Vector4(0, 0, 0, 0));
-
-            bool clicked = ImGui.Selectable(id, isSelected,
-                ImGuiSelectableFlags.SpanAllColumns, new Vector2(0, height));
-
-            ImGui.PopStyleColor(3);
-
-            if (isSelected)
-                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderActive));
-            else if (ImGui.IsItemHovered())
-                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderHovered));
-
-            return clicked;
-        }
         public static void DrawSelectable_Icon(FontAwesomeIcon icon, string label, WindowSelection tab, bool compact)
         {
+            bool RowSelectable(string id, bool isSelected, float height = 0f)
+            {
+                ImGui.PushStyleColor(ImGuiCol.Header, new Vector4(0, 0, 0, 0));
+                ImGui.PushStyleColor(ImGuiCol.HeaderHovered, new Vector4(0, 0, 0, 0));
+                ImGui.PushStyleColor(ImGuiCol.HeaderActive, new Vector4(0, 0, 0, 0));
+
+                bool clicked = ImGui.Selectable(id, isSelected,
+                    ImGuiSelectableFlags.SpanAllColumns, new Vector2(0, height));
+
+                ImGui.PopStyleColor(3);
+
+                if (isSelected)
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderActive));
+                else if (ImGui.IsItemHovered())
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderHovered));
+
+                return clicked;
+            }
+
             bool isSelected = C.SelectedTab == tab;
             float scale = ImGuiHelpers.GlobalScale;
             float rowHeight = 25 * scale;
@@ -251,6 +255,75 @@ namespace GatherChill.Ui
             // --- Column 2: label + row-spanning selectable ---
             ImGui.TableNextColumn();
             ImGui.AlignTextToFramePadding();
+
+            string selectableLabel = compact ? $"##{tab}" : $"{label}##{tab}";
+            bool clicked = RowSelectable(selectableLabel, isSelected, rowHeight);
+
+            if (clicked)
+            {
+                C.SelectedTab = tab;
+                C.SaveDebounced();
+            }
+
+            if (compact && ImGui.IsItemHovered())
+                ImGui.SetTooltip(label);
+        }
+        public static void DrawSelectable_Icon_Small(FontAwesomeIcon icon, string label, WindowSelection tab, bool compact)
+        {
+            bool RowSelectable(string id, bool isSelected, float height = 0f)
+            {
+                ImGui.PushStyleColor(ImGuiCol.Header, new Vector4(0, 0, 0, 0));
+                ImGui.PushStyleColor(ImGuiCol.HeaderHovered, new Vector4(0, 0, 0, 0));
+                ImGui.PushStyleColor(ImGuiCol.HeaderActive, new Vector4(0, 0, 0, 0));
+
+                // Center the label vertically within the given height
+                ImGui.PushStyleVar(ImGuiStyleVar.SelectableTextAlign, new Vector2(0f, 0.5f));
+
+                bool clicked = ImGui.Selectable(id, isSelected,
+                    ImGuiSelectableFlags.SpanAllColumns, new Vector2(0, height));
+
+                ImGui.PopStyleVar();
+                ImGui.PopStyleColor(3);
+
+                if (isSelected)
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderActive));
+                else if (ImGui.IsItemHovered())
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiCol.HeaderHovered));
+
+                return clicked;
+            }
+
+            bool isSelected = C.SelectedTab == tab;
+            float scale = ImGuiHelpers.GlobalScale;
+
+            float textHeight = ImGui.GetTextLineHeight();
+            float rowHeight = textHeight + 4 * scale;
+
+            // Measure the icon with the icon font so centering is accurate
+            ImGui.PushFont(UiBuilder.IconFont);
+            float iconHeight = ImGui.GetTextLineHeight();
+            ImGui.PopFont();
+            float iconOffsetY = (rowHeight - iconHeight) * 0.5f;
+
+            ImGui.TableNextRow(ImGuiTableRowFlags.None, rowHeight);
+
+            // --- Column 0: accent bar (paints just this cell when selected) ---
+            ImGui.TableNextColumn();
+            if (isSelected)
+            {
+                var color = C.UseIceTheme ? Theme_Colors.SidebarAccent : ImGuiColors.ParsedGold;
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.CellBg, ImGui.GetColorU32(color));
+            }
+
+            // --- Column 1: icon, centered within the row ---
+            ImGui.TableNextColumn();
+            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + iconOffsetY);
+            ImGui.Dummy(new(0.1f));
+            ImGui.SameLine();
+            ImGui_Ice.Icon(icon);
+
+            // --- Column 2: label + row-spanning selectable (label is now centered) ---
+            ImGui.TableNextColumn();
 
             string selectableLabel = compact ? $"##{tab}" : $"{label}##{tab}";
             bool clicked = RowSelectable(selectableLabel, isSelected, rowHeight);

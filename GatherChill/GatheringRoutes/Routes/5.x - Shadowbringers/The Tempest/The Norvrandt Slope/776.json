@@ -20,7 +20,7 @@
             "y": 421.3766,
             "z": -492.9901
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 232,
             "fan_EndAngle": 347,
@@ -38,13 +38,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-29 18:29:45",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 147
 }
