@@ -41,7 +41,7 @@ public static partial class Utils
         }
         catch (Exception ex)
         {
-            // IceLogging.Error($"InteractWithObject: Exception: {ex}");
+            Svc.Log.Error(ex, "InteractWithObject failed");
         }
     }
     public static unsafe void SetGatheringRing(uint territoryId, float worldX, float worldY, int radius, string? tooltip = "Node Location")

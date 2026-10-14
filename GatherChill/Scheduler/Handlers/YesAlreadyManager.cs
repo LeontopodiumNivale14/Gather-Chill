@@ -1,4 +1,5 @@
 ﻿using ECommons.EzSharedDataManager;
+using GatherChill.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,9 @@ namespace GatherChill.Scheduler.Handlers
         private static bool WasChanged = false;
         internal static void Tick()
         {
-            /*
             if (WasChanged)
             {
-                if (!SchedulerMain.AreWeTicking)
+                if (Gather_Helper.State == IceState.Idle)
                 {
                     WasChanged = false;
                     Unlock();
@@ -23,13 +23,12 @@ namespace GatherChill.Scheduler.Handlers
             }
             else
             {
-                if (SchedulerMain.AreWeTicking)
+                if (Gather_Helper.State != IceState.Idle)
                 {
                     WasChanged = true;
                     Lock();
                 }
             }
-            */
         }
         internal static void Lock()
         {

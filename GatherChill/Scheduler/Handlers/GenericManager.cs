@@ -3,6 +3,7 @@ using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using GatherChill.Enums;
 using System.Collections.Generic;
 
 namespace GatherChill.Scheduler.Handlers
@@ -47,12 +48,12 @@ namespace GatherChill.Scheduler.Handlers
 
         internal static void Tick()
         {
-            // if (SchedulerMain.AreWeTicking)
+            if (Gather_Helper.State != IceState.Idle)
             {
                 //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
 
                 var featureEnabled = (P.pandora.GetFeatureEnabled("Auto-select Turn-ins") ?? false);
-                var configEnabled = (P.pandora.GetConfigEnabled("Auto-select Turn-ins", "AutoSelect") ?? false);
+                var configEnabled = (P.pandora.GetConfigEnabled("Auto-select Turn-ins", "AutoConfirm") ?? false);
 
                 var isenabled = featureEnabled && configEnabled;
 
