@@ -62,7 +62,7 @@ namespace GatherChill.Gui
             return ImGui.Button($"{label}##{id}");
         }
 
-        private static bool ImageButtonWithText(IDalamudTextureWrap texture, string label, string id, Vector2 imageSize, bool? isOn, float padding = 4f, float sidePadding = 4f)
+        private static bool ImageButtonWithText(IDalamudTextureWrap? texture, string label, string id, Vector2 imageSize, bool? isOn, float padding = 4f, float sidePadding = 4f)
         {
             var frameHeight = ImGui.GetFrameHeight();
             var textSize = ImGui.CalcTextSize(label);
@@ -134,7 +134,7 @@ namespace GatherChill.Gui
             return ImGui.Button($"##{id}");
         }
 
-        private static bool ImageButton(IDalamudTextureWrap texture, string id, Vector2 imageSize, bool? isOn, float sidePadding = 4f)
+        private static bool ImageButton(IDalamudTextureWrap? texture, string id, Vector2 imageSize, bool? isOn, float sidePadding = 4f)
         {
             var frameHeight = ImGui.GetFrameHeight();
             var aspect = imageSize.X / imageSize.Y;
@@ -186,7 +186,7 @@ namespace GatherChill.Gui
         }
 
         // Borrowed from cosmic plugin... 
-        public static void Draw_XPBar(float current, float needed, string label = null, Vector2? size = null)
+        public static void Draw_XPBar(float current, float needed, string? label = null, Vector2? size = null)
         {
             // If we want it to have a standard label above the bar. Not required but for small things it's nice to just have the option
             if (label != null)
@@ -230,7 +230,7 @@ namespace GatherChill.Gui
             // Case 2: Normal progression (not overcapped)
             else if (current <= needed && needed > 0)
             {
-                float fraction = Math.Clamp((float)current / needed, 0f, 1f);
+                float fraction = Math.Clamp(current / needed, 0f, 1f);
                 float filledWidth = actualSize.X * fraction;
 
                 if (filledWidth > 0f)

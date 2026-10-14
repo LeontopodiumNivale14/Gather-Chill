@@ -8,11 +8,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GatherChill.Gui;
 
@@ -85,9 +82,9 @@ public static class GameIcons
         return clicked;
     }
 
-    public static bool TryGetScaledIcon(uint iconId, int size, out IDalamudTextureWrap texture, bool grey = false) => TryGetScaledIcon(new GameIconLookup(iconId), size, size, out texture, grey);
+    public static bool TryGetScaledIcon(uint iconId, int size, out IDalamudTextureWrap? texture, bool grey = false) => TryGetScaledIcon(new GameIconLookup(iconId), size, size, out texture, grey);
 
-    public static bool TryGetScaledIcon(GameIconLookup lookup, int width, int height, out IDalamudTextureWrap texture, bool grey = false)
+    public static bool TryGetScaledIcon(GameIconLookup lookup, int width, int height, out IDalamudTextureWrap? texture, bool grey = false)
     {
         texture = Get(lookup, width, height, grey);
         return texture != null;
@@ -156,7 +153,7 @@ public static class GameIcons
         return Svc.Texture.CreateFromRaw(RawImageSpecification.Bgra32(width, height), bitmap, $"ECommons.GameIcons {iconId}@{width}x{height}{suffix}");
     }
 
-    private static bool TryGetTexFile(GameIconLookup lookup, out TexFile file)
+    private static bool TryGetTexFile(GameIconLookup lookup, out TexFile? file)
     {
         file = null;
         if (!Svc.Texture.TryGetIconPath(lookup, out var path)) return false;
