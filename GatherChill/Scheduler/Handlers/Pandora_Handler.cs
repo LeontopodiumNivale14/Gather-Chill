@@ -4,11 +4,12 @@ using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using GatherChill.Enums;
+using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 
 namespace GatherChill.Scheduler.Handlers
 {
-    internal static unsafe class GenericManager
+    internal static unsafe class Pandora_Handler
     {
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
@@ -40,7 +41,7 @@ namespace GatherChill.Scheduler.Handlers
             else
             {
                 ECommons.Automation.Callback.Fire(contextMenu, false, 0, 0, 1021003, 0, 0);
-                Svc.Log.Debug($"Filled slot {i}");
+                IceLogging.Debug($"Filled slot {i}");
                 SlotsFilled.Add(i);
                 return true;
             }
