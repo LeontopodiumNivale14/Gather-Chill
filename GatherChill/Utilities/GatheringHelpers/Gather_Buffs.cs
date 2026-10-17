@@ -190,6 +190,8 @@ public static partial class Gather_Util
             RequiredGp = 50,
             RequiredLv = 23,
         },
+
+        // Crystal Specific
         [GatherBuffId.TwelveBounty] = new()
         {
             // +3 yield on crystals, buff through node
@@ -218,6 +220,19 @@ public static partial class Gather_Util
             RequiredGp = 200,
             RequiredLv = 74,
         },
+
+        // Hidden Item Finder (Older Expac + Maps)
+        [GatherBuffId.HiddenFinder] = new()
+        {
+            ActionName = "Luck of the X",
+            ClassAction = new()
+            {
+                [Job.MIN] = 4081,
+                [Job.BTN] = 4095,
+            },
+            RequiredGp = 200,
+            RequiredLv = 55,
+        }
     };
 
     // Old Dictionaries before I swapped to enums to NOT hate myself

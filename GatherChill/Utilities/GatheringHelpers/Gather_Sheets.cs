@@ -5,6 +5,7 @@ using GatherChill.Enums;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using Lumina.Excel.Sheets;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using static GatherChill.ConfigFiles.Config;
 
@@ -112,6 +113,7 @@ public static partial class Gather_Util
         public int Level { get; set; } = 1;
         public int Star { get; set; } = 0;
         public bool IsCollectable { get; set; } = false;
+        public bool IsHidden { get; set; } = false;
         public bool IsReducable => IsReduceSource;
 
         public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
@@ -175,8 +177,59 @@ public static partial class Gather_Util
     public static Dictionary<uint, GatherPointInfo> Sheet_RouteInfo = new();
     public static Dictionary<uint, ItemClass> Sheet_ItemInfo = new();
 
+    #region Map Info
+
+    public readonly record struct MapEntry(uint MapId, string Name, uint[] RouteIds);
+
+    // Maps that share routes across multiple routes... makes sense to just store them as this vs writing it out x20 times
+    private static readonly uint[] ToadskinNodes = [198, 294, 197, 147, 199, 149, 189, 284, 210, 209, 150, 151];
+    private static readonly uint[] WyvernskinNodes = [391, 356, 354, 358, 352, 359, 361, 360, 300, 351, 353, 355];
+    private static readonly uint[] GaganaskinNodes = [514, 513, 517, 516, 519, 529, 493, 491, 495];
+    private static readonly uint[] GliderskinNodes = [621, 620, 625, 623, 596, 648, 598, 600, 602];
+    private static readonly uint[] SaigaskinNodes = [847, 848, 825, 826];
+    private static readonly uint[] LoboskinNodes = [981, 983, 983, 985, 989, 990, 991, 1001, 1002, 1003];
+
+    public static readonly MapEntry[] Maps =
+    [
+        new(6688,  "Leather",       [20, 49, 137, 140, 141, 180]),
+        new(6689,  "Goatskin",      [46, 142, 143, 185, 186]),
+        new(6690,  "Toadskin",      ToadskinNodes),
+        new(6691,  "Boarskin",      ToadskinNodes),
+        new(6692,  "Peisteskin",    ToadskinNodes),
+        new(12241, "Archaeoskin",   [295, 287, 297, 286, 298, 296, 288, 285]),
+        new(12242, "Wyvernskin",    WyvernskinNodes),
+        new(12243, "Dragonskin",    WyvernskinNodes),
+        new(17835, "Gaganaskin",    GaganaskinNodes),
+        new(17836, "Gazelleskin",   GaganaskinNodes),
+        new(26744, "Gliderskin",    GliderskinNodes),
+        new(26745, "Zonureskin",    GliderskinNodes),
+        new(36611, "Saigaskin",     SaigaskinNodes),
+        new(36612, "Kumbhiraskin",  SaigaskinNodes),
+        new(39591, "Ophiotauroskin", [846, 844, 824, 823]),
+        new(43556, "Loboskin",      LoboskinNodes),
+        new(43557, "Br'aaxskin",    LoboskinNodes),
+        new(46185, "Gargantua",     [1004, 1019]),
+    ];
+
+    public static readonly FrozenDictionary<uint, MapEntry> MapsById = Maps.ToFrozenDictionary(m => m.MapId);
+
+    public static bool TryGetRoute(uint mapId, out uint[] routeIds)
+    {
+        if (!MapsById.TryGetValue(mapId, out var entry))
+        {
+            routeIds = [];
+            return false;
+        }
+
+        routeIds = entry.RouteIds;
+        return true;
+    }
+
+    #endregion
+
     public static void UpdateSheetInfo()
     {
+        CollectableDatabase.Build();
         CreateInitialDictionaries();
 
         UpdateTimes();
@@ -193,7 +246,6 @@ public static partial class Gather_Util
 
         // Config Update
         Update_NodeConfig();
-        CollectableDatabase.Build();
     }
 
     // TO WHOEVER MIGHT BE READING THIS (including future you)
@@ -279,6 +331,18 @@ public static partial class Gather_Util
                 }
             }
 
+            // Map checking (seeing if the route can contain a map)
+            foreach (var map in Maps)
+            {
+                if (!map.RouteIds.Contains(routeId))
+                    continue;
+
+                if (itemIds.Contains(map.MapId))
+                    continue;
+
+                itemIds.Add(map.MapId);
+            }
+
             // THE PAIN POINT. Adding the hidden items.
             if (gatheringPointDict.TryGetValue(routeId, out var nodeList))
             {
@@ -301,6 +365,11 @@ public static partial class Gather_Util
 
             if (itemIds.Count == 0)
                 continue;
+
+            // TEMP: find duplicate item IDs in this route
+            var dupes = itemIds.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (dupes.Count > 0)
+                IceLogging.Verbose($"RouteID: {routeId} | Duplicate items: {string.Join(", ", dupes)}");
 
             if (job is Job.FSH)
                 IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
@@ -464,6 +533,7 @@ public static partial class Gather_Util
 
         return merged;
     }
+
     private static void UpdateItemDictionary()
     {
         // Item Dictionary Info Population
@@ -500,6 +570,7 @@ public static partial class Gather_Util
                         var name = itemSheet.Name.ToString();
                         bool collectable = itemSheet.IsCollectable;
                         bool reducable = itemSheet.AetherialReduce != 0;
+                        bool isHidden = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault().IsHidden;
 
                         Sheet_ItemInfo[item] = new()
                         {
@@ -507,7 +578,9 @@ public static partial class Gather_Util
                             Name = name,
                             IconId = itemSheet.Icon,
                             RouteInfo = new() { key },
-                            NodeTypes = new() { routeInfo.NodeType }
+                            NodeTypes = new() { routeInfo.NodeType },
+                            IsHidden = isHidden,
+                            IsCollectable = collectable
                             // Level = itemLevel,
                             // Star = stars,
                         };

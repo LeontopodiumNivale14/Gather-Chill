@@ -52,7 +52,7 @@ internal class RouteInfo
 
         public override float CalculateLineHeight()
         {
-            return ImGui.GetFrameHeightWithSpacing();
+            return ImGui.GetFrameHeight() + ImGui.GetStyle().CellPadding.Y * 2;
         }
     }
     public sealed class RouteId : ColumnNumber<RouteItem>
@@ -195,13 +195,11 @@ internal class RouteInfo
                 return;
             }
 
-            float scale = ImGui.GetTextLineHeightWithSpacing();
+            var scale = ImGui.GetFrameHeight();
 
             ImGui.Image(expacInfo.Icon.Handle, new(scale));
             if (ImGui.IsItemHovered())
-            {
                 ImGui.SetTooltip($"{expacInfo.Name}");
-            }
         }
 
         public override int Compare(RouteItem a, RouteItem b)
@@ -260,7 +258,8 @@ internal class RouteInfo
     }
     public sealed class ItemInfo : ColumnString<RouteItem>
     {
-        private const int MaxIconsPerRow = 8;
+        private const int MaxVisibleIcons = 8;
+        private const string OverflowSample = "+99";
         private bool _widthCalculated;
 
         public ItemInfo()
@@ -274,10 +273,16 @@ internal class RouteInfo
             if (_widthCalculated)
                 return;
 
+            var style = ImGui.GetStyle();
             var iconSize = ImGui.GetFrameHeight();
-            var spacing = ImGui.GetStyle().ItemSpacing.X;
+            var overflowWidth = ImGui.CalcTextSize(OverflowSample).X + style.FramePadding.X * 2;
 
-            var width = (iconSize * MaxIconsPerRow) + (spacing * (MaxIconsPerRow - 1)) + ImGui.GetStyle().CellPadding.X * 2;
+            // N icons + the overflow button = N gaps between items.
+            var width = (iconSize * MaxVisibleIcons)
+                      + overflowWidth
+                      + (style.ItemSpacing.X * MaxVisibleIcons)
+                      + (style.CellPadding.X * 2);
+
             SetFixedWidth(width);
             _widthCalculated = true;
         }
@@ -316,26 +321,57 @@ internal class RouteInfo
                 return;
             }
 
-            var buttonSize = ImGui.GetTextLineHeightWithSpacing() - 1;
-            var first = true;
+            // ImageButton with framePadding 1 adds 1px per side, so this totals one frame height.
+            var buttonSize = ImGui.GetFrameHeight() - 2;
+            var drawn = 0;
+            var hiddenStart = itemIds.Count;
 
-            foreach (var itemId in itemIds)
+            for (var i = 0; i < itemIds.Count; i++)
             {
-                if (!ExcelHelper.Sheet_Item.TryGetRow(itemId, out var itemInfo))
+                if (drawn >= MaxVisibleIcons)
+                {
+                    hiddenStart = i;
+                    break;
+                }
+
+                if (!ExcelHelper.Sheet_Item.TryGetRow(itemIds[i], out var itemInfo))
                     continue;
 
-                if (!first)
+                if (drawn > 0)
                     ImGui.SameLine();
-                first = false;
+                drawn++;
 
-                var iconId = (int)itemInfo.Icon;
-                var icon = Svc.Texture.GetFromGameIcon(iconId).GetWrapOrEmpty();
+                var icon = Svc.Texture.GetFromGameIcon((int)itemInfo.Icon).GetWrapOrEmpty();
 
                 ImGui.ImageButton(icon.Handle, new Vector2(buttonSize, buttonSize), 1);
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip(itemInfo.Name.ToString());
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                     ImGui.SetClipboardText(itemInfo.Name.ToString());
+            }
+
+            DrawOverflow(itemIds, hiddenStart);
+        }
+
+        private static void DrawOverflow(IReadOnlyList<uint> itemIds, int hiddenStart)
+        {
+            var hiddenCount = itemIds.Count - hiddenStart;
+            if (hiddenCount <= 0)
+                return;
+
+            ImGui.SameLine();
+            ImGui.Button($"+{hiddenCount}##more");
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return;
+
+            for (var i = hiddenStart; i < itemIds.Count; i++)
+            {
+                if (ExcelHelper.Sheet_Item.TryGetRow(itemIds[i], out var itemInfo))
+                    ImGui.Text(itemInfo.Name.ToString());
             }
         }
     }
@@ -526,42 +562,37 @@ internal class RouteInfo
         {
             var sheetInfo = row.GatherPoint;
             if (sheetInfo?.Folklore == null || sheetInfo.Folklore.ItemId == 0)
-            {
                 return;
-            }
 
             var folklore = sheetInfo.Folklore;
-            float scale = ImGui.GetTextLineHeightWithSpacing() - 1;
+            var scale = ImGui.GetFrameHeight();
 
             ImGui.Image(folklore.Icon.GetWrapOrEmpty().Handle, new(scale));
+            if (!ImGui.IsItemHovered())
+                return;
 
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                if (ImGui.BeginTable("Folklore Info", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
-                {
-                    ImGui.TableSetupColumn("Name");
-                    ImGui.TableSetupColumn("Unlocked");
-                    ImGui.TableHeadersRow();
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return;
 
-                    ImGui.TableNextRow();
+            using var table = ImRaii.Table("Folklore Info", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders);
+            if (!table.Success)
+                return;
 
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.Text($"{folklore.Name}");
+            ImGui.TableSetupColumn("Name");
+            ImGui.TableSetupColumn("Unlocked");
+            ImGui.TableHeadersRow();
 
-                    ImGui.TableNextColumn();
-                    bool isUnlocked = Svc.UnlockState.IsItemUnlocked(folklore.SheetInfo);
-                    var icon = isUnlocked ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
-                    var color = isUnlocked ? EColor.Green : EColor.Red;
-                    ImGuiEx.Icon(color, icon);
+            ImGui.TableNextRow();
 
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text($"{folklore.Name}");
 
-
-                    ImGui.EndTable();
-                }
-
-                ImGui.EndTooltip();
-            }
+            ImGui.TableNextColumn();
+            var isUnlocked = Svc.UnlockState.IsItemUnlocked(folklore.SheetInfo);
+            var icon = isUnlocked ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
+            var color = isUnlocked ? EColor.Green : EColor.Red;
+            ImGuiEx.Icon(color, icon);
         }
     }
     public sealed class NodeKind : ColumnFlags<GatherNodeKind, RouteItem>

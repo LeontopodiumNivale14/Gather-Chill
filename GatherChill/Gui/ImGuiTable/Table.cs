@@ -84,7 +84,8 @@ public partial class Table<T> : IDisposable
 
     public virtual float CalculateLineHeight()
     {
-        return ImGui.GetTextLineHeightWithSpacing();
+        // Matches a plain-text row: text height + top/bottom cell padding.
+        return ImGui.GetTextLineHeight() + ImGui.GetStyle().CellPadding.Y * 2;
     }
 
     public virtual void LoadRows()

@@ -1,4 +1,5 @@
-﻿using ECommons.ExcelServices;
+﻿using Dalamud.Interface.Utility.Raii;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Enums;
@@ -30,284 +31,83 @@ internal class DebugWindow : Window
 
     public void Dispose() { P.windowSystem.RemoveWindow(this); }
 
+    private static readonly Dictionary<string, Action> DebugTabs = new()
+    {
+        ["Game: Gathering Window"] = () => GatheringWindow.Draw(),
+
+        ["Table: Gather Points"] = () => GatherPointTable.Draw(),
+
+        ["Logs: Destination"] = () => Tabs_Debug.Logs_Destination.Draw(),
+
+        ["Help: Task Info"] = () => TaskInfo.Draw(),
+
+        ["Test: Gather Buffs"] = () => GatherBuffTest.Draw(),
+        ["Test: Crazy Arrow"] = () => CrazyArrow.Draw(),
+
+        ["Editor: Reduction Items"] = () => ReductionEditor.Draw(),
+        ["Editor: Aethernet"] = () => AethernetEditor.Draw(),
+    };
+
+    private static string SelectedTab = DebugTabs.First().Key;
+
     public override void Draw()
     {
-        if (ImGui.BeginTabBar("Gather & Chill: Debug Tabs"))
+        using var colors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.Header, Theme_Colors.HeaderBg) : default;
+        if (C.UseIceTheme)
         {
-            if (ImGui.BeginTabItem("Task Info"))
-            {
-                TaskInfoDetails();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Log Viewer"))
-            {
-                Ui_LogViewer.Draw_Debug();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Destination Log"))
-            {
-                DestinationLogViewer();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Gathering Table"))
-            {
-                DrawGatherPointTable();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Buff Info"))
-            {
-                BuffViewer();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Crazy Arrow Test"))
-            {
-                DrawArrowDebugWindow();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Shard Editor"))
-            {
-                AethernetEditor.Draw();
-            }
-
-            ImGui.EndTabBar();
+            colors.Push(ImGuiCol.HeaderHovered, Theme_Colors.HeaderHovered);
+            colors.Push(ImGuiCol.HeaderActive, Theme_Colors.HeaderActive);
+            colors.Push(ImGuiCol.Button, Theme_Colors.ButtonBg);
+            colors.Push(ImGuiCol.ButtonHovered, Theme_Colors.ButtonHovered);
+            colors.Push(ImGuiCol.ButtonActive, Theme_Colors.ButtonActive);
+            colors.Push(ImGuiCol.WindowBg, Theme_Colors.DarkSlate);
+            colors.Push(ImGuiCol.FrameBg, Theme_Colors.FrameBg);
+            colors.Push(ImGuiCol.FrameBgHovered, Theme_Colors.FrameBgHovered);
+            colors.Push(ImGuiCol.FrameBgActive, Theme_Colors.FrameBgActive);
+            colors.Push(ImGuiCol.CheckMark, Theme_Colors.IceBlue);
         }
-    }
 
-    private static uint _NodeIdSearch = 0;
+        using var style = C.UseIceTheme ? ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 4.0f) : default;
 
-    public static void DrawGatherPointTable()
-    {
-        if (ImGui.BeginTable("GatherPointTable", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Sortable |  ImGuiTableFlags.SizingFixedFit))
+        float spacing = 10f;
+        float leftPanelWidth = 200f;
+        float rightPanelWidth = ImGui.GetContentRegionAvail().X - leftPanelWidth - spacing;
+        float childHeight = ImGui.GetContentRegionAvail().Y;
+
+        if (ImGui.BeginTable("Debug Window: Table Details", 2, ImGuiTableFlags.None, ImGui.GetContentRegionAvail()))
         {
-            // Setup columns
-            ImGui.TableSetupColumn("ID");
-            ImGui.TableSetupColumn("Node IDs");
-            ImGui.TableSetupColumn("Type");
-            ImGui.TableSetupColumn("Level");
-            ImGui.TableSetupColumn("Zone Name");
-            ImGui.TableSetupColumn("Place Name");
-            ImGui.TableSetupColumn("Expansion");
-            ImGui.TableSetupColumn("Items");
-            ImGui.TableSetupScrollFreeze(0, 2);
-            ImGui.TableHeadersRow();
-
-            // Get sorting specs
-            var sortSpecs = ImGui.TableGetSortSpecs();
-            IEnumerable<KeyValuePair<uint, GatherPointInfo>> sortedData = Sheet_RouteInfo;
-
-            if (sortSpecs.SpecsCount > 0)
-            {
-                var spec = sortSpecs.Specs;
-                sortedData = spec.ColumnIndex switch
-                {
-                    0 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Key)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Key),
-                    1 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.NodeIds?.FirstOrDefault() ?? 0)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.NodeIds?.FirstOrDefault() ?? 0),
-                    2 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Job)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Job),
-                    3 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.Level)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.Level),
-                    4 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.ZoneName)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.ZoneName),
-                    5 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.PlaceName)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.PlaceName),
-                    6 => spec.SortDirection == ImGuiSortDirection.Ascending
-                        ? Sheet_RouteInfo.OrderBy(x => x.Value.ExpId)
-                        : Sheet_RouteInfo.OrderByDescending(x => x.Value.ExpId),
-                    _ => Sheet_RouteInfo
-                };
-            }
+            ImGui.TableSetupColumn("Selector", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("Details", ImGuiTableColumnFlags.WidthStretch);
 
             ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(1);
-            ImGui.InputUInt("###NodeIdSearch", ref _NodeIdSearch);
-
-            // Draw rows
-            foreach (var kvp in sortedData)
+            ImGui.TableSetColumnIndex(0);
+            using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+            if (ImGui.BeginChild("Debug Selector##DebugSelector_ChilledLeves", ImGui.GetContentRegionAvail(), true))
             {
-                if (_NodeIdSearch != 0 && !kvp.Value.NodeIds.Contains(_NodeIdSearch))
-                    continue;
-
-                ImGui.TableNextRow();
-
-                ImGui.TableNextColumn();
-                ImGui.Text(kvp.Key.ToString());
-
-                ImGui.TableNextColumn();
-                // Display all NodeIds as comma-separated list
-                if (kvp.Value.NodeIds != null && kvp.Value.NodeIds.Count > 0)
+                foreach (var viewName in DebugTabs.Keys)
                 {
-                    ImGui.Text(string.Join(", ", kvp.Value.NodeIds));
-                }
-                else
-                {
-                    ImGui.Text("");
-                }
+                    bool isSelected = (SelectedTab == viewName);
+                    string label = isSelected ? $"→ {viewName}" : $"{viewName}";
 
-                ImGui.TableNextColumn();
-                ImGui.Text(kvp.Value.Job.ToString());
-
-                ImGui.TableNextColumn();
-                ImGui.Text(kvp.Value.Level.ToString());
-
-                ImGui.TableNextColumn();
-                ImGui.Text(kvp.Value.ZoneName ?? "");
-
-                ImGui.TableNextColumn();
-                ImGui.Text(kvp.Value.PlaceName ?? "");
-
-                ImGui.TableNextColumn();
-                ImGui.TextDisabled($"{kvp.Value.ExpId}");
-                ImGui.SameLine();
-                if (Gather_Util.Sheet_Expansion.TryGetValue(kvp.Value.ExpId, out var expansionInfo))
-                {
-                    ImGui.Text($"{expansionInfo.Name}");
-                }
-
-                ImGui.TableNextColumn();
-                if (kvp.Value.ItemIds != null && kvp.Value.ItemIds.Count > 0)
-                {
-                    ImGui.Text(string.Join(", ", kvp.Value.ItemIds));
-                }
-                else
-                {
-                    ImGui.Text("");
+                    if (ImGui.Selectable(label, isSelected))
+                    {
+                        SelectedTab = viewName;
+                    }
                 }
             }
+            ImGui.EndChild();
+
+            ImGui.TableNextColumn();
+            if (ImGui.BeginChild("Debug Viewer Tab##DebugViewTabDetails", ImGui.GetContentRegionAvail(), true))
+            {
+                if (DebugTabs.TryGetValue(SelectedTab, out var drawAction))
+                    drawAction();
+                else
+                    ImGui.Text("Unknown debugger tab");
+            }
+            ImGui.EndChild();
 
             ImGui.EndTable();
         }
     }
-    public static void TaskInfoDetails()
-    {
-        ImGui.Text($"Running task: {P.TaskManager.NumQueuedTasks != 0} | Amount of queue'd task: {P.TaskManager.NumQueuedTasks}");
-        string currentTask = P.TaskManager.CurrentTask?.Name ?? "";
-        ImGui.Text($"Current task running: {currentTask}");
-        ImGui.Text($"Current State: {Gather_Helper.State}");
-        ImGui.Text($"ItemId set: {Gather_Helper.GatherRoute.itemId}");
-        ImGui.Text($"Task Count: {P.TaskManager.Tasks.Count}");
-    }
-    private static void DestinationLogViewer()
-    {
-        ImGuiTableFlags flags = ImGuiTableFlags.RowBg |
-                                ImGuiTableFlags.Borders |
-                                ImGuiTableFlags.ScrollY |
-                                ImGuiTableFlags.SizingFixedFit;
-
-        if (ImGui.BeginTable("Destination Log Viewer", 5, flags))
-        {
-            ImGui.TableSetupColumn("Timestamp");
-            ImGui.TableSetupColumn("Start");
-            ImGui.TableSetupColumn("Destination");
-            ImGui.TableSetupColumn("Distance");
-
-            ImGui.TableHeadersRow();
-
-            var filteredLogs = DestinationLogs.Logs.AsEnumerable();
-            var entryNumber = 0;
-
-            foreach (var log in filteredLogs.OrderByDescending(l => l.Timestamp))
-            {
-                ImGui.TableNextRow();
-
-                ImGui.PushID($"{log.PlayerDestination}_{entryNumber}");
-
-                ImGui.TableSetColumnIndex(0);
-                ImGui_Ice.Table_VertCenterText(log.Timestamp.ToString("HH:mm:ss"));
-
-                ImGui.TableNextColumn();
-                ImGui_Ice.Table_VertCenterText($"X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
-
-                ImGui.TableNextColumn();
-                ImGui_Ice.Table_VertCenterText($"X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
-
-                ImGui.TableNextColumn();
-                ImGui_Ice.Table_VertCenterText($"{log.Distance}");
-
-                ImGui.TableNextColumn();
-                if (ImGui.Button("Copy Info"))
-                {
-                    var clipboardText = new StringBuilder();
-                    clipboardText.AppendLine($"Start: X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
-                    clipboardText.Append($"End: X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
-                    ImGui.SetClipboardText($"{clipboardText}");
-                    Notify.Success("Log copied to clipbard");
-                }
-                ImGui.PopID();
-
-                entryNumber += 1;
-            }
-
-            ImGui.EndTable();
-        }
-    }
-    private static void BuffViewer()
-    {
-        var gatherDict = Gather_Util.GathActionDict[GatherBuffId.GivingLand];
-
-        ImGui.Text($"Giving land CD: MIN: {BuffCD(gatherDict.ClassAction[Job.MIN])} | BTN: {BuffCD(gatherDict.ClassAction[Job.BTN]):N1}");
-    }
-    private unsafe static float BuffCD(uint actionId)
-    {
-        // Get the recast time for an action
-        var recastGroup = ActionManager.Instance()->GetRecastGroupDetail(ActionManager.Instance()->GetRecastGroup(1, actionId));
-
-        if (recastGroup != null)
-        {
-            float total = recastGroup->Total;     // total cooldown duration
-            float elapsed = recastGroup->Elapsed; // how much has elapsed
-            float remaining = total - elapsed;    // time remaining
-            bool isActive = recastGroup->IsActive; // Is Active (leaving these here because it's just nice to know/might use in future)
-
-            return remaining;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    private static void DrawArrowDebugWindow()
-    {
-        if (ImGui.Button("Set to player Pos"))
-        {
-            _position = Player.Position;
-        }
-        ImGui.SliderFloat("Back Radius", ref _backRadius, 0.1f, 3f);
-        ImGui.SliderFloat("Tip Radius", ref _tipRadius, 0.05f, 2f);
-        ImGui.SliderFloat("Depth", ref _depth, 0.1f, 5f);
-        ImGui.SliderFloat("Wing Spread", ref _wingSpread, 0f, 3f);
-        ImGui.SliderFloat("Notch Frac", ref _notchFrac, 0.05f, 0.8f);
-        ImGui.SliderFloat("Rotation", ref _rotation, 0f, MathF.PI * 2f);
-        ImGui.ColorEdit4("Color Editor", ref color);
-
-        if (Player.Available)
-        {
-            // Draw slightly in front of the player so you can see it
-            var pos = Player.Position + new Vector3(0, 0.1f, 0);
-            PictoManager.DrawArrow(_position, Player.Rotation + _rotation, _backRadius, _tipRadius, _depth, _wingSpread, _notchFrac, Utils.ToUintABGR(color));
-        }
-    }
-
-    private static Vector4 color = Vector4.Zero;
-
-    private static Vector3 _position = Vector3.Zero;
-    private static float _backRadius = 1.0f;
-    private static float _tipRadius = 0.35f;
-    private static float _depth = 1.5f;
-    private static float _wingSpread = 0.7f;
-    private static float _notchFrac = 0.33f;
-    private static float _rotation = 0f;
 }

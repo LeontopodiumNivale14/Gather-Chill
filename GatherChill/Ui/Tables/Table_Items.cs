@@ -47,7 +47,7 @@ internal class Table_Items
 
         public override float CalculateLineHeight()
         {
-            return ImGui.GetFrameHeightWithSpacing();
+            return ImGui.GetFrameHeight() + ImGui.GetStyle().CellPadding.Y * 2;
         }
     }
 
@@ -741,100 +741,124 @@ internal class Table_Items
 
         public override void DrawColumn(GatherItems row)
         {
-            if (CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
+            var drewButton = DrawCollectable(row);
+            DrawReduce(row, drewButton);
+        }
+
+        private static bool DrawCollectable(GatherItems row)
+        {
+            if (!CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
+                return false;
+
+            ImGui_Ice.ImageButton(109, "Collectable");
+            if (!ImGui.IsItemHovered())
+                return true;
+
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return true;
+
+            ImGui.Text("Collectable");
+            ImGui.Text($"Level: {collectableInfo.LevelMin} - {collectableInfo.LevelMax}");
+
+            using var table = ImRaii.Table("Collectable Info", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg);
+            if (!table.Success)
+                return true;
+
+            ImGui.TableSetupColumn("Quality");
+            ImGui.TableSetupColumn("Exp");
+            ImGui.TableSetupColumn("Scripts");
+            ImGui.TableHeadersRow();
+
+            foreach (var reward in collectableInfo.Rewards)
             {
-                ImGui_Ice.ImageButton(109, "Collectable");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                var rewardText = reward.MaxQuality != null
+                    ? $"{reward.MinQuality:N0} - {reward.MaxQuality}"
+                    : $"{reward.MinQuality:N0}";
+                ImGui.Text(rewardText);
 
-                    ImGui.Text("Collectable");
-                    ImGui.Text($"Level: {collectableInfo.LevelMin} - {collectableInfo.LevelMax}");
+                ImGui.TableNextColumn();
+                ImGui.Text($"{reward.Experience:N0}");
 
-                    using (var table = ImRaii.Table("Collectable Info", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
-                    {
-                        ImGui.TableSetupColumn("Quality");
-                        ImGui.TableSetupColumn("Exp");
-                        ImGui.TableSetupColumn("Scripts");
-
-                        ImGui.TableHeadersRow();
-
-                        foreach (var reward in collectableInfo.Rewards)
-                        {
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-                            string rewardText = reward.MaxQuality != null ? $"{reward.MinQuality:N0} - {reward.MaxQuality}" : $"{reward.MinQuality:N0}";
-
-                            ImGui.Text(rewardText);
-
-                            ImGui.TableNextColumn();
-                            ImGui.Text($"{reward.Experience:N0}");
-
-                            ImGui.TableNextColumn();
-                            ImGui.Text($"{reward.Scrips}");
-                        }
-                    }
-
-                    ImGui.EndTooltip();
-                }
+                ImGui.TableNextColumn();
+                ImGui.Text($"{reward.Scrips}");
             }
 
+            return true;
+        }
+
+        private static void DrawReduce(GatherItems row, bool sameLine)
+        {
             if (row.Reduce_Sources.Count != 0)
             {
-                ImGui_Ice.ImageButton(121, "Reducable");
-                if (ImGui.IsItemHovered())
-                {
-                    using (var tooltip = ImRaii.Tooltip())
-                    {
-                        if (tooltip.Alive)
-                        {
-                            using (var table = ImRaii.Table("Reducable Tooltip Table", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
-                            {
-                                if (!table.Success)
-                                    return;
+                if (sameLine)
+                    ImGui.SameLine();
 
-                                ImGui.TableSetupColumn("Icon");
-                                ImGui.TableSetupColumn("Name");
-                                ImGui.TableSetupColumn("Job");
-
-                                foreach (var item in row.Reduce_Sources)
-                                {
-                                    if (Gather_Util.Sheet_ItemInfo.TryGetValue(item, out var info))
-                                    {
-                                        ImGui.TableNextRow();
-                                        ImGui.TableSetColumnIndex(0);
-                                        GameIcons.DrawInline(info.IconId, false);
-
-                                        ImGui.TableNextColumn();
-                                        ImGui.AlignTextToFramePadding();
-                                        ImGui.Text($"{info.Name}");
-
-                                        ImGui.TableNextColumn();
-                                        var iconDict = Gather_Util.Icons_AssignmentType;
-                                        var job = info.NodeTypes[0];
-                                        ImGui_Ice.ImageButton(iconDict[job].IconId, "Button", sidePadding: 0.1f);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                DrawReduceSources(row);
+                return;
             }
-            else if (row.Reduce_Into != 0)
+
+            if (row.Reduce_Into == 0)
+                return;
+
+            if (sameLine)
+                ImGui.SameLine();
+
+            DrawReduceInto(row);
+        }
+
+        private static void DrawReduceSources(GatherItems row)
+        {
+            ImGui_Ice.ImageButton(121, "Reducable");
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return;
+
+            using var table = ImRaii.Table("Reducable Tooltip Table", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders);
+            if (!table.Success)
+                return;
+
+            ImGui.TableSetupColumn("Icon");
+            ImGui.TableSetupColumn("Name");
+            ImGui.TableSetupColumn("Job");
+
+            foreach (var item in row.Reduce_Sources)
             {
-                var reducableItem = Gather_Util.Sheet_ItemInfo[row.Reduce_Into];
-                ImGui_Ice.ImageButton(reducableItem.IconId, "Reduce Info");
-                if (ImGui.IsItemHovered())
-                {
-                    using (var tooltip = ImRaii.Tooltip())
-                    {
-                        if (tooltip.Alive)
-                        {
-                            ImGui.Text($"{reducableItem.Name}");
-                        }
-                    }
-                }
+                if (!Gather_Util.Sheet_ItemInfo.TryGetValue(item, out var info))
+                    continue;
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                GameIcons.DrawInline(info.IconId, false);
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
+                ImGui.Text($"{info.Name}");
+
+                ImGui.TableNextColumn();
+                var iconDict = Gather_Util.Icons_AssignmentType;
+                var job = info.NodeTypes[0];
+                ImGui_Ice.ImageButton(iconDict[job].IconId, "Button", sidePadding: 0.1f);
             }
+        }
+
+        private static void DrawReduceInto(GatherItems row)
+        {
+            var reducableItem = Gather_Util.Sheet_ItemInfo[row.Reduce_Into];
+            ImGui_Ice.ImageButton(reducableItem.IconId, "Reduce Info");
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return;
+
+            ImGui.Text($"{reducableItem.Name}");
         }
     }
 }

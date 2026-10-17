@@ -84,8 +84,12 @@ public sealed class GatherChill : IDalamudPlugin
         };
         EzCmd.Add("/gatherchill", OnCommand, """
             Open plugin interface
+            /gatherchill start - Starts running list
+            /gatherchill stop - Stops plugin
+
+            /forager - other option
             """);
-        EzCmd.Add("/icegather", OnCommand);
+        EzCmd.Add("/forager", OnCommand);
         Svc.Framework.Update += Tick;
         Svc.PluginInterface.UiBuilder.Draw += OnDraw;
 

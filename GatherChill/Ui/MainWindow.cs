@@ -4,7 +4,6 @@ using Dalamud.Interface.Utility.Raii;
 using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Ui.Settings_Info;
-using GatherChill.Ui.Tabs_Debug;
 using GatherChill.Ui.Tabs_MainWindow;
 using System.Collections.Generic;
 using System.Reflection;

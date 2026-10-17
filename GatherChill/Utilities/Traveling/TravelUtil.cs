@@ -973,6 +973,20 @@ public static partial class TravelUtil
 
         #endregion
 
+        #region Azys Lla
+
+        [74] = new()
+        {
+            ShardId = 74,
+            TerritoryId = 402,
+            ValidTerritories = new() { 402 },
+            Position = new(-722.80f, -182.30f, -593.41f),
+            MoveTo = new(-719.68f, -186.96f, -591.58f),
+        },
+
+
+        #endregion
+
         // Stb
 
         #region Fringes

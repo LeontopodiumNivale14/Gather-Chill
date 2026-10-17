@@ -322,15 +322,11 @@ namespace GatherChill.Scheduler.Tasks
                 LastItemInfo = new()
                 {
                     ItemId = itemId,
-                    LastAmount = 0,
+                    LastAmount = currentAmount,
                 };
             }
 
-            if (LastItemInfo.LastAmount == 0)
-            {
-                LastItemInfo.LastAmount = currentAmount;
-            }
-            else if (LastItemInfo.LastAmount != currentAmount)
+            if (LastItemInfo.LastAmount != currentAmount)
             {
                 IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", "Gathering Action");
                 var difference = currentAmount - LastItemInfo.LastAmount;
@@ -350,6 +346,7 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     Gather_Helper.State = IceState.Start;
                     P.TaskManager.Tasks.Clear();
+                    UpdateHiddenUse();
                     return true;
                 }
             }
@@ -371,7 +368,7 @@ namespace GatherChill.Scheduler.Tasks
                         return true;
                     }
 
-                    if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
+                    if (GenericHelpers.TryGetAddonMaster<Utilities.Gathering>("Gathering", out var gather) && gather.IsAddonReady)
                     {                        
                         if (!correctRoute())
                         {
@@ -397,17 +394,49 @@ namespace GatherChill.Scheduler.Tasks
                                 14, 15, 16, 17, 18, 19
                             };
 
-                            if (Crystals.Contains(itemId))
+                            var goalItem = gather.GatheredItems.Where(x => x.ItemID == itemId).FirstOrDefault();
+                            if (goalItem != null)
                             {
-                                bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
+                                // We found the item we're looking for, we can buff -> gather (if it's not a collectable)
+                                if (Crystals.Contains(itemId))
+                                {
+                                    bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
 
-                                if (Crystal_BuffCheck(maxInteg))
+                                    if (Crystal_BuffCheck(maxInteg))
+                                        return false;
+                                }
+                                else if (Basic_BuffCheck())
                                     return false;
 
-
+                                goalItem.Gather();
                             }
-                            else if (Basic_BuffCheck())
-                                return false;
+                            else
+                            {
+                                if (Gather_Util.Sheet_ItemInfo.TryGetValue(itemId, out var itemInfo))
+                                {
+                                    if (itemInfo.IsHidden & !HiddenUsed && CanCheckHidden())
+                                    {
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        // For some reason or another, we need to just gather the crystals (probably not available)
+                                        var crystal = gather.GatheredItems.Where(x => Crystals.Contains(x.ItemID)).FirstOrDefault();
+                                        if (crystal != null)
+                                        {
+                                            if (EzThrottler.Throttle($"Gathering Backup: {crystal.Gather}"))
+                                                crystal.Gather();
+                                        }
+                                        else
+                                        {
+                                            // WELL WE NEED TO GATHER SOMETHING... OR. HERE ME OUT. We just abandon and error
+                                            IceLogging.Error("No backup item could be found (aka crystals?) and no actual. . . hidden item can be found. So we gonna skeet out :fguns:", tag);
+                                            SchedulerMain.DisablePlugin();
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
 
 
                             if (EzThrottler.Throttle($"Gathering Item: {itemId}"))
@@ -417,12 +446,61 @@ namespace GatherChill.Scheduler.Tasks
                         }
                     }
                 }
+                else
+                {
+                    if (_toggleHidden)
+                    {
+                        HiddenUsed = true;
+                        _toggleHidden = false;
+                    }
+                }
             }
             else
+            {
+                UpdateHiddenUse();
                 return true;
+            }
 
             return false;
         }
+
+        private static bool HiddenUsed = false;
+        private static bool _toggleHidden = false;
+
+        private static void UpdateHiddenUse()
+        {
+            HiddenUsed = false;
+            _toggleHidden = false;
+        }
+
+        private static unsafe bool CanCheckHidden()
+        {
+            if (HiddenUsed)
+                return false;
+
+            var am = ActionManager.Instance();
+            if (am is null)
+                return false;
+
+            var actionInfo = Gather_Util.GathActionDict[GatherBuffId.HiddenFinder];
+            var actionId = actionInfo.ClassAction[Player.Job];
+
+            var canUse = am->GetActionStatus(ActionType.Action, actionId, checkRecastActive: false, checkCastingActive: false) is 0;
+
+            if (canUse)
+            {
+                if (EzThrottler.Throttle("Use buff", 100))
+                    ActionManager.Instance()->UseAction(ActionType.Action, actionId);
+                _toggleHidden = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
         private static unsafe bool Basic_BuffCheck()
         {
             var actionInfo = Gather_Util.GathActionDict[GatherBuffId.BYII];
