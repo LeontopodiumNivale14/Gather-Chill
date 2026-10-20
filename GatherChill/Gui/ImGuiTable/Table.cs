@@ -128,7 +128,14 @@ public partial class Table<T> : IDisposable
         if (Columns.Count == 0)
             return;
 
-        using var table = ImRaii.Table("Table", Columns.Count, Flags, ImGui.GetContentRegionAvail());
+        // With ScrollY the outer size is the scroll viewport. Without it, the Y value is a
+        // *minimum* height, so passing the full available region forces the table to fill
+        // the parent and makes the parent show a scrollbar. Zero = size to content.
+        var outerSize = Flags.HasFlag(ImGuiTableFlags.ScrollY)
+            ? ImGui.GetContentRegionAvail()
+            : Vector2.Zero;
+
+        using var table = ImRaii.Table("Table", Columns.Count, Flags, outerSize);
         if (!table)
             return;
 

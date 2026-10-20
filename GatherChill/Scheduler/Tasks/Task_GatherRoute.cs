@@ -34,6 +34,7 @@ namespace GatherChill.Scheduler.Tasks
         }
 
         private static ItemCatch LastItemInfo = new();
+        private static GatherProfile SelectedProfile = null;
 
         public static void NormalItem_Enqueue()
         {
@@ -326,11 +327,12 @@ namespace GatherChill.Scheduler.Tasks
                 };
             }
 
+            var config = C.GatherList.Where(x => x.ItemId == itemId).FirstOrDefault();
+
             if (LastItemInfo.LastAmount != currentAmount)
             {
                 IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", "Gathering Action");
                 var difference = currentAmount - LastItemInfo.LastAmount;
-                var config = C.GatherList.Where(x => x.ItemId == itemId).FirstOrDefault();
 
                 if (difference > 0)
                 {
@@ -405,8 +407,26 @@ namespace GatherChill.Scheduler.Tasks
                                     if (Crystal_BuffCheck(maxInteg))
                                         return false;
                                 }
-                                else if (Basic_BuffCheck())
-                                    return false;
+                                else
+                                {
+                                    if (SelectedProfile is null)
+                                    {
+                                        var level = Player.Level;
+                                        var gp = Utils.GetGp();
+                                        var integrity = gather.CurrentIntegrity;
+                                        var gatherChance = goalItem.GatherChance;
+                                        var boonChance = goalItem.BoonChance;
+                                        var amount = config.GatherAmount;
+
+                                        var autoProfile = C.User_AutoProfile;
+
+                                        var result = Gather_Util.PlanBuffs(level, gp, integrity, gatherChance, boonChance, amount, autoProfile, goalItem.GatherAmount);
+                                        SelectedProfile = result.Profile;
+                                    }
+
+                                    if (CheckGatheringBuffs(gather))
+                                        return false;
+                                }
 
                                 goalItem.Gather();
                             }
@@ -445,6 +465,10 @@ namespace GatherChill.Scheduler.Tasks
                             return false;
                         }
                     }
+                    else
+                    {
+                        SelectedProfile = null;
+                    }
                 }
                 else
                 {
@@ -452,6 +476,11 @@ namespace GatherChill.Scheduler.Tasks
                     {
                         HiddenUsed = true;
                         _toggleHidden = false;
+                    }
+                    if (BuffCounter != GatherBuffId.Unknown)
+                    {
+                        CurrentUse[BuffCounter] += 1;
+                        BuffCounter = GatherBuffId.Unknown;
                     }
                 }
             }
@@ -466,13 +495,40 @@ namespace GatherChill.Scheduler.Tasks
 
         private static bool HiddenUsed = false;
         private static bool _toggleHidden = false;
+        private static GatherBuffId BuffCounter = GatherBuffId.Unknown;
+        private static Dictionary<GatherBuffId, int> CurrentUse = new()
+        {
+            [GatherBuffId.BoonIncrease_1] = 0,
+            [GatherBuffId.BoonIncrease_2] = 0,
+            [GatherBuffId.Tidings] = 0,
+            [GatherBuffId.YieldI] = 0,
+            [GatherBuffId.YieldII] = 0,
+            [GatherBuffId.BonusIntegrity] = 0,
+            [GatherBuffId.BonusIntegrity_Chance] = 0,
+            [GatherBuffId.BYII] = 0,
+            [GatherBuffId.FieldMasteryI] = 0,
+            [GatherBuffId.FieldMasteryII] = 0,
+            [GatherBuffId.FieldMasteryIII] = 0,
+            [GatherBuffId.FieldMasteryTemp] = 0,
+            [GatherBuffId.TwelveBounty] = 0,
+            [GatherBuffId.GivingLand] = 0,
+            [GatherBuffId.Scrutiny] = 0,
+            [GatherBuffId.Focus] = 0,
+            [GatherBuffId.Priming] = 0,
+            [GatherBuffId.Scour] = 0,
+            [GatherBuffId.Brazen] = 0,
+            [GatherBuffId.Meticulous] = 0,
+        };
 
         private static void UpdateHiddenUse()
         {
             HiddenUsed = false;
             _toggleHidden = false;
+            foreach (var buff in CurrentUse)
+            {
+                CurrentUse[buff.Key] = 0;
+            }
         }
-
         private static unsafe bool CanCheckHidden()
         {
             if (HiddenUsed)
@@ -483,7 +539,7 @@ namespace GatherChill.Scheduler.Tasks
                 return false;
 
             var actionInfo = Gather_Util.GathActionDict[GatherBuffId.HiddenFinder];
-            var actionId = actionInfo.ClassAction[Player.Job];
+            var actionId = actionInfo.ClassAction[Player.Job].ActionId;
 
             var canUse = am->GetActionStatus(ActionType.Action, actionId, checkRecastActive: false, checkCastingActive: false) is 0;
 
@@ -499,24 +555,102 @@ namespace GatherChill.Scheduler.Tasks
                 return false;
             }
         }
-
-
-        private static unsafe bool Basic_BuffCheck()
+        private static bool CheckGatheringBuffs(Utilities.Gathering gathering)
         {
-            var actionInfo = Gather_Util.GathActionDict[GatherBuffId.BYII];
-            bool hasBuff = Utils.HasStatusId(actionInfo.StatusId) || Utils.HasStatusId(actionInfo.StatusId2);
-            bool hasGp = Utils.GetGp() >= actionInfo.RequiredGp;
-            bool isLevel = Player.Level >= actionInfo.RequiredLv;
-            var actionId = actionInfo.ClassAction[Player.Job];
+            const string tag = "Gather: Check Buffs";
 
-            if (!hasBuff && hasGp && isLevel)
+            var job = Player.Job;
+            var currentGp = Utils.GetGp();
+            var missingDur = gathering.CurrentIntegrity != gathering.TotalIntegrity;
+
+            var gatherProfile = SelectedProfile;
+
+            foreach (var buff in gatherProfile.BuffPriority)
             {
-                ActionManager.Instance()->UseAction(ActionType.Action, actionId);
+                var buffProfile = gatherProfile.GatheringBuffs[buff];
+                var actionInfo = Gather_Util.GathActionDict[buff];
+
+                if (!buffProfile.Enabled)
+                {
+                    IceLogging.Verbose($"Skipping: {buff} due to not enabled", tag);
+                    continue;
+                }
+
+                // 0 means no cap; otherwise skip once we've used it as many times as planned
+                if (buffProfile.MaxUse != 0 && CurrentUse[buff] >= buffProfile.MaxUse)
+                {
+                    IceLogging.Verbose($"Skipping: {buff} due to reaching max use ({buffProfile.MaxUse})", tag);
+                    continue;
+                }
+
+                if (currentGp < actionInfo.RequiredGp)
+                {
+                    IceLogging.Verbose($"Skipping: {buff} due to not enough GP", tag);
+                    continue;
+                }
+
+                if (!IsBuffDue(buff, actionInfo, missingDur))
+                {
+                    IceLogging.Verbose($"Skipping: {buff} is not due", tag);
+                    continue;
+                }
+
+                // The cast was throttled, so a buff is still due. Report "busy" so the caller waits instead of gathering without it.
+                if (!UseGatheringAction(actionInfo.ClassAction[job].ActionId))
+                {
+                    IceLogging.Verbose($"Waiting: {buff} is due but a cast is still on cooldown", tag);
+                    return true;
+                }
+
+                IceLogging.Verbose($"Used buff: {buff}", tag);
+                BuffCounter = buff;
+
+                // Wise and Bountiful don't end the check, same as before, so the gather itself can follow right away
+                if (buff is GatherBuffId.BonusIntegrity_Chance or GatherBuffId.BYII)
+                {
+                    continue;
+                }
+
                 return true;
             }
-            else
-                return false;
+
+            return false;
         }
+
+        private static bool IsBuffDue(GatherBuffId buff, Gather_Util.GatheringActions actionInfo, bool missingDur)
+        {
+            // Ageless Words only helps if we're actually missing integrity
+            if (buff == GatherBuffId.BonusIntegrity)
+            {
+                return missingDur;
+            }
+
+            // Wise is a free proc: it needs the status to be up, and it's wasted at full integrity
+            if (buff == GatherBuffId.BonusIntegrity_Chance)
+            {
+                return missingDur && Utils.HasStatusId(actionInfo.StatusId);
+            }
+
+            // everything else (Field Mastery, Gift, Yield, Tidings, Bountiful) is due when its status isn't already up
+            if (Utils.HasStatusId(actionInfo.StatusId))
+            {
+                return false;
+            }
+
+            return actionInfo.StatusId2 == 0 || !Utils.HasStatusId(actionInfo.StatusId2);
+        }
+
+        private static unsafe bool UseGatheringAction(uint ActionId)
+        {
+            if (!EzThrottler.Throttle("Using Gathering Action", 500))
+            {
+                return false;
+            }
+
+            ActionManager.Instance()->UseAction(ActionType.Action, ActionId);
+            return true;
+        }
+
         private static unsafe bool Crystal_BuffCheck(bool MaxDurability)
         {
             var job = Player.Job;
@@ -527,7 +661,7 @@ namespace GatherChill.Scheduler.Tasks
 
             if (MaxDurability)
             {
-                var cooldown = BuffCooldown(givingLand.ClassAction[job]);
+                var cooldown = BuffCooldown(givingLand.ClassAction[job].ActionId);
                 if (cooldown < 40)
                 {
                     // We're within possible range of using the skill, need to see if it's actually 0, if yes then we can buff, if not then we continue onwards.
@@ -536,7 +670,7 @@ namespace GatherChill.Scheduler.Tasks
                         if (!Utils.HasStatusId(givingLand.StatusId) && (Utils.GetGp() >= givingLand.RequiredGp) && level >= givingLand.RequiredLv)
                         {
                             if (EzThrottler.Throttle("Using Action", 100))
-                                ActionManager.Instance()->UseAction(ActionType.Action, givingLand.ClassAction[job]);
+                                ActionManager.Instance()->UseAction(ActionType.Action, givingLand.ClassAction[job].ActionId);
 
                             return true;
                         }
@@ -547,7 +681,7 @@ namespace GatherChill.Scheduler.Tasks
                     if (!Utils.HasStatusId(twelveBounty.StatusId) && Utils.GetGp() >= twelveBounty.RequiredGp && level >= twelveBounty.RequiredLv)
                     {
                         if (EzThrottler.Throttle("Using Action", 100))
-                            ActionManager.Instance()->UseAction(ActionType.Action, twelveBounty.ClassAction[job]);
+                            ActionManager.Instance()->UseAction(ActionType.Action, twelveBounty.ClassAction[job].ActionId);
 
                         return true;
                     }
@@ -561,7 +695,7 @@ namespace GatherChill.Scheduler.Tasks
                 if (Utils.HasStatusId(bonusInteg.StatusId))
                 {
                     if (EzThrottler.Throttle("Using Action", 100))
-                        ActionManager.Instance()->UseAction(ActionType.Action, bonusInteg.ClassAction[job]);
+                        ActionManager.Instance()->UseAction(ActionType.Action, bonusInteg.ClassAction[job].ActionId);
 
                     return true;
                 }
@@ -571,7 +705,7 @@ namespace GatherChill.Scheduler.Tasks
                     if (Utils.GetGp() >= increaseInteg.RequiredGp && level >= increaseInteg.RequiredLv)
                     {
                         if (EzThrottler.Throttle("Using Action", 100))
-                            ActionManager.Instance()->UseAction(ActionType.Action, increaseInteg.ClassAction[job]);
+                            ActionManager.Instance()->UseAction(ActionType.Action, increaseInteg.ClassAction[job].ActionId);
 
                         return true;
                     }

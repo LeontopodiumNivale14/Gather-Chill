@@ -2,9 +2,6 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GatherChill.Ui.Tabs_Debug
 {
@@ -14,12 +11,12 @@ namespace GatherChill.Ui.Tabs_Debug
         {
             var gatherDict = Gather_Util.GathActionDict[GatherBuffId.GivingLand];
 
-            ImGui.Text($"Giving land CD: MIN: {BuffCD(gatherDict.ClassAction[Job.MIN])} | BTN: {BuffCD(gatherDict.ClassAction[Job.BTN]):N1}");
+            ImGui.Text($"Giving land CD: MIN: {BuffCD(gatherDict.ClassAction[Job.MIN].ActionId)} | BTN: {BuffCD(gatherDict.ClassAction[Job.BTN].ActionId):N1}");
 
             var hiddenSkill = Gather_Util.GathActionDict[GatherBuffId.HiddenFinder];
             foreach (var job in hiddenSkill.ClassAction)
             {
-                ImGui.Text($"Job: [{job.Key}] | ID: {job.Value} | Status: {ActionAvailable(job.Value)}");
+                ImGui.Text($"Job: [{job.Key}] | ID: {job.Value} | Status: {ActionAvailable(job.Value.ActionId)}");
             }
         }
         private unsafe static float BuffCD(uint actionId)

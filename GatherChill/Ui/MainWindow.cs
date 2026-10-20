@@ -83,13 +83,13 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.UserCog,
                 Label = "Gather Profiles",
-                Draw = () => { }
+                Draw = () => GatherBuffs_Tab.Draw()
             },
             [WindowSelection.RouteViewer] = new()
             {
-                Icon = FontAwesomeIcon.Landmark,
-                Label = "Route Viewer",
-                Draw = () => { }
+                Icon = FontAwesomeIcon.Book,
+                Label = "Gather Logs",
+                Draw = () => GatherLog.Draw(),
             },
             [WindowSelection.RouteEditor] = new()
             {

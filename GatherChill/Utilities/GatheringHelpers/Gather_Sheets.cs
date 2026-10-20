@@ -115,6 +115,8 @@ public static partial class Gather_Util
         public bool IsCollectable { get; set; } = false;
         public bool IsHidden { get; set; } = false;
         public bool IsReducable => IsReduceSource;
+        public ushort GatheringRow { get; set; } = 0;
+        public uint RequiredQuest { get; set; } = 0;
 
         public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
         public ExpansionIds Expansion { get; set; } = ExpansionIds.Unk;
@@ -231,6 +233,7 @@ public static partial class Gather_Util
     {
         CollectableDatabase.Build();
         CreateInitialDictionaries();
+        Update_GatheringDetails();
 
         UpdateTimes();
         UpdateItemDictionary();
@@ -570,7 +573,12 @@ public static partial class Gather_Util
                         var name = itemSheet.Name.ToString();
                         bool collectable = itemSheet.IsCollectable;
                         bool reducable = itemSheet.AetherialReduce != 0;
-                        bool isHidden = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault().IsHidden;
+
+                        var gatheringSheet = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault();
+
+                        bool isHidden = gatheringSheet.IsHidden;
+                        var gatheringRow = gatheringSheet.RowId;
+                        var requiredQuest = gatheringSheet.Unknown0; // RequiredQuest tab in the exdschems, offset is 0x00;
 
                         Sheet_ItemInfo[item] = new()
                         {
@@ -580,7 +588,9 @@ public static partial class Gather_Util
                             RouteInfo = new() { key },
                             NodeTypes = new() { routeInfo.NodeType },
                             IsHidden = isHidden,
-                            IsCollectable = collectable
+                            IsCollectable = collectable,
+                            GatheringRow = (ushort)gatheringRow,
+                            RequiredQuest = requiredQuest,
                             // Level = itemLevel,
                             // Star = stars,
                         };

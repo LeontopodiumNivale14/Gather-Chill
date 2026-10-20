@@ -25,7 +25,7 @@
             "y": 169.0242,
             "z": 111.3145
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 311,
             "fan_EndAngle": 104,
@@ -56,7 +56,7 @@
             "y": 169.9518,
             "z": 119.9934
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 331,
             "fan_EndAngle": 125,
@@ -80,7 +80,7 @@
             "y": 168.2633,
             "z": 113.6608
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 305,
             "fan_EndAngle": 65,
@@ -111,7 +111,7 @@
             "y": 170.7656,
             "z": 43.01591
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 189,
             "fan_EndAngle": 301,
@@ -142,7 +142,7 @@
             "y": 171.5775,
             "z": 49.79576
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 164,
             "fan_EndAngle": 284,
@@ -166,7 +166,7 @@
             "y": 168.7132,
             "z": 33.29783
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 134,
             "fan_EndAngle": 282,
@@ -197,7 +197,7 @@
             "y": 159.5121,
             "z": -11.58269
           },
-          "allowFlying": true,
+          "requiresFlying": true,
           "flight_FanInfo": {
             "fan_StartAngle": 105,
             "fan_EndAngle": 202,
@@ -228,7 +228,7 @@
             "y": 159.594,
             "z": -17.77679
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 67,
             "fan_EndAngle": 190,
@@ -250,10 +250,10 @@
       "blacklistNode": []
     }
   ],
+  "requiresFlying": true,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "liza",
+  "author": "Ice",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 71
 }

@@ -4,6 +4,7 @@ using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Scheduler;
+using GatherChill.Ui.Tables;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using System;
@@ -16,7 +17,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
     internal class GatherPlaylist
     {
         private static float _modeWindow = 100f;
-        private static Config.ItemInfo _itemToRemove = new();
+        private static Table_GatherPlaylist.GatherPlaylistTable? _gatherTable;
         private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _gatherDragDrop = new("GatherItemOrder", id => id.ItemId.ToString());
 
         public static void Draw()
@@ -49,8 +50,14 @@ namespace GatherChill.Ui.Tabs_MainWindow
                     if (ImGui.Button("Search for item"))
                         OpenItemPicker();
 
-                    // Must be drawn in the same ID scope as the button above
+                    ImGui.SameLine();
+                    var canClear = Gather_Helper.State == IceState.Idle && C.GatherList.Count > 0;
+                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Trash, "Clear All", canClear))
+                        ImGui.OpenPopup(ClearAllPopupId);
+
+                    // Must be drawn in the same ID scope as the buttons above
                     DrawItemPicker();
+                    DrawClearAllPopup();
 
                     _modeWindow = ImGui.GetCursorPosY() + ImGui.GetStyle().WindowPadding.Y;
                 }
@@ -67,98 +74,17 @@ namespace GatherChill.Ui.Tabs_MainWindow
                         return;
                     }
 
+                    _gatherTable ??= new(gatherList, _gatherDragDrop, RouteSelector_OpenPopup);
+                    _gatherTable.Refresh();
+
                     _gatherDragDrop.Begin();
+                    _gatherTable.Draw();
 
-                    // ScrollY removed: it turns the table into its own child window,
-                    // which breaks the cursor positions RealtimeDragDrop stores.
-                    using (var table = ImRaii.Table("Gatherable Items", 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
+                    if (_gatherTable.ItemToRemove is { } itemToRemove)
                     {
-                        if (!table.Success)
-                            return;
-
-                        ImGui.TableSetupColumn("##Order");
-                        ImGui.TableSetupColumn("Item");
-                        ImGui.TableSetupColumn("Gather");
-                        ImGui.TableSetupColumn("Have");
-                        ImGui.TableSetupColumn("Route(s)");
-                        ImGui.TableSetupColumn("Remove");
-
-                        ImGui.TableHeadersRow();
-
-                        var timedList = NodeList(true);
-                        var normalList = NodeList(false);
-
-                        for (int i = 0; i < gatherList.Count; i++)
-                        {
-                            var item = gatherList[i];
-                            var sheetInfo = Gather_Util.Sheet_ItemInfo[item.ItemId];
-                            var uniqueId = item.ItemId.ToString();
-
-                            ImGui.PushID($"{item.ItemId}_{sheetInfo.Name}");
-
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-
-                            _gatherDragDrop.NextRow();
-                            _gatherDragDrop.SetRowColor(uniqueId);
-                            _gatherDragDrop.DrawButtonDummy(uniqueId, gatherList, i);
-
-                            ImGui.TableNextColumn();
-                            ImGui_Ice.ImageButtonWithText(sheetInfo.IconId, sheetInfo.Name, sheetInfo.Name);
-
-                            ImGui.TableNextColumn();
-                            var amount = item.GatherAmount;
-                            ImGui.SetNextItemWidth(100);
-                            if (ImGui.InputInt($"##GatherAmount_{sheetInfo.Name}_{item.ItemId}", ref amount, 1, 10))
-                            {
-                                item.GatherAmount = amount;
-                                C.SaveDebounced();
-                            }
-
-                            ImGui.TableNextColumn();
-                            ImGui.Text($"{Utils.GetItemCount(item.ItemId):N0}");
-
-                            ImGui.TableNextColumn();
-                            var count = C.ItemRoutes[item.ItemId].EnabledRoutes.Count();
-                            var firstRoute = C.ItemRoutes[item.ItemId].EnabledRoutes.First();
-                            string routeText = count > 1 ? $"{firstRoute} + {count - 1}" : $"{firstRoute}";
-                            if (ImGui.Button(routeText))
-                            {
-                                RouteSelector_OpenPopup(item.ItemId);
-                            }
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.BeginTooltip();
-                                ImGui.Text("Select which routes you would like to do");
-                                ImGui.EndTooltip();
-                            }
-                            var routeDetails = P.routeEditor.GetRoute(firstRoute);
-                            if (routeDetails.AetheryteId == 0)
-                            {
-                                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.Red));
-                                if (ImGui.IsItemHovered())
-                                {
-                                    ImGui.BeginTooltip();
-                                    ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
-                                    ImGui.EndTooltip();
-                                }
-                            }
-
-                            ImGui.TableNextColumn();
-                            if (ImGuiEx.IconButton(FontAwesomeIcon.Trash, $"Remove_{item.ItemId}", enabled: ImGui.IsKeyDown(ImGuiKey.LeftShift) || ImGui.IsKeyDown(ImGuiKey.RightShift)))
-                            {
-                                _itemToRemove = item;
-                            }
-
-                            ImGui.PopID();
-                        }
-                    }
-
-                    if (C.GatherList.Contains(_itemToRemove))
-                    {
-                        C.GatherList.Remove(_itemToRemove);
+                        gatherList.Remove(itemToRemove);
                         C.SaveDebounced();
-                        _itemToRemove = new();
+                        _gatherTable.ItemToRemove = null;
                     }
 
                     _gatherDragDrop.End();
@@ -517,6 +443,35 @@ namespace GatherChill.Ui.Tabs_MainWindow
             _pickerFiltered = PickerSortById
                 ? result.OrderBy(x => x.Key).ToList()
                 : result.OrderBy(x => x.Value.Name).ToList();
+        }
+
+        #endregion
+
+        #region Clear All Popup
+
+        private const string ClearAllPopupId = "GatherChill_ClearAllPopup";
+
+        private static void DrawClearAllPopup()
+        {
+            using var popup = ImRaii.Popup(ClearAllPopupId);
+            if (!popup.Success)
+                return;
+
+            ImGui.Text($"Remove all {C.GatherList.Count} items from the playlist?");
+            ImGui.TextDisabled("This can't be undone.");
+            ImGui.Spacing();
+
+            if (ImGui.Button("Yes, clear all"))
+            {
+                C.GatherList.Clear();
+                C.Save();
+                ImGui.CloseCurrentPopup();
+                return;
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel"))
+                ImGui.CloseCurrentPopup();
         }
 
         #endregion

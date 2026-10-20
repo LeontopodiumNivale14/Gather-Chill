@@ -25,7 +25,7 @@
             "y": 186.7775,
             "z": 540.4086
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 316,
             "fan_EndAngle": 95,
@@ -56,7 +56,7 @@
             "y": 183.5301,
             "z": 504.6102
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 47,
             "fan_EndAngle": 210,
@@ -87,7 +87,7 @@
             "y": 167.5313,
             "z": 380.7374
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 101,
             "fan_EndAngle": 251,
@@ -118,7 +118,7 @@
             "y": 167.4331,
             "z": 370.2539
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 45,
             "fan_EndAngle": 213,
@@ -142,7 +142,7 @@
             "y": 166.069,
             "z": 357.0733
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 92,
             "fan_EndAngle": 246,
@@ -173,7 +173,7 @@
             "y": 196.1108,
             "z": 582.8488
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 306,
             "fan_EndAngle": 113,
@@ -204,7 +204,7 @@
             "y": 188.57,
             "z": 539.6458
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 241,
             "fan_EndAngle": 26,
@@ -226,10 +226,10 @@
       "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 71
 }

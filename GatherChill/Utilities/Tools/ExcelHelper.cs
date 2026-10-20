@@ -27,6 +27,8 @@ internal static class ExcelHelper
     internal static ExcelSheet<Aetheryte> Sheet_Aetheryte;
     internal static ExcelSheet<AetherCurrent> Sheet_AetherCurrent;
     internal static ExcelSheet<AetherCurrentCompFlgSet> Sheet_AethercurrentComplete;
+    internal static ExcelSheet<Lumina.Excel.Sheets.Action> Sheet_Action;
+    internal static ExcelSheet<Quest> Sheet_Quest;
 
     public static void Init()
     {
@@ -52,6 +54,9 @@ internal static class ExcelHelper
         Sheet_Aetheryte = Svc.Data.GetExcelSheet<Aetheryte>();
         Sheet_AetherCurrent = Svc.Data.GetExcelSheet<AetherCurrent>();
         Sheet_AethercurrentComplete = Svc.Data.GetExcelSheet<AetherCurrentCompFlgSet>();
+
+        Sheet_Action = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>();
+        Sheet_Quest = Svc.Data.GetExcelSheet<Quest>();
     }
 
     public static string GetTerritoryName(uint territoryid)

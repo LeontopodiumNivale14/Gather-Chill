@@ -21,5 +21,16 @@
 
         // Hidden Item Finder (Quest Req)
         HiddenFinder = 14,
+
+        // Collectable Stuff
+        Collect = 99,
+        Scrutiny = 100,
+        Focus = 101,
+        Priming = 102,
+        Scour = 103,
+        Brazen = 104,
+        Meticulous = 105,
+
+        Unknown = 999,
     }
 }

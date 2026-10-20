@@ -1,9 +1,11 @@
-﻿using Dalamud.Interface.Utility;
+﻿using Dalamud.Game.Text;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Gui.ImGuiTable;
 using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
 
@@ -20,6 +22,8 @@ internal class Table_Items
         public string Name => ItemInfo.Name;
         public int Level => ItemInfo.Level;
         public int Stars => ItemInfo.Star;
+        public uint QuestId => ItemInfo.RequiredQuest;
+        public bool IsCollectable => ItemInfo.IsCollectable;
         public List<uint> Reduce_Sources => ItemInfo.ReducedFromItemIds;
         public uint Reduce_Into => ItemInfo.ReducesIntoItemId;
         public List<uint> NodeTypes => ItemInfo.NodeTypes;
@@ -70,7 +74,9 @@ internal class Table_Items
 
         public override void DrawColumn(GatherItems row)
         {
-            ImGui_Ice.ImageButtonWithText(row.Icon, $"{row.Name}", $"{row.ItemId}_{row.Name}");
+            var nameText = row.IsCollectable ? $"{row.Name} {SeIconChar.Collectible.ToIconString()}" : row.Name;
+
+            ImGui_Ice.ImageButtonWithText(row.Icon, nameText, $"{row.ItemId}_{row.Name}");
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -741,8 +747,9 @@ internal class Table_Items
 
         public override void DrawColumn(GatherItems row)
         {
-            var drewButton = DrawCollectable(row);
-            DrawReduce(row, drewButton);
+            var drewCollectable = DrawCollectable(row);
+            var drewReduce = DrawReduce(row, drewCollectable);
+            DrawQuest(row, drewCollectable || drewReduce);
         }
 
         private static bool DrawCollectable(GatherItems row)
@@ -789,7 +796,7 @@ internal class Table_Items
             return true;
         }
 
-        private static void DrawReduce(GatherItems row, bool sameLine)
+        private static bool DrawReduce(GatherItems row, bool sameLine)
         {
             if (row.Reduce_Sources.Count != 0)
             {
@@ -797,16 +804,17 @@ internal class Table_Items
                     ImGui.SameLine();
 
                 DrawReduceSources(row);
-                return;
+                return true;
             }
 
             if (row.Reduce_Into == 0)
-                return;
+                return false;
 
             if (sameLine)
                 ImGui.SameLine();
 
             DrawReduceInto(row);
+            return true;
         }
 
         private static void DrawReduceSources(GatherItems row)
@@ -859,6 +867,29 @@ internal class Table_Items
                 return;
 
             ImGui.Text($"{reducableItem.Name}");
+        }
+        private static void DrawQuest(GatherItems row, bool sameLine)
+        {
+            if (row.QuestId is 0)
+                return;
+
+            if (sameLine)
+                ImGui.SameLine();
+
+            if (ExcelHelper.Sheet_Quest.TryGetRow(row.QuestId, out var questInfo))
+            {
+                ImGui_Ice.ImageButton(230607, "Quest Required", sidePadding: 2);
+                if (ImGui.IsItemHovered())
+                {
+                    using (var tooltip = ImRaii.Tooltip())
+                    {
+                        if (tooltip.Alive)
+                        {
+                            ImGui.Text($"Requires Quest: {questInfo.Name}");
+                        }
+                    }
+                }
+            }
         }
     }
 }

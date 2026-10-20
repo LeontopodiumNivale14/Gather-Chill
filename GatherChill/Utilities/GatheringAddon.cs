@@ -91,6 +91,14 @@ public unsafe class Gathering : AddonMasterBase<AddonGathering>
                 return match.Success ? int.Parse(match.Value) : 0;
             }
         }
+        public int GatherAmount
+        {
+            get
+            {
+                var match = ExtractNumber().Match(checkbox->GetComponentById(31)->GetTextNodeById(7)->GetAsAtkTextNode()->NodeText.GetText());
+                return match.Success ? int.Parse(match.Value) : 0;
+            }
+        }
 
         public void Gather() => addonMaster.ClickCheckboxIfEnabled(CheckBox);
     }

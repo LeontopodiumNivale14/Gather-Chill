@@ -23,4 +23,7 @@ public partial class Config
     public int Cordial_Amount { get; set; } = 300;
     public bool Cordial_Inverse { get; set; } = false;
     public bool Cordial_PreventOvercap { get; set; } = true;
+
+    // Auto Buff Settings
+    public ProfileClass User_AutoProfile { get; set; } = new();
 }
