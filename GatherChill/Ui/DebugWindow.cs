@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -37,7 +38,8 @@ internal class DebugWindow : Window
 
         ["Table: Gather Points"] = () => GatherPointTable.Draw(),
 
-        ["Logs: Destination"] = () => Tabs_Debug.Logs_Destination.Draw(),
+        ["Logs: Plugin"] = () => Logs_Normal.Draw(),
+        ["Logs: Destination"] = () => Logs_Destination.Draw(),
 
         ["Help: Task Info"] = () => TaskInfo.Draw(),
 
@@ -46,6 +48,8 @@ internal class DebugWindow : Window
 
         ["Editor: Reduction Items"] = () => ReductionEditor.Draw(),
         ["Editor: Aethernet"] = () => AethernetEditor.Draw(),
+
+        ["Ui: Test Elements"] = () => UiElements.Draw(),
     };
 
     private static string SelectedTab = DebugTabs.First().Key;
@@ -69,45 +73,48 @@ internal class DebugWindow : Window
 
         using var style = C.UseIceTheme ? ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 4.0f) : default;
 
-        float spacing = 10f;
-        float leftPanelWidth = 200f;
-        float rightPanelWidth = ImGui.GetContentRegionAvail().X - leftPanelWidth - spacing;
-        float childHeight = ImGui.GetContentRegionAvail().Y;
+        ElementSelector();
 
-        if (ImGui.BeginTable("Debug Window: Table Details", 2, ImGuiTableFlags.None, ImGui.GetContentRegionAvail()))
+        ImGui.SameLine();
+
+        DebugViewer();
+    }
+
+    private static void ElementSelector()
+    {
+        using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+        var width = 200f * ImGuiHelpers.GlobalScale;
+
+        using (var child = ImRaii.Child("Debug Selector##DebugSelector_ChilledLeves", new(width, ImGui.GetContentRegionAvail().Y), true))
         {
-            ImGui.TableSetupColumn("Selector", ImGuiTableColumnFlags.WidthFixed, 200);
-            ImGui.TableSetupColumn("Details", ImGuiTableColumnFlags.WidthStretch);
+            if (!child.Success)
+                return;
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
-            if (ImGui.BeginChild("Debug Selector##DebugSelector_ChilledLeves", ImGui.GetContentRegionAvail(), true))
+            foreach (var viewName in DebugTabs.Keys)
             {
-                foreach (var viewName in DebugTabs.Keys)
-                {
-                    bool isSelected = (SelectedTab == viewName);
-                    string label = isSelected ? $"→ {viewName}" : $"{viewName}";
+                bool isSelected = (SelectedTab == viewName);
+                string label = isSelected ? $"→ {viewName}" : $"{viewName}";
 
-                    if (ImGui.Selectable(label, isSelected))
-                    {
-                        SelectedTab = viewName;
-                    }
+                if (ImGui.Selectable(label, isSelected))
+                {
+                    SelectedTab = viewName;
                 }
             }
-            ImGui.EndChild();
+        }
+    }
 
-            ImGui.TableNextColumn();
-            if (ImGui.BeginChild("Debug Viewer Tab##DebugViewTabDetails", ImGui.GetContentRegionAvail(), true))
-            {
-                if (DebugTabs.TryGetValue(SelectedTab, out var drawAction))
-                    drawAction();
-                else
-                    ImGui.Text("Unknown debugger tab");
-            }
-            ImGui.EndChild();
+    private static void DebugViewer()
+    {
+        using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+        using (var child = ImRaii.Child("Debug Viewer Tab##DebugViewTabDetails", ImGui.GetContentRegionAvail(), true))
+        {
+            if (!child.Success)
+                return;
 
-            ImGui.EndTable();
+            if (DebugTabs.TryGetValue(SelectedTab, out var drawAction))
+                drawAction();
+            else
+                ImGui.Text("Unknown debugger tab");
         }
     }
 }

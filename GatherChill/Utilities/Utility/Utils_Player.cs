@@ -95,13 +95,33 @@ public static partial class Utils
     }
     public static int GetGp()
     {
-        uint gp = LocalPlayer.CurrentGp;
-        return (int)gp;
+        if (Player.Available)
+        {
+            uint gp = LocalPlayer.CurrentGp;
+            if (Player.Job is Job.MIN or Job.BTN or Job.FSH)
+                return (int)gp;
+            else
+                return 0;
+        }
+        else
+        {
+            return 0;
+        }
     }
     public static int MaxGp()
     {
-        var maxGp = LocalPlayer.MaxGp;
-        return (int)maxGp;
+        if (Player.Available)
+        {
+            uint gp = LocalPlayer.MaxGp;
+            if (Player.Job is Job.MIN or Job.BTN or Job.FSH)
+                return (int)gp;
+            else
+                return 0;
+        }
+        else
+        {
+            return 0;
+        }
     }
     public unsafe static void TaskClassChange(Job job)
     {

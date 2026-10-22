@@ -30,6 +30,7 @@ public static partial class Gather_Util
         public MapInfo Map { get; set; } = new();
         public FolkloreInfo Folklore { get; set; } = new();
         public GatherNodeKind Kind { get; set; } = GatherNodeKind.Regular;
+        public bool IsTimedNode => TimedInfo.Count > 0;
     }
     public readonly struct EorzeaTimeWindow
     {

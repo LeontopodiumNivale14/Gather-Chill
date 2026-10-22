@@ -277,9 +277,8 @@ public static partial class TravelUtil
             ShardId = 75,
             TerritoryId = 478,
             ValidTerritories = new() { 478 },
-            Position = new(74.84f, 209.25f, -16.63f),
-            MoveTo = new(66.19f, 207.46f, -14.87f),
-            InteractDistance = 11,
+            Position = new(71.95f, 211.26f, -18.91f),
+            MoveTo = new(71.64f, 210.06f, -16.95f),
         },
 
         #endregion

@@ -25,6 +25,7 @@ public sealed class GatherChill : IDalamudPlugin
     internal SettingsWindow settingWindow;
     internal DebugWindow debugWindow;
     internal RouteEditor_Window routeWindow;
+    internal GatheringOverlay gatherOverlay;
 
     // Taskmanager from Ecommons
     internal TaskManager TaskManager;
@@ -72,6 +73,7 @@ public sealed class GatherChill : IDalamudPlugin
         settingWindow = new();
         debugWindow = new();
         routeWindow = new();
+        gatherOverlay = new();
 
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         Svc.PluginInterface.UiBuilder.OpenMainUi += () =>
@@ -109,6 +111,7 @@ public sealed class GatherChill : IDalamudPlugin
         Pandora_Handler.Tick();
         TextAdvancedManager.Tick();
         YesAlreadyManager.Tick();
+        Gather_Helper.RemoveTimedRoutes();
     }
 
     public void OnDraw()
@@ -165,6 +168,12 @@ public sealed class GatherChill : IDalamudPlugin
         else if (firstArg.ToLower() == "stop")
         {
             SchedulerMain.DisablePlugin();
+            return;
+        }
+        else if (firstArg.ToLower() == "overlay")
+        {
+            gatherOverlay.IsOpen = true;
+            return;
         }
     }
 }

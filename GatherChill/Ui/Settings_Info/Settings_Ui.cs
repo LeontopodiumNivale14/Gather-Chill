@@ -39,6 +39,13 @@ public static partial class SettingsUi
         Cordial_Inverse,
         Cordial_Overcap,
 
+        // Gather Buff Holding
+        HoldGP_TimedNodes,
+        TimedNodes_HoldTime,
+        HoldGP_Crystals,
+        Crystal_HoldTime,
+        TimedNode_MinGP,
+
         // Misc
         ColorTheme,
         CompactOverlay,

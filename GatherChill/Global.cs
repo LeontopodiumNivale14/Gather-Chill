@@ -16,6 +16,7 @@ global using System.Linq;
 global using System.Numerics;
 global using System;
 global using static ECommons.GenericHelpers;
+global using Dalamud.Game.ClientState.Conditions;
 
 global using static GatherChill.GatherChill;
 global using static GatherChill.Utilities.Utility.Utils;

@@ -1,6 +1,11 @@
-﻿using GatherChill.Enums;
+﻿using ECommons.GameHelpers;
+using ECommons.Throttlers;
+using GatherChill.Enums;
+using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GatherChill.Scheduler
@@ -16,5 +21,145 @@ namespace GatherChill.Scheduler
         public static SelectedRoute GatherRoute = new();
         public static IceState State = IceState.Idle;
         public static GatherMode gatherMode = GatherMode.Normal;
+
+        public class ProgressInfo
+        {
+            public uint ItemId { get; set; } = 0;
+
+            // Inventory count when the gather started (e.g. 150). Set once.
+            public int StartInventory { get; set; } = 0;
+
+            public int Remaining
+            {
+                get
+                {
+                    foreach (var info in C.GatherList)
+                    {
+                        if (info.ItemId == ItemId)
+                            return Math.Max(info.GatherAmount, 0);
+                    }
+
+                    return 0;
+                }
+            }
+
+            public int Current => Utils.GetItemCount(ItemId);
+
+            public int Gathered => Math.Max(Current - StartInventory, 0);
+        }
+
+        public static List<ProgressInfo> ItemProgress = new();
+        public static HashSet<uint> GatheredTimedRoutes = new();
+        public static void RemoveTimedRoutes()
+        {
+            if (!EzThrottler.Throttle("Has Checked"))
+                return;
+
+            foreach (var route in GatheredTimedRoutes)
+            {
+                var routeInfo = Gather_Util.Sheet_RouteInfo[route];
+                if (!routeInfo.TimedInfo.Any(x => x.IsUp()))
+                {
+                    GatheredTimedRoutes.Remove(route);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns true if any timed node on a selected route is currently up.
+        /// upRoutes: every currently-up route not already in GatheredTimedRoutes.
+        /// nextUp: real time until the soonest window opens among routes that are
+        ///         NOT currently up (null if there are none).
+        /// </summary>
+        public static bool AnyTimedNodes(out List<uint> upRoutes, out TimeSpan? nextUp)
+        {
+            upRoutes = new List<uint>();
+            nextUp = null;
+
+            if (C.GatherList.Count == 0)
+                return false;
+
+            var visited = new HashSet<uint>();
+            TimeSpan? soonest = null;
+
+            foreach (var item in C.GatherList.Where(x => x.GatherAmount != 0))
+            {
+                if (!C.ItemRoutes.TryGetValue(item.ItemId, out var itemRoute))
+                    continue;
+
+                foreach (var route in itemRoute.EnabledRoutes)
+                {
+                    if (GatheredTimedRoutes.Contains(route))
+                        continue;
+
+                    // Same route can be shared by multiple items
+                    if (!visited.Add(route))
+                        continue;
+
+                    if (!Gather_Util.Sheet_RouteInfo.TryGetValue(route, out var info))
+                        continue;
+
+                    if (info.TimedInfo.Count == 0)
+                        continue;
+
+                    if (info.TimedInfo.Any(x => x.IsUp()))
+                    {
+                        upRoutes.Add(route);
+                        continue;
+                    }
+
+                    foreach (var window in info.TimedInfo)
+                    {
+                        var wait = window.TimeUntilStart();
+                        if (soonest == null || wait < soonest.Value)
+                            soonest = wait;
+                    }
+                }
+            }
+
+            nextUp = soonest;
+            return upRoutes.Count > 0;
+        }
+
+        // Convenience overloads
+        public static bool AnyTimedNodes(out List<uint> upRoutes) => AnyTimedNodes(out upRoutes, out _);
+        public static bool AnyTimedNodes() => AnyTimedNodes(out _, out _);
+
+        /// <summary>
+        /// True when GP should be saved for an upcoming (or already up) timed node.
+        /// </summary>
+        public static bool ShouldHoldGpForTimedNode()
+        {
+            if (!C.HoldGP_TimeNodes)
+                return false;
+
+            var next = NextTimedNode();
+            if (next is not { } wait)
+                return false;
+
+            // wait is at or below the hold threshold
+            return wait.TotalSeconds <= C.TimedNodes_HoldTime;
+        }
+
+        /// <summary>
+        /// null          -> nothing to wait for (already on an up timed route, or no timed routes exist)
+        /// TimeSpan.Zero -> a different timed route is up right now
+        /// otherwise     -> real time until the soonest timed route opens
+        /// </summary>
+        public static TimeSpan? NextTimedNode()
+        {
+            var anyUp = AnyTimedNodes(out var upRoutes, out var nextUp);
+
+            // Already on a timed route that's up
+            if (anyUp && upRoutes.Contains(GatherRoute.routeId))
+                return null;
+
+            // A different timed route is up right now
+            if (anyUp)
+                return TimeSpan.Zero;
+
+            // Nothing up: time until the soonest opens (null if no timed routes at all)
+            return nextUp;
+        }
     }
 }

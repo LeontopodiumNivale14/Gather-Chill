@@ -1,14 +1,12 @@
 ﻿using ECommons.Throttlers;
-using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
-using System;
+using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.InteropServices;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
-using static GatherChill.ConfigFiles.Config;
 
 namespace GatherChill.Scheduler.Tasks
 {
@@ -16,14 +14,70 @@ namespace GatherChill.Scheduler.Tasks
     {
         public static void Enqueue()
         {
-            P.TaskManager.Enqueue(() => CheckList(), "Checking for items");
+            if (Svc.Condition[ConditionFlag.Gathering])
+            {
+                P.TaskManager.Enqueue(() => CheckInteraction(), "Checking Gathering Interaction");
+            }
+            else
+            {
+                P.TaskManager.Enqueue(() => CheckList(), "Checking for items");
+            }
+        }
+
+        private static unsafe bool CheckInteraction()
+        {
+            // Not gathering at all, nothing to check
+            if (!Svc.Condition[ConditionFlag.Gathering])
+                return true;
+
+            if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
+            {
+                if (EzThrottler.Throttle("Selecting yes"))
+                    yesNo.Yes();
+            }
+
+            if (!GenericHelpers.TryGetAddonMaster<Gathering>(out var gathering) || !gathering.IsAddonReady)
+                return false;
+
+            var target = Svc.Targets.Target;
+            if (target == null)
+                return false;
+
+            var nodeId = target.BaseId;
+            var route = Gather_Util.Sheet_RouteInfo
+                .Where(x => x.Value.NodeIds.Contains(nodeId))
+                .FirstOrNull();
+
+            if (route != null)
+            {
+                foreach (var item in gathering.GatheredItems)
+                {
+                    var wanted = C.GatherList.Any(x => x.ItemId == item.ItemID && x.GatherAmount != 0);
+                    if (!wanted)
+                        continue;
+
+                    IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}");
+                    Gather_Helper.GatherRoute = new() { itemId = item.ItemID, routeId = route.Value.Key };
+                    Gather_Helper.State = IceState.Gather;
+                    return true;
+                }
+            }
+
+            if (EzThrottler.Throttle("Closing window"))
+                Ecom_Handler.CloseWindow(gathering.Base);
+
+            return false;
         }
 
         private static unsafe bool CheckList()
         {
             string tag = "Task Start: Check List";
 
+            IceLogging.Verbose("Starting check list process", tag);
+
             var itemList = C.GatherList.Where(x => x.GatherAmount != 0).ToList();
+            Gather_Helper.ItemProgress.Clear();
+
             if (itemList.Count != 0)
             {
                 var itemSheet = Gather_Util.Sheet_ItemInfo;
@@ -38,9 +92,22 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     if (itemConfig.TryGetValue(item.ItemId, out var selectedRoutes))
                     {
+                        if (!Gather_Helper.ItemProgress.Any(x => x.ItemId == item.ItemId))
+                        {
+                            Gather_Helper.ItemProgress.Add(new()
+                            {
+                                ItemId = item.ItemId,
+                                StartInventory = Utils.GetItemCount(item.ItemId),
+                            });
+                        }
+
                         foreach (var route in selectedRoutes.EnabledRoutes)
                         {
                             var routeInfo = routeSheet[route];
+                            var gatherRoute = P.routeEditor.GetRoute(route);
+                            if (gatherRoute == null || gatherRoute.AetheryteId == 0)
+                                continue;
+
                             if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
                             {
                                 LegendaryItems.Add(new() { routeId = route, itemId = item.ItemId });
@@ -66,6 +133,19 @@ namespace GatherChill.Scheduler.Tasks
                     // -> I'd say... every so often (could just run this on the main tick thread, but could have it check every x amount of seconds)
                     // -> Once the timed route has passed it's slot, clear it from the recently gathered list
                     // -> Thay way, the route can be gathered at again
+
+                    if (Gather_Helper.AnyTimedNodes(out var currentlyUp))
+                    {
+                        IceLogging.Verbose("We currently have some timed routes that are up! Checking to make sure if any are legendary/not gathered...", tag);
+                        foreach (var route in LegendaryItems.Where(x => currentlyUp.Contains(x.routeId)))
+                        {
+                            IceLogging.Verbose("We found a legendary item to gather! So we gonna just skip out of here and go do it", tag);
+
+                            Gather_Helper.GatherRoute = route;
+                            Gather_Helper.State = IceState.Teleport;
+                            return true;
+                        }
+                    }
                 }
 
                 if (EphemeralItems.Count != 0)

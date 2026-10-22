@@ -24,6 +24,14 @@ public partial class Config
     public bool Cordial_Inverse { get; set; } = false;
     public bool Cordial_PreventOvercap { get; set; } = true;
 
+    // Gather timer based stuff
+    public bool HoldGP_TimeNodes { get; set; } = true;
+    public uint TimedNodes_HoldTime { get; set; } = 60;
+    public bool HoldGP_CrystalBuff { get; set; } = true;
+    public uint CrystalBuff_HoldGP { get; set; } = 30;
+
+    public uint TimedNode_MinGP { get; set; } = 0;
+
     // Auto Buff Settings
     public ProfileClass User_AutoProfile { get; set; } = new();
 }

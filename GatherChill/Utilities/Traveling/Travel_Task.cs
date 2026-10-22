@@ -154,10 +154,11 @@ public static partial class TravelUtil
         }
         else if (!P.navmesh.IsRunning())
         {
+            ResetInfo();
+
             if (currentDistance < distance)
             {
                 IceLogging.Verbose("We've met the distance threshold to our destination, continuing on", tag);
-                ResetInfo();
                 return true;
             }
             else
@@ -218,6 +219,8 @@ public static partial class TravelUtil
         }
         else if (!P.navmesh.IsRunning())
         {
+            ResetInfo();
+
             if (Player.DistanceTo(new Vector2(pos.X, pos.Z)) < distance)
             // if (Player.DistanceTo(pos) < distance)
             {
@@ -326,10 +329,11 @@ public static partial class TravelUtil
         }
         else if (!P.navmesh.IsRunning())
         {
+            ResetInfo();
+
             if (currentDistance < distance)
             {
                 IceLogging.Verbose("We've met the distance threshold to our destination, continuing on", tag);
-                ResetInfo();
                 return true;
             }
             else

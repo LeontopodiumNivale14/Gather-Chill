@@ -36,6 +36,32 @@ namespace GatherChill.Scheduler.Tasks
         private static ItemCatch LastItemInfo = new();
         private static GatherProfile SelectedProfile = null;
 
+        private static void Enqueue_Check()
+        {
+            string tag = "Task Gather: Enqueue Check";
+
+            var selectedRoute = Gather_Helper.GatherRoute;
+            if (Gather_Util.Sheet_RouteInfo.TryGetValue(selectedRoute.routeId, out var routeInfo))
+            {
+                if (routeInfo.Kind is GatherNodeKind.Unspoiled or GatherNodeKind.Legendary)
+                {
+                    // These are the "only gather once, and then fuck off"
+                }
+                else if (routeInfo.Kind is GatherNodeKind.Ephemeral)
+                {
+                    // These are the "gather as long as the timed node is up
+                }
+                else
+                {
+                    // This is just our normal nodes, the sane nodes specifically (bless these ones)
+                }
+            }
+            else
+            {
+                IceLogging.Verbose("We seem... to have gotten an invalid route. So we just gonna get out of this", tag);
+            }
+        }
+
         public static void NormalItem_Enqueue()
         {
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
@@ -214,18 +240,30 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
             {
-                // We've checked all locations and found no valid nodes
-                IceLogging.Debug("Checked all locations for this node group, moving to next route index", tag);
-                TargetNodeId = null;
-                RouteIndex += 1;
-                NodeCheckIndex = 0;
-                if (EzThrottler.Throttle("Else statement"))
+                var routeInfo = Gather_Util.Sheet_RouteInfo[Gather_Helper.GatherRoute.routeId];
+                if (routeInfo.Kind is GatherNodeKind.Unspoiled or GatherNodeKind.Legendary)
                 {
-                    IceLogging.Debug($"Gather route count: {GatherRoute.Count}");
-                    IceLogging.Debug("Moving to the next node");
-                    IceLogging.Debug($"Route Index: {RouteIndex}");
+                    IceLogging.Debug("We seem to have traveled to the route, and realized that there is no nodes existing whatsoever", tag);
+                    IceLogging.Debug("Going to add it to the checked list and not look again till the next time window", tag);
+                    Gather_Helper.GatheredTimedRoutes.Add(Gather_Helper.GatherRoute.routeId);
+
+                    Gather_Helper.State = IceState.Start;
+                    return true;
                 }
-                return true;
+                else
+                {
+                    IceLogging.Debug("Checked all locations for this node group, moving to next route index", tag);
+                    TargetNodeId = null;
+                    RouteIndex += 1;
+                    NodeCheckIndex = 0;
+                    if (EzThrottler.Throttle("Else statement"))
+                    {
+                        IceLogging.Debug($"Gather route count: {GatherRoute.Count}");
+                        IceLogging.Debug("Moving to the next node");
+                        IceLogging.Debug($"Route Index: {RouteIndex}");
+                    }
+                    return true;
+                }
             }
 
             return false;
@@ -267,6 +305,9 @@ namespace GatherChill.Scheduler.Tasks
         }
         private static bool InteractWithNode(uint nodeId)
         {
+            if (SelectedProfile != null)
+                SelectedProfile = null;
+
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
                                         .Where(x => x.IsTargetable)
                                         .FirstOrDefault();
@@ -286,10 +327,31 @@ namespace GatherChill.Scheduler.Tasks
                     }
                     else
                     {
-                        if (EzThrottler.Throttle("Target + Interaction throttle"))
+                        bool allowedToInteract = true;
+
+                        var routeInfo = Gather_Util.Sheet_RouteInfo[Gather_Helper.GatherRoute.routeId];
+
+                        if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
                         {
-                            Utils.TargetgameObject(targetNode);
-                            Utils.InteractWithObject(targetNode);
+                            var timeSlot = routeInfo.TimedInfo.Where(x => x.IsUp()).FirstOrDefault();
+                            if (timeSlot.TimeUntilEnd().TotalSeconds > 60 && Utils.GetGp() < C.TimedNode_MinGP)
+                                allowedToInteract = false;
+                        }
+
+                        if (allowedToInteract)
+                        {
+                            if (EzThrottler.Throttle("Target + Interaction throttle"))
+                            {
+                                Utils.TargetgameObject(targetNode);
+                                Utils.InteractWithObject(targetNode);
+                            }
+                        }
+                        else
+                        {
+                            if (EzThrottler.Throttle("Waiting for gp???"))
+                            {
+                                IceLogging.Debug($"Waiting for gp to refill currently. . . currently at: {Utils.GetGp()}");
+                            }
                         }
                     }
                 }
@@ -331,7 +393,7 @@ namespace GatherChill.Scheduler.Tasks
 
             if (LastItemInfo.LastAmount != currentAmount)
             {
-                IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", "Gathering Action");
+                IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", tag);
                 var difference = currentAmount - LastItemInfo.LastAmount;
 
                 if (difference > 0)
@@ -346,6 +408,8 @@ namespace GatherChill.Scheduler.Tasks
 
                 if (config.GatherAmount == 0)
                 {
+                    IceLogging.Debug("Gather Amount has hit 0, we're resetting back to start", tag);
+
                     Gather_Helper.State = IceState.Start;
                     P.TaskManager.Tasks.Clear();
                     UpdateHiddenUse();
@@ -371,7 +435,12 @@ namespace GatherChill.Scheduler.Tasks
                     }
 
                     if (GenericHelpers.TryGetAddonMaster<Utilities.Gathering>("Gathering", out var gather) && gather.IsAddonReady)
-                    {                        
+                    {              
+                        if (EzThrottler.Throttle("Gathering Log Time"))
+                        {
+                            IceLogging.Debug("Currently in a gathering state! And the gathering window is open", tag);
+                        }
+
                         if (!correctRoute())
                         {
                             if (EzThrottler.Throttle("Exiting Wrong Route"))
@@ -400,32 +469,35 @@ namespace GatherChill.Scheduler.Tasks
                             if (goalItem != null)
                             {
                                 // We found the item we're looking for, we can buff -> gather (if it's not a collectable)
-                                if (Crystals.Contains(itemId))
+                                if (!Gather_Helper.ShouldHoldGpForTimedNode())
                                 {
-                                    bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
-
-                                    if (Crystal_BuffCheck(maxInteg))
-                                        return false;
-                                }
-                                else
-                                {
-                                    if (SelectedProfile is null)
+                                    if (Crystals.Contains(itemId))
                                     {
-                                        var level = Player.Level;
-                                        var gp = Utils.GetGp();
-                                        var integrity = gather.CurrentIntegrity;
-                                        var gatherChance = goalItem.GatherChance;
-                                        var boonChance = goalItem.BoonChance;
-                                        var amount = config.GatherAmount;
+                                        bool maxInteg = gather.TotalIntegrity == gather.CurrentIntegrity;
 
-                                        var autoProfile = C.User_AutoProfile;
-
-                                        var result = Gather_Util.PlanBuffs(level, gp, integrity, gatherChance, boonChance, amount, autoProfile, goalItem.GatherAmount);
-                                        SelectedProfile = result.Profile;
+                                        if (Crystal_BuffCheck(maxInteg))
+                                            return false;
                                     }
+                                    else
+                                    {
+                                        if (SelectedProfile is null)
+                                        {
+                                            var level = Player.Level;
+                                            var gp = Utils.GetGp();
+                                            var integrity = gather.CurrentIntegrity;
+                                            var gatherChance = goalItem.GatherChance;
+                                            var boonChance = goalItem.BoonChance;
+                                            var amount = config.GatherAmount;
 
-                                    if (CheckGatheringBuffs(gather))
-                                        return false;
+                                            var autoProfile = C.User_AutoProfile;
+
+                                            var result = Gather_Util.PlanBuffs(level, gp, integrity, gatherChance, boonChance, amount, autoProfile, goalItem.GatherAmount);
+                                            SelectedProfile = result.Profile;
+                                        }
+
+                                        if (CheckGatheringBuffs(gather))
+                                            return false;
+                                    }
                                 }
 
                                 goalItem.Gather();
@@ -465,6 +537,10 @@ namespace GatherChill.Scheduler.Tasks
                             return false;
                         }
                     }
+                    else if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
+                    {
+                        yesNo.Yes();
+                    }
                     else
                     {
                         SelectedProfile = null;
@@ -487,6 +563,11 @@ namespace GatherChill.Scheduler.Tasks
             else
             {
                 UpdateHiddenUse();
+                if (Gather_Util.Sheet_RouteInfo[routeId].Kind is GatherNodeKind.Unspoiled or GatherNodeKind.Legendary)
+                {
+                    Gather_Helper.GatheredTimedRoutes.Add(routeId);
+                }
+
                 return true;
             }
 
@@ -662,7 +743,7 @@ namespace GatherChill.Scheduler.Tasks
             if (MaxDurability)
             {
                 var cooldown = BuffCooldown(givingLand.ClassAction[job].ActionId);
-                if (cooldown < 40)
+                if (cooldown < C.CrystalBuff_HoldGP)
                 {
                     // We're within possible range of using the skill, need to see if it's actually 0, if yes then we can buff, if not then we continue onwards.
                     if (cooldown == 0)
