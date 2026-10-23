@@ -88,7 +88,7 @@ public sealed class GatherChill : IDalamudPlugin
             Open plugin interface
             /gatherchill start - Starts running list
             /gatherchill stop - Stops plugin
-
+            /gatherchill overlay - opens the overlay
             /forager - other option
             """);
         EzCmd.Add("/forager", OnCommand);
