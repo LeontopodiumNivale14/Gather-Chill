@@ -10,7 +10,7 @@
         Gather = 3,
     }
 
-    internal enum GatherMode
+    internal enum GatherType
     {
         Normal = 0,
         Ephemeral = 1,

@@ -23,7 +23,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
         public static void Draw()
         {
-            var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+            using var colors = ImGui_Ice.PushChildBG();
 
             using (var child = ImRaii.Child("Route Editor Tab", default, true))
             {

@@ -41,7 +41,7 @@ internal class Table_Items
 
         public ItemTable(List<GatherItems> itemList)
         {
-            List<Column<GatherItems>> headers = [_id, _itemName, _level, _nodeTypes, _folklore, _uptime, _reducableItems];
+            List<Column<GatherItems>> headers = [_itemName, _level, _nodeTypes, _folklore, _uptime, _reducableItems, _id];
             Id = "ItemInfo_V1";
             Columns = headers;
             Rows = itemList;
@@ -491,7 +491,7 @@ internal class Table_Items
             if (row.TimeSlot.Count == 0)
                 return UptimeEnum.Always;
 
-            return UpFor(row) is not null ? UptimeEnum.Currently : UptimeEnum.Unavailable;
+            return Gather_Util.UptimeHelper.IsUp(row.TimeSlot) ? UptimeEnum.Currently : UptimeEnum.Unavailable;
         }
 
         // Filter: show the row if its current state is one of the selected flags.
@@ -509,7 +509,7 @@ internal class Table_Items
         // Sort: Always -> Currently -> Unavailable
         // then by the most useful countdown within a state.
         // (so shorted being first, then next longest... ect)
-        // Then by level -> stars -> itemIds... sheesh. I really hate myself don't I
+        // Then by level -> stars -> itemIds
         public override int Compare(GatherItems a, GatherItems b)
         {
             var stateA = GetState(a);
@@ -549,153 +549,13 @@ internal class Table_Items
         {
             return state switch
             {
-                UptimeEnum.Currently => UpFor(row) ?? TimeSpan.Zero,
-                UptimeEnum.Unavailable => NextUptime(row) ?? TimeSpan.MaxValue,
+                UptimeEnum.Currently => Gather_Util.UptimeHelper.UpFor(row.TimeSlot) ?? TimeSpan.Zero,
+                UptimeEnum.Unavailable => Gather_Util.UptimeHelper.NextUptime(row.TimeSlot) ?? TimeSpan.MaxValue,
                 _ => TimeSpan.Zero,
             };
         }
 
-        public override void DrawColumn(GatherItems row)
-        {
-            ImGui.AlignTextToFramePadding();
-            if (row.TimeSlot.Count == 0)
-            {
-                using (var disabled = ImRaii.Disabled(true))
-                    ImGui.Text("Always");
-            }
-            else
-            {
-                if (UpFor(row) is { } upFor)
-                {
-                    ImGui.Button($"Up for: {FormatCountdown(upFor)}");
-                }
-                else if (NextUptime(row) is { } next)
-                {
-                    var style = ImGui.GetStyle();
-                    var disabledText = style.Colors[(int)ImGuiCol.TextDisabled];
-                    var button = style.Colors[(int)ImGuiCol.Button];
-
-                    using var colors = ImRaii.PushColor(ImGuiCol.Button, button with { W = button.W * 0.5f })
-                                             .Push(ImGuiCol.ButtonHovered, button with { W = button.W * 0.5f })
-                                             .Push(ImGuiCol.ButtonActive, button with { W = button.W * 0.5f });
-
-                    ImGui.Button($"Next Uptime: {FormatCountdown(next)}");
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    var slots = GetUpcoming(row);
-                    if (slots.Count != 0)
-                    {
-                        using (var tooltip = ImRaii.Tooltip())
-                        {
-                            if (tooltip.Alive)
-                            {
-                                DrawUpcoming(slots);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        private static string FormatCountdown(TimeSpan span)
-        {
-            if (span.TotalHours >= 1)
-                return $"{(int)span.TotalHours}h {span.Minutes}m";
-
-            return $"{span.Minutes}m {span.Seconds}s";
-        }
-        private static TimeSpan? UpFor(GatherItems row)
-        {
-            if (row.TimeSlot.Count == 0)
-                return null;
-
-            var remaining = row.TimeSlot.Max(w => w.TimeUntilEnd());
-            return remaining > TimeSpan.Zero ? remaining : null;
-        }
-        private static TimeSpan? NextUptime(GatherItems row)
-        {
-            if (row.TimeSlot.Count == 0)
-                return null;
-
-            return row.TimeSlot.Min(w => w.TimeUntilStart());
-        }
-        private readonly record struct UpcomingSlot(EorzeaTimeWindow Window, DateTime Start, DateTime End, bool IsUp);
-        private static List<UpcomingSlot> GetUpcoming(GatherItems row, int count = 5)
-        {
-            var now = DateTime.Now;
-            var eorzeaDay = Utils.EorzeaMinutesToReal(Utils.EorzeaMinutesPerDay);
-            var slots = new List<UpcomingSlot>();
-
-            foreach (var window in row.TimeSlot)
-            {
-                var isUp = window.IsUp();
-
-                // First occurrence: currently running, or the next one to open.
-                var start = isUp
-                    ? now - (window.DurationReal - window.TimeUntilEnd())
-                    : now + window.TimeUntilStart();
-
-                // Enough repeats of each window that we can't run out before hitting `count`.
-                for (var i = 0; i < count; i++)
-                {
-                    var slotStart = start + eorzeaDay * i;
-                    slots.Add(new(window, slotStart, slotStart + window.DurationReal, isUp && i == 0));
-                }
-            }
-
-            return slots.OrderBy(s => s.Start).Take(count).ToList();
-        }
-        private static void DrawUpcoming(List<UpcomingSlot> slots)
-        {
-            ImGui.TextUnformatted("Upcoming uptimes");
-            ImGui.Separator();
-
-            using (var table = ImRaii.Table("##UpcomingUptimes", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
-            {
-                if (!table.Success)
-                    return;
-
-                ImGui.TableSetupColumn("Status");
-                ImGui.TableSetupColumn("Local");
-                ImGui.TableSetupColumn("Eorzea");
-                ImGui.TableSetupColumn("Duration");
-                ImGui.TableHeadersRow();
-
-                var now = DateTime.Now;
-                var dim = ImGui.GetStyle().Colors[(int)ImGuiCol.TextDisabled];
-
-                for (var i = 0; i < slots.Count; i++)
-                {
-                    var slot = slots[i];
-
-                    ImGui.TableNextRow();
-
-                    // Later rows fade a little so the eye lands on what's next.
-                    var fade = slot.IsUp ? 1f : Math.Max(0.55f, 1f - i * 0.1f);
-                    using var color = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] with { W = fade });
-
-                    // Status
-                    ImGui.TableNextColumn();
-                    if (slot.IsUp)
-                        ImGui.TextColored(new Vector4(0.4f, 0.9f, 0.4f, 1f), $"Up ({FormatCountdown(slot.End - now)} left)");
-                    else
-                        ImGui.Text($"in {FormatCountdown(slot.Start - now)}");
-
-                    // Local
-                    ImGui.TableNextColumn();
-                    ImGui.Text($"{slot.Start:t} – {slot.End:t}");
-
-                    // Eorzea
-                    ImGui.TableNextColumn();
-                    ImGui.Text(slot.Window.ToString());
-
-                    // Duration
-                    ImGui.TableNextColumn();
-                    ImGui.Text(FormatCountdown(slot.Window.DurationReal));
-                }
-            }
-        }
-
+        public override void DrawColumn(GatherItems row) => Gather_Util.UptimeHelper.Draw(row.TimeSlot, "Always");
     }
     public sealed class Type : ColumnFlags<NodeTypes, GatherItems>
     {

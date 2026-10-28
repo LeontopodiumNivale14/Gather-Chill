@@ -55,12 +55,6 @@ namespace GatherChill.Ui
                 Label = "Item Viewer",
                 Draw = () => Item_Menu.Draw()
             },
-            [WindowSelection.Reducables] = new()
-            {
-                Icon = FontAwesomeIcon.FlaskVial,
-                Label = "Reducables",
-                Draw = () => ReducableViewer.Draw()
-            },
             [WindowSelection.GatherList] = new()
             {
                 Icon = FontAwesomeIcon.PlayCircle,
@@ -71,7 +65,7 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.Save,
                 Label = "Saved List",
-                Draw = () => { }
+                Draw = () => SavedList.Draw(),
             },
             [WindowSelection.Settings] = new()
             {
@@ -79,13 +73,19 @@ namespace GatherChill.Ui
                 Label = "Settings",
                 Draw = () => SettingsUi.Draw()
             },
-            [WindowSelection.GatherProfiles] = new()
+            [WindowSelection.Gatherbuffs] = new()
             {
                 Icon = FontAwesomeIcon.UserCog,
-                Label = "Gather Profiles",
+                Label = "Gather Buffs",
                 Draw = () => GatherBuffs_Tab.Draw()
             },
-            [WindowSelection.RouteViewer] = new()
+            [WindowSelection.Reducables] = new()
+            {
+                Icon = FontAwesomeIcon.FlaskVial,
+                Label = "Reducables",
+                Draw = () => ReducableViewer.Draw()
+            },
+            [WindowSelection.GatherLog] = new()
             {
                 Icon = FontAwesomeIcon.Book,
                 Label = "Gather Logs",
@@ -101,7 +101,7 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.Clipboard,
                 Label = "Logs",
-                Draw = () => { }
+                Draw = () => LogsWindow.Draw()
             }
         };
 
@@ -110,7 +110,7 @@ namespace GatherChill.Ui
         /// </summary>
         public override void Draw()
         {
-            using var colors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.Header, Theme_Colors.HeaderBg) : default;
+            using var colors = ImGui_Ice.PushChildBG();
             if (C.UseIceTheme)
             {
                 colors.Push(ImGuiCol.HeaderHovered, Theme_Colors.HeaderHovered);
@@ -145,7 +145,7 @@ namespace GatherChill.Ui
             // var compact = ImGui.GetContentRegionAvail().X < (500 * scale); 
             var compact = false;
 
-            using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+            using var colors = ImGui_Ice.PushChildBG();
 
             using (var sidebarSelection = ImRaii.Child("CL_SidebarSelection", new(scaledWidth, height), true))
             {

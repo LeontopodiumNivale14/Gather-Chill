@@ -1,5 +1,6 @@
 ﻿using ECommons.GameHelpers;
 using ECommons.Throttlers;
+using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
@@ -20,7 +21,7 @@ namespace GatherChill.Scheduler
 
         public static SelectedRoute GatherRoute = new();
         public static IceState State = IceState.Idle;
-        public static GatherMode gatherMode = GatherMode.Normal;
+        public static GatherType gatherMode = GatherType.Normal;
 
         public class ProgressInfo
         {
@@ -29,23 +30,65 @@ namespace GatherChill.Scheduler
             // Inventory count when the gather started (e.g. 150). Set once.
             public int StartInventory { get; set; } = 0;
 
-            public int Remaining
+            // Gather goal when the gather started. Set once. Unused in Keep mode.
+            public int GatherTarget { get; set; } = 0;
+
+            private Config.ItemInfo? Info
             {
                 get
                 {
                     foreach (var info in C.GatherList)
                     {
                         if (info.ItemId == ItemId)
-                            return Math.Max(info.GatherAmount, 0);
+                            return info;
                     }
 
-                    return 0;
+                    return null;
                 }
             }
+
+            public GatherMode Mode => Info?.Mode ?? GatherMode.Gather;
 
             public int Current => Utils.GetItemCount(ItemId);
 
             public int Gathered => Math.Max(Current - StartInventory, 0);
+
+            // The overall goal, for display ("x / Target").
+            public int Target
+            {
+                get
+                {
+                    var info = Info;
+                    if (info == null)
+                        return 0;
+
+                    if (info.Mode == GatherMode.Keep)
+                        return Math.Max(info.KeepAmount, 0);
+
+                    return Math.Max(GatherTarget, 0);
+                }
+            }
+
+            // What the overlay shows on the left of "x / Target".
+            public int Progress => Mode == GatherMode.Keep ? Current : Gathered;
+
+            // How many more are needed.
+            public int Remaining => Math.Max(Target - Progress, 0);
+
+            // 0..1 for progress bars.
+            public float Fraction
+            {
+                get
+                {
+                    var target = Target;
+                    if (target <= 0)
+                        return 1f;
+
+                    return Math.Clamp((float)Progress / target, 0f, 1f);
+                }
+            }
+
+            public bool IsComplete => Remaining == 0;
         }
 
         public static List<ProgressInfo> ItemProgress = new();
@@ -82,7 +125,12 @@ namespace GatherChill.Scheduler
             var visited = new HashSet<uint>();
             TimeSpan? soonest = null;
 
-            foreach (var item in C.GatherList.Where(x => x.GatherAmount != 0))
+            var itemList = C.GatherList.Where(x =>
+                (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
+                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                .ToList();
+
+            foreach (var item in itemList)
             {
                 if (!C.ItemRoutes.TryGetValue(item.ItemId, out var itemRoute))
                     continue;

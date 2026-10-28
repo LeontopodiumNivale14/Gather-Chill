@@ -892,6 +892,67 @@ public static partial class TravelUtil
             MoveTo = new(38.60f, 20.30f, -675.33f),
         },
 
+        // ARR
+
+        #region Gridania
+
+        // North
+        [7] = new()
+        {
+            ShardId = 7,
+            TerritoryId = 154,
+            ValidTerritories = new() { 154 },
+            Position = new(-41.58f, -38.56f, 233.75f),
+            MoveTo = new(-40.12f, -39.26f, 229.54f),
+        },
+
+
+        #endregion
+
+        #region Limsa
+
+        // Middle la Noscea
+        [52] = new()
+        {
+            ShardId = 52,
+            TerritoryId = 134,
+            ValidTerritories = new() { 134 },
+            Position = new(227.98f, 115.53f, -257.04f),
+            MoveTo = new(225.18f, 113.92f, -256.50f),
+        },
+
+        // Upper La Noscea
+        [15] = new()
+        {
+            ShardId = 15,
+            TerritoryId = 139,
+            ValidTerritories = new() { 139 },
+            Position = new(437.43f, 5.51f, 94.59f),
+            MoveTo = new(433.38f, 3.61f, 92.80f),
+        },
+
+
+        #endregion
+
+        #region Thanalan
+
+        // Central
+        [53] = new()
+        {
+            ShardId = 53,
+            TerritoryId = 141,
+            ValidTerritories = new() { 141 },
+            Position = new(-16.16f, 0.32f, -166.58f),
+            MoveTo = new(-17.11f, -1.88f, -162.74f),
+        },
+
+
+
+
+        #endregion
+
+        // HW
+
         #region Coerthas Western Highlands
 
         [71] = new()

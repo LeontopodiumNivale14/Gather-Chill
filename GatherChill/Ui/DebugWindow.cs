@@ -56,7 +56,7 @@ internal class DebugWindow : Window
 
     public override void Draw()
     {
-        using var colors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.Header, Theme_Colors.HeaderBg) : default;
+        using var colors = ImGui_Ice.PushChildBG();
         if (C.UseIceTheme)
         {
             colors.Push(ImGuiCol.HeaderHovered, Theme_Colors.HeaderHovered);
@@ -82,7 +82,7 @@ internal class DebugWindow : Window
 
     private static void ElementSelector()
     {
-        using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+        using var colors = ImGui_Ice.PushChildBG();
         var width = 200f * ImGuiHelpers.GlobalScale;
 
         using (var child = ImRaii.Child("Debug Selector##DebugSelector_ChilledLeves", new(width, ImGui.GetContentRegionAvail().Y), true))
@@ -105,7 +105,7 @@ internal class DebugWindow : Window
 
     private static void DebugViewer()
     {
-        using var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+        using var colors = ImGui_Ice.PushChildBG();
         using (var child = ImRaii.Child("Debug Viewer Tab##DebugViewTabDetails", ImGui.GetContentRegionAvail(), true))
         {
             if (!child.Success)

@@ -17,8 +17,16 @@ namespace GatherChill.Ui.Tabs_MainWindow
     internal class GatherPlaylist
     {
         private static float _modeWindow = 100f;
-        private static Table_GatherPlaylist.GatherPlaylistTable? _gatherTable;
-        private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _gatherDragDrop = new("GatherItemOrder", id => id.ItemId.ToString());
+
+        private static readonly List<Config.ItemInfo> _normalItems = new();
+        private static readonly List<Config.ItemInfo> _timedItems = new();
+
+        private static Table_GatherPlaylist.GatherPlaylistTable? _normalTable;
+        private static Table_GatherPlaylist.GatherPlaylistTable? _timedTable;
+
+        // Keeping these separate. Partially because I want to still let users set a priority for timed nodes. And don't wanna fuck with timed vs not 
+        private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _normalDragDrop = new("GatherItemOrder_Normal", id => id.ItemId.ToString());
+        private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _timedDragDrop = new("GatherItemOrder_Timed", id => id.ItemId.ToString());
 
         public static void Draw()
         {
@@ -27,7 +35,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                 if (!child.Success)
                     return;
 
-                var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+                using var colors = ImGui_Ice.PushChildBG();
 
                 var rightColumnAvail = ImGui.GetContentRegionAvail();
                 float availWidth = rightColumnAvail.X;
@@ -55,9 +63,17 @@ namespace GatherChill.Ui.Tabs_MainWindow
                     if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Trash, "Clear All", canClear))
                         ImGui.OpenPopup(ClearAllPopupId);
 
-                    // Must be drawn in the same ID scope as the buttons above
+                    ImGui.SameLine();
+                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Save, "Save List"))
+                    {
+                        _listName = string.Empty;
+                        _listDescription = string.Empty;
+                        ImGui.OpenPopup(SavePopupID);
+                    }
+
                     DrawItemPicker();
                     DrawClearAllPopup();
+                    SavePopup();
 
                     _modeWindow = ImGui.GetCursorPosY() + ImGui.GetStyle().WindowPadding.Y;
                 }
@@ -67,48 +83,87 @@ namespace GatherChill.Ui.Tabs_MainWindow
                     if (!child_Table.Success)
                         return;
 
-                    var gatherList = C.GatherList;
-                    if (gatherList.Count == 0)
+                    if (C.GatherList.Count == 0)
                     {
                         ImGui.TextDisabled("We have no items to gather... sadge. Please add some?");
                         return;
                     }
 
-                    _gatherTable ??= new(gatherList, _gatherDragDrop, RouteSelector_OpenPopup);
-                    _gatherTable.Refresh();
+                    RebuildPartitions();
 
-                    _gatherDragDrop.Begin();
-                    _gatherTable.Draw();
+                    DrawItemTable("Gather in order", _normalItems, ref _normalTable, _normalDragDrop, timed: false);
+                    ImGui.Spacing();
+                    DrawItemTable("Timed nodes (gathered when up)", _timedItems, ref _timedTable, _timedDragDrop, timed: true);
 
-                    if (_gatherTable.ItemToRemove is { } itemToRemove)
-                    {
-                        gatherList.Remove(itemToRemove);
-                        C.SaveDebounced();
-                        _gatherTable.ItemToRemove = null;
-                    }
-
-                    _gatherDragDrop.End();
+                    SyncOrder();
                 }
 
                 RouteSelector_Popup();
             }
         }
 
-        private static List<Config.ItemInfo> NodeList(bool timed)
+        // Matches the route popup: normal routes win if both exist
+        private static bool IsTimedItem(uint itemId)
         {
-            var result = new List<Config.ItemInfo>();
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(itemId, out var info))
+                return false;
+
+            return info.NormalRoutes.Count == 0 && info.TimedRoutes.Count > 0;
+        }
+
+        private static void RebuildPartitions()
+        {
+            _normalItems.Clear();
+            _timedItems.Clear();
+
             foreach (var item in C.GatherList)
             {
-                if (!Gather_Util.Sheet_ItemInfo.TryGetValue(item.ItemId, out var itemInfo))
-                    continue;
-
-                var routeCount = timed ? itemInfo.TimedRoutes.Count : itemInfo.NormalRoutes.Count;
-                if (routeCount == 0)
-                    continue;
-
-                result.Add(item);
+                if (IsTimedItem(item.ItemId))
+                    _timedItems.Add(item);
+                else
+                    _normalItems.Add(item);
             }
-            return result;
+        }
+
+        // Doing this so I can keep the normal items -> timed items in order
+        // If I don't, then it's going to get messy with the list...
+        private static void SyncOrder()
+        {
+            var merged = _normalItems.Concat(_timedItems).ToList();
+            if (merged.SequenceEqual(C.GatherList))
+                return;
+
+            C.GatherList.Clear();
+            C.GatherList.AddRange(merged);
+            C.SaveDebounced();
+        }
+
+        private static void DrawItemTable(string header, List<Config.ItemInfo> items, ref Table_GatherPlaylist.GatherPlaylistTable? table, ImGuiEx.RealtimeDragDrop<Config.ItemInfo> dragDrop, bool timed)
+        {
+            ImGui.TextUnformatted(header);
+
+            if (items.Count == 0)
+            {
+                ImGui.TextDisabled("Nothing here.");
+                return;
+            }
+
+            table ??= new(items, dragDrop, RouteSelector_OpenPopup, timed);
+            table.Refresh();
+
+            dragDrop.Begin();
+            table.Draw();
+
+            if (table.ItemToRemove is { } itemToRemove)
+            {
+                // Remove from the sub-list too, otherwise SyncOrder would write it back this frame
+                items.Remove(itemToRemove);
+                C.GatherList.Remove(itemToRemove);
+                C.SaveDebounced();
+                table.ItemToRemove = null;
+            }
+
+            dragDrop.End();
         }
 
         #region Route Selector Popup
@@ -472,6 +527,34 @@ namespace GatherChill.Ui.Tabs_MainWindow
             ImGui.SameLine();
             if (ImGui.Button("Cancel"))
                 ImGui.CloseCurrentPopup();
+        }
+
+        #endregion
+
+        #region Save Gather List
+
+        private static string _listName = string.Empty;
+        private static string _listDescription = string.Empty;
+        private static readonly string SavePopupID = "Save new gather list popup";
+
+        private static void SavePopup()
+        {
+            using (var popup = ImRaii.Popup(SavePopupID))
+            {
+                if (!popup.Success)
+                    return;
+
+                ImGui.InputText("List Name", ref _listName);
+                ImGui.InputTextMultiline("Description", ref _listDescription, 3000);
+                using (ImRaii.Disabled(_listName == string.Empty))
+                {
+                    if (ImGui.Button("Save new Gather List"))
+                    {
+                        C.SaveNewGatherList(_listName, _listDescription);
+                        ImGui.CloseCurrentPopup();
+                    }
+                }
+            }
         }
 
         #endregion

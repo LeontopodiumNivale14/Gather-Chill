@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GatherChill.Enums;
+using System.Collections.Generic;
 
 namespace GatherChill.ConfigFiles;
 
@@ -8,6 +9,8 @@ public partial class Config
     {
         public uint ItemId { get; set; } = 0;
         public int GatherAmount { get; set; } = 1;
+        public int KeepAmount { get; set; } = 1;
+        public GatherMode Mode { get; set; } = GatherMode.Gather;
     }
 
     public class RouteSelection

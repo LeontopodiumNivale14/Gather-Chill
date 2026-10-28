@@ -77,9 +77,6 @@ internal class GatheringOverlay : Window
 
     // Place to keep all the helpers for all the windows in a nice little spot
 
-    // I honestly keep using this... but part of me things that I should just throw this in my helper
-    private static ImRaii.ColorDisposable PushPanelBg() => C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
-
     // Shortens text with "..." until it fits maxWidth
     private static string Truncate(string text, float maxWidth)
     {
@@ -132,7 +129,7 @@ internal class GatheringOverlay : Window
 
     private static void CurrentItem()
     {
-        using var bg = PushPanelBg();
+        using var colors = ImGui_Ice.PushChildBG();
         using var itemMenu = ImRaii.Child("Gather & Chill: Overlay Menu", new(ImGui.GetContentRegionAvail().X, GetItemHeight()), true, NoScroll);
         if (!itemMenu.Success)
             return;
@@ -226,13 +223,13 @@ internal class GatheringOverlay : Window
 
     private static void GPBar(float rowHeight)
     {
-        using var bg = PushPanelBg();
+        using var colors = ImGui_Ice.PushChildBG();
         ImGui_Ice.VerticalBar("GP", Utils.GetGp(), Utils.MaxGp(), framed: true, totalHeight: rowHeight);
     }
 
     private static void ItemProgressWindow()
     {
-        using var bg = PushPanelBg();
+        using var colors = ImGui_Ice.PushChildBG();
 
         // Fixed height, full width of the container
         using var child = ImRaii.Child("Item Progress Bar", new(ImGui.GetContentRegionAvail().X, GetProgressHeight()), true, NoScroll);
@@ -244,13 +241,15 @@ internal class GatheringOverlay : Window
         if (progress == null)
             return;
 
-        // Read once so the bar and the numbers can't disagree within a frame
-        var gathered = progress.Gathered;
-        var total = gathered + progress.Remaining;
+        var total = progress.Target;
         if (total <= 0)
             return;
 
-        Draw_XPBar(gathered, total, "Progress");
+        // Keep: current inventory. Gather: gathered this run.
+        var current = Math.Min(progress.Progress, total);
+
+        var label = progress.Mode == GatherMode.Keep ? "Keep" : "Progress";
+        Draw_XPBar(current, total, label);
     }
 
     #region Next / Then Items
@@ -370,7 +369,7 @@ internal class GatheringOverlay : Window
 
     private static void DrawUpcomingChild(string id, string label, uint? itemId, Vector2 size)
     {
-        using var bg = PushPanelBg();
+        using var colors = ImGui_Ice.PushChildBG();
         using var child = ImRaii.Child(id, size, true, NoScroll);
         if (!child.Success)
             return;

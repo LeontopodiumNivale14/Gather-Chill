@@ -6,6 +6,8 @@ namespace GatherChill.Gui
 {
     internal class ImGui_Ice
     {
+        public static ImRaii.ColorDisposable? PushChildBG() => C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+
         // Typically I JUST need the icon + string in the sameline,
         // so this works for me to throw the text -> Icon
         public static void Icon(FontAwesomeIcon icon, string? s = null)

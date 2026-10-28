@@ -9,9 +9,9 @@ public enum WindowSelection
 
 
     Settings = 25,
-    GatherProfiles = 26,
+    Gatherbuffs = 26,
 
-    RouteViewer = 50,
+    GatherLog = 50,
     RouteEditor = 51,
 
 

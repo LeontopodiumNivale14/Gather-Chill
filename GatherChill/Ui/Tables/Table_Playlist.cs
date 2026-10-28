@@ -1,11 +1,14 @@
 ﻿using Dalamud.Game.Text;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using GatherChill.ConfigFiles;
+using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Gui.ImGuiTable;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
+using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Ui.Tables;
 
@@ -15,24 +18,30 @@ internal class Table_GatherPlaylist
     {
         public Config.ItemInfo? ItemToRemove { get; set; }
 
-        public GatherPlaylistTable(List<Config.ItemInfo> items, ImGuiEx.RealtimeDragDrop<Config.ItemInfo> dragDrop, Action<uint> openRoutePopup)
+        public GatherPlaylistTable(List<Config.ItemInfo> items, ImGuiEx.RealtimeDragDrop<Config.ItemInfo> dragDrop, Action<uint> openRoutePopup, bool timed)
         {
-            Id = "GatherPlaylist_V1";
+            Id = timed ? "GatherPlaylist_Timed_V1" : "GatherPlaylist_V1";
             Sortable = false;
             ScrollFreezeCols = 0;
 
             Flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable;
 
-            Columns =
-            [
+            var columns = new List<Column<Config.ItemInfo>>
+            {
                 new OrderColumn(dragDrop, items),
                 new ItemColumn(),
+                new GatherModeColumn(),
                 new GatherAmountColumn(),
                 new HaveColumn(),
-                new RoutesColumn(openRoutePopup),
-                new RemoveColumn(item => ItemToRemove = item),
-            ];
+            };
 
+            if (timed)
+                columns.Add(new UptimeColumn());
+
+            columns.Add(new RoutesColumn(openRoutePopup));
+            columns.Add(new RemoveColumn(item => ItemToRemove = item));
+
+            Columns = [.. columns];
             Rows = items;
         }
 
@@ -97,23 +106,72 @@ internal class Table_GatherPlaylist
         }
     }
 
+    public sealed class GatherModeColumn : Column<Config.ItemInfo>
+    {
+        private static readonly string[] ModeNames = Enum.GetNames<GatherMode>();
+
+        public GatherModeColumn()
+        {
+            Label = "Mode";
+
+            var textWidth = 0f;
+            foreach (var name in ModeNames)
+                textWidth = Math.Max(textWidth, ImGui.CalcTextSize(name).X);
+
+            var style = ImGui.GetStyle();
+            var comboWidth = textWidth + style.FramePadding.X * 2 + ImGui.GetFrameHeight();
+
+            SetFixedWidth(comboWidth + style.CellPadding.X * 2);
+            Flags = ImGuiTableColumnFlags.WidthFixed;
+        }
+
+        public override void DrawColumn(Config.ItemInfo row)
+        {
+            ImGui.SetNextItemWidth(-1);
+            using var combo = ImRaii.Combo("##GatherMode", row.Mode.ToString());
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Gather: collect this many more.\nKeep: gather until your inventory holds this many.");
+
+            if (!combo.Success)
+                return;
+
+            foreach (var mode in Enum.GetValues<GatherMode>())
+            {
+                if (!ImGui.Selectable(mode.ToString(), row.Mode == mode))
+                    continue;
+
+                row.Mode = mode;
+                C.SaveDebounced();
+            }
+        }
+    }
+
     public sealed class GatherAmountColumn : Column<Config.ItemInfo>
     {
         public GatherAmountColumn()
         {
-            Label = "Gather";
+            Label = "Amount";
             SetFixedWidth(110 * ImGuiHelpers.GlobalScale);
             Flags = ImGuiTableColumnFlags.WidthFixed;
         }
 
         public override void DrawColumn(Config.ItemInfo row)
         {
-            var amount = row.GatherAmount;
-            ImGui.SetNextItemWidth(100);
-            if (!ImGui.InputInt("##GatherAmount", ref amount, 1, 10))
+            var isKeep = row.Mode == GatherMode.Keep;
+            var amount = isKeep ? row.KeepAmount : row.GatherAmount;
+
+            ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
+            if (!ImGui.InputInt("##Amount", ref amount, 1, 10))
                 return;
 
-            row.GatherAmount = amount;
+            // Clamping this so a user can't go negative (I know there is people that will
+            amount = Math.Max(amount, 0);
+
+            if (isKeep)
+                row.KeepAmount = amount;
+            else
+                row.GatherAmount = amount;
+
             C.SaveDebounced();
         }
     }
@@ -180,6 +238,22 @@ internal class Table_GatherPlaylist
                 ImGui.Text("We don't have an aetheryte for this currently set, so you'll need to tp here yourself");
                 ImGui.EndTooltip();
             }
+        }
+    }
+
+    public sealed class UptimeColumn : Column<Config.ItemInfo>
+    {
+        public UptimeColumn()
+        {
+            Label = "Uptime";
+            SetFixedWidth(170 * ImGuiHelpers.GlobalScale);
+            Flags = ImGuiTableColumnFlags.WidthFixed;
+        }
+
+        public override void DrawColumn(Config.ItemInfo row)
+        {
+            var windows = Gather_Util.UptimeHelper.GetEnabledWindows(row.ItemId);
+            Gather_Util.UptimeHelper.Draw(windows, "No routes enabled");
         }
     }
 

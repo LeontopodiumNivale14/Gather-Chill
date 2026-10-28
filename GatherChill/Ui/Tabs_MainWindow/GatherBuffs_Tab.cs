@@ -21,7 +21,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
                 if (!child.Success)
                     return;
 
-                var childColors = C.UseIceTheme ? ImRaii.PushColor(ImGuiCol.ChildBg, Theme_Colors.ChildBg) : default;
+                using var colors = ImGui_Ice.PushChildBG();
                 var rightColumnAvail = ImGui.GetContentRegionAvail();
                 float availWidth = rightColumnAvail.X;
 

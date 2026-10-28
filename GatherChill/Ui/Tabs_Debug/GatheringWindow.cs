@@ -122,7 +122,68 @@ namespace GatherChill.Ui.Tabs_Debug
             }
             else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var collectable) && collectable.IsAddonReady)
             {
+                using (var table = ImRaii.Table("Gather Masterpiece Table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
+                {
+                    if (!table.Success)
+                        return;
 
+                    ImGui.TableSetupColumn("Label");
+                    ImGui.TableSetupColumn("Info");
+
+                    ImGui.TableHeadersRow();
+
+                    // Actual Table Info
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Item Name");
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextDisabled($"{collectable.ItemID}");
+                    ImGui.SameLine();
+                    ImGui.Text($"{collectable.ItemName}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text("Integrity");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.CurrentIntegrity} / {collectable.TotalIntegrity}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Current Collectability");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.CurrentCollectability:N0}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text("Low Goal");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.MinCollectability}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Mid Goal");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.MidCollectability}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"High Goal");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.HighCollectability}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Has Focus");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.HasFocus}");
+                }
             }
             else
             {

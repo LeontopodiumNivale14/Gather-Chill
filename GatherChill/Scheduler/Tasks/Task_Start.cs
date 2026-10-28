@@ -52,7 +52,9 @@ namespace GatherChill.Scheduler.Tasks
             {
                 foreach (var item in gathering.GatheredItems)
                 {
-                    var wanted = C.GatherList.Any(x => x.ItemId == item.ItemID && x.GatherAmount != 0);
+                    var wanted = C.GatherList.Any(x => 
+                        (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
+                        (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
                     if (!wanted)
                         continue;
 
@@ -75,7 +77,10 @@ namespace GatherChill.Scheduler.Tasks
 
             IceLogging.Verbose("Starting check list process", tag);
 
-            var itemList = C.GatherList.Where(x => x.GatherAmount != 0).ToList();
+            var itemList = C.GatherList.Where(x => 
+                (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
+                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                .ToList();
             Gather_Helper.ItemProgress.Clear();
 
             if (itemList.Count != 0)

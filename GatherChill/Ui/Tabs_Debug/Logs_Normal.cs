@@ -14,7 +14,7 @@ namespace GatherChill.Ui.Tabs_Debug
         {
             LogTable ??= new Table_logs.LogTable();
 
-            if (ImGui.Button("copy Logs"))
+            if (ImGui.Button("PRESS ME TO COPY TO CLIPBOARD"))
             {
                 IceLogging.LogSystem.CopyToClipboard();
             }

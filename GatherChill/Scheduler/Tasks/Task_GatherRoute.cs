@@ -390,13 +390,18 @@ namespace GatherChill.Scheduler.Tasks
             }
 
             var config = C.GatherList.Where(x => x.ItemId == itemId).FirstOrDefault();
+            bool exitLoop = false;
 
-            if (LastItemInfo.LastAmount != currentAmount)
+            if (config.Mode == GatherMode.Keep && currentAmount >= config.KeepAmount)
+            {
+                exitLoop = true;
+            }
+            else if (config.Mode == GatherMode.Gather && LastItemInfo.LastAmount != currentAmount)
             {
                 IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", tag);
                 var difference = currentAmount - LastItemInfo.LastAmount;
 
-                if (difference > 0)
+                if (difference > 0 && config.Mode is GatherMode.Gather)
                 {
                     config.GatherAmount = config.GatherAmount - difference;
                     if (config.GatherAmount < 0)
@@ -406,15 +411,27 @@ namespace GatherChill.Scheduler.Tasks
                 }
                 LastItemInfo.LastAmount = currentAmount;
 
-                if (config.GatherAmount == 0)
+                if (config.Mode == GatherMode.Gather && config.GatherAmount == 0)
+                {
+                    exitLoop = true;
+                }
+            }
+
+            if (exitLoop)
+            {
+                if (config.Mode == GatherMode.Keep)
+                {
+                    IceLogging.Debug("We've hit our keep amount, so we're going to restart back to the beginning", tag);
+                }
+                else if (config.Mode == GatherMode.Gather)
                 {
                     IceLogging.Debug("Gather Amount has hit 0, we're resetting back to start", tag);
-
-                    Gather_Helper.State = IceState.Start;
-                    P.TaskManager.Tasks.Clear();
-                    UpdateHiddenUse();
-                    return true;
                 }
+
+                Gather_Helper.State = IceState.Start;
+                P.TaskManager.Tasks.Clear();
+                UpdateGatherBuffs();
+                return true;
             }
 
             if (Svc.Condition[ConditionFlag.Gathering])
@@ -469,7 +486,7 @@ namespace GatherChill.Scheduler.Tasks
                             if (goalItem != null)
                             {
                                 // We found the item we're looking for, we can buff -> gather (if it's not a collectable)
-                                if (!Gather_Helper.ShouldHoldGpForTimedNode())
+                                if (!Gather_Helper.ShouldHoldGpForTimedNode() && !goalItem.IsCollectable)
                                 {
                                     if (Crystals.Contains(itemId))
                                     {
@@ -487,7 +504,7 @@ namespace GatherChill.Scheduler.Tasks
                                             var integrity = gather.CurrentIntegrity;
                                             var gatherChance = goalItem.GatherChance;
                                             var boonChance = goalItem.BoonChance;
-                                            var amount = config.GatherAmount;
+                                            var amount = config.Mode is GatherMode.Gather ? config.GatherAmount : config.KeepAmount - Utils.GetItemCount(goalItem.ItemID);
 
                                             var autoProfile = C.User_AutoProfile;
 
@@ -537,6 +554,40 @@ namespace GatherChill.Scheduler.Tasks
                             return false;
                         }
                     }
+                    else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var gatherMaster) && gatherMaster.IsAddonReady)
+                    {
+                        // Fresh state every tick: progression, integrity, GP and buffs all change after each action
+                        var state = Gather_Util.BuildState(gatherMaster, (int)gatherMaster.HighCollectability);
+
+                        // Preset is chosen once per node, from the GP we had when the window opened
+                        if (_collectablePreset == CollectablePreset.None)
+                        {
+                            var collectableId = gatherMaster.ItemID;
+                            bool isEphemeral = Gather_Util.ReducableItems.Any(x => x.ItemId == collectableId || x.SublimeItemId == collectableId);
+
+                            _collectablePreset = Gather_Util.CollectableSolver.ChoosePreset(state, isEphemeral);
+                            IceLogging.Debug($"Collectable preset chosen: {_collectablePreset} (GP: {state.AvailableGp}, Ephemeral: {isEphemeral})", tag);
+                        }
+
+                        var nextAction = Gather_Util.CollectableSolver.GetNextAction(_collectablePreset, state);
+                        if (nextAction is null)
+                        {
+                            if (EzThrottler.Throttle("Collectable no action"))
+                                IceLogging.Debug($"Solver returned no action | Prog: {state.Progression}/{state.TargetCollectability} | Att: {state.Attempts}/{state.MaxAttempts} | GP: {state.AvailableGp}", tag);
+                            return false;
+                        }
+
+                        var actionId = Gather_Util.CollectableSolver.GetActionId(nextAction.Value, Player.Job);
+                        if (actionId is null)
+                        {
+                            if (EzThrottler.Throttle("Collectable no action id"))
+                                IceLogging.Warning($"No action id for {nextAction.Value} on job {Player.Job}", tag);
+                            return false;
+                        }
+
+                        if (UseGatheringAction(actionId.Value))
+                            IceLogging.Verbose($"Collectable: {nextAction.Value} | Prog: {state.Progression} | Att: {state.Attempts}/{state.MaxAttempts} | GP: {state.AvailableGp} | Scrutiny: {state.HasScrutiny} | Standard: {state.HasCollectorStandard}", tag);
+                    }
                     else if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
                     {
                         yesNo.Yes();
@@ -562,7 +613,7 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
             {
-                UpdateHiddenUse();
+                UpdateGatherBuffs();
                 if (Gather_Util.Sheet_RouteInfo[routeId].Kind is GatherNodeKind.Unspoiled or GatherNodeKind.Legendary)
                 {
                     Gather_Helper.GatheredTimedRoutes.Add(routeId);
@@ -577,6 +628,7 @@ namespace GatherChill.Scheduler.Tasks
         private static bool HiddenUsed = false;
         private static bool _toggleHidden = false;
         private static GatherBuffId BuffCounter = GatherBuffId.Unknown;
+        private static CollectablePreset _collectablePreset = CollectablePreset.None;
         private static Dictionary<GatherBuffId, int> CurrentUse = new()
         {
             [GatherBuffId.BoonIncrease_1] = 0,
@@ -601,10 +653,12 @@ namespace GatherChill.Scheduler.Tasks
             [GatherBuffId.Meticulous] = 0,
         };
 
-        private static void UpdateHiddenUse()
+        private static void UpdateGatherBuffs()
         {
             HiddenUsed = false;
             _toggleHidden = false;
+            _collectablePreset = CollectablePreset.None;
+
             foreach (var buff in CurrentUse)
             {
                 CurrentUse[buff.Key] = 0;
