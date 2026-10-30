@@ -5,7 +5,6 @@ using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Scheduler.Tasks
@@ -52,7 +51,10 @@ namespace GatherChill.Scheduler.Tasks
             {
                 foreach (var item in gathering.GatheredItems)
                 {
-                    var wanted = Gather_Helper.IsTargeted(item.ItemID) && C.GatherList.Any(x =>
+                    if (!Gather_Helper.IsTargeted(item.ItemID))
+                        continue;
+
+                    var wanted = C.GatherList.Any(x =>
                         (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
                         (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
                     if (!wanted)
@@ -77,9 +79,10 @@ namespace GatherChill.Scheduler.Tasks
 
             IceLogging.Verbose("Starting check list process", tag);
 
-            var itemList = C.GatherList.Where(x => Gather_Helper.IsTargeted(x.ItemId) && (
+            var itemList = C.GatherList.Where(x =>
                 (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
-                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount)))
+                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                .Where(x => Gather_Helper.IsTargeted(x.ItemId))
                 .ToList();
             Gather_Helper.ItemProgress.Clear();
 

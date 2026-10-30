@@ -1,8 +1,5 @@
-using Dalamud.Game.ClientState.Conditions;
 using GatherChill.Enums;
 using GatherChill.Scheduler.Tasks;
-using GatherChill.Utilities;
-using GatherChill.Utilities.GatheringHelpers;
 
 namespace GatherChill.Scheduler
 {

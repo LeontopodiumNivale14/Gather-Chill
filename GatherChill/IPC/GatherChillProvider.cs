@@ -58,7 +58,10 @@ public class GatherChillProvider
     [EzIPC]
     public bool GatherItem(uint itemId, int amount)
     {
-        if (Gather_Helper.State != IceState.Idle || !GatherList_Util.CanGather(itemId) || !GatherList_Util.TryAdd(itemId, amount))
+        if (IsBusy())
+            return false;
+
+        if (!GatherList_Util.CanGather(itemId) || !GatherList_Util.TryAdd(itemId, amount))
             return false;
 
         C.Save();
