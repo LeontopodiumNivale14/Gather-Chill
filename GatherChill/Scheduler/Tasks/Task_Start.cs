@@ -52,7 +52,7 @@ namespace GatherChill.Scheduler.Tasks
             {
                 foreach (var item in gathering.GatheredItems)
                 {
-                    var wanted = C.GatherList.Any(x => 
+                    var wanted = Gather_Helper.IsTargeted(item.ItemID) && C.GatherList.Any(x =>
                         (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
                         (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
                     if (!wanted)
@@ -77,9 +77,9 @@ namespace GatherChill.Scheduler.Tasks
 
             IceLogging.Verbose("Starting check list process", tag);
 
-            var itemList = C.GatherList.Where(x => 
+            var itemList = C.GatherList.Where(x => Gather_Helper.IsTargeted(x.ItemId) && (
                 (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
-                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount)))
                 .ToList();
             Gather_Helper.ItemProgress.Clear();
 
@@ -191,6 +191,7 @@ namespace GatherChill.Scheduler.Tasks
 
                 IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
                 Gather_Helper.State = IceState.Idle;
+                Gather_Helper.OnlyItemId = 0;
                 return true;
             }
             

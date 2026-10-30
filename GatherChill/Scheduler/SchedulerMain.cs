@@ -16,6 +16,7 @@ namespace GatherChill.Scheduler
             P.navmesh.Stop();
 
             Gather_Helper.GatherRoute = new() { itemId = 0, routeId = 0};
+            Gather_Helper.OnlyItemId = 0;
 
         }
 

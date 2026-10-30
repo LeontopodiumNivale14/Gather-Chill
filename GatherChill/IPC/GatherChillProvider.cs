@@ -11,7 +11,7 @@ namespace GatherChill.IPC;
 /// </summary>
 public class GatherChillProvider
 {
-    private const int Version = 1;
+    private const int Version = 2;
 
     public GatherChillProvider() => EzIPC.Init(this, "GatherChill");
 
@@ -49,4 +49,27 @@ public class GatherChillProvider
 
         return count;
     }
+
+    /// <summary>
+    /// Starts gathering one item right away, ignoring the rest of the gather list. Stops once it's done.
+    /// The item is added to the list (an existing entry keeps the larger amount).
+    /// Returns false if Gather n Chill is busy or has no route for the item.
+    /// </summary>
+    [EzIPC]
+    public bool GatherItem(uint itemId, int amount)
+    {
+        if (Gather_Helper.State != IceState.Idle || !GatherList_Util.CanGather(itemId) || !GatherList_Util.TryAdd(itemId, amount))
+            return false;
+
+        C.Save();
+        Gather_Helper.OnlyItemId = GatherList_Util.ResolveGatherItemId(itemId);
+        Gather_Helper.State = IceState.Start;
+        return true;
+    }
+
+    /// <summary>
+    /// Stops gathering, same as the Stop button.
+    /// </summary>
+    [EzIPC]
+    public void Stop() => SchedulerMain.DisablePlugin();
 }
