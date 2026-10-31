@@ -35,9 +35,6 @@ namespace GatherChill.Scheduler.Tasks
                     yesNo.Yes();
             }
 
-            if (!GenericHelpers.TryGetAddonMaster<Gathering>(out var gathering) || !gathering.IsAddonReady)
-                return false;
-
             var target = Svc.Targets.Target;
             if (target == null)
                 return false;
@@ -49,26 +46,49 @@ namespace GatherChill.Scheduler.Tasks
 
             if (route != null)
             {
-                foreach (var item in gathering.GatheredItems)
+                if (GenericHelpers.TryGetAddonMaster<Gathering>(out var gathering) && gathering.IsAddonReady)
                 {
-                    if (!Gather_Helper.IsTargeted(item.ItemID))
-                        continue;
+                    foreach (var item in gathering.GatheredItems)
+                    {
+                        if (!Gather_Helper.IsTargeted(item.ItemID))
+                            continue;
 
-                    var wanted = C.GatherList.Any(x =>
-                        (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
-                        (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
-                    if (!wanted)
-                        continue;
+                        var wanted = C.GatherList.Any(x =>
+                            (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
+                            (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
+                        if (!wanted)
+                            continue;
 
-                    IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}");
-                    Gather_Helper.GatherRoute = new() { itemId = item.ItemID, routeId = route.Value.Key };
-                    Gather_Helper.State = IceState.Gather;
-                    return true;
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}");
+                        Gather_Helper.GatherRoute = new() { itemId = item.ItemID, routeId = route.Value.Key };
+                        Gather_Helper.State = IceState.Gather;
+                        return true;
+                    }
+
+                    // If we got this far, the item we need isn't here so we're just leaving
+                    if (EzThrottler.Throttle("Closing window"))
+                        Ecom_Handler.CloseWindow(gathering.Base);
+                }
+                else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var gatherMaster) && gatherMaster.IsAddonReady)
+                {
+                    var wanted = Gather_Helper.IsTargeted(gatherMaster.ItemID) && C.GatherList.Any(x =>
+                        (x.Mode == GatherMode.Gather && x.ItemId == gatherMaster.ItemID && x.GatherAmount != 0) ||
+                        (x.Mode == GatherMode.Keep && x.ItemId == gatherMaster.ItemID && Utils.GetItemCount(gatherMaster.ItemID) < x.KeepAmount));
+                    
+                    if (wanted)
+                    {
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {gatherMaster.ItemID}");
+                        Gather_Helper.GatherRoute = new() { itemId = gatherMaster.ItemID, routeId = route.Value.Key };
+                        Gather_Helper.State = IceState.Gather;
+                        return true;
+                    }
+                    else
+                    {
+                        if (EzThrottler.Throttle("Closing window"))
+                            Ecom_Handler.CloseWindow(gatherMaster.Base);
+                    }
                 }
             }
-
-            if (EzThrottler.Throttle("Closing window"))
-                Ecom_Handler.CloseWindow(gathering.Base);
 
             return false;
         }
@@ -142,9 +162,9 @@ namespace GatherChill.Scheduler.Tasks
                     // -> Once the timed route has passed it's slot, clear it from the recently gathered list
                     // -> Thay way, the route can be gathered at again
 
-                    if (Gather_Helper.AnyTimedNodes(out var currentlyUp))
+                    if (Gather_Helper.AnyTimedNodes(out var currentlyUp) && LegendaryItems.Any(x => currentlyUp.Contains(x.routeId)))
                     {
-                        IceLogging.Verbose("We currently have some timed routes that are up! Checking to make sure if any are legendary/not gathered...", tag);
+                        IceLogging.Verbose("We currently have some legendary timed routes that are up! Checking to make sure if any are legendary/not gathered...", tag);
                         foreach (var route in LegendaryItems.Where(x => currentlyUp.Contains(x.routeId)))
                         {
                             IceLogging.Verbose("We found a legendary item to gather! So we gonna just skip out of here and go do it", tag);
@@ -164,6 +184,19 @@ namespace GatherChill.Scheduler.Tasks
                     // First one we find, teleport -> Start gathering
                     // Might be worth making a setting to either reduce after X amount of items gathered, or do it between nodes....
                     // Decisions decisions tch
+
+                    if (Gather_Helper.AnyTimedNodes(out var currentlyUp) && EphemeralItems.Any(x => currentlyUp.Contains(x.routeId)))
+                    {
+                        IceLogging.Verbose("We have some items we need to desynth, so going to go gather some to desynth", tag);
+                        foreach (var route in EphemeralItems.Where(x => currentlyUp.Contains(x.routeId)))
+                        {
+                            IceLogging.Debug("We found a ephemerial item to gather -> desynth! So we're gonna get out of here and go gather that", tag);
+
+                            Gather_Helper.GatherRoute = route;
+                            Gather_Helper.State = IceState.Teleport;
+                            return true;
+                        }
+                    }
                 }
 
                 if (NormalItems.Count != 0)

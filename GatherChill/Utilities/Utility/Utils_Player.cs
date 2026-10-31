@@ -5,7 +5,9 @@ using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using GatherChill.Scheduler;
 using GatherChill.Utilities.Tools;
+using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 using static GatherChill.Ui.Tables.Table_Items;
 
@@ -123,6 +125,7 @@ public static partial class Utils
             return 0;
         }
     }
+    public static unsafe bool IsItemEquipped(uint ItemId) => InventoryManager.Instance()->GetItemCountInContainer(ItemId, InventoryType.EquippedItems) > 0;
     public unsafe static void TaskClassChange(Job job)
     {
         string tag = "Task: Equip Gearset";
@@ -156,5 +159,34 @@ public static partial class Utils
         if (EzThrottler.Throttle("No gearsets"))
             IceLogging.Verbose($"Hewwo. We have gotten thiws faw, which means thawt the geawset fow {job.ToString()} doesn't exist. Pwease make owne", tag);
         return;
+    }
+    public static unsafe void TaskEquipItem(uint itemId)
+    {
+        string tag = "Task: Equip Item";
+        var itemSheet = ExcelHelper.Sheet_Item[itemId];
+
+        var pos = FindItemInInventory(itemId, [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4, InventoryType.ArmoryMainHand, InventoryType.ArmoryHands]);
+        if (pos == null)
+        {
+            IceLogging.ChatError($"Failed to find the item: {itemSheet.Name} [ID: {itemId}] in inventory", tag);
+            SchedulerMain.DisablePlugin();
+        }
+
+        InventoryManager.Instance()->MoveItemSlot(pos.Value.inv, pos.Value.slot, InventoryType.EquippedItems, (ushort)(itemSheet.EquipSlotCategory.RowId - 1), true);
+    }
+    private static unsafe (InventoryType inv, ushort slot)? FindItemInInventory(uint ItemId, IEnumerable<InventoryType> inventories)
+    {
+        foreach (var inv in inventories)
+        {
+            var cont = InventoryManager.Instance()->GetInventoryContainer(inv);
+            for (ushort i = 0; i < cont->Size; ++i)
+            {
+                if (cont->GetInventorySlot(i)->ItemId == ItemId)
+                {
+                    return (inv, i);
+                }
+            }
+        }
+        return null;
     }
 }

@@ -183,6 +183,27 @@ namespace GatherChill.Ui.Tabs_Debug
 
                     ImGui.TableNextColumn();
                     ImGui.Text($"{collectable.HasFocus}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Meticulous Score");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.MeticulousPower}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Scour Score");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.ScourPower}");
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.Text($"Brazen Score Range");
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text($"{collectable.BrazenPowerMin} - {collectable.BrazenPowerMax}");
                 }
             }
             else

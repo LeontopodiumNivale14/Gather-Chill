@@ -188,7 +188,9 @@ namespace GatherChill.Ui.Tabs_Debug
             var popupId = $"ExpansionPopup_{rowIdx}";
             var expansion = entry.Expansion;
 
-            if (ImGui_Ice.ImageButtonWithText(Sheet_Expansion[expansion].IconId, expansion.ToString(), $"{entry.ItemId}_{entry.SublimeItemId}_Expansion"))
+            var iconId = Sheet_Expansion.TryGetValue(expansion, out var expInfo) ? expInfo.IconId : 0u;
+
+            if (ImGui_Ice.ImageButtonWithText(iconId, expansion.ToString(), $"{entry.ItemId}_{entry.SublimeItemId}_Expansion"))
                 ImGui.OpenPopup(popupId);
 
             DrawExpansionPickerPopup(popupId, selected =>
@@ -202,20 +204,32 @@ namespace GatherChill.Ui.Tabs_Debug
             if (!ImGui.BeginPopup(popupId))
                 return;
 
-            foreach (var exp in AllExpansions)
+            try
             {
-                ImGui.PushID($"ExpPick_{exp}");
-
-                if (ImGui_Ice.ImageButtonWithText(Sheet_Expansion[exp].IconId, exp.ToString(), string.Empty))
+                foreach (var exp in AllExpansions)
                 {
-                    onSelected(exp);
-                    ImGui.CloseCurrentPopup();
+                    if (!Sheet_Expansion.TryGetValue(exp, out var expInfo))
+                        continue;
+
+                    ImGui.PushID($"ExpPick_{exp}");
+                    try
+                    {
+                        if (ImGui_Ice.ImageButtonWithText(expInfo.IconId, exp.ToString(), string.Empty))
+                        {
+                            onSelected(exp);
+                            ImGui.CloseCurrentPopup();
+                        }
+                    }
+                    finally
+                    {
+                        ImGui.PopID();
+                    }
                 }
-
-                ImGui.PopID();
             }
-
-            ImGui.EndPopup();
+            finally
+            {
+                ImGui.EndPopup();
+            }
         }
 
         private static void DrawResultSlot(Gather_Util.ReduceInfo entry, int rowIdx, int slot)

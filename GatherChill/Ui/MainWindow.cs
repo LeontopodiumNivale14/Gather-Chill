@@ -125,6 +125,8 @@ namespace GatherChill.Ui
                 colors.Push(ImGuiCol.CheckMark, Theme_Colors.IceBlue);
                 colors.Push(ImGuiCol.Text, Theme_Colors.FrostWhite);
                 colors.Push(ImGuiCol.PopupBg, Theme_Colors.PopupBg);
+                colors.Push(ImGuiCol.Header, Theme_Colors.HeaderBg);
+                colors.Push(ImGuiCol.HeaderActive, Theme_Colors.HeaderActive);
             }
 
             using var style = C.UseIceTheme ? ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 4.0f) : default;

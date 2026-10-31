@@ -8,6 +8,7 @@ using Lumina.Excel.Sheets;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using static GatherChill.ConfigFiles.Config;
+using static GatherChill.Ui.RouteWindowTabs.RouteInfo;
 
 namespace GatherChill.Utilities.GatheringHelpers;
 
@@ -30,7 +31,7 @@ public static partial class Gather_Util
         public MapInfo Map { get; set; } = new();
         public FolkloreInfo Folklore { get; set; } = new();
         public GatherNodeKind Kind { get; set; } = GatherNodeKind.Regular;
-        public bool IsTimedNode => TimedInfo.Count > 0;
+        public uint RequiredItem { get; set; } = 0;
     }
     public readonly struct EorzeaTimeWindow
     {
@@ -115,17 +116,21 @@ public static partial class Gather_Util
         public int Star { get; set; } = 0;
         public bool IsCollectable { get; set; } = false;
         public bool IsHidden { get; set; } = false;
-        public bool IsReducable => IsReduceSource;
         public ushort GatheringRow { get; set; } = 0;
         public uint RequiredQuest { get; set; } = 0;
 
-        public List<EorzeaTimeWindow> TimedSlots { get; set; } = new();
+        public uint ItemRequired { get; set; } = 0;
+
+        // Timed Information Vs Normal Info
+        public List<UptimeHelper.UptimeEntry> TimedSlots { get; set; } = new();
         public ExpansionIds Expansion { get; set; } = ExpansionIds.Unk;
         public List<uint> NormalRoutes => GetRoutes(false);
         public List<uint> TimedRoutes => GetRoutes(true);
+
+        // Reducable Info
         public List<uint> ReducedFromItemIds { get; set; } = new();
         public uint ReducesIntoItemId { get; set; } = 0;
-
+        public bool IsReducable => IsReduceSource;
         public bool IsReduceResult => ReducedFromItemIds.Count > 0;
         public bool IsReduceSource => ReducesIntoItemId != 0;
         public List<uint> Territories()
@@ -243,6 +248,7 @@ public static partial class Gather_Util
         UpdateExpansionIcon();
         UpdateGatheringTypes();
         UpdateFolklore();
+        UpdateRequiredItem();
         UpdateNodeKinds();
         UpdateItemTimeSlots();
         UpdateItemExpansions();
@@ -580,6 +586,7 @@ public static partial class Gather_Util
                         bool isHidden = gatheringSheet.IsHidden;
                         var gatheringRow = gatheringSheet.RowId;
                         var requiredQuest = gatheringSheet.Unknown0; // RequiredQuest tab in the exdschems, offset is 0x00;
+                        var requiredItem = route.Value.RequiredItem;
 
                         Sheet_ItemInfo[item] = new()
                         {
@@ -592,6 +599,7 @@ public static partial class Gather_Util
                             IsCollectable = collectable,
                             GatheringRow = (ushort)gatheringRow,
                             RequiredQuest = requiredQuest,
+                            ItemRequired = requiredItem,
                             // Level = itemLevel,
                             // Star = stars,
                         };
@@ -697,6 +705,40 @@ public static partial class Gather_Util
             }
         }
     }
+
+    private static void UpdateRequiredItem()
+    {
+        foreach (var route in Sheet_RouteInfo)
+        {
+            uint requiredItem = 0;
+
+            foreach (var nodeId in route.Value.NodeIds)
+            {
+                if (ExcelHelper.Sheet_GatherPoint.TryGetRow(nodeId, out var gatherPoint))
+                {
+                    if (gatherPoint.GatheringPointBonus[0].Value.Condition.RowId == 20)
+                    {
+                        requiredItem = gatherPoint.GatheringPointBonus[0].Value.ConditionValue;
+                        IceLogging.Verbose($"Route: {route.Key} has a required Item! {requiredItem}");
+
+                        route.Value.RequiredItem = requiredItem;
+                    }
+                }
+            }
+
+            foreach (var item in route.Value.ItemIds)
+            {
+                if (Sheet_ItemInfo.TryGetValue(item, out var itemInfo))
+                {
+                    if (itemInfo.RouteInfo.Count == 1 && requiredItem != 0)
+                    {
+                        itemInfo.ItemRequired = requiredItem;
+                    }
+                }
+            }
+        }
+    }
+
     private static void UpdateItemTimeSlots()
     {
         // Items that have permanent uptime for routes
@@ -709,21 +751,15 @@ public static partial class Gather_Util
             if (ignoreList.Contains(item.Key))
                 continue;
 
-            var validRoutes = Sheet_RouteInfo.Where(x => x.Value.ItemIds.Contains(item.Key)).ToList();
+            var validRoutes = Sheet_RouteInfo
+                .Where(x => x.Value.ItemIds.Contains(item.Key))
+                .Select(x => x.Key)
+                .ToList();
+
             if (validRoutes.Count == 0)
                 continue;
 
-            List<EorzeaTimeWindow> uptimes = new();
-            foreach (var route in validRoutes)
-            {
-                foreach (var time in route.Value.TimedInfo)
-                {
-                    if (!uptimes.Contains(time))
-                        uptimes.Add(time);
-                }
-            }
-
-            item.Value.TimedSlots = uptimes;
+            item.Value.TimedSlots = UptimeHelper.GetWindows(validRoutes);
         }
     }
     private enum TimeSource
@@ -780,7 +816,6 @@ public static partial class Gather_Util
                 : GatherNodeKind.Unspoiled;
         }
     }
-
     private static void IncludeReducables()
     {
         bool TryCreateItemInfo(uint itemId, out ItemClass itemInfo)
@@ -841,6 +876,9 @@ public static partial class Gather_Util
             if (resultInfo.Star == 0)
                 resultInfo.Star = firstSource.Star;
 
+            if (resultInfo.ItemRequired == 0)
+                resultInfo.ItemRequired = firstSource.ItemRequired;
+
             foreach (var sourceId in reduce.AllItemIds())
             {
                 if (!resultInfo.ReducedFromItemIds.Contains(sourceId))
@@ -861,11 +899,9 @@ public static partial class Gather_Util
                         resultInfo.NodeTypes.Add(nodeType);
                 }
 
+                // Merges by window, so shared windows combine their route IDs
                 foreach (var slot in source.TimedSlots)
-                {
-                    if (!resultInfo.TimedSlots.Contains(slot))
-                        resultInfo.TimedSlots.Add(slot);
-                }
+                    UptimeHelper.Add(resultInfo.TimedSlots, slot);
             }
         }
     }

@@ -94,7 +94,7 @@ public static partial class SettingsUi
 
     private static SettingEntry TimedNode_MinGP = new()
     {
-        Label = "Wait to interact till GP",
+        Label = "Wait to interact till GP [Collectable]",
         Category = GatheringOptions,
         Keywords = new[] { "GP", "Gathering Points", "Hold", "Timed Node", "Wait" },
         Draw = () =>
@@ -111,6 +111,67 @@ public static partial class SettingsUi
                 "Wait for GP to be this before interacting with a legendary/unspoiled timed node\n" +
                 "If the timed node has < 60s remaining, it will go ahead and interact with it, even if this condition isn't met\n" +
                 "It's better to get some. Rather than none");
+        }
+    };
+
+    private static SettingEntry WaitForGP_Collectables = new()
+    {
+        Label = "Hold GP for Collectables",
+        Category = GatheringOptions,
+        Keywords = new[] {"GP", "Gathering Points", "Wait", "Reserve", "True / False"},
+        Draw = () =>
+        {
+            var v = C.WaitGP_Collectable;
+            if (ImGui.Checkbox($"Wait for GP for regular collectables", ref v))
+            {
+                C.WaitGP_Collectable = v;
+                C.Save();
+            }
+        }
+    };
+
+    private static SettingEntry WaitForGP_CollectableAmount = new()
+    {
+        Label = "GP Wait Amount [Collectable]",
+        Category = GatheringOptions,
+        Keywords = new[] { "GP", "Gathering Points", "Wait", "Amount", "Collectable" },
+        Draw = () =>
+        {
+            var v = C.Collectable_WaitGP;
+            using (var disabled = ImRaii.Disabled(!C.WaitGP_Collectable))
+            {
+                ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
+                if (ImGui.InputUInt("Wait Amount for Collectables", ref v, 1, 10))
+                {
+                    C.Collectable_WaitGP = v;
+                    C.SaveDebounced();
+                }
+            }
+            ImGui.SameLine();
+            ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle,
+                "Amount of gp that is necessary before interacting with a normal collectable\n" +
+                "Please note: These are NOT timed nodes in any form or matter. Those have a seperate option above for them in general ^\n" +
+                "This is useful for things like the crystarium questline, where getting more quality is important for more items");
+        }
+    };
+
+    private static SettingEntry WaitForGP_HiddenItem = new()
+    {
+        Label = "Wait for GP: Hidden Item",
+        Category = GatheringOptions,
+        Keywords = new[] { "GP", "Gathering Points", "Wait", "Reserve", "True / False" },
+        Draw = () =>
+        {
+            var v = C.WaitGP_HiddenItem;
+            if (ImGui.Checkbox($"Wait for GP for hidden Items", ref v))
+            {
+                C.WaitGP_HiddenItem = v;
+                C.Save();
+            }
+            ImGui.SameLine();
+            ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle,
+                "Really, only useful for the crystarium relic quest [Lv. 90 relics],\n" +
+                "but will wait till you have at minimum 200 gp to ensure the item shows up");
         }
     };
 }

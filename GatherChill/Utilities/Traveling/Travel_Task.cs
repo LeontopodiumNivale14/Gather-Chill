@@ -11,6 +11,7 @@ namespace GatherChill.Utilities.Traveling;
 public static partial class TravelUtil
 {
     private static (uint baseId, bool flyingRequired) LastNode = (0, false);
+    private static int StuckCounter = 0;
 
     public static void Gathering_TravelCheck(NodeLocation node)
     {
@@ -194,6 +195,9 @@ public static partial class TravelUtil
             if (CheckAndHandleStuck())
                 return false;
 
+            if (StuckCounter != 0)
+                StuckCounter = 0;
+
             if (!mounted)
             {
                 // We should never be not mounting here, so going to just stop the current navmesh and restart it
@@ -250,10 +254,15 @@ public static partial class TravelUtil
             }
             else
             {
-                // All other conditions have been met to start navmesh moving
-                // And we're not close enough to the point, so starting to move now
+                if (StuckCounter >= 5)
+                {
+                    JumpAction();
+                    StuckCounter = 0;
+                }
+
                 if (EzThrottler.Throttle("Commence Navmesh Movement"))
                 {
+                    StuckCounter += 1;
                     P.navmesh.SetTolerance(0.25f);
                     IceLogging.DestinationLogs.Log(pos);
                     P.navmesh.PathfindAndMoveTo(pos, true);
@@ -388,7 +397,7 @@ public static partial class TravelUtil
         _stuckAttempts = 0;
     }
 
-    private static unsafe bool CheckAndHandleStuck()
+    private static bool CheckAndHandleStuck()
     {
         var currentPos = Player.Position;
         var now = Environment.TickCount64;
@@ -419,7 +428,7 @@ public static partial class TravelUtil
 
         if (_stuckAttempts == 3 && !isFlying)
         {
-            ActionManager.Instance()->UseAction(ActionType.GeneralAction, 2);
+            JumpAction();
             return true;
         }
 
@@ -427,5 +436,10 @@ public static partial class TravelUtil
         P.navmesh.PathStop();
         _stuckAttempts = 0;
         return true;
+    }
+
+    private static unsafe void JumpAction()
+    {
+        ActionManager.Instance()->UseAction(ActionType.GeneralAction, 2);
     }
 }
