@@ -14,6 +14,12 @@ internal class TaskInfo
         ImGui.Text($"Current task running: {currentTask}");
         ImGui.Text($"Current State: {Gather_Helper.State}");
         ImGui.Text($"ItemId set: {Gather_Helper.GatherRoute.itemId}");
+        ImGui.Text($"Current Route: {Gather_Helper.GatherRoute.routeId}");
         ImGui.Text($"Task Count: {P.TaskManager.Tasks.Count}");
+
+        ImGui.Separator();
+
+        var timedList = string.Join(", ", Gather_Helper.GatheredTimedRoutes);
+        ImGui.Text($"Current timed banned: {timedList}");
     }
 }

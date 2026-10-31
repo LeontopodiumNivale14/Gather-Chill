@@ -23,16 +23,19 @@ namespace GatherChill.Scheduler
         {
             if (Gather_Helper.State != IceState.Idle)
             {
-                if (Gather_Helper.State != IceState.Start)
+                var currentRoute = Gather_Helper.GatherRoute.routeId;
+                if (!Svc.Condition[ConditionFlag.Gathering])
                 {
-                    var currentRoute = Gather_Helper.GatherRoute.routeId;
-
-                    if (Gather_Helper.AnyTimedNodes(out var currentlyUp) && !currentlyUp.Contains(currentRoute))
+                    if (Gather_Helper.GatheredTimedRoutes.Contains(currentRoute))
                     {
-                        if (!Svc.Condition[ConditionFlag.Gathering])
+                        SoftReset();
+                        return;
+                    }
+                    else if (Gather_Util.Sheet_RouteInfo.TryGetValue(currentRoute, out var routeInfo) && routeInfo.Kind is not GatherNodeKind.Regular)
+                    {
+                        if (!routeInfo.TimedInfo.Any(x => x.IsUp()))
                         {
-                            Gather_Helper.State = IceState.Start;
-                            P.TaskManager.Abort();
+                            SoftReset();
                             return;
                         }
                     }
@@ -51,6 +54,19 @@ namespace GatherChill.Scheduler
                     enqueue();
                 }
             }
+        }
+
+        private static void SoftReset()
+        {
+            var currentRoute = Gather_Helper.GatherRoute.routeId;
+
+            Gather_Helper.GatherRoute = new() { itemId = 0, routeId = 0 };
+
+            Gather_Helper.State = IceState.Start;
+            P.TaskManager.Abort();
+            P.navTask.Abort();
+            if (P.navmesh.IsRunning())
+                P.navmesh.Stop();
         }
     }
 }

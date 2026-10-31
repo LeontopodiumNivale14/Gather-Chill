@@ -48,8 +48,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Lightning Moraine
@@ -59,8 +59,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Pot Marjoram
@@ -70,8 +70,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Fire Moraine
@@ -81,8 +81,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12936 }, // Duskborne Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Peat Moss
@@ -92,8 +92,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Bright Lightning Rock
@@ -103,8 +103,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Water Mint
@@ -114,8 +114,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Bright Fire Rock
@@ -125,8 +125,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12937 }, // Dawnborne Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Humic Soil
@@ -136,8 +136,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12939 }, // Leafborne Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Radiant Lightning Moraine
@@ -147,8 +147,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12938 }, // Landborne Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Wild Sage
@@ -158,8 +158,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12939 }, // Leafborne Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Radiant Fire Moraine
@@ -169,8 +169,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 12938 }, // Landborne Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Lover's Laurel
@@ -180,8 +180,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 15648 }, // Light-kissed Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Radiant Astral Moraine
@@ -191,8 +191,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 15648 }, // Light-kissed Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Dacite
@@ -202,8 +202,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20015 }, // Everbright Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Doman Yellow
@@ -213,8 +213,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20013 }, // Dusklight Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Schorl
@@ -224,8 +224,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20014 }, // Dawnlight Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Countess Tea Leaves
@@ -235,8 +235,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20014 }, // Dawnlight Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Torreya Branch
@@ -246,8 +246,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20016 }, // Everborn Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Rhodolite
@@ -257,8 +257,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 20013 }, // Dusklight Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Yanxian Verbena
@@ -268,8 +268,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 23182 }, // Duskglow Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Yanxian Soil
@@ -279,8 +279,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 23182 }, // Duskglow Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Voeburt Bichir
@@ -290,8 +290,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Poecilia
@@ -301,8 +301,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Gale Rock
@@ -312,8 +312,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // White Clay
@@ -323,8 +323,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27811 }, // Chiaroglow Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Solarite
@@ -334,8 +334,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Sweet Marjoram
@@ -345,8 +345,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27812 }, // Scuroglow Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Bog Sage
@@ -356,8 +356,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27814 }, // Agewood Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Shade Quartz
@@ -367,8 +367,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 27813 }, // Agedeep Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Fuchsia Bloom
@@ -378,8 +378,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Thunder Rock
@@ -389,8 +389,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Levin Mint
@@ -400,8 +400,63 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 30590 }, // Levinstrike Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
+            },
+        },
+        new() // Connoisseur's Aurum Regis Ore
+        {
+            ItemId = 39811,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 39821 }, // Brilliant Miner's Component
+                new() { ItemId = 8 }, // Fire Crystal
+            },
+        },
+        new() // Connoisseur's Asphaltum
+        {
+            ItemId = 41286,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 41294 }, // Inspirational Miner's Component
+            },
+        },
+        new() // Connoisseur's Raw Onyx
+        {
+            ItemId = 41290,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 41296 }, // Nightforged Miner's Component
+            },
+        },
+        new() // Connoisseur's Cloves
+        {
+            ItemId = 39813,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 39822 }, // Brilliant Botanist's Component
+            },
+        },
+        new() // Connoisseur's Gianthive Chip
+        {
+            ItemId = 41288,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 41295 }, // Inspirational Botanist's Component
+            },
+        },
+        new() // Connoisseur's Glimshroom
+        {
+            ItemId = 41292,
+            Expansion = ExpansionIds.ShB,
+            ResultItems = new()
+            {
+                new() { ItemId = 41297 }, // Nightforged Botanist's Component
             },
         },
         new() // Lunar Quartz
@@ -411,8 +466,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Ewer Clay
@@ -422,8 +477,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Gilled Topknot
@@ -433,8 +488,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36223 }, // Moonlight Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Verdigris Guppy
@@ -444,8 +499,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Othardian Lumpsucker
@@ -455,8 +510,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36226 }, // Endtide Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Ghostly Umbral Rock
@@ -466,8 +521,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36224 }, // Endstone Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Palm Chippings
@@ -477,8 +532,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 36225 }, // Endwood Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Phyllinos
@@ -488,11 +543,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39241 }, // Pure Aqueous Glioaether
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
-        new() // Siderite
+        new() // Prime Siderite
         {
             ItemId = 37694,
             SublimeItemId = 37695,
@@ -500,8 +555,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 37696 }, // Igneous Glioaether
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Earthen Quartz
@@ -511,11 +566,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
-        new() // Crystalbloom
+        new() // Prime Crystalbloom
         {
             ItemId = 37691,
             SublimeItemId = 37692,
@@ -523,8 +578,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 37693 }, // Verdurous Glioaether
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Sophora Roots
@@ -534,8 +589,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 38936 }, // Earthbreak Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Mayashell
@@ -545,11 +600,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 37698 }, // Aqueous Glioaether
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
-        new() // Sphongos
+        new() // Prime Sphongos
         {
             ItemId = 39234,
             SublimeItemId = 39235,
@@ -557,8 +612,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39236 }, // Pure Verdurous Glioaether
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Connoisseur's Miracle Apple
@@ -568,11 +623,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39818 }, // Customized Botanist's Component
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
-        new() // Achondrite
+        new() // Prime Achondrite
         {
             ItemId = 39237,
             SublimeItemId = 39238,
@@ -580,8 +635,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39239 }, // Pure Igneous Glioaether
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Connoisseur's Soiled Femur
@@ -591,11 +646,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39817 }, // Customized Miner's Component
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
-        new() // Chloroschist
+        new() // Prime Chloroschist
         {
             ItemId = 39909,
             SublimeItemId = 39910,
@@ -603,11 +658,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39908 }, // Concentrated Verdurous Glioaether
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
-        new() // Haritaki
+        new() // Prime Haritaki
         {
             ItemId = 39906,
             SublimeItemId = 39907,
@@ -615,8 +670,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39911 }, // Concentrated Igneous Glioaether
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // The Fury's Aegis
@@ -626,11 +681,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 39913 }, // Concentrated Aqueous Glioaether
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
-        new() // Fossilized Dragon's Scale
+        new() // Prime Fossilized Dragon's Scale
         {
             ItemId = 41416,
             SublimeItemId = 41417,
@@ -638,11 +693,11 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 41415 }, // Potent Verdurous Glioaether
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
-        new() // Kukuru Beans
+        new() // Prime Kukuru Beans
         {
             ItemId = 41413,
             SublimeItemId = 41414,
@@ -650,8 +705,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 41418 }, // Potent Igneous Glioaether
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Stargilt Lobster
@@ -661,8 +716,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 41420 }, // Potent Aqueous Glioaether
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Electrocoal
@@ -672,8 +727,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
-                new() { ItemId = 11 },    // Earth Crystal
-                new() { ItemId = 17 },    // Earth Cluster
+                new() { ItemId = 11 }, // Earth Crystal
+                new() { ItemId = 17 }, // Earth Cluster
             },
         },
         new() // Goldbranch
@@ -683,8 +738,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
-                new() { ItemId = 10 },    // Wind Crystal
-                new() { ItemId = 16 },    // Wind Cluster
+                new() { ItemId = 10 }, // Wind Crystal
+                new() { ItemId = 16 }, // Wind Cluster
             },
         },
         new() // Longnose Gar
@@ -694,8 +749,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44038 }, // Mythbrine Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Sunlit Prism
@@ -705,8 +760,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44035 }, // Sungilt Aethersand
-                new() { ItemId = 13 },    // Water Crystal
-                new() { ItemId = 19 },    // Water Cluster
+                new() { ItemId = 13 }, // Water Crystal
+                new() { ItemId = 19 }, // Water Cluster
             },
         },
         new() // Brightwind Ore
@@ -716,8 +771,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44036 }, // Mythloam Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Volcanic Grass
@@ -727,8 +782,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 44037 }, // Mythroot Aethersand
-                new() { ItemId = 8 },     // Fire Crystal
-                new() { ItemId = 14 },    // Fire Cluster
+                new() { ItemId = 8 }, // Fire Crystal
+                new() { ItemId = 14 }, // Fire Cluster
             },
         },
         new() // Purple Palate
@@ -738,8 +793,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand
-                new() { ItemId = 9 },     // Ice Crystal
-                new() { ItemId = 15 },    // Ice Cluster
+                new() { ItemId = 9 }, // Ice Crystal
+                new() { ItemId = 15 }, // Ice Cluster
             },
         },
         new() // Levin Quartz
@@ -749,8 +804,8 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
         new() // Calamus Root
@@ -760,9 +815,10 @@ public static partial class Gather_Util
             ResultItems = new()
             {
                 new() { ItemId = 46246 }, // Levinchrome Aethersand
-                new() { ItemId = 12 },    // Lightning Crystal
-                new() { ItemId = 18 },    // Lightning Cluster
+                new() { ItemId = 12 }, // Lightning Crystal
+                new() { ItemId = 18 }, // Lightning Cluster
             },
         },
     };
+
 }

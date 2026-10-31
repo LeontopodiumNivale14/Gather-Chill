@@ -11,20 +11,25 @@ public static partial class Gather_Util
 {
     public static class UptimeHelper
     {
-        private readonly record struct UpcomingSlot(EorzeaTimeWindow Window, DateTime Start, DateTime End, bool IsUp);
+        /// <summary>
+        /// A time window plus every route that uses it.
+        /// </summary>
+        public readonly record struct UptimeEntry(EorzeaTimeWindow Window, List<uint> RouteIds);
+
+        private readonly record struct UpcomingSlot(UptimeEntry Entry, DateTime Start, DateTime End, bool IsUp);
 
         /// <summary>
         /// Windows from the routes the user has enabled for this item (playlist use).
         /// </summary>
-        public static List<EorzeaTimeWindow> GetEnabledWindows(uint itemId) => GetWindows(C.ItemRoutes[itemId].EnabledRoutes);
+        public static List<UptimeEntry> GetEnabledWindows(uint itemId) => GetWindows(C.ItemRoutes[itemId].EnabledRoutes);
 
         /// <summary>
         /// Windows from any set of routes (saved list, or anything else with its own route set).
-        /// De-duplicated, since routes can share a window.
+        /// De-duplicated, since routes can share a window. Shared windows list every route that uses them.
         /// </summary>
-        public static List<EorzeaTimeWindow> GetWindows(IEnumerable<uint> routeIds)
+        public static List<UptimeEntry> GetWindows(IEnumerable<uint> routeIds)
         {
-            var result = new List<EorzeaTimeWindow>();
+            var result = new List<UptimeEntry>();
 
             foreach (var routeId in routeIds)
             {
@@ -32,16 +37,33 @@ public static partial class Gather_Util
                     continue;
 
                 foreach (var window in routeInfo.TimedInfo)
-                {
-                    if (!result.Contains(window))
-                        result.Add(window);
-                }
+                    Add(result, new UptimeEntry(window, [routeId]));
             }
 
             return result;
         }
 
-        public static bool IsUp(List<EorzeaTimeWindow> windows) => UpFor(windows) is not null;
+        /// <summary>
+        /// Adds an entry to the list. If its window is already there, the route IDs are merged into the existing entry.
+        /// The incoming route list is copied, so the source entry is never aliased.
+        /// </summary>
+        public static void Add(List<UptimeEntry> target, UptimeEntry entry)
+        {
+            var index = target.FindIndex(e => e.Window.Equals(entry.Window));
+            if (index < 0)
+            {
+                target.Add(new UptimeEntry(entry.Window, [.. entry.RouteIds]));
+                return;
+            }
+
+            foreach (var routeId in entry.RouteIds)
+            {
+                if (!target[index].RouteIds.Contains(routeId))
+                    target[index].RouteIds.Add(routeId);
+            }
+        }
+
+        public static bool IsUp(List<UptimeEntry> entries) => UpFor(entries) is not null;
 
         public static string FormatCountdown(TimeSpan span)
         {
@@ -52,42 +74,42 @@ public static partial class Gather_Util
         }
 
         // Longest time remaining across windows that are up right now, null if none are up
-        public static TimeSpan? UpFor(List<EorzeaTimeWindow> windows)
+        public static TimeSpan? UpFor(List<UptimeEntry> entries)
         {
-            if (windows.Count == 0)
+            if (entries.Count == 0)
                 return null;
 
-            var remaining = windows.Max(w => w.TimeUntilEnd());
+            var remaining = entries.Max(e => e.Window.TimeUntilEnd());
             return remaining > TimeSpan.Zero ? remaining : null;
         }
 
         // Soonest next opening across windows
-        public static TimeSpan? NextUptime(List<EorzeaTimeWindow> windows)
+        public static TimeSpan? NextUptime(List<UptimeEntry> entries)
         {
-            if (windows.Count == 0)
+            if (entries.Count == 0)
                 return null;
 
-            return windows.Min(w => w.TimeUntilStart());
+            return entries.Min(e => e.Window.TimeUntilStart());
         }
 
         /// <summary>
         /// Draws the "Up for / Next Uptime" button with the upcoming-slots tooltip.
         /// </summary>
-        public static void Draw(List<EorzeaTimeWindow> windows, string emptyText = "No timed routes")
+        public static void Draw(List<UptimeEntry> entries, string emptyText = "No timed routes")
         {
             ImGui.AlignTextToFramePadding();
 
-            if (windows.Count == 0)
+            if (entries.Count == 0)
             {
                 ImGui.TextDisabled(emptyText);
                 return;
             }
 
-            if (UpFor(windows) is { } upFor)
+            if (UpFor(entries) is { } upFor)
             {
                 ImGui.Button($"Up for: {FormatCountdown(upFor)}");
             }
-            else if (NextUptime(windows) is { } next)
+            else if (NextUptime(entries) is { } next)
             {
                 var button = ImGui.GetStyle().Colors[(int)ImGuiCol.Button];
 
@@ -102,7 +124,7 @@ public static partial class Gather_Util
             if (!ImGui.IsItemHovered())
                 return;
 
-            var slots = GetUpcoming(windows);
+            var slots = GetUpcoming(entries);
             if (slots.Count == 0)
                 return;
 
@@ -111,14 +133,15 @@ public static partial class Gather_Util
                 DrawUpcoming(slots);
         }
 
-        private static List<UpcomingSlot> GetUpcoming(List<EorzeaTimeWindow> windows, int count = 5)
+        private static List<UpcomingSlot> GetUpcoming(List<UptimeEntry> entries, int count = 5)
         {
             var now = DateTime.Now;
             var eorzeaDay = Utils.EorzeaMinutesToReal(Utils.EorzeaMinutesPerDay);
             var slots = new List<UpcomingSlot>();
 
-            foreach (var window in windows)
+            foreach (var entry in entries)
             {
+                var window = entry.Window;
                 var isUp = window.IsUp();
 
                 // First occurrence: currently running, or the next one to open
@@ -129,7 +152,7 @@ public static partial class Gather_Util
                 for (var i = 0; i < count; i++)
                 {
                     var slotStart = start + eorzeaDay * i;
-                    slots.Add(new(window, slotStart, slotStart + window.DurationReal, isUp && i == 0));
+                    slots.Add(new(entry, slotStart, slotStart + window.DurationReal, isUp && i == 0));
                 }
             }
 
@@ -141,7 +164,7 @@ public static partial class Gather_Util
             ImGui.TextUnformatted("Upcoming uptimes");
             ImGui.Separator();
 
-            using var table = ImRaii.Table("##UptimeHelper_Upcoming", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg);
+            using var table = ImRaii.Table("##UptimeHelper_Upcoming", 5, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg);
             if (!table.Success)
                 return;
 
@@ -149,6 +172,7 @@ public static partial class Gather_Util
             ImGui.TableSetupColumn("Local");
             ImGui.TableSetupColumn("Eorzea");
             ImGui.TableSetupColumn("Duration");
+            ImGui.TableSetupColumn("Route");
             ImGui.TableHeadersRow();
 
             var now = DateTime.Now;
@@ -156,6 +180,7 @@ public static partial class Gather_Util
             for (var i = 0; i < slots.Count; i++)
             {
                 var slot = slots[i];
+                var window = slot.Entry.Window;
 
                 ImGui.TableNextRow();
 
@@ -173,10 +198,13 @@ public static partial class Gather_Util
                 ImGui.Text($"{slot.Start:t} – {slot.End:t}");
 
                 ImGui.TableNextColumn();
-                ImGui.Text(slot.Window.ToString());
+                ImGui.Text(window.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.Text(FormatCountdown(slot.Window.DurationReal));
+                ImGui.Text(FormatCountdown(window.DurationReal));
+
+                ImGui.TableNextColumn();
+                ImGui.Text(string.Join(", ", slot.Entry.RouteIds));
             }
         }
     }

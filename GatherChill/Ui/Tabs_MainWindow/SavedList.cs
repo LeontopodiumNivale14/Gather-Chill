@@ -17,15 +17,10 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
         public static void Draw()
         {
-            using (var child = ImRaii.Child("Gather & Chill: Saved List", default, true))
-            {
-                if (!child.Success)
-                    return;
-
-                GatherSavedList(C.Saved_List);
-                ImGui.SameLine();
-                Gather_ListDetails(C.Saved_List, true);
-            }
+            ImGui.SameLine();
+            GatherSavedList(C.Saved_List);
+            ImGui.SameLine();
+            Gather_ListDetails(C.Saved_List, true);
 
         }
 

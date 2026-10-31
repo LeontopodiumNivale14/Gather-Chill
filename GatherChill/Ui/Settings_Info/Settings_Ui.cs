@@ -45,6 +45,9 @@ public static partial class SettingsUi
         HoldGP_Crystals,
         Crystal_HoldTime,
         TimedNode_MinGP,
+        WaitForGP_Collectables,
+        WaitForGP_CollectableAmount,
+        WaitForGP_HiddenItem,
 
         // Misc
         ColorTheme,

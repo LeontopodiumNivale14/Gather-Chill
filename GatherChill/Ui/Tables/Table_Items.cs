@@ -27,7 +27,8 @@ internal class Table_Items
         public List<uint> Reduce_Sources => ItemInfo.ReducedFromItemIds;
         public uint Reduce_Into => ItemInfo.ReducesIntoItemId;
         public List<uint> NodeTypes => ItemInfo.NodeTypes;
-        public List<EorzeaTimeWindow> TimeSlot => ItemInfo.TimedSlots;
+        public uint RequiredItem => ItemInfo.ItemRequired;
+        public List<Gather_Util.UptimeHelper.UptimeEntry> TimeSlot => ItemInfo.TimedSlots;
     }
     public class ItemTable : Table<GatherItems>, IDisposable
     {
@@ -37,11 +38,11 @@ internal class Table_Items
         private readonly Folklore _folklore = new();
         private readonly Uptime _uptime = new();
         private readonly Type _nodeTypes = new();
-        private readonly Notes _reducableItems = new();
+        private readonly Notes _itemNotes = new();
 
         public ItemTable(List<GatherItems> itemList)
         {
-            List<Column<GatherItems>> headers = [_itemName, _level, _nodeTypes, _folklore, _uptime, _reducableItems, _id];
+            List<Column<GatherItems>> headers = [_itemName, _level, _nodeTypes, _folklore, _uptime, _itemNotes, _id];
             Id = "ItemInfo_V1";
             Columns = headers;
             Rows = itemList;
@@ -607,30 +608,66 @@ internal class Table_Items
 
         public override void DrawColumn(GatherItems row)
         {
-            var drewCollectable = DrawCollectable(row);
-            var drewReduce = DrawReduce(row, drewCollectable);
-            DrawQuest(row, drewCollectable || drewReduce);
+            bool sameLine = false;
+            if (CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
+            {
+                sameLine = true;
+                DrawCollectable(collectableInfo);
+            }
+
+            if (row.Reduce_Sources.Count != 0)
+            {
+                if (sameLine)
+                    ImGui.SameLine();
+
+                DrawReduceSources(row);
+                sameLine = true;
+            }
+            else if (row.Reduce_Into != 0)
+            {
+                if (sameLine)
+                    ImGui.SameLine();
+
+                DrawReduceInto(row);
+                sameLine = true;
+            }
+
+            if (row.QuestId != 0)
+            {
+                if (sameLine)
+                    ImGui.SameLine();
+
+                DrawQuest(row);
+                sameLine = true;
+            }
+
+            if (row.RequiredItem != 0)
+            {
+                if (sameLine)
+                    ImGui.SameLine();
+
+                DrawTool(row);
+                sameLine = true;
+
+            }
         }
 
-        private static bool DrawCollectable(GatherItems row)
+        private static void DrawCollectable(CollectableInfo collectableInfo)
         {
-            if (!CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
-                return false;
-
             ImGui_Ice.ImageButton(109, "Collectable");
             if (!ImGui.IsItemHovered())
-                return true;
+                return;
 
             using var tooltip = ImRaii.Tooltip();
             if (!tooltip.Alive)
-                return true;
+                return;
 
             ImGui.Text("Collectable");
             ImGui.Text($"Level: {collectableInfo.LevelMin} - {collectableInfo.LevelMax}");
 
             using var table = ImRaii.Table("Collectable Info", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg);
             if (!table.Success)
-                return true;
+                return;
 
             ImGui.TableSetupColumn("Quality");
             ImGui.TableSetupColumn("Exp");
@@ -653,28 +690,7 @@ internal class Table_Items
                 ImGui.Text($"{reward.Scrips}");
             }
 
-            return true;
-        }
-
-        private static bool DrawReduce(GatherItems row, bool sameLine)
-        {
-            if (row.Reduce_Sources.Count != 0)
-            {
-                if (sameLine)
-                    ImGui.SameLine();
-
-                DrawReduceSources(row);
-                return true;
-            }
-
-            if (row.Reduce_Into == 0)
-                return false;
-
-            if (sameLine)
-                ImGui.SameLine();
-
-            DrawReduceInto(row);
-            return true;
+            return;
         }
 
         private static void DrawReduceSources(GatherItems row)
@@ -714,7 +730,6 @@ internal class Table_Items
                 ImGui_Ice.ImageButton(iconDict[job].IconId, "Button", sidePadding: 0.1f);
             }
         }
-
         private static void DrawReduceInto(GatherItems row)
         {
             var reducableItem = Gather_Util.Sheet_ItemInfo[row.Reduce_Into];
@@ -728,14 +743,8 @@ internal class Table_Items
 
             ImGui.Text($"{reducableItem.Name}");
         }
-        private static void DrawQuest(GatherItems row, bool sameLine)
+        private static void DrawQuest(GatherItems row)
         {
-            if (row.QuestId is 0)
-                return;
-
-            if (sameLine)
-                ImGui.SameLine();
-
             if (ExcelHelper.Sheet_Quest.TryGetRow(row.QuestId, out var questInfo))
             {
                 ImGui_Ice.ImageButton(230607, "Quest Required", sidePadding: 2);
@@ -748,6 +757,31 @@ internal class Table_Items
                             ImGui.Text($"Requires Quest: {questInfo.Name}");
                         }
                     }
+                }
+            }
+        }
+        private static void DrawTool(GatherItems row)
+        {
+            if (ExcelHelper.Sheet_Item.TryGetRow(row.RequiredItem, out var itemSheet))
+            {
+                ImGui_Ice.ImageButton(itemSheet.Icon, $"{row.Name} | {row.RequiredItem}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text($"Requires tool to be equipped:");
+                    ImGui.Text($"{itemSheet.Name}");
+                    ImGui.EndTooltip();
+                }
+            }
+            else
+            {
+                ImGuiEx.Icon(FontAwesomeIcon.Tools);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text($"Requires tool to be equipped:");
+                    ImGui.Text($"ItemId: {row.RequiredItem}");
+                    ImGui.EndTooltip();
                 }
             }
         }

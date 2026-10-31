@@ -32,7 +32,9 @@ public partial class Config
     public uint TimedNodes_HoldTime { get; set; } = 60;
     public bool HoldGP_CrystalBuff { get; set; } = true;
     public uint CrystalBuff_HoldGP { get; set; } = 30;
-
+    public bool WaitGP_Collectable { get; set; } = true;
+    public uint Collectable_WaitGP { get; set; } = 700;
+    public bool WaitGP_HiddenItem { get; set; } = false;
     public uint TimedNode_MinGP { get; set; } = 0;
 
     // Auto Buff Settings
