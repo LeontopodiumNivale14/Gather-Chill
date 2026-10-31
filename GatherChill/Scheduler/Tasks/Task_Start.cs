@@ -5,7 +5,6 @@ using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Scheduler.Tasks
@@ -51,6 +50,9 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     foreach (var item in gathering.GatheredItems)
                     {
+                        if (!Gather_Helper.IsTargeted(item.ItemID))
+                            continue;
+
                         var wanted = C.GatherList.Any(x =>
                             (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
                             (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
@@ -69,7 +71,7 @@ namespace GatherChill.Scheduler.Tasks
                 }
                 else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var gatherMaster) && gatherMaster.IsAddonReady)
                 {
-                    var wanted = C.GatherList.Any(x =>
+                    var wanted = Gather_Helper.IsTargeted(gatherMaster.ItemID) && C.GatherList.Any(x =>
                         (x.Mode == GatherMode.Gather && x.ItemId == gatherMaster.ItemID && x.GatherAmount != 0) ||
                         (x.Mode == GatherMode.Keep && x.ItemId == gatherMaster.ItemID && Utils.GetItemCount(gatherMaster.ItemID) < x.KeepAmount));
                     
@@ -97,9 +99,10 @@ namespace GatherChill.Scheduler.Tasks
 
             IceLogging.Verbose("Starting check list process", tag);
 
-            var itemList = C.GatherList.Where(x => 
+            var itemList = C.GatherList.Where(x =>
                 (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
                 (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                .Where(x => Gather_Helper.IsTargeted(x.ItemId))
                 .ToList();
             Gather_Helper.ItemProgress.Clear();
 
@@ -224,6 +227,7 @@ namespace GatherChill.Scheduler.Tasks
 
                 IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
                 Gather_Helper.State = IceState.Idle;
+                Gather_Helper.OnlyItemId = 0;
                 return true;
             }
             

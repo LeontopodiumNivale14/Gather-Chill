@@ -1,13 +1,9 @@
-﻿using ECommons.GameHelpers;
-using ECommons.Throttlers;
+﻿using ECommons.Throttlers;
 using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GatherChill.Scheduler
 {
@@ -22,6 +18,14 @@ namespace GatherChill.Scheduler
         public static SelectedRoute GatherRoute = new();
         public static IceState State = IceState.Idle;
         public static GatherType gatherMode = GatherType.Normal;
+
+        // Set by the GatherItem IPC so only that item gets gathered. 0 = the whole list.
+        public static uint OnlyItemId = 0;
+
+        /// <summary>
+        /// False if the GatherItem IPC limited this run to a different item.
+        /// </summary>
+        public static bool IsTargeted(uint itemId) => OnlyItemId == 0 || OnlyItemId == itemId;
 
         public class ProgressInfo
         {
@@ -128,6 +132,7 @@ namespace GatherChill.Scheduler
             var itemList = C.GatherList.Where(x =>
                 (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
                 (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
+                .Where(x => IsTargeted(x.ItemId))
                 .ToList();
 
             foreach (var item in itemList)
