@@ -8,6 +8,7 @@ using GatherChill.Utilities.GatheringHelpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static GatherChill.ConfigFiles.Config;
 
 namespace GatherChill.Ui.Tabs_MainWindow
 {
@@ -26,64 +27,80 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
         #region Gather Saved List
 
+        #region State
+
         private static string _searchText = "";
-        private static int _renameFolderId = -1;
         private static string _renameBuffer = "";
+        private static int _renameFolderId = -1;
+        private static int _renameListId = -1;
         private static bool _openRenamePopup = false;
+
+        private const string ListPayload = "GC_LIST";
+        private const string FolderPayload = "GC_FOLDER";
+        private static int _draggedListId = -1;
+        private static int _draggedFolderId = -1;
+
+        private const ImGuiDragDropFlags LineFlags = ImGuiDragDropFlags.AcceptBeforeDelivery | ImGuiDragDropFlags.AcceptNoDrawDefaultRect;
+
         private static readonly Dictionary<uint, string> _itemNameCache = new();
-        private static string GetItemName(uint itemId)
-        {
-            if (_itemNameCache.TryGetValue(itemId, out var cached))
-                return cached;
 
-            // Swap this for whatever item-name helper you already use
-            var name = Sheet_ItemInfo[itemId].Name;
-            _itemNameCache[itemId] = Sheet_ItemInfo[itemId].Name;
-            return name;
-        }
-        private static bool ListMatchesSearch(Config.Class_List list)
-        {
-            if (list.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
-                return true;
+        // Reordering only makes sense in Manual mode, and not while search flattens everything
+        private static bool CanReorder => C.SortMode == Config.ListSortMode.Manual && string.IsNullOrWhiteSpace(_searchText);
 
-            if (list.Description.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
-                return true;
+        #endregion
 
-            return list.ItemList.Any(i => GetItemName(i.ItemId).Contains(_searchText, StringComparison.OrdinalIgnoreCase));
-        }
-        private static IOrderedEnumerable<Config.Class_List> SortLists(IEnumerable<Config.Class_List> lists)
-        {
-            return C.SortMode switch
-            {
-                Config.ListSortMode.RecentlyModified => lists
-                    .OrderByDescending(l => l.LastModified)
-                    .ThenBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
-                Config.ListSortMode.Manual => lists
-                    .OrderBy(l => l.SortOrder)
-                    .ThenBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
-                _ => lists.OrderBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
-            };
-        }
+        #region Main Draw
+
         private static void GatherSavedList(List<Config.Class_List> gatherList)
         {
             var scale = ImGuiHelpers.GlobalScale;
-            var selectionWindow = new Vector2(200 * scale, ImGui.GetContentRegionAvail().Y);
+            var style = ImGui.GetStyle();
 
-            using var listSelect = ImRaii.Child("Gather Selection Window", selectionWindow, true);
-            if (!listSelect.Success)
-                return;
+            var width = 200 * scale;
+            var padding = style.WindowPadding.Y * 2;
 
-            // Open + draw at window level so the popup IDs match
+            // Toolbar is two rows (search + folder button, then sort), footer is one row
+            var topHeight = ImGui.GetFrameHeight() * 2 + style.ItemSpacing.Y + padding;
+            var bottomHeight = ImGui.GetFrameHeight() + padding;
+
+            // Whatever is left, minus the gaps between the three children
+            var middleHeight = Math.Max(
+                ImGui.GetContentRegionAvail().Y - topHeight - bottomHeight - style.ItemSpacing.Y * 2,
+                50 * scale);
+
+            // Open + draw at the parent level so the popup IDs match
             if (_openRenamePopup)
             {
-                ImGui.OpenPopup("RenameFolder");
+                ImGui.OpenPopup("RenameEntry");
                 _openRenamePopup = false;
             }
-            DrawRenameFolderPopup();
+            DrawRenamePopup();
 
-            DrawListToolbar();
-            ImGui.Separator();
+            // Group makes the three children behave as one block, so a SameLine()
+            // for whatever draws next to this panel lines up with the top of it
+            using var group = ImRaii.Group();
 
+            // Each child has to end before the next one begins, so these are scoped blocks
+            using (var top = ImRaii.Child("##GatherToolbar", new Vector2(width, topHeight), true))
+            {
+                if (top.Success)
+                    DrawListToolbar();
+            }
+
+            using (var middle = ImRaii.Child("##GatherListScroll", new Vector2(width, middleHeight), true))
+            {
+                if (middle.Success)
+                    DrawListContents(gatherList);
+            }
+
+            using (var bottom = ImRaii.Child("##GatherFooter", new Vector2(width, bottomHeight), true))
+            {
+                if (bottom.Success)
+                    DrawImportExportFooter();
+            }
+        }
+        private static void DrawListContents(List<Config.Class_List> gatherList)
+        {
             // Searching: flat, sorted results, folders ignored
             if (!string.IsNullOrWhiteSpace(_searchText))
             {
@@ -103,94 +120,10 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
             foreach (var list in SortLists(rootLists))
                 DrawListEntry(list);
+
+            DrawRootDropZone();
         }
-        private static void DrawFolderContextMenu(Config.Class_Folder folder)
-        {
-            if (!ImGui.BeginPopupContextItem($"##folder_ctx_{folder.Id}"))
-                return;
 
-            if (ImGui.MenuItem("Rename"))
-            {
-                _renameFolderId = folder.Id;
-                _renameBuffer = folder.Name;
-                _openRenamePopup = true;
-            }
-
-            if (CanReorder)
-            {
-                ImGui.Separator();
-
-                if (ImGui.MenuItem("Move up"))
-                    C.MoveFolder(folder, -1);
-
-                if (ImGui.MenuItem("Move down"))
-                    C.MoveFolder(folder, 1);
-
-                ImGui.Separator();
-            }
-
-            if (ImGui.MenuItem("Delete (lists move to root)"))
-                C.DeleteFolder(folder.Id);
-
-            ImGui.EndPopup();
-        }
-        private static void DrawListEntry(Config.Class_List list)
-        {
-            using var id = ImRaii.PushId($"list_{list.Id}");
-
-            if (ImGui.Selectable(list.Name, _selectedListId == list.Id))
-                _selectedListId = list.Id;
-
-            if (!ImGui.BeginPopupContextItem($"##list_ctx_{list.Id}"))
-                return;
-
-            if (CanReorder)
-            {
-                if (ImGui.MenuItem("Move up"))
-                    C.MoveList(list, -1);
-
-                if (ImGui.MenuItem("Move down"))
-                    C.MoveList(list, 1);
-
-                ImGui.Separator();
-            }
-
-            if (ImGui.BeginMenu("Move to folder"))
-            {
-                if (ImGui.MenuItem("(None)", "", list.FolderId == null))
-                    C.MoveListToFolder(list, null);
-
-                foreach (var folder in SortFolders())
-                {
-                    if (ImGui.MenuItem(folder.Name, "", list.FolderId == folder.Id))
-                        C.MoveListToFolder(list, folder.Id);
-                }
-
-                ImGui.EndMenu();
-            }
-
-            ImGui.EndPopup();
-        }
-        private static void DrawRenameFolderPopup()
-        {
-            if (!ImGui.BeginPopup("RenameFolder"))
-                return;
-
-            ImGui.SetNextItemWidth(180 * ImGuiHelpers.GlobalScale);
-            var submitted = ImGui.InputText("##RenameFolderInput", ref _renameBuffer, 64,
-                ImGuiInputTextFlags.EnterReturnsTrue);
-
-            if (submitted && !string.IsNullOrWhiteSpace(_renameBuffer))
-            {
-                var folder = C.FindFolder(_renameFolderId);
-                if (folder != null)
-                    folder.Name = _renameBuffer.Trim();
-
-                ImGui.CloseCurrentPopup();
-            }
-
-            ImGui.EndPopup();
-        }
         private static void DrawListToolbar()
         {
             var scale = ImGuiHelpers.GlobalScale;
@@ -199,8 +132,11 @@ namespace GatherChill.Ui.Tabs_MainWindow
             ImGui.InputTextWithHint("##ListSearch", "Search lists or items...", ref _searchText, 64);
 
             ImGui.SameLine();
-            if (ImGui.Button("+##NewFolder"))
+            if (ImGuiEx.IconButton(FontAwesomeIcon.Folder, "##NewFolder"))
+            {
                 C.AddFolder();
+                C.Save();
+            }
 
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip("New folder");
@@ -217,15 +153,23 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
             foreach (var mode in Enum.GetValues<Config.ListSortMode>())
             {
-                if (ImGui.Selectable(SortModeLabel(mode), C.SortMode == mode))
-                    C.SortMode = mode;
+                if (!ImGui.Selectable(SortModeLabel(mode), C.SortMode == mode))
+                    continue;
+
+                C.SortMode = mode;
+                C.Save();
             }
         }
+
         private static void DrawFolder(Config.Class_Folder folder, List<Config.Class_List> gatherList)
         {
             using var id = ImRaii.PushId($"folder_{folder.Id}");
 
             using var node = ImRaii.TreeNode($"{folder.Name}###folder_{folder.Id}");
+
+            // All of these attach to the tree node, so they must come right after it
+            FolderDragSource(folder);
+            FolderDropTarget(folder);
             DrawFolderContextMenu(folder);
 
             if (!node.Success)
@@ -234,19 +178,425 @@ namespace GatherChill.Ui.Tabs_MainWindow
             foreach (var list in SortLists(gatherList.Where(l => l.FolderId == folder.Id)))
                 DrawListEntry(list);
         }
-        private static string SortModeLabel(Config.ListSortMode mode) => mode switch
+
+        private static void DrawListEntry(Config.Class_List list)
         {
-            Config.ListSortMode.RecentlyModified => "Recently modified",
-            Config.ListSortMode.Manual => "Manual",
-            _ => "Name",
-        };
+            using var id = ImRaii.PushId($"list_{list.Id}");
+
+            if (ImGui.Selectable(list.Name, _selectedListId == list.Id))
+                _selectedListId = list.Id;
+
+            // Attach to the Selectable, so they must come right after it
+            ListDragSource(list);
+            ListDropTarget(list);
+
+            if (!ImGui.BeginPopupContextItem($"##list_ctx_{list.Id}"))
+                return;
+
+            if (ImGui.MenuItem("Rename"))
+            {
+                _renameListId = list.Id;
+                _renameFolderId = -1;
+                _renameBuffer = list.Name;
+                _openRenamePopup = true;
+            }
+
+            if (ImGui.MenuItem("Export"))
+                ExportList(list);
+
+            ImGui.Separator();
+
+            if (CanReorder)
+            {
+                if (ImGui.MenuItem("Move up"))
+                {
+                    C.MoveList(list, -1);
+                    C.Save();
+                }
+
+                if (ImGui.MenuItem("Move down"))
+                {
+                    C.MoveList(list, 1);
+                    C.Save();
+                }
+
+                ImGui.Separator();
+            }
+
+            if (ImGui.BeginMenu("Move to folder"))
+            {
+                if (ImGui.MenuItem("(None)", "", list.FolderId == null))
+                {
+                    C.MoveListToFolder(list, null);
+                    C.Save();
+                }
+
+                foreach (var folder in SortFolders())
+                {
+                    if (!ImGui.MenuItem(folder.Name, "", list.FolderId == folder.Id))
+                        continue;
+
+                    C.MoveListToFolder(list, folder.Id);
+                    C.Save();
+                }
+
+                ImGui.EndMenu();
+            }
+
+            ImGui.EndPopup();
+        }
+
+        #endregion
+
+        #region Menus And Popups
+
+        private static void DrawFolderContextMenu(Config.Class_Folder folder)
+        {
+            if (!ImGui.BeginPopupContextItem($"##folder_ctx_{folder.Id}"))
+                return;
+
+            if (ImGui.MenuItem("Rename"))
+            {
+                _renameFolderId = folder.Id;
+                _renameListId = -1;
+                _renameBuffer = folder.Name;
+                _openRenamePopup = true;
+            }
+
+            if (ImGui.MenuItem("Export folder"))
+                ExportFolder(folder);
+
+            if (CanReorder)
+            {
+                ImGui.Separator();
+
+                if (ImGui.MenuItem("Move up"))
+                {
+                    C.MoveFolder(folder, -1);
+                    C.Save();
+                }
+
+                if (ImGui.MenuItem("Move down"))
+                {
+                    C.MoveFolder(folder, 1);
+                    C.Save();
+                }
+            }
+
+            ImGui.Separator();
+
+            if (ImGui.MenuItem("Delete (lists move to root)"))
+            {
+                C.DeleteFolder(folder.Id);
+                C.Save();
+            }
+
+            ImGui.EndPopup();
+        }
+
+        private static void DrawRenamePopup()
+        {
+            if (!ImGui.BeginPopup("RenameEntry"))
+                return;
+
+            ImGui.SetNextItemWidth(180 * ImGuiHelpers.GlobalScale);
+
+            // Start typing right away
+            if (ImGui.IsWindowAppearing())
+                ImGui.SetKeyboardFocusHere();
+
+            var submitted = ImGui.InputText("##RenameInput", ref _renameBuffer, 64,
+                ImGuiInputTextFlags.EnterReturnsTrue);
+
+            if (submitted && !string.IsNullOrWhiteSpace(_renameBuffer))
+            {
+                var name = _renameBuffer.Trim();
+
+                if (_renameListId != -1)
+                {
+                    if (C.FindPlaylist(_renameListId) is { } list)
+                        C.RenameList(list, name);
+                }
+                else if (C.FindFolder(_renameFolderId) is { } folder)
+                {
+                    folder.Name = name;
+                }
+
+                C.Save();
+                ImGui.CloseCurrentPopup();
+            }
+
+            ImGui.EndPopup();
+        }
+
+        #endregion
+
+        #region Drag And Drop
+
+        private static void ListDragSource(Config.Class_List list)
+        {
+            if (!CanReorder)
+                return;
+
+            if (!ImGui.BeginDragDropSource())
+                return;
+
+            _draggedListId = list.Id;
+            ImGui.SetDragDropPayload(ListPayload, BitConverter.GetBytes(list.Id));
+            ImGui.TextUnformatted(list.Name);
+            ImGui.EndDragDropSource();
+        }
+
+        private static void ListDropTarget(Config.Class_List target)
+        {
+            if (!CanReorder)
+                return;
+
+            var after = IsMouseInLowerHalf();
+
+            if (!ImGui.BeginDragDropTarget())
+                return;
+
+            var payload = ImGui.AcceptDragDropPayload(ListPayload, LineFlags);
+
+            // No line when hovering the list you're dragging
+            if (!payload.IsNull && _draggedListId != target.Id)
+            {
+                DrawInsertionLine(after);
+
+                if (payload.IsDelivery() && C.FindPlaylist(_draggedListId) is { } dragged)
+                {
+                    C.MoveListNextTo(dragged, target, after);
+                    C.Save();
+                }
+            }
+
+            ImGui.EndDragDropTarget();
+        }
+
+        private static void FolderDragSource(Config.Class_Folder folder)
+        {
+            if (!CanReorder)
+                return;
+
+            if (!ImGui.BeginDragDropSource())
+                return;
+
+            _draggedFolderId = folder.Id;
+            ImGui.SetDragDropPayload(FolderPayload, BitConverter.GetBytes(folder.Id));
+            ImGui.TextUnformatted(folder.Name);
+            ImGui.EndDragDropSource();
+        }
+
+        // Folders accept lists (move inside, default highlight) and other folders (reorder, line)
+        private static void FolderDropTarget(Config.Class_Folder target)
+        {
+            if (!CanReorder)
+                return;
+
+            var after = IsMouseInLowerHalf();
+
+            if (!ImGui.BeginDragDropTarget())
+                return;
+
+            var listPayload = ImGui.AcceptDragDropPayload(ListPayload);
+            if (!listPayload.IsNull && C.FindPlaylist(_draggedListId) is { } list)
+            {
+                C.MoveListToFolder(list, target.Id);
+                C.Save();
+            }
+
+            var folderPayload = ImGui.AcceptDragDropPayload(FolderPayload, LineFlags);
+            if (!folderPayload.IsNull && _draggedFolderId != target.Id)
+            {
+                DrawInsertionLine(after);
+
+                if (folderPayload.IsDelivery() && C.FindFolder(_draggedFolderId) is { } folder)
+                {
+                    C.MoveFolderNextTo(folder, target, after);
+                    C.Save();
+                }
+            }
+
+            ImGui.EndDragDropTarget();
+        }
+
+        // Empty space at the bottom of the panel: drop a list here to move it to the root
+        private static void DrawRootDropZone()
+        {
+            if (!CanReorder)
+                return;
+
+            var height = Math.Max(24 * ImGuiHelpers.GlobalScale, ImGui.GetContentRegionAvail().Y);
+            ImGui.InvisibleButton("##RootDrop", new Vector2(-1, height));
+
+            if (!ImGui.BeginDragDropTarget())
+                return;
+
+            var payload = ImGui.AcceptDragDropPayload(ListPayload);
+            if (!payload.IsNull && C.FindPlaylist(_draggedListId) is { } list)
+            {
+                C.MoveListToFolder(list, null);
+                C.Save();
+            }
+
+            ImGui.EndDragDropTarget();
+        }
+
+        // Draws the line between items: top edge for "before", bottom edge for "after".
+        // Offsetting by half the item spacing puts it in the gap, so the "after" line of
+        // one item and the "before" line of the next are in the same spot.
+        // Fucking drag drop is black magic is2g
+        private static void DrawInsertionLine(bool after)
+        {
+            var min = ImGui.GetItemRectMin();
+            var max = ImGui.GetItemRectMax();
+            var halfGap = ImGui.GetStyle().ItemSpacing.Y * 0.5f;
+            var y = after ? max.Y + halfGap : min.Y - halfGap;
+
+            ImGui.GetWindowDrawList().AddLine(
+                new Vector2(min.X, y),
+                new Vector2(max.X, y),
+                ImGui.GetColorU32(ImGuiCol.DragDropTarget),
+                2f * ImGuiHelpers.GlobalScale);
+        }
+
+        // Screen Y grows downward, so a bigger Y means lower on screen.
+        // "Mouse Y > midpoint" = the mouse is in the bottom half = drop AFTER the item.
+        private static bool IsMouseInLowerHalf()
+        {
+            var min = ImGui.GetItemRectMin();
+            var max = ImGui.GetItemRectMax();
+            return ImGui.GetMousePos().Y > (min.Y + max.Y) * 0.5f;
+        }
+
+        #endregion
+
+        #region Sorting And Search
+
+        private static IOrderedEnumerable<Config.Class_List> SortLists(IEnumerable<Config.Class_List> lists)
+        {
+            return C.SortMode switch
+            {
+                Config.ListSortMode.RecentlyModified => lists
+                    .OrderByDescending(l => l.LastModified)
+                    .ThenBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
+                Config.ListSortMode.Manual => lists
+                    .OrderBy(l => l.SortOrder)
+                    .ThenBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
+                _ => lists.OrderBy(l => l.Name, StringComparer.OrdinalIgnoreCase),
+            };
+        }
+
         private static IEnumerable<Config.Class_Folder> SortFolders()
         {
             return C.SortMode == Config.ListSortMode.Manual
                 ? C.GetSortedFolders()
                 : C.Saved_Folders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ToList();
         }
-        private static bool CanReorder => C.SortMode == Config.ListSortMode.Manual && string.IsNullOrWhiteSpace(_searchText);
+
+        private static string SortModeLabel(Config.ListSortMode mode) => mode switch
+        {
+            Config.ListSortMode.RecentlyModified => "Recently modified",
+            Config.ListSortMode.Manual => "Manual",
+            _ => "Name",
+        };
+
+        private static bool ListMatchesSearch(Config.Class_List list)
+        {
+            if (list.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (list.Description.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return list.ItemList.Any(i => GetItemName(i.ItemId).Contains(_searchText, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string GetItemName(uint itemId)
+        {
+            if (_itemNameCache.TryGetValue(itemId, out var cached))
+                return cached;
+
+            var name = Sheet_ItemInfo[itemId].Name;
+            _itemNameCache[itemId] = name;
+            return name;
+        }
+
+        #endregion
+
+        #region Import / Export
+
+        private static void DrawImportExportFooter()
+        {
+            var spacing = ImGui.GetStyle().ItemSpacing.X;
+            var width = (ImGui.GetContentRegionAvail().X - spacing) * 0.5f;
+
+            var selected = C.FindPlaylist(_selectedListId);
+            var exportLabel = selected != null ? "Export" : "Export All";
+
+            if (ImGui.Button($"{exportLabel}##ExportButton", new Vector2(width, 0)))
+            {
+                if (selected != null)
+                    ExportList(selected);
+                else
+                    ExportAll();
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip(selected != null
+                    ? $"Copy \"{selected.Name}\" to the clipboard"
+                    : "Copy every folder and list to the clipboard");
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Import", new Vector2(width, 0)))
+                ImportFromClipboard();
+
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Add the folders and lists copied to the clipboard");
+        }
+        private static void ExportAll()
+        {
+            if (C.Saved_List.Count == 0 && C.Saved_Folders.Count == 0)
+            {
+                ShowResult(false, "Nothing to export yet.");
+                return;
+            }
+
+            ImGui.SetClipboardText(C.ExportAll());
+            ShowResult(true, "Copied all folders and lists to the clipboard.");
+        }
+        private static void ExportList(Config.Class_List list)
+        {
+            ImGui.SetClipboardText(C.Export(Array.Empty<Config.Class_Folder>(), new[] { list }));
+            ShowResult(true, $"Copied \"{list.Name}\" to the clipboard.");
+        }
+        private static void ExportFolder(Config.Class_Folder folder)
+        {
+            var lists = C.Saved_List.Where(l => l.FolderId == folder.Id).ToList();
+
+            ImGui.SetClipboardText(C.Export(new[] { folder }, lists));
+            ShowResult(true, $"Copied folder \"{folder.Name}\" and its {lists.Count} list(s) to the clipboard.");
+        }
+        private static void ImportFromClipboard()
+        {
+            var result = C.Import(ImGui.GetClipboardText());
+            if (result.Success)
+                C.Save();
+
+            ShowResult(result.Success, result.Message);
+        }
+        private static void ShowResult(bool success, string message)
+        {
+            if (success)
+                Notify.Success(message);
+            else
+                Notify.Error(message);
+        }
+
+        #endregion
 
         #endregion
 
