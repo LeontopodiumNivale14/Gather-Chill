@@ -1,10 +1,8 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GatherChill.Gui;
 using GatherChill.Utilities.Tools;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace GatherChill.Ui.Settings_Info;
 

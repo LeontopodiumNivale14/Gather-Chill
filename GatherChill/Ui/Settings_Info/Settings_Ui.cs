@@ -49,6 +49,11 @@ public static partial class SettingsUi
         WaitForGP_CollectableAmount,
         WaitForGP_HiddenItem,
 
+        // Repair Settings
+        SelfRepair,
+        DarkMatter,
+        RepairAmount,
+
         // Misc
         ColorTheme,
         CompactOverlay,
