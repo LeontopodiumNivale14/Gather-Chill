@@ -20,7 +20,7 @@
             "y": 0.6453099,
             "z": 146.8502
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 253,
             "fan_EndAngle": 66,
@@ -44,7 +44,7 @@
             "y": 1.645311,
             "z": 127.1692
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 130,
             "fan_EndAngle": 268,
@@ -68,7 +68,7 @@
             "y": 1.014643,
             "z": 76.91808
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 112,
             "fan_EndAngle": 237,
@@ -86,13 +86,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 4
 }

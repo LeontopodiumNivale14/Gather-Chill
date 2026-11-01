@@ -23,7 +23,7 @@
             "y": -12.48407,
             "z": -139.1286
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 145,
             "fan_EndAngle": 241,
@@ -47,7 +47,7 @@
             "y": -5.325439,
             "z": -151.8677
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 110,
             "fan_EndAngle": 195,
@@ -71,7 +71,7 @@
             "y": -8.886987,
             "z": -146.7091
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 183,
             "fan_EndAngle": 267,
@@ -89,7 +89,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 1,
@@ -101,7 +102,7 @@
             "y": -20.47343,
             "z": -91.56972
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 324,
             "fan_EndAngle": 58,
@@ -125,7 +126,7 @@
             "y": -18.44138,
             "z": -98.99116
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 284,
             "fan_EndAngle": 6,
@@ -149,7 +150,7 @@
             "y": -16.63113,
             "z": -95.08063
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 264,
             "fan_EndAngle": 11,
@@ -167,7 +168,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 2,
@@ -179,7 +181,7 @@
             "y": -6.031807,
             "z": -86.84014
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 317,
             "fan_EndAngle": 48,
@@ -203,7 +205,7 @@
             "y": -6.21051,
             "z": -93.30067
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 327,
             "fan_EndAngle": 55,
@@ -227,7 +229,7 @@
             "y": -6.972526,
             "z": -101.9793
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 325,
             "fan_EndAngle": 44,
@@ -245,7 +247,8 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     },
     {
       "groupId": 3,
@@ -257,7 +260,7 @@
             "y": -9.306109,
             "z": -136.2825
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 119,
             "fan_EndAngle": 203,
@@ -281,7 +284,7 @@
             "y": -7.384988,
             "z": -139.6625
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 103,
             "fan_EndAngle": 178,
@@ -305,7 +308,7 @@
             "y": -4.610027,
             "z": -154.2626
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 145,
             "fan_EndAngle": 209,
@@ -323,13 +326,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 4,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 18
 }

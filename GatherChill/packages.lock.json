@@ -16,9 +16,9 @@
       },
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.2.1.24, )",
-        "resolved": "3.2.1.24",
-        "contentHash": "VmmXyQfomFi7kbWyPuXHN6A1ftyNgDzptRoPOGynWnnqMrl5/Q4Oonq/B74Wj9WzuuiM6OwoqFPeXEdJ+urZYA=="
+        "requested": "[3.2.1.26, )",
+        "resolved": "3.2.1.26",
+        "contentHash": "llUY80afPoU11VXKwAKhiAByFHSiiF5OD2BdIeYsHuCz+FRJoku39zga0br7THGY8PzhfH3hVOx8zdFW8d8iEA=="
       },
       "Pictomancy": {
         "type": "Direct",
@@ -114,11 +114,6 @@
           "NETStandard.Library": "1.6.1",
           "SharpDX": "4.2.0"
         }
-      },
-      "System.IO.Hashing": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA=="
       }
     }
   }
