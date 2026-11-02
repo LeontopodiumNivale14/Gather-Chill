@@ -1,4 +1,5 @@
 ﻿using GatherChill.Scheduler;
+using GatherChill.Utilities.Utility;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ internal class TaskInfo
         ImGui.Text($"ItemId set: {Gather_Helper.GatherRoute.itemId}");
         ImGui.Text($"Current Route: {Gather_Helper.GatherRoute.routeId}");
         ImGui.Text($"Task Count: {P.TaskManager.Tasks.Count}");
+        ImGui.Text($"Current Free Slot Count: {Utils.GetFreeSlotCount()}");
 
         ImGui.Separator();
 

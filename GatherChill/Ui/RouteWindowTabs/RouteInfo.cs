@@ -73,6 +73,8 @@ internal class RouteInfo
                 ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.2f, 0.25f))); // Green
             if (row.Ignore)
                 ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(new Vector4(0.9f, 0.5f, 0.5f, 1.0f))); // Pink? Orange?
+            if (row.RouteInfo.AetheryteId == 0)
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(EColor.BlueSky));
 
             using (ImRaii.Disabled(row.Ignore))
             {

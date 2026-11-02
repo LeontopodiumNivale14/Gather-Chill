@@ -183,15 +183,15 @@
           },
           "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 84,
-            "fan_EndAngle": 295,
+            "fan_StartAngle": 116,
+            "fan_EndAngle": 260,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 84,
-            "fan_EndAngle": 295,
+            "fan_StartAngle": 116,
+            "fan_EndAngle": 260,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -231,11 +231,11 @@
           },
           "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 0,
-            "fan_EndAngle": 359,
-            "fan_DistanceMin": 1,
-            "fan_DistanceMax": 2,
-            "fan_Height": 0
+            "fan_StartAngle": 220,
+            "fan_EndAngle": 320,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0.36
           },
           "gathering_FanInfo": {
             "fan_StartAngle": 0,
@@ -332,7 +332,8 @@
   ],
   "requiresFlying": false,
   "groupCount": 4,
-  "author": "alydev",
+  "author": "Ice",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 52
 }

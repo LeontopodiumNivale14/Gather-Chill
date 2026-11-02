@@ -106,7 +106,7 @@ namespace GatherChill.Scheduler.Tasks
                 .ToList();
             Gather_Helper.ItemProgress.Clear();
 
-            if (itemList.Count != 0)
+            if (itemList.Count != 0 && Utils.GetFreeSlotCount() > 1)
             {
                 var itemSheet = Gather_Util.Sheet_ItemInfo;
                 var routeSheet = Gather_Util.Sheet_RouteInfo;
@@ -225,7 +225,10 @@ namespace GatherChill.Scheduler.Tasks
                     return false;
                 }
 
-                IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
+                if (Utils.GetFreeSlotCount() <= 1)
+                    IceLogging.Info("We only have one free slot remaining, and that will defitenly bite us in the ass... please clear out your inventory", tag);
+                else
+                    IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
                 GatherJobs.EndNaturally();
                 Gather_Helper.State = IceState.Idle;
                 Gather_Helper.OnlyItemId = 0;

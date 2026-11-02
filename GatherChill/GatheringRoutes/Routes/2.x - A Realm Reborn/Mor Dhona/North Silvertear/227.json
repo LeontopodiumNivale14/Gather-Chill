@@ -20,17 +20,17 @@
             "y": 8.065197,
             "z": -588.8444
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
-            "fan_StartAngle": 177,
-            "fan_EndAngle": 275,
+            "fan_StartAngle": 176,
+            "fan_EndAngle": 266,
             "fan_DistanceMin": 2.5,
             "fan_DistanceMax": 4,
             "fan_Height": 0
           },
           "gathering_FanInfo": {
-            "fan_StartAngle": 76,
-            "fan_EndAngle": 273,
+            "fan_StartAngle": 176,
+            "fan_EndAngle": 266,
             "fan_DistanceMin": 1,
             "fan_DistanceMax": 2,
             "fan_Height": 0
@@ -44,7 +44,7 @@
             "y": -1.425196,
             "z": -544.4944
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 180,
             "fan_EndAngle": 298,
@@ -68,7 +68,7 @@
             "y": -7.00347,
             "z": -451.2652
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 204,
             "fan_EndAngle": 321,
@@ -86,13 +86,14 @@
           "useSpecificWalkingSpots": false,
           "walkablePositions": []
         }
-      ]
+      ],
+      "blacklistNode": []
     }
   ],
+  "requiresFlying": false,
   "groupCount": 1,
-  "requiresFolklore": false,
-  "folkloreBook": "",
-  "author": "alydev",
+  "author": "Censored",
   "lastUpdated": "2025-12-08",
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 24
 }

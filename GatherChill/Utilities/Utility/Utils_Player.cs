@@ -190,4 +190,54 @@ public static partial class Utils
         }
         return null;
     }
+    public static unsafe bool NeedsRepair()
+    {
+        string tag = "Needs Repair";
+        float below = C.Repair_Amount;
+
+        var im = InventoryManager.Instance();
+        if (im == null)
+        {
+            IceLogging.Error("InventoryManager was null", tag);
+            return false;
+        }
+
+        var equipped = im->GetInventoryContainer(InventoryType.EquippedItems);
+        if (equipped == null)
+        {
+            IceLogging.Error("InventoryContainer was null", tag);
+            return false;
+        }
+
+        if (!equipped->IsLoaded)
+        {
+            IceLogging.Error($"InventoryContainer is not loaded", tag);
+            return false;
+        }
+
+        for (var i = 0; i < equipped->Size; i++)
+        {
+            var item = equipped->GetInventorySlot(i);
+            if (item == null)
+                continue;
+
+            var itemCondition = Convert.ToInt32(Convert.ToDouble(item->Condition) / 30000.0 * 100.0);
+
+            if (itemCondition <= below)
+            {
+                IceLogging.Debug($"Found an item that needed repair. Condition: {itemCondition}", tag);
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public static unsafe int GetFreeSlotCount()
+    {
+        var manager = InventoryManager.Instance();
+        if (manager == null)
+            return 0;
+
+        return (int)manager->GetEmptySlotsInBag();
+    }
 }

@@ -73,10 +73,12 @@ namespace GatherChill.Scheduler.Tasks
             }
             else
             {
-                P.TaskManager.Enqueue(() => CheckDesynth(), "Checking for desynth items");
-                P.TaskManager.Enqueue(() => ChangeJob(), "Checking for job change");
-                P.TaskManager.Enqueue(() => CheckEquipment(), "Checking for equipment requirement");
-                P.TaskManager.Enqueue(() => Travel_FarCheck(), "Traveling to node group");
+                P.TaskManager.EnqueueMulti(
+                    new(()=> CheckDesynth(), "Checking for desynth items"),
+                    new(() => ChangeJob(), "Checking for job change"),
+                    new(() => CheckEquipment(), "Checking for equipment requirement"),
+                    new(() => Task_SelfRepair.Enqueue(), "Self Repair Check"),
+                    new(() => Travel_FarCheck(), "Traveling to node group"));
             }
         }
 
@@ -561,6 +563,10 @@ namespace GatherChill.Scheduler.Tasks
                     exitLoop = true;
                 }
             }
+            else if (Utils.GetFreeSlotCount() <= 1)
+            {
+
+            }
 
             if (exitLoop)
             {
@@ -609,7 +615,7 @@ namespace GatherChill.Scheduler.Tasks
                     uint OtherItem(Utilities.Gathering gather)
                     {
                         var gatherList = gather.GatheredItems.Where(x => x.ItemID != 0).ToList();
-                        var itemList = GatherJobs.ActiveList
+                        var itemList = C.GatherList
                             .Where(x => (x.Mode == GatherMode.Gather && x.GatherAmount != 0)
                                      || (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
                             .ToList();
@@ -739,7 +745,7 @@ namespace GatherChill.Scheduler.Tasks
                                             {
                                                 // WELL WE NEED TO GATHER SOMETHING... OR. HERE ME OUT. We just abandon and error
                                                 IceLogging.Error("No backup item could be found (aka crystals?) and no actual. . . hidden item can be found. So we gonna skeet out :fguns:", tag);
-                                                SchedulerMain.Fail("Neither the hidden item nor a backup item could be found");
+                                                SchedulerMain.DisablePlugin();
                                                 return true;
                                             }
                                         }
