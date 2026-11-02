@@ -1,9 +1,12 @@
 using ECommons.GameHelpers;
 using GatherChill.ConfigFiles;
 using GatherChill.Enums;
+using GatherChill.IPC;
+using GatherChill.Scheduler.Handlers;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GatherChill.Scheduler;
 
@@ -65,7 +68,7 @@ internal static class GatherJobs
             return GatherJobStartResult.NotReady;
         }
 
-        if (Gather_Helper.State != IceState.Idle || current != null)
+        if (Gather_Helper.State != IceState.Idle || current != null || Svc.Condition[ConditionFlag.Gathering])
         {
             message = "Gather n Chill is busy";
             return GatherJobStartResult.Busy;
@@ -121,6 +124,9 @@ internal static class GatherJobs
 
         job.Outcome = outcome;
         job.Message = message;
+        // DisablePlugin clears the route and queues; retain only the node owned at the time of stopping.
+        if (Svc.Condition[ConditionFlag.Gathering] && Gather_Helper.GatherRoute.itemId == job.ItemId)
+            job.StoppingNodeId = Svc.Targets.Target?.GameObjectId;
         job.State = GatherJobState.Stopping;
         IceLogging.Info($"Job {job.Id} for {job.Owner} is ending: {outcome}, {message}", "IPC");
     }
@@ -141,7 +147,11 @@ internal static class GatherJobs
 
     public static void Tick()
     {
-        if (current is not { State: GatherJobState.Stopping } job || !HandsFree())
+        if (current is not { State: GatherJobState.Stopping } job)
+            return;
+
+        CloseGatheringWindow(job);
+        if (!HandsFree())
             return;
 
         job.State = job.Outcome;
@@ -149,6 +159,35 @@ internal static class GatherJobs
         finished.Add(job);
         if (finished.Count > FinishedToKeep)
             finished.RemoveAt(0);
+    }
+
+    private static unsafe void CloseGatheringWindow(Job job)
+    {
+        if (job.StoppingNodeId == null)
+            return;
+
+        if (!Player.Available || !Svc.Condition[ConditionFlag.Gathering] ||
+            Gather_Helper.State != IceState.Idle || Svc.Targets.Target?.GameObjectId != job.StoppingNodeId)
+        {
+            // Do not acquire a later manual interaction while waiting for travel to settle.
+            job.StoppingNodeId = null;
+            return;
+        }
+
+        if (P.TaskManager.IsBusy || P.navTask.IsBusy)
+            return;
+
+        // Close the collectable first if both addons exist. CloseWindow already throttles callbacks.
+        if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var collectable))
+        {
+            if (collectable.IsAddonReady && collectable.ItemID == job.ItemId)
+                Ecom_Handler.CloseWindow(collectable.Base);
+        }
+        else if (GenericHelpers.TryGetAddonMaster<Gathering>(out var gathering) && gathering.IsAddonReady &&
+            gathering.GatheredItems.Any(x => x.ItemID == job.ItemId))
+        {
+            Ecom_Handler.CloseWindow(gathering.Base);
+        }
     }
 
     private static bool HandsFree()
@@ -159,20 +198,24 @@ internal static class GatherJobs
         if (Gather_Helper.State != IceState.Idle || P.TaskManager.IsBusy || P.navTask.IsBusy)
             return false;
 
-        return !IsBusy(() => P.navmesh.IsRunning() || P.navmesh.PathfindInProgress())
-            && !IsBusy(() => P.lifestream.IsBusy());
+        return !IsBusy(NavmeshIPC.Name, "Path.IsRunning", "Nav.PathfindInProgress")
+            && !IsBusy(LifestreamIPC.Name, "IsBusy");
     }
 
-    // A plugin that isn't installed isn't moving the character.
-    private static bool IsBusy(Func<bool> read)
+    // Only a confirmed absent/unloaded plugin is idle; unreadable state must keep the job stopping.
+    private static bool IsBusy(string pluginName, params string[] endpoints)
     {
         try
         {
-            return read();
+            if (!Svc.PluginInterface.InstalledPlugins.Any(x => x.InternalName == pluginName && x.IsLoaded))
+                return false;
+
+            // Read directly: the EzIPC safe wrappers can turn failed bool reads into false.
+            return endpoints.Any(x => Svc.PluginInterface.GetIpcSubscriber<bool>($"{pluginName}.{x}").InvokeFunc());
         }
         catch
         {
-            return false;
+            return true;
         }
     }
 
@@ -185,6 +228,7 @@ internal static class GatherJobs
         public List<Config.ItemInfo> Items { get; } = [new Config.ItemInfo { ItemId = itemId, GatherAmount = wanted }];
         public GatherJobState State { get; set; } = GatherJobState.Running;
         public GatherJobState Outcome { get; set; }
+        public ulong? StoppingNodeId { get; set; }
         public string Message { get; set; } = $"Gathering {wanted}x {itemId}";
         public int Gathered => Math.Max(GetItemCount(ItemId) - startCount, 0);
     }
