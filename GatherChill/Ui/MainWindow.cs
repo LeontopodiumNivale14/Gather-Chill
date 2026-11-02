@@ -5,6 +5,7 @@ using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Ui.Settings_Info;
 using GatherChill.Ui.Tabs_MainWindow;
+using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 using System.Reflection;
 using Action = System.Action;
@@ -13,12 +14,13 @@ namespace GatherChill.Ui
 {
     internal class MainWindow : Window
     {
-        /// <summary>
-        /// Constructor for the main window. Adjusts window size, flags, and initializes data.
-        /// </summary>
-        public MainWindow() : base($"Gather & Chill {P.GetType().Assembly.GetName().Version} ###Gather&ChillMainWindow")
-        {
+        private const string WindowId = "###Gather&ChillMainWindow";
+        private static readonly string VersionString = P.GetType().Assembly.GetName().Version?.ToString() ?? "";
 
+        public static string MainWindowName = "Gather";
+
+        public MainWindow() : base($"{MainWindowName} & Chill {VersionString} {WindowId}")
+        {
             Flags = ImGuiWindowFlags.None;
 
             // Set up size constraints to ensure window cannot be too small or too large.
@@ -38,6 +40,29 @@ namespace GatherChill.Ui
         public void Dispose()
         {
             P.windowSystem.RemoveWindow(this);
+        }
+
+        public static void SetName(int id)
+        {
+            MainWindowName = GetNameForId(id);
+            IceLogging.Verbose($"Set ID to: {id}", "Main Window", true);
+        }
+
+        private static string GetNameForId(int id)
+        {
+            if (id == 69)
+                return "Vera";
+
+            if (1 < id && id < 100)
+                return "Forager";
+
+            return "Gather";
+        }
+
+        public override void OnOpen()
+        {
+            SetName(Random.Shared.Next(1, 1000));
+            WindowName = $"{MainWindowName} & Chill {VersionString} {WindowId}";
         }
 
         public class WindowInfo
