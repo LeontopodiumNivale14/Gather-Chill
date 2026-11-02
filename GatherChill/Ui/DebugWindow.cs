@@ -1,18 +1,8 @@
 ﻿using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using ECommons.ExcelServices;
-using ECommons.GameHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using GatherChill.Enums;
 using GatherChill.Gui;
-using GatherChill.Scheduler;
-using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui.Tabs_Debug;
-using GatherChill.Utilities.GatheringHelpers;
-using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
-using System.Text;
-using static GatherChill.Utilities.Tools.IceLogging;
 
 namespace GatherChill.Ui;
 
@@ -35,6 +25,7 @@ internal class DebugWindow : Window
     private static readonly Dictionary<string, Action> DebugTabs = new()
     {
         ["Game: Gathering Window"] = () => GatheringWindow.Draw(),
+        ["Game: Map Info"] = () => MiniMapDebugView.Draw(),
 
         ["Table: Gather Points"] = () => GatherPointTable.Draw(),
 

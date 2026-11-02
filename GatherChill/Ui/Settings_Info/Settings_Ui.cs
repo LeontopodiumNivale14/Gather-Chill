@@ -1,5 +1,7 @@
 ﻿using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.GameHelpers;
+using GatherChill.ConfigFiles;
 using GatherChill.Gui;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,50 @@ public static partial class SettingsUi
         // Precomputed lowercase haystack so filtering isn't re-concatenating strings every frame.
         public string SearchHaystack => _haystack ??= string.Join(' ', new[] { Label, Category }.Concat(Keywords)).ToLowerInvariant();
         private string? _haystack;
+    }
+
+    // ---- Character context ----------------------------------------------------
+
+    // null = use the logged-in character. Set this later if you add a character picker.
+    private static ulong? _selectedCid;
+
+    // Resolved once at the top of Draw(); character entries read it through CharacterEntry.
+    private static Config.CharacterInformation? _character;
+
+    private static void ResolveCharacter()
+    {
+        var cid = _selectedCid ?? Player.CID;
+        _character = C.GetOrCreateCharacterInfo(cid); // swap C for your config instance
+    }
+
+    /// <summary>
+    /// Builds a SettingEntry whose Draw receives the active character's info.
+    /// Shows a disabled message instead when no character is available.
+    /// </summary>
+    private static SettingEntry CharacterEntry(
+        string label,
+        string category,
+        Action<Config.CharacterInformation> draw,
+        string[]? keywords = null)
+    {
+        return new SettingEntry
+        {
+            Label = label,
+            Category = category,
+            Keywords = keywords ?? Array.Empty<string>(),
+            Draw = () =>
+            {
+                if (_character == null)
+                {
+                    ImGui.BeginDisabled();
+                    ImGui.TextUnformatted($"{label} (log in to a character to edit)");
+                    ImGui.EndDisabled();
+                    return;
+                }
+
+                draw(_character);
+            },
+        };
     }
 
     public static List<SettingEntry> BuildRegistry() => new()
@@ -58,9 +104,13 @@ public static partial class SettingsUi
         ColorTheme,
         CompactOverlay,
 
+        // Character Specific
+        Wait_ReturnPoint,
+        Post_ReturnPoint,
+
         // Route Editor
-        Route_SaveLoc, 
-        Route_UpdateAll, 
+        Route_SaveLoc,
+        Route_UpdateAll,
         LoadExternal
     };
 
@@ -80,6 +130,8 @@ public static partial class SettingsUi
 
     public static void Draw()
     {
+        ResolveCharacter();
+
         using var colors = ImGui_Ice.PushChildBG();
 
         using (ImRaii.Child("Settings Ui: Window", ImGui.GetContentRegionAvail(), true))
@@ -113,14 +165,14 @@ public static partial class SettingsUi
         if (ImGui.InputTextWithHint("##settings-search", "Search settings...", ref _searchQuery, 128))
             _filterDirty = true;
 
-        if (!string.IsNullOrEmpty(_searchQuery))
+        if (string.IsNullOrEmpty(_searchQuery))
+            return;
+
+        ImGui.SameLine();
+        if (ImGui.SmallButton("Clear"))
         {
-            ImGui.SameLine();
-            if (ImGui.SmallButton("Clear"))
-            {
-                _searchQuery = string.Empty;
-                _filterDirty = true;
-            }
+            _searchQuery = string.Empty;
+            _filterDirty = true;
         }
     }
 
@@ -137,14 +189,14 @@ public static partial class SettingsUi
     {
         foreach (var group in settings.GroupBy(s => s.Category))
         {
-            if (ImGui.CollapsingHeader(group.Key, ImGuiTreeNodeFlags.DefaultOpen))
-            {
-                ImGui.Indent();
-                foreach (var entry in group)
-                    entry.Draw();
-                ImGui.Unindent();
-                ImGui.Spacing();
-            }
+            if (!ImGui.CollapsingHeader(group.Key, ImGuiTreeNodeFlags.DefaultOpen))
+                continue;
+
+            ImGui.Indent();
+            foreach (var entry in group)
+                entry.Draw();
+            ImGui.Unindent();
+            ImGui.Spacing();
         }
     }
 }

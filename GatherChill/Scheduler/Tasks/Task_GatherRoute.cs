@@ -235,96 +235,139 @@ namespace GatherChill.Scheduler.Tasks
             return false;
         }
 
+        private static bool IsTimedRoute()
+        {
+            if (!Gather_Util.Sheet_RouteInfo.TryGetValue(Gather_Helper.GatherRoute.routeId, out var info))
+                return false;
+
+            return info.Kind == GatherNodeKind.Unspoiled || info.Kind == GatherNodeKind.Legendary;
+        }
+        
+        // How close do I want the matching minimap marker to be 
+        // Right now from testing, it seems like it's directly 1->1 with the cordinates
+        // But it never hurts to have some buffer...
+        private const float MarkerMatchRadius = 25;
+        private static bool TryGetTimedRouteIndex(out int routeIndex)
+        {
+            routeIndex = -1;
+
+            var markers = Gather_Util.GetActiveWorldXZ();
+            if (markers.Count == 0)
+                return false;
+
+            var bestDist = MarkerMatchRadius;
+
+            for (var i = 0; i < GatherRoute.Count; i++)
+            {
+                var node = GatherRoute[i];
+                if (node.Locations.Count == 0)
+                    continue;
+
+                var pos = node.Locations[0].Position;
+                var pos2D = new Vector2(pos.X, pos.Z);
+
+                foreach (var marker in markers)
+                {
+                    var dist = Vector2.Distance(pos2D, marker);
+
+                    // dist >= bestDist means NOT closer than the best so far -> skip.
+                    // Only a dist SMALLER than bestDist gets past this line.
+                    if (dist >= bestDist)
+                        continue;
+
+                    bestDist = dist;
+                    routeIndex = i;
+                }
+            }
+
+            return routeIndex != -1;
+        }
         private static bool Travel_FarCheck()
         {
             const string tag = "Task: Gather Travel";
+            const float loadRange = 75f;
 
-            // I want to keep the old way of telling if a node is good for a certain distance, then have it move to the next one if not...
-            // just need to incorporate the navmesh task properly. The one way I did it is *-minorly-* jank? Idk I don't like it
-            // So I think the general gameplan is to:
-            // 1: Do a far check on the nodes (stay mounted = true)
-            // 2: Once we're within range of all nodes, find node then travel to it
-            // 3: If we're already flying, do a fly -> ground fan location
-            // 3.1: If we're not flying, check to see if we should fly, then queue up fly -> ground or just ground
-            // 4: Once we're within range, queue up the node gathering task in the normal task
-
-            // 1st: Check the route to make sure it's even loaded right... if not then we need to clear it and start fresh
-
-            var navtask = P.navTask;
-            if (!navtask.IsBusy)
+            // Checking to see if we even have a route to begin with
+            var route = P.routeEditor.GetRoute(Gather_Helper.GatherRoute.routeId);
+            if (route != null && selectedRoute != route)
             {
-                var playerPos = Player.Position;
-                const float loadRange = 75f;
+                IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
+                selectedRoute = route;
 
-                // Checking to see if we even have a route to begin with
-                var route = P.routeEditor.GetRoute(Gather_Helper.GatherRoute.routeId);
-                if (route != null && selectedRoute != route)
-                {
-                    IceLogging.Verbose("No route was loaded/old route did not match. Updating to current", tag);
-                    selectedRoute = route;
+                GatherRoute.Clear();
+                GatherRoute.AddRange(route.NodeInfo.OrderBy(n => n.GroupId));
 
-                    GatherRoute.Clear();
-                    GatherRoute.AddRange(route.NodeInfo.OrderBy(n => n.GroupId));
-
-                    var order = string.Join(", ", GatherRoute.Select(n => $"{n.NodeId} (G{n.GroupId})"));
-                    IceLogging.Verbose($"GatherRoute order: {order}", tag);
-                }
-
-                if (GatherRoute.Count == 0)
-                {
-                    IceLogging.Warning("No nodes were in this route is loaded, which means that it doesn't know where tf to go. Please report the route/item", tag);
-                    return true;
-                }
-
-                if (RouteIndex >= GatherRoute.Count)
-                {
-                    // We've hit a higher index than we should for these, so going to just immediately reset it back to 0
-                    RouteIndex = 0;
-                }
-
-                var currentNode = GatherRoute[RouteIndex];
-                TargetNodeId = currentNode.NodeId;
-                if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
-                {
-                    var node = currentNode.Locations[0];
-                    TravelUtil.Gathering_TravelCheck(node);
-                    return false;
-                }
-                else
-                {
-                    IceLogging.Debug("We're within range of all nodes, continuing on", tag);
-                    P.navmesh.PathStop();
-
-                    var validNode = Svc.Objects.Where(obj => obj.BaseId == TargetNodeId)
-                               .Where(obj => obj.IsTargetable)
-                               .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
-                               .FirstOrDefault();
-
-                    if (EzThrottler.Throttle("IsNodeValid"))
-                    {
-                        IceLogging.Debug($"Is Node Valid: {validNode != null}");
-                    }
-
-                    if (validNode == null)
-                    {
-                        NodeCheckIndex = 0;
-                        IceLogging.Debug("We can't seem to find a node that is valid, so we're going to do an individual check in turn JUST to make sure");
-                        P.TaskManager.Enqueue(() => Travel_IndividualCheck(), "Checking individual nodes");
-                        return true;
-                    }
-                    else
-                    {
-                        IceLogging.Debug("we're within range, checking travel kind now");
-                        P.TaskManager.Enqueue(() => Travel_MoveAndInteract(validNode), "Checking Travel Kind");
-                        return true;
-                    }
-                }
-
-
-
+                var order = string.Join(", ", GatherRoute.Select(n => $"{n.NodeId} (G{n.GroupId})"));
+                IceLogging.Verbose($"GatherRoute order: {order}", tag);
             }
 
-            return false;
+            if (GatherRoute.Count == 0)
+            {
+                IceLogging.Warning("No nodes were in this route is loaded, which means that it doesn't know where tf to go. Please report the route/item", tag);
+                return true;
+            }
+
+            // RouteIndex >= Count means we ran past the end of the list -> wrap to 0
+            if (RouteIndex >= GatherRoute.Count)
+                RouteIndex = 0;
+
+            // Timed route + a marker on one of our nodes: retarget, and cancel any path to a different node.
+            // Runs BEFORE the IsBusy check so it can interrupt travel.
+            if (IsTimedRoute() && TryGetTimedRouteIndex(out var timedIndex) && timedIndex != RouteIndex)
+            {
+                IceLogging.Debug($"Timed node marker matches route index {timedIndex} (node {GatherRoute[timedIndex].NodeId}), switching to it", tag);
+                RouteIndex = timedIndex;
+
+                if (P.navTask.IsBusy)
+                {
+                    P.navTask.Abort();
+                    P.navmesh.Stop();
+                }
+            }
+
+            // Still pathing to the current target, so wait for the next pass
+            if (P.navTask.IsBusy)
+                return false;
+
+            var currentNode = GatherRoute[RouteIndex];
+            if (currentNode.Locations.Count == 0)
+            {
+                IceLogging.Warning($"Node {currentNode.NodeId} has no locations", tag);
+                return true;
+            }
+
+            TargetNodeId = currentNode.NodeId;
+
+            // Distance > loadRange means we're FARTHER than 75y, so keep traveling
+            if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
+            {
+                TravelUtil.Gathering_TravelCheck(currentNode.Locations[0]);
+                return false;
+            }
+
+            IceLogging.Debug("We're within range of all nodes, continuing on", tag);
+            P.navmesh.PathStop();
+
+            var validNode = Svc.Objects
+                .Where(obj => obj.BaseId == TargetNodeId)
+                .Where(obj => obj.IsTargetable)
+                .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint)
+                .FirstOrDefault();
+
+            if (EzThrottler.Throttle("IsNodeValid"))
+                IceLogging.Debug($"Is Node Valid: {validNode != null}");
+
+            if (validNode != null)
+            {
+                IceLogging.Debug("we're within range, checking travel kind now");
+                P.TaskManager.Enqueue(() => Travel_MoveAndInteract(validNode), "Checking Travel Kind");
+                return true;
+            }
+
+            NodeCheckIndex = 0;
+            IceLogging.Debug("We can't seem to find a node that is valid, so we're going to do an individual check in turn JUST to make sure");
+            P.TaskManager.Enqueue(() => Travel_IndividualCheck(), "Checking individual nodes");
+            return true;
         }
         private static bool Travel_IndividualCheck()
         {
@@ -565,7 +608,7 @@ namespace GatherChill.Scheduler.Tasks
             }
             else if (Utils.GetFreeSlotCount() <= 1)
             {
-
+                exitLoop = true;
             }
 
             if (exitLoop)
@@ -747,14 +790,23 @@ namespace GatherChill.Scheduler.Tasks
                             bool isEphemeral = Gather_Util.ReducableItems.Any(x => x.ItemId == collectableId || x.SublimeItemId == collectableId);
 
                             _collectablePreset = Gather_Util.CollectableSolver.ChoosePreset(state, isEphemeral);
-                            IceLogging.Debug($"Collectable preset chosen: {_collectablePreset} (GP: {state.AvailableGp}, Ephemeral: {isEphemeral}) | Item: {gatherMaster.ItemName} | Min: {state.MinCollectability} | Mid: {gatherMaster.MidCollectability} | High: {gatherMaster.HighCollectability}", tag);
+                            IceLogging.Debug(
+                                $"Collectable preset chosen: {_collectablePreset} (GP: {state.AvailableGp}, Ephemeral: {isEphemeral}) | " +
+                                $"Item: {gatherMaster.ItemName} | Tiers: {state.MinCollectability}/{state.MidCollectability}/{state.HighCollectability} | " +
+                                $"Scour: {state.ScourPower} | Met: {state.MeticulousPower} | Brazen: {state.BrazenPowerMin}",
+                                tag);
                         }
+
+                        // Shared by the three logs below so they stay in sync
+                        var status =
+                            $"Prog: {state.Progression} | Min: {state.MinCollectability} | Att: {state.Attempts}/{state.MaxAttempts} | GP: {state.AvailableGp} | " +
+                            $"Scrutiny: {state.HasScrutiny} | Priming: {state.HasPriming} | Star: {state.HasCollectorStandard} | Swirl: {state.HasHighStandard}";
 
                         var nextAction = Gather_Util.CollectableSolver.GetNextAction(_collectablePreset, state);
                         if (nextAction is null)
                         {
                             if (EzThrottler.Throttle("Collectable no action"))
-                                IceLogging.Debug($"Solver returned no action | Prog: {state.Progression} | Min: {state.MinCollectability} | Att: {state.Attempts}/{state.MaxAttempts} | GP: {state.AvailableGp}", tag);
+                                IceLogging.Debug($"Solver returned no action | {status}", tag);
                             return false;
                         }
 
@@ -767,7 +819,7 @@ namespace GatherChill.Scheduler.Tasks
                         }
 
                         if (UseGatheringAction(actionId.Value))
-                            IceLogging.Verbose($"Collectable: {nextAction.Value} | Prog: {state.Progression} | Min: {state.MinCollectability} | Att: {state.Attempts}/{state.MaxAttempts} | GP: {state.AvailableGp} | Scrutiny: {state.HasScrutiny} | Standard: {state.HasCollectorStandard}", tag);
+                            IceLogging.Verbose($"Collectable: {nextAction.Value} | {status} | Scour: {state.ScourPower} | Met: {state.MeticulousPower}", tag);
                     }
                     else if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
                     {

@@ -1,4 +1,6 @@
 ﻿using ECommons.EzIpcManager;
+using GatherChill.Enums;
+using GatherChill.Utilities.Utility;
 
 #nullable disable
 namespace GatherChill.IPC
@@ -8,13 +10,34 @@ namespace GatherChill.IPC
         public const string Name = "Lifestream";
         public const string Repo = "https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json";
         public LifestreamIPC() => EzIPC.Init(this, Name, SafeWrapper.AnyException);
+        public bool Installed => Utils.HasPlugin(Name);
 
-        [EzIPC] public Func<string, bool> AethernetTeleport; //
+        [EzIPC] public Func<string, bool> AethernetTeleport;
         [EzIPC] public Func<uint, byte, bool> Teleport;
         [EzIPC] public Func<bool> TeleportToHome;
         [EzIPC] public Func<bool> TeleportToFC;
         [EzIPC] public Func<bool> TeleportToApartment;
         [EzIPC] public Func<bool> IsBusy;
         [EzIPC] public Action<string> ExecuteCommand;
+
+        public void QueueTask(ReturnTypes returnType, string command = "")
+        {
+            if (!Installed)
+                return;
+
+            if (IsBusy())
+                return;
+
+            if (returnType is ReturnTypes.Home)
+                TeleportToHome();
+            else if (returnType is ReturnTypes.FC)
+                TeleportToFC();
+            else if (returnType is ReturnTypes.Apartment)
+                TeleportToApartment();
+            else if (returnType is ReturnTypes.Custom && command != string.Empty)
+                ExecuteCommand(command);
+            else
+                return;
+        }
     }
 }

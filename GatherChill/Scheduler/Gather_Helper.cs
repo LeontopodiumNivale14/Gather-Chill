@@ -113,10 +113,10 @@ namespace GatherChill.Scheduler
         }
 
         /// <summary>
-        /// Returns true if any timed node on a selected route is currently up.
-        /// upRoutes: every currently-up route not already in GatheredTimedRoutes.
-        /// nextUp: real time until the soonest window opens among routes that are
-        ///         NOT currently up (null if there are none).
+        /// Returns true **ONLY IF** any timed node on the currently selected routes are up <br></br>     
+        /// upRoutes: returns all the routes that are not on the banned list <br></br>
+        /// nextUp: return the time of the closest window from the currently available routes <br></br>
+        ///         if there is none, it return null
         /// </summary>
         public static bool AnyTimedNodes(out List<uint> upRoutes, out TimeSpan? nextUp)
         {

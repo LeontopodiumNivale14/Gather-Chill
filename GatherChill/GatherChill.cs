@@ -90,8 +90,10 @@ public sealed class GatherChill : IDalamudPlugin
             /gatherchill stop - Stops plugin
             /gatherchill overlay - opens the overlay
             /forager - other option
+            /chill - other OTHER option
             """);
         EzCmd.Add("/forager", OnCommand);
+        EzCmd.Add("/chill", OnCommand);
         Svc.Framework.Update += Tick;
         Svc.PluginInterface.UiBuilder.Draw += OnDraw;
 

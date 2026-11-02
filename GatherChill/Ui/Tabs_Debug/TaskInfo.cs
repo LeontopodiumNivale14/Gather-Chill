@@ -1,4 +1,5 @@
 ﻿using GatherChill.Scheduler;
+using GatherChill.Scheduler.Tasks;
 using GatherChill.Utilities.Utility;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,9 @@ internal class TaskInfo
 
         var timedList = string.Join(", ", Gather_Helper.GatheredTimedRoutes);
         ImGui.Text($"Current timed banned: {timedList}");
+        if (ImGui.Button("Queue Return Test"))
+        {
+            P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Lifestream Test");
+        }
     }
 }

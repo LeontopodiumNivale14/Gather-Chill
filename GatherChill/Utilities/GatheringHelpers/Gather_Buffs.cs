@@ -290,7 +290,7 @@ public static partial class Gather_Util
                 [Job.MIN] = new() { ActionId = 34871, Name = "Priming Touch" },
                 [Job.BTN] = new() { ActionId = 34872, Name = "Priming Touch" },
             },
-            StatusId = 2668,
+            StatusId = 3910,
             StatusName = "",
             RequiredGp = 100,
         },

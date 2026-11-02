@@ -214,6 +214,20 @@ namespace GatherChill.Scheduler.Tasks
                     Gather_Helper.State = IceState.Teleport;
                     return true;
                 }
+
+                if (LegendaryItems.Count != 0 || EphemeralItems.Count != 0 || EphemeralItems.Count != 0)
+                {
+                    IceLogging.Verbose("We have a timed node of some sort that we're waiting for. (And no normal items to gather it seems)", tag);
+                    IceLogging.Verbose("If we have a spot to return to, we're going to do so. Otherwise, we just gonna wait where we are", tag);
+                    if (!Gather_Helper.AnyTimedNodes(out _, out var nextUp))
+                    {
+                        if (nextUp != null && nextUp.Value.TotalSeconds > 60)
+                        {
+                            P.TaskManager.Enqueue(() => Task_Return.Lifestream_ItemWait(), "Using Lifestream");
+                        }
+                        P.TaskManager.Enqueue(() => Task_Wait.Enqueue(), "Waiting for timed node");
+                    }
+                }
             }
             else
             {
