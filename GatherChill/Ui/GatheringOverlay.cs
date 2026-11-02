@@ -282,7 +282,7 @@ internal class GatheringOverlay : Window
         var waiting = new List<(uint Id, TimeSpan Timer)>();
         var normal = new List<uint>();
 
-        foreach (var info in C.GatherList)
+        foreach (var info in GatherJobs.ActiveList)
         {
             if (info.ItemId == current)
                 continue;

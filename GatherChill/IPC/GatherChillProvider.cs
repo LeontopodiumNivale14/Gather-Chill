@@ -11,7 +11,7 @@ namespace GatherChill.IPC;
 /// </summary>
 public class GatherChillProvider
 {
-    private const int Version = 2;
+    private const int Version = 3;
 
     public GatherChillProvider() => EzIPC.Init(this, "GatherChill");
 
@@ -19,10 +19,10 @@ public class GatherChillProvider
     public int ApiVersion() => Version;
 
     /// <summary>
-    /// True while Gather n Chill is gathering.
+    /// True while Gather n Chill is gathering, or a job is still settling.
     /// </summary>
     [EzIPC]
-    public bool IsBusy() => Gather_Helper.State != IceState.Idle;
+    public bool IsBusy() => Gather_Helper.State != IceState.Idle || GatherJobs.HasUnsettledJob;
 
     /// <summary>
     /// True if Gather n Chill has a route for the item, so callers only send what it can gather.
@@ -75,4 +75,28 @@ public class GatherChillProvider
     /// </summary>
     [EzIPC]
     public void Stop() => SchedulerMain.DisablePlugin();
+
+    /// <summary>
+    /// Starts a job that gathers <paramref name="amount"/> more of one item, without touching the saved gather list.
+    /// Result is a <see cref="GatherJobStartResult"/>; JobId is empty unless it started.
+    /// </summary>
+    [EzIPC]
+    public (int Result, Guid JobId, string Message) StartJob(string owner, uint itemId, int amount)
+    {
+        var result = GatherJobs.Start(owner, itemId, amount, out var jobId, out var message);
+        return ((int)result, jobId, message);
+    }
+
+    /// <summary>
+    /// State is a <see cref="GatherJobState"/>. A job stays Stopping until travel and the gathering window
+    /// have settled, then reports Succeeded, Failed or Cancelled. Unknown means the id isn't known (anymore).
+    /// </summary>
+    [EzIPC]
+    public (int State, int Gathered, int Wanted, string Message) GetJob(Guid jobId) => GatherJobs.Get(jobId);
+
+    /// <summary>
+    /// Cancels the job if it is still running and belongs to <paramref name="owner"/>. Never stops other gathering.
+    /// </summary>
+    [EzIPC]
+    public bool CancelJob(string owner, Guid jobId) => GatherJobs.Cancel(owner, jobId);
 }

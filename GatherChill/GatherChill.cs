@@ -112,6 +112,7 @@ public sealed class GatherChill : IDalamudPlugin
         TextAdvancedManager.Tick();
         YesAlreadyManager.Tick();
         Gather_Helper.RemoveTimedRoutes();
+        GatherJobs.Tick();
     }
 
     public void OnDraw()

@@ -100,7 +100,7 @@ namespace GatherChill.Scheduler.Tasks
                     };
                 }
 
-                var config = C.GatherList.Where(x => x.ItemId == goalItemId).FirstOrDefault();
+                var config = GatherJobs.ActiveList.Where(x => x.ItemId == goalItemId).FirstOrDefault();
                 bool exitLoop = false;
 
                 if (config.Mode == GatherMode.Keep && currentAmount >= config.KeepAmount)
@@ -418,7 +418,7 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     IceLogging.Error("We seem to be getting an invalid node???", tag);
                     IceLogging.Error($"Current node: {currentNode.NodeId} doesn't seem to have a valid location. Please report this and the item you were trying to gather", tag);
-                    SchedulerMain.DisablePlugin();
+                    SchedulerMain.Fail($"Node {currentNode.NodeId} has no valid location");
                     return true;
                 }
                 else
@@ -534,7 +534,7 @@ namespace GatherChill.Scheduler.Tasks
                 };
             }
 
-            var config = C.GatherList.Where(x => x.ItemId == itemId).FirstOrDefault();
+            var config = GatherJobs.ActiveList.Where(x => x.ItemId == itemId).FirstOrDefault();
             bool exitLoop = false;
 
             if (config.Mode == GatherMode.Keep && currentAmount >= config.KeepAmount)
@@ -609,7 +609,7 @@ namespace GatherChill.Scheduler.Tasks
                     uint OtherItem(Utilities.Gathering gather)
                     {
                         var gatherList = gather.GatheredItems.Where(x => x.ItemID != 0).ToList();
-                        var itemList = C.GatherList
+                        var itemList = GatherJobs.ActiveList
                             .Where(x => (x.Mode == GatherMode.Gather && x.GatherAmount != 0)
                                      || (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
                             .ToList();
@@ -739,7 +739,7 @@ namespace GatherChill.Scheduler.Tasks
                                             {
                                                 // WELL WE NEED TO GATHER SOMETHING... OR. HERE ME OUT. We just abandon and error
                                                 IceLogging.Error("No backup item could be found (aka crystals?) and no actual. . . hidden item can be found. So we gonna skeet out :fguns:", tag);
-                                                SchedulerMain.DisablePlugin();
+                                                SchedulerMain.Fail("Neither the hidden item nor a backup item could be found");
                                                 return true;
                                             }
                                         }

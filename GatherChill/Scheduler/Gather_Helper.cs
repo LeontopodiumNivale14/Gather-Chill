@@ -41,7 +41,7 @@ namespace GatherChill.Scheduler
             {
                 get
                 {
-                    foreach (var info in C.GatherList)
+                    foreach (var info in GatherJobs.ActiveList)
                     {
                         if (info.ItemId == ItemId)
                             return info;
@@ -123,13 +123,13 @@ namespace GatherChill.Scheduler
             upRoutes = new List<uint>();
             nextUp = null;
 
-            if (C.GatherList.Count == 0)
+            if (GatherJobs.ActiveList.Count == 0)
                 return false;
 
             var visited = new HashSet<uint>();
             TimeSpan? soonest = null;
 
-            var itemList = C.GatherList.Where(x =>
+            var itemList = GatherJobs.ActiveList.Where(x =>
                 (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
                 (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
                 .Where(x => IsTargeted(x.ItemId))
