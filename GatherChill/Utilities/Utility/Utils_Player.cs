@@ -169,7 +169,8 @@ public static partial class Utils
         if (pos == null)
         {
             IceLogging.ChatError($"Failed to find the item: {itemSheet.Name} [ID: {itemId}] in inventory", tag);
-            SchedulerMain.DisablePlugin();
+            SchedulerMain.Fail($"{itemSheet.Name} isn't in the inventory");
+            return;
         }
 
         InventoryManager.Instance()->MoveItemSlot(pos.Value.inv, pos.Value.slot, InventoryType.EquippedItems, (ushort)(itemSheet.EquipSlotCategory.RowId - 1), true);

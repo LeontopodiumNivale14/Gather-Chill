@@ -8,8 +8,19 @@ namespace GatherChill.Scheduler
 {
     internal static class SchedulerMain
     {
-        internal static void DisablePlugin()
+        /// <summary>
+        /// Stops gathering, same as the Stop button.
+        /// </summary>
+        internal static void DisablePlugin() => DisablePlugin(GatherJobState.Cancelled, "Stopped in Gather n Chill");
+
+        /// <summary>
+        /// Stops gathering because something went wrong. An IPC job reports it as failed.
+        /// </summary>
+        internal static void Fail(string reason) => DisablePlugin(GatherJobState.Failed, reason);
+
+        internal static void DisablePlugin(GatherJobState outcome, string reason)
         {
+            GatherJobs.End(outcome, reason);
             Gather_Helper.State = IceState.Idle;
             P.TaskManager.Abort();
             P.navTask.Abort();

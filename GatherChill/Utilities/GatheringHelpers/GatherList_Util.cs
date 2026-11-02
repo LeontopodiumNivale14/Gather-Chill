@@ -55,30 +55,38 @@ internal static class GatherList_Util
         }
 
         C.GatherList.Add(new Config.ItemInfo { ItemId = targetId, GatherAmount = Math.Max(1, amount) });
+        EnsureEnabledRoutes(targetId);
+        return true;
+    }
 
-        // Make sure the item has usable routes enabled
-        if (C.ItemRoutes.TryGetValue(targetId, out var itemConfig))
+    /// <summary>
+    /// Makes sure the item has usable routes enabled. Returns false if it has none at all.
+    /// </summary>
+    public static bool EnsureEnabledRoutes(uint targetId)
+    {
+        if (!Gather_Util.Sheet_ItemInfo.TryGetValue(targetId, out var itemInfo) ||
+            !C.ItemRoutes.TryGetValue(targetId, out var itemConfig))
+            return false;
+
+        var enabled = itemConfig.EnabledRoutes;
+
+        // If both route types exist, only normal routes should be used
+        if (itemInfo.TimedRoutes.Count != 0 && itemInfo.NormalRoutes.Count != 0)
         {
-            var enabled = itemConfig.EnabledRoutes;
-
-            // If both route types exist, only normal routes should be used
-            if (itemInfo.TimedRoutes.Count != 0 && itemInfo.NormalRoutes.Count != 0)
-            {
-                foreach (var route in itemInfo.TimedRoutes)
-                    enabled.Remove(route);
-            }
-
-            // Nothing enabled: fall back to the first normal route, otherwise all timed routes
-            if (enabled.Count == 0)
-            {
-                if (itemInfo.NormalRoutes.Count != 0)
-                    enabled.Add(itemInfo.NormalRoutes[0]);
-                else
-                    foreach (var route in itemInfo.TimedRoutes)
-                        enabled.Add(route);
-            }
+            foreach (var route in itemInfo.TimedRoutes)
+                enabled.Remove(route);
         }
 
-        return true;
+        // Nothing enabled: fall back to the first normal route, otherwise all timed routes
+        if (enabled.Count == 0)
+        {
+            if (itemInfo.NormalRoutes.Count != 0)
+                enabled.Add(itemInfo.NormalRoutes[0]);
+            else
+                foreach (var route in itemInfo.TimedRoutes)
+                    enabled.Add(route);
+        }
+
+        return enabled.Count != 0;
     }
 }
