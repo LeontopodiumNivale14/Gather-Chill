@@ -8,7 +8,7 @@ namespace GatherChill.Ui.Settings_Info;
 
 public static partial class SettingsUi
 {
-    private static readonly string RepairOption = "Repair Options";
+    private static readonly string RepairOption = "Repair & Spiritbond Options";
 
     private static SettingEntry SelfRepair = new()
     {
@@ -61,6 +61,22 @@ public static partial class SettingsUi
             }
             ImGui.SameLine();
             ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle, "What do you want your gear to be at to repair", false);
+        }
+    };
+
+    private static SettingEntry Spiritbond_Extract = new()
+    {
+        Label = "Extract Materia",
+        Category = RepairOption,
+        Keywords = new[] { "Extract", "Materia", "Spiritbond" },
+        Draw = () =>
+        {
+            var v = C.Extract_Spiritbond;
+            if (ImGui.Checkbox("Extract Spiritbonded Gear", ref v))
+            {
+                C.Extract_Spiritbond = v;
+                C.Save();
+            }
         }
     };
 }

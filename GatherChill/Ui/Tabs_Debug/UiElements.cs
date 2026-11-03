@@ -1,7 +1,4 @@
 ﻿using GatherChill.Gui;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GatherChill.Ui.Tabs_Debug
 {

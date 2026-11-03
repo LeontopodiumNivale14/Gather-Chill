@@ -99,6 +99,7 @@ public static partial class SettingsUi
         SelfRepair,
         DarkMatter,
         RepairAmount,
+        Spiritbond_Extract,
 
         // Misc
         ColorTheme,

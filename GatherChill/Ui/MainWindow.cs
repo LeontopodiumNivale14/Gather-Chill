@@ -23,15 +23,12 @@ namespace GatherChill.Ui
         {
             Flags = ImGuiWindowFlags.None;
 
-            // Set up size constraints to ensure window cannot be too small or too large.
-            // Increased minimum size to better accommodate larger font sizes
             SizeConstraints = new()
             {
                 MinimumSize = new Vector2(500, 500),
                 MaximumSize = new Vector2(2000, 2000)
             };
 
-            // Register this window with Dalamud's window system.
             P.windowSystem.AddWindow(this);
 
             AllowPinning = false;

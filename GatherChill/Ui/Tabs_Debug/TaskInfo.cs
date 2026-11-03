@@ -19,6 +19,11 @@ internal class TaskInfo
         ImGui.Text($"Current Route: {Gather_Helper.GatherRoute.routeId}");
         ImGui.Text($"Task Count: {P.TaskManager.Tasks.Count}");
         ImGui.Text($"Current Free Slot Count: {Utils.GetFreeSlotCount()}");
+        if (ImGui.Button("Abort Task"))
+        {
+            P.TaskManager.Abort();
+            P.navTask.Abort();
+        }
 
         ImGui.Separator();
 
@@ -27,6 +32,10 @@ internal class TaskInfo
         if (ImGui.Button("Queue Return Test"))
         {
             P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Lifestream Test");
+        }
+        if (ImGui.Button("Test Spiritbond Extraction"))
+        {
+            P.TaskManager.Enqueue(() => Task_Spiritbond.Enqueue(), "Extracting Spiritbond");
         }
     }
 }

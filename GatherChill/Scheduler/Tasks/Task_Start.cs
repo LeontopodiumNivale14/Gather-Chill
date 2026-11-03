@@ -25,6 +25,8 @@ namespace GatherChill.Scheduler.Tasks
 
         private static unsafe bool CheckInteraction()
         {
+            string tag = "Task: Start Process";
+
             // Not gathering at all, nothing to check
             if (!Svc.Condition[ConditionFlag.Gathering])
                 return true;
@@ -55,11 +57,12 @@ namespace GatherChill.Scheduler.Tasks
 
                         var wanted = GatherJobs.ActiveList.Any(x =>
                             (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
-                            (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount));
+                            (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount)
+                            && Utils.GetFreeSlotCount() > 1);
                         if (!wanted)
                             continue;
 
-                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}");
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}", tag);
                         Gather_Helper.GatherRoute = new() { itemId = item.ItemID, routeId = route.Value.Key };
                         Gather_Helper.State = IceState.Gather;
                         return true;
@@ -73,11 +76,12 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     var wanted = Gather_Helper.IsTargeted(gatherMaster.ItemID) && GatherJobs.ActiveList.Any(x =>
                         (x.Mode == GatherMode.Gather && x.ItemId == gatherMaster.ItemID && x.GatherAmount != 0) ||
-                        (x.Mode == GatherMode.Keep && x.ItemId == gatherMaster.ItemID && Utils.GetItemCount(gatherMaster.ItemID) < x.KeepAmount));
+                        (x.Mode == GatherMode.Keep && x.ItemId == gatherMaster.ItemID && Utils.GetItemCount(gatherMaster.ItemID) < x.KeepAmount)
+                        && Utils.GetFreeSlotCount() > 1);
                     
                     if (wanted)
                     {
-                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {gatherMaster.ItemID}");
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {gatherMaster.ItemID}", tag);
                         Gather_Helper.GatherRoute = new() { itemId = gatherMaster.ItemID, routeId = route.Value.Key };
                         Gather_Helper.State = IceState.Gather;
                         return true;
@@ -246,6 +250,7 @@ namespace GatherChill.Scheduler.Tasks
                 GatherJobs.EndNaturally();
                 Gather_Helper.State = IceState.Idle;
                 Gather_Helper.OnlyItemId = 0;
+                P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Checking for return post");
                 return true;
             }
             

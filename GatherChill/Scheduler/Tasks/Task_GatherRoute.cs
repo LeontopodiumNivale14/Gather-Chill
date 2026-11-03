@@ -78,6 +78,7 @@ namespace GatherChill.Scheduler.Tasks
                     new(() => ChangeJob(), "Checking for job change"),
                     new(() => CheckEquipment(), "Checking for equipment requirement"),
                     new(() => Task_SelfRepair.Enqueue(), "Self Repair Check"),
+                    new(() => Task_Spiritbond.Enqueue(), "Spiritbond Check"),
                     new(() => Travel_FarCheck(), "Traveling to node group"));
             }
         }
