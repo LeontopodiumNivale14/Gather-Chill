@@ -238,6 +238,7 @@ public static partial class Gather_Util
     public static void UpdateSheetInfo()
     {
         CollectableDatabase.Build();
+        DebugFindNodes(); // TEMP
         CreateInitialDictionaries();
         Update_GatheringDetails();
 
@@ -254,6 +255,8 @@ public static partial class Gather_Util
         UpdateItemExpansions();
         IncludeReducables();
 
+        DebugRouteResult();
+
         // Config Update
         Update_NodeConfig();
     }
@@ -269,6 +272,169 @@ public static partial class Gather_Util
     /// This is created like this because there are hidden items that aren't normally attached to the routes, <br></br>
     /// and is a pain to loop back to the routes it's done to make sure all is caught
     /// </summary>
+
+    // Set to whatever you're hunting. Both are only used for debug output.
+    private static readonly HashSet<uint> DebugNodeIds = [32314, 32317];
+    private static readonly HashSet<uint> DebugRouteIds = [541, 542, 543];
+
+    private static void LogSkip(uint routeId, string reason)
+    {
+        // Only log the routes we care about, the full log is too noisy
+        if (!DebugRouteIds.Contains(routeId))
+            return;
+
+        IceLogging.Verbose($"RouteID: {routeId} | Skipped: {reason}", "Route Build");
+    }
+
+    /// <summary>
+    /// Looks up specific GatherPoint rows directly (bypassing the PlaceName > 0 filter)
+    /// and dumps everything we'd need to know to route them.
+    /// </summary>
+    private static void DebugFindNodes()
+    {
+        var sheet = ExcelHelper.Sheet_GatherPoint;
+        var itemPointDict = ExcelHelper.Sheet_GatherItemPoint.Flatten()
+            .GroupBy(gip => gip.GatheringPoint.RowId)
+            .ToDictionary(g => g.Key, g => g.Select(x => x.RowId).ToList());
+
+        foreach (var nodeId in DebugNodeIds)
+        {
+            if (!sheet.TryGetRow(nodeId, out var node))
+            {
+                IceLogging.Verbose($"[NodeDebug] Node {nodeId}: row NOT FOUND in GatheringPoint sheet");
+                continue;
+            }
+
+            var baseRow = node.GatheringPointBase.Value;
+            var territory = node.TerritoryType.Value;
+            var zone = territory.RowId != 0 ? territory.PlaceName.Value.Name.ToString() : "(none)";
+            var hiddenCount = itemPointDict.TryGetValue(nodeId, out var hidden) ? hidden.Count : 0;
+
+            IceLogging.Verbose(
+                $"[NodeDebug] Node {nodeId} | Base: {baseRow.RowId} | BaseLevel: {baseRow.GatheringLevel} | " +
+                $"BaseType: {baseRow.GatheringType.RowId} | PlaceName: {node.PlaceName.RowId} | " +
+                $"Territory: {territory.RowId} ({zone}) | MapValid: {territory.Map.IsValid} | " +
+                $"HiddenItemRows: {hiddenCount}");
+
+            // Every node that shares this base, regardless of PlaceName
+            var siblings = sheet
+                .Where(x => x.GatheringPointBase.RowId == baseRow.RowId)
+                .ToList();
+
+            IceLogging.Verbose($"[NodeDebug]   Base {baseRow.RowId} has {siblings.Count} node(s) total, " +
+                               $"{siblings.Count(x => x.PlaceName.RowId > 0)} with PlaceName > 0");
+
+            foreach (var sibling in siblings)
+            {
+                var sibTerritory = sibling.TerritoryType.Value;
+                IceLogging.Verbose(
+                    $"[NodeDebug]   - Node {sibling.RowId} | PlaceName: {sibling.PlaceName.RowId} | " +
+                    $"Territory: {sibTerritory.RowId} | MapValid: {sibTerritory.Map.IsValid}");
+            }
+        }
+    }
+    private static void DebugRouteResult()
+    {
+        foreach (var routeId in DebugRouteIds)
+        {
+            if (!Sheet_RouteInfo.TryGetValue(routeId, out var info))
+            {
+                IceLogging.Verbose($"[RouteDebug] Route {routeId}: NOT in Sheet_RouteInfo");
+                continue;
+            }
+
+            IceLogging.Verbose(
+                $"[RouteDebug] Route {routeId} | Job: {info.Job} | Level: {info.Level} | " +
+                $"Territory: {info.TerritoryId} | Zone: {info.ZoneName} | Place: {info.PlaceName} | " +
+                $"Exp: {info.ExpId} ({info.ExpansionName}) | Nodes: {info.NodeIds.Count} | " +
+                $"Items: {string.Join(", ", info.ItemIds)} | Kind: {info.Kind} | Map: ({info.Map.X}, {info.Map.Y}) r{info.Map.Radius}");
+
+            foreach (var itemId in info.ItemIds)
+            {
+                var inItemInfo = Sheet_ItemInfo.TryGetValue(itemId, out var item);
+                IceLogging.Verbose(
+                    $"[RouteDebug]   Item {itemId} | In Sheet_ItemInfo: {inItemInfo} | " +
+                    $"Routes: {(inItemInfo ? string.Join(", ", item!.RouteInfo) : "-")}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Routes whose GatherPoint rows only point at the placeholder territory (RowId 1),
+    /// so the real zone has to be supplied by hand. RouteId (GatheringPointBase) -> TerritoryType RowId.
+    /// </summary>
+    private static readonly Dictionary<uint, uint> RouteTerritoryOverrides = new()
+    {
+        [316] = 1073,
+        [317] = 1073,
+        [319] = 1073,
+        [322] = 1073,
+        [336] = 1073,
+        [393] = 1073,
+        [394] = 1073,
+        [396] = 1073,
+        [398] = 1073,
+        [399] = 1073,
+        [541] = 622,
+        [542] = 622,
+        [543] = 622,
+        [544] = 622,
+        [545] = 622,
+        [546] = 622,
+        [547] = 622,
+        [548] = 622,
+        [549] = 622,
+        [550] = 622,
+    };
+
+    private static bool TryResolveTerritory(uint routeId, List<uint> nodes, out uint territoryId, out string zoneName, out string placeName, out ExpansionIds expansion)
+    {
+        territoryId = 0;
+        zoneName = "???";
+        placeName = "???";
+        expansion = 0;
+
+        // 1. First node with real territory data
+        foreach (var nodeId in nodes)
+        {
+            if (!ExcelHelper.Sheet_GatherPoint.TryGetRow(nodeId, out var node))
+                continue;
+
+            var territoryType = node.TerritoryType.Value;
+            if (territoryType.RowId <= 1 || !territoryType.Map.IsValid)
+                continue;
+
+            var name = territoryType.PlaceName.Value.Name.ToString();
+            if (name == string.Empty)
+                continue;
+
+            territoryId = territoryType.RowId;
+            zoneName = name;
+            expansion = (ExpansionIds)territoryType.ExVersion.Value.RowId;
+
+            if (node.PlaceName.IsValid && node.PlaceName.RowId != 0)
+                placeName = node.PlaceName.Value.Name.ToString();
+
+            return true;
+        }
+
+        if (!RouteTerritoryOverrides.TryGetValue(routeId, out var overrideId))
+            return false;
+
+        var sheet = Svc.Data.GetExcelSheet<TerritoryType>();
+        if (sheet == null || !sheet.TryGetRow(overrideId, out var overrideType))
+            return false;
+
+        var overrideName = overrideType.PlaceName.Value.Name.ToString();
+        if (overrideName == string.Empty)
+            return false;
+
+        territoryId = overrideType.RowId;
+        zoneName = overrideName;
+        expansion = (ExpansionIds)overrideType.ExVersion.Value.RowId;
+        return true;
+    }
+
     private static void CreateInitialDictionaries()
     {
         var sheet_gatherPoint = ExcelHelper.Sheet_GatherPoint;
@@ -278,12 +444,12 @@ public static partial class Gather_Util
             .GroupBy(gip => gip.GatheringPoint.RowId)
             .ToDictionary(g => g.Key, g => g.Select(x => x.RowId).ToList());
 
+        // No PlaceName filter: some nodes (beast tribe etc.) have PlaceName == 0
         var gatheringPointDict = sheet_gatherPoint
-            .Where(gp => gp.PlaceName.RowId > 0)
             .GroupBy(gp => gp.GatheringPointBase.RowId)
             .ToDictionary(g => g.Key, g => g.Select(x => x.RowId).ToList());
 
-        // Used to make sure we don't loop through an already-processed.... *-sighs-*
+        // Used to make sure we don't loop through an already-processed base
         var processedBases = new HashSet<uint>();
 
         foreach (var gatherPoint in sheet_gatherPoint)
@@ -292,38 +458,42 @@ public static partial class Gather_Util
             uint routeId = gatherPointBase.RowId;
 
             // Skip if already processed this base
-            if (processedBases.Contains(routeId))
+            if (!processedBases.Add(routeId))
                 continue;
-            processedBases.Add(routeId);
 
             if (gatherPointBase.GatheringLevel == 0)
+            {
+                LogSkip(routeId, "GatheringLevel == 0");
                 continue;
+            }
 
             Job job = 0;
-            uint routeType = 0;
             uint level = gatherPointBase.GatheringLevel;
-            uint territoryId = 0;
-            ExpansionIds expansion = 0;
-            string expansionName = "ARealmReborn";
-            string zoneName = "???";
-            string placeName = "???";
             List<uint> itemIds = new();
             int radius = 0;
 
             // Map gathering type
-            uint baseType = gatherPointBase.GatheringType.Value.RowId;
-            if (baseType is 0 or 1)
+            uint routeType = gatherPointBase.GatheringType.Value.RowId;
+            if (routeType is 0 or 1)
                 job = Job.MIN;
-            else if (baseType is 2 or 3)
+            else if (routeType is 2 or 3)
                 job = Job.BTN;
-            else if (baseType is 4 or 5)
+            else if (routeType is 4 or 5)
                 job = Job.FSH;
-            routeType = baseType;
 
             if (job is Job.FSH)
+            {
+                LogSkip(routeId, $"Fishing node (GatheringType {routeType})");
                 continue;
+            }
 
-            // Adding the base items 
+            if (Ignore_Routes.Contains(routeId))
+            {
+                LogSkip(routeId, "In Ignore_Routes");
+                continue;
+            }
+
+            // Adding the base items
             for (int i = 0; i <= 7; i++)
             {
                 var gatheringItemId = gatherPointBase.Item[i].RowId;
@@ -354,70 +524,52 @@ public static partial class Gather_Util
             }
 
             // THE PAIN POINT. Adding the hidden items.
-            if (gatheringPointDict.TryGetValue(routeId, out var nodeList))
+            gatheringPointDict.TryGetValue(routeId, out var nodeList);
+            var nodes = nodeList ?? new List<uint>();
+
+            foreach (var gatherPointId in nodes)
             {
-                foreach (var gatherPointId in nodeList)
+                if (!gatheringItemPointDict.TryGetValue(gatherPointId, out var hiddenItemIds))
+                    continue;
+
+                foreach (var gatheringItemId in hiddenItemIds)
                 {
-                    if (gatheringItemPointDict.TryGetValue(gatherPointId, out var hiddenItemIds))
-                    {
-                        foreach (var gatheringItemId in hiddenItemIds)
-                        {
-                            if (ExcelHelper.Sheet_GatheringItem.TryGetRow(gatheringItemId, out var gatherItem))
-                            {
-                                var itemId = gatherItem.Item.RowId;
-                                if (itemId != 0 && !itemIds.Contains(itemId))
-                                    itemIds.Add(itemId);
-                            }
-                        }
-                    }
+                    if (!ExcelHelper.Sheet_GatheringItem.TryGetRow(gatheringItemId, out var gatherItem))
+                        continue;
+
+                    var itemId = gatherItem.Item.RowId;
+                    if (itemId != 0 && !itemIds.Contains(itemId))
+                        itemIds.Add(itemId);
                 }
             }
 
             if (itemIds.Count == 0)
+            {
+                LogSkip(routeId, "No items found");
                 continue;
+            }
 
             // TEMP: find duplicate item IDs in this route
             var dupes = itemIds.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (dupes.Count > 0)
                 IceLogging.Verbose($"RouteID: {routeId} | Duplicate items: {string.Join(", ", dupes)}");
 
-            if (job is Job.FSH)
-                IceLogging.Verbose($"RouteID: {routeId} | Item Count: {itemIds.Count()}");
-
-            // Getting the associated territory info here
-            var firstNodeId = nodeList?.FirstOrDefault() ?? 0;
-            if (firstNodeId != 0 && sheet_gatherPoint.TryGetRow(firstNodeId, out var firstNode))
+            if (!TryResolveTerritory(routeId, nodes, out var territoryId, out var zoneName, out var placeName, out var expansion))
             {
-                if (firstNode.TerritoryType.Value.RowId != 0)
-                {
-                    var territoryType = firstNode.TerritoryType.Value;
-                    territoryId = territoryType.RowId;
-                    if (territoryType.Map.IsValid)
-                        zoneName = territoryType.PlaceName.Value.Name.ToString();
-
-                    if (zoneName == string.Empty)
-                        continue;
-
-                    expansion = (ExpansionIds)territoryType.ExVersion.Value.RowId;
-                }
-
-                if (firstNode.PlaceName.IsValid)
-                    placeName = firstNode.PlaceName.Value.Name.ToString();
-            }
-
-            if (zoneName == "???")
+                LogSkip(routeId, $"No usable territory info across {nodes.Count} node(s) and no override");
                 continue;
-
-            switch (expansion)
-            {
-                case ExpansionIds.ARR: expansionName = "ARealmReborn"; break;
-                case ExpansionIds.HW: expansionName = "Heavensward"; break;
-                case ExpansionIds.StB: expansionName = "Stormblood"; break;
-                case ExpansionIds.ShB: expansionName = "Shadowbringers"; break;
-                case ExpansionIds.EW: expansionName = "Endwalker"; break;
-                case ExpansionIds.DT: expansionName = "Dawntrail"; break;
-                default: expansionName = "???"; break;
             }
+
+            string expansionName = expansion switch
+            {
+                ExpansionIds.ARR => "ARealmReborn",
+                ExpansionIds.HW => "Heavensward",
+                ExpansionIds.StB => "Stormblood",
+                ExpansionIds.ShB => "Shadowbringers",
+                ExpansionIds.EW => "Endwalker",
+                ExpansionIds.DT => "Dawntrail",
+                _ => "???",
+            };
 
             MapInfo mapInfo = new();
             if (ExcelHelper.Sheet_ExportedGatherPoints.TryGetRow(routeId, out var exportSheet))
@@ -431,27 +583,27 @@ public static partial class Gather_Util
                 };
             }
 
-            if (Ignore_Routes.Contains(routeId))
-                continue;
-
-            if (!Sheet_RouteInfo.ContainsKey(routeId))
+            if (Sheet_RouteInfo.ContainsKey(routeId))
             {
-                Sheet_RouteInfo.Add(routeId, new GatherPointInfo()
-                {
-                    Job = job,
-                    NodeType = routeType,
-                    Level = level,
-                    TerritoryId = territoryId,
-                    ZoneName = zoneName,
-                    PlaceName = placeName,
-                    NodeIds = new SortedSet<uint>(nodeList ?? Enumerable.Empty<uint>()),
-                    ItemIds = itemIds,
-                    Radius = radius,
-                    ExpId = expansion,
-                    ExpansionName = expansionName,
-                    Map = mapInfo,
-                });
+                LogSkip(routeId, "Already in Sheet_RouteInfo");
+                continue;
             }
+
+            Sheet_RouteInfo.Add(routeId, new GatherPointInfo()
+            {
+                Job = job,
+                NodeType = routeType,
+                Level = level,
+                TerritoryId = territoryId,
+                ZoneName = zoneName,
+                PlaceName = placeName,
+                NodeIds = new SortedSet<uint>(nodes),
+                ItemIds = itemIds,
+                Radius = radius,
+                ExpId = expansion,
+                ExpansionName = expansionName,
+                Map = mapInfo,
+            });
         }
     }
     private static void UpdateTimes()

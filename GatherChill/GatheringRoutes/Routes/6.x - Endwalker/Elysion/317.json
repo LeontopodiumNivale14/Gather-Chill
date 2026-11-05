@@ -1,0 +1,115 @@
+{
+  "routeId": 317,
+  "territoryId": 1073,
+  "zoneName": "Elysion",
+  "placeName": "???",
+  "expansionId": 4,
+  "gatheringJobId": 16,
+  "levelRequirement": 0,
+  "nodeIds": [
+    31820,
+    31821,
+    31822
+  ],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 31820,
+      "locations": [
+        {
+          "position": {
+            "x": -9.143447,
+            "y": 494.1166,
+            "z": -82.62958
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 130,
+            "fan_EndAngle": 232,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0.2
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 130,
+            "fan_EndAngle": 232,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 1,
+      "nodeId": 31822,
+      "locations": [
+        {
+          "position": {
+            "x": -4.054798,
+            "y": 494.3483,
+            "z": -54.37905
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.49
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.49
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 2,
+      "nodeId": 31821,
+      "locations": [
+        {
+          "position": {
+            "x": -5.287843,
+            "y": 494.2204,
+            "z": -66.80152
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.2
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.2
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    }
+  ],
+  "requiresFlying": false,
+  "groupCount": 3,
+  "author": "Ice",
+  "lastUpdated": null,
+  "timedNode": false,
+  "aetheryteId": 181
+}

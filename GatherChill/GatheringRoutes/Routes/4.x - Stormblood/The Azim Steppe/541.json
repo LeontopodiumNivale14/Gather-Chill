@@ -1,0 +1,115 @@
+{
+  "routeId": 541,
+  "territoryId": 622,
+  "zoneName": "The Azim Steppe",
+  "placeName": "???",
+  "expansionId": 2,
+  "gatheringJobId": 16,
+  "levelRequirement": 1,
+  "nodeIds": [
+    32314,
+    32315,
+    32316
+  ],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 32316,
+      "locations": [
+        {
+          "position": {
+            "x": -501.4457,
+            "y": 67.48835,
+            "z": -391.6048
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 158,
+            "fan_EndAngle": 223,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 158,
+            "fan_EndAngle": 223,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 1,
+      "nodeId": 32315,
+      "locations": [
+        {
+          "position": {
+            "x": -505.4885,
+            "y": 67.502,
+            "z": -397.644
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 181,
+            "fan_EndAngle": 261,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 181,
+            "fan_EndAngle": 261,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 2,
+      "nodeId": 32314,
+      "locations": [
+        {
+          "position": {
+            "x": -506.7959,
+            "y": 67.50204,
+            "z": -406.9001
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 206,
+            "fan_EndAngle": 297,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 186,
+            "fan_EndAngle": 317,
+            "fan_DistanceMin": 1,
+            "fan_DistanceMax": 2,
+            "fan_Height": 0.2
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    }
+  ],
+  "requiresFlying": false,
+  "groupCount": 3,
+  "author": "Ice",
+  "lastUpdated": "2025-12-08",
+  "timedNode": false,
+  "aetheryteId": 110
+}

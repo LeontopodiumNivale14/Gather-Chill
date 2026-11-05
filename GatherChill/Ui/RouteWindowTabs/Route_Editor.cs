@@ -78,6 +78,8 @@ namespace GatherChill.Ui.RouteWindowTabs
                     var territory = routeInfo.TerritoryId;
                     if (territory == 399)
                         territory = 478;
+                    else if (territory == 1073)
+                        territory = 960;
 
                     foreach (var shard in TravelUtil.Aethernet.Where(x => x.Value.TerritoryId == territory))
                     {

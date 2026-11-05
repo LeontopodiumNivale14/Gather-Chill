@@ -28,6 +28,7 @@ namespace GatherChill.Ui
                 MinimumSize = new Vector2(500, 500),
                 MaximumSize = new Vector2(2000, 2000)
             };
+            TitleBarButtons.Add(new() { ShowTooltip = () => ImGui.SetTooltip("♥ Ko-fi (Buy me an ice coffee)"), Icon = FontAwesomeIcon.Heart, IconOffset = new(1, 1), Click = _ => GenericHelpers.ShellStart("https://ko-fi.com/ice643269") });
 
             P.windowSystem.AddWindow(this);
 

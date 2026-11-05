@@ -22,7 +22,7 @@
             "y": -56.83437,
             "z": -67.45443
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -48,7 +48,7 @@
             "y": 0,
             "z": -15.3156
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 0,
@@ -78,7 +78,7 @@
             "y": -75.38622,
             "z": -54.10777
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -102,7 +102,7 @@
             "y": -73.84261,
             "z": -90.64128
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -128,7 +128,7 @@
             "y": 0,
             "z": -15.3156
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 0,
@@ -158,7 +158,7 @@
             "y": -75.15577,
             "z": 76.83081
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -182,7 +182,7 @@
             "y": -73.66306,
             "z": 58.79474
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 359,
@@ -208,7 +208,7 @@
             "y": 0,
             "z": -15.3156
           },
-          "allowFlying": true,
+          "requiresFlying": false,
           "flight_FanInfo": {
             "fan_StartAngle": 0,
             "fan_EndAngle": 0,
@@ -229,10 +229,10 @@
       ]
     }
   ],
+  "requiresFlying": false,
   "groupCount": 3,
-  "requiresFolklore": false,
-  "folkloreBook": null,
   "author": null,
   "lastUpdated": null,
-  "timedNode": false
+  "timedNode": false,
+  "aetheryteId": 0
 }
