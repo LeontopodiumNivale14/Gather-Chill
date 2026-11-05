@@ -51,6 +51,27 @@ public class GatherChillProvider
     }
 
     /// <summary>
+    /// Clears the current gathering list, and will replace the list with it's own. 
+    /// Items without a route are skipped. Returns how many items were added.
+    /// </summary>
+    [EzIPC]
+    public int OverwriteGatherList((uint ItemId, int Amount)[] items)
+    {
+        var count = 0;
+        C.GatherList.Clear();
+        foreach (var (itemId, amount) in items)
+        {
+            if (GatherList_Util.CanGather(itemId) && GatherList_Util.TryAdd(itemId, amount))
+                count++;
+        }
+
+        if (count != 0)
+            C.Save();
+
+        return count;
+    }
+
+    /// <summary>
     /// Starts gathering one item right away, ignoring the rest of the gather list. Stops once it's done.
     /// The item is added to the list (an existing entry keeps the larger amount).
     /// Returns false if Gather n Chill is busy or has no route for the item.
