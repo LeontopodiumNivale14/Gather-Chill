@@ -105,4 +105,10 @@ public class GatherChillProvider
     /// </summary>
     [EzIPC]
     public void OpenWindow() => P.mainWindow.IsOpen = true;
+
+    /// <summary>
+    /// Opens the gathering overlay (current item, GP, what's next), e.g. while a job runs. Leaves it open if it already is.
+    /// </summary>
+    [EzIPC]
+    public void OpenOverlay() => P.gatherOverlay.IsOpen = true;
 }
