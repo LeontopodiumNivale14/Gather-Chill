@@ -1,4 +1,5 @@
-﻿using ECommons.Logging;
+﻿using Dalamud.Interface.Utility;
+using ECommons.Logging;
 using GatherChill.Ui.RouteWindowTabs;
 
 namespace GatherChill.Ui.Settings_Info;
@@ -34,6 +35,33 @@ public static partial class SettingsUi
             {
                 C.Compact_Ui = v;
                 C.Save();
+            }
+        }
+    };
+
+    private static SettingEntry SafetyGatherDelay = new()
+    {
+        Label = "Safety Delay [Gather]",
+        Category = MiscOption,
+        Keywords = new[] { "Safety", "Delay", "Gathering" },
+        Draw = () =>
+        {
+            var v = C.SafetyDelay_Gather;
+            if (ImGui.Checkbox("Add a delay between gathering attempts", ref v))
+            {
+                C.SafetyDelay_Gather = v;
+                C.Save();
+            }
+
+            if (v)
+            {
+                var d = C.Gather_DelayTimer;
+                ImGui.SetNextItemWidth(150 * ImGuiHelpers.GlobalScale);
+                if (ImGui.SliderInt("Gathering delay", ref d, 250, 2500))
+                {
+                    C.Gather_DelayTimer = d;
+                    C.SaveDebounced();
+                }
             }
         }
     };

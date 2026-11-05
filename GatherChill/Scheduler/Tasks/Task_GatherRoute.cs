@@ -588,6 +588,9 @@ namespace GatherChill.Scheduler.Tasks
                 itemId = LastItemInfo.ItemId;
             var routeId = routeSelected.routeId;
 
+            if (C.SafetyDelay_Gather && !EzThrottler.Throttle("Safety Throttle", C.Gather_DelayTimer))
+                return false;
+
             if (P.navmesh.IsRunning())
             {
                 if (EzThrottler.Throttle("Stopping navmesh, cause we shouldn't be running"))

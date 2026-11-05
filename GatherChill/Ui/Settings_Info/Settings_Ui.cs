@@ -104,6 +104,7 @@ public static partial class SettingsUi
         // Misc
         ColorTheme,
         CompactOverlay,
+        SafetyGatherDelay,
 
         // Character Specific
         Wait_ReturnPoint,
