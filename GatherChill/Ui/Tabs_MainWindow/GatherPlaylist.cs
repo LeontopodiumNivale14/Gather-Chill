@@ -1,16 +1,11 @@
-﻿using Dalamud.Interface.Textures;
-using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.Utility.Raii;
 using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Scheduler;
 using GatherChill.Ui.Tables;
 using GatherChill.Utilities.GatheringHelpers;
-using GatherChill.Utilities.Utility;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 
 namespace GatherChill.Ui.Tabs_MainWindow
 {

@@ -243,14 +243,19 @@ namespace GatherChill.Scheduler.Tasks
 
             return info.Kind == GatherNodeKind.Unspoiled || info.Kind == GatherNodeKind.Legendary;
         }
-        
+
         // How close do I want the matching minimap marker to be 
         // Right now from testing, it seems like it's directly 1->1 with the cordinates
         // But it never hurts to have some buffer...
-        private const float MarkerMatchRadius = 25;
-        private static bool TryGetTimedRouteIndex(out int routeIndex)
+        private const float MarkerMatchRadius = 10;
+
+        // Which entry of the current node's Locations to use. 0 = default behavior.
+        private static int ActiveLocationIndex = 0;
+
+        private static bool TryGetTimedRouteIndex(out int routeIndex, out int locationIndex)
         {
             routeIndex = -1;
+            locationIndex = 0;
 
             var markers = Gather_Util.GetActiveWorldXZ();
             if (markers.Count == 0)
@@ -261,28 +266,34 @@ namespace GatherChill.Scheduler.Tasks
             for (var i = 0; i < GatherRoute.Count; i++)
             {
                 var node = GatherRoute[i];
-                if (node.Locations.Count == 0)
-                    continue;
 
-                var pos = node.Locations[0].Position;
-                var pos2D = new Vector2(pos.X, pos.Z);
-
-                foreach (var marker in markers)
+                for (var j = 0; j < node.Locations.Count; j++)
                 {
-                    var dist = Vector2.Distance(pos2D, marker);
+                    var pos = node.Locations[j].Position;
+                    var pos2D = new Vector2(pos.X, pos.Z);
 
-                    // dist >= bestDist means NOT closer than the best so far -> skip.
-                    // Only a dist SMALLER than bestDist gets past this line.
-                    if (dist >= bestDist)
-                        continue;
+                    foreach (var marker in markers)
+                    {
+                        var dist = Vector2.Distance(pos2D, marker);
 
-                    bestDist = dist;
-                    routeIndex = i;
+                        // dist >= bestDist means NOT closer than the best so far -> skip.
+                        // Only a dist SMALLER than bestDist gets past this line.
+                        if (dist >= bestDist)
+                            continue;
+
+                        bestDist = dist;
+                        routeIndex = i;
+                        locationIndex = j;
+                    }
                 }
             }
 
+            if (routeIndex != -1 && EzThrottler.Throttle("TimedMarkerChosen", 2000))
+                IceLogging.Debug($"Timed marker chose route index {routeIndex} (node {GatherRoute[routeIndex].NodeId}), location {locationIndex}, dist {bestDist:F2}", "Timed Marker");
+
             return routeIndex != -1;
         }
+
         private static bool Travel_FarCheck()
         {
             const string tag = "Task: Gather Travel";
@@ -312,18 +323,27 @@ namespace GatherChill.Scheduler.Tasks
             if (RouteIndex >= GatherRoute.Count)
                 RouteIndex = 0;
 
-            // Timed route + a marker on one of our nodes: retarget, and cancel any path to a different node.
+            // Timed route + a marker on one of our node locations: retarget, and cancel any path to a different spot.
             // Runs BEFORE the IsBusy check so it can interrupt travel.
-            if (IsTimedRoute() && TryGetTimedRouteIndex(out var timedIndex) && timedIndex != RouteIndex)
+            if (IsTimedRoute() && TryGetTimedRouteIndex(out var timedIndex, out var timedLocation))
             {
-                IceLogging.Debug($"Timed node marker matches route index {timedIndex} (node {GatherRoute[timedIndex].NodeId}), switching to it", tag);
-                RouteIndex = timedIndex;
-
-                if (P.navTask.IsBusy)
+                if (timedIndex != RouteIndex || timedLocation != ActiveLocationIndex)
                 {
-                    P.navTask.Abort();
-                    P.navmesh.Stop();
+                    IceLogging.Debug($"Switching to route index {timedIndex} (node {GatherRoute[timedIndex].NodeId}), location {timedLocation}", tag);
+                    RouteIndex = timedIndex;
+                    ActiveLocationIndex = timedLocation;
+
+                    if (P.navTask.IsBusy)
+                    {
+                        P.navTask.Abort();
+                        P.navmesh.Stop();
+                    }
                 }
+            }
+            else
+            {
+                // No marker -> normal behavior
+                ActiveLocationIndex = 0;
             }
 
             // Still pathing to the current target, so wait for the next pass
@@ -337,12 +357,16 @@ namespace GatherChill.Scheduler.Tasks
                 return true;
             }
 
+            // Guard against a stale index when the node has fewer locations
+            var locationIndex = ActiveLocationIndex < currentNode.Locations.Count ? ActiveLocationIndex : 0;
+            var location = currentNode.Locations[locationIndex];
+
             TargetNodeId = currentNode.NodeId;
 
             // Distance > loadRange means we're FARTHER than 75y, so keep traveling
-            if (Player.DistanceTo(currentNode.Locations[0].Position) > loadRange)
+            if (Player.DistanceTo(location.Position) > loadRange)
             {
-                TravelUtil.Gathering_TravelCheck(currentNode.Locations[0]);
+                TravelUtil.Gathering_TravelCheck(location);
                 return false;
             }
 
