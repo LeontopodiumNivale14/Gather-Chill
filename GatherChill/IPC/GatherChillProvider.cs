@@ -11,7 +11,7 @@ namespace GatherChill.IPC;
 /// </summary>
 public class GatherChillProvider
 {
-    private const int Version = 3;
+    private const int Version = 4;
 
     public GatherChillProvider() => EzIPC.Init(this, "GatherChill");
 
@@ -99,4 +99,10 @@ public class GatherChillProvider
     /// </summary>
     [EzIPC]
     public bool CancelJob(string owner, Guid jobId) => GatherJobs.Cancel(owner, jobId);
+
+    /// <summary>
+    /// Opens the main window, e.g. after adding items to the gather list. Leaves it open if it already is.
+    /// </summary>
+    [EzIPC]
+    public void OpenWindow() => P.mainWindow.IsOpen = true;
 }
