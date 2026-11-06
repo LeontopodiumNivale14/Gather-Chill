@@ -14,6 +14,45 @@ namespace GatherChill.Scheduler.Handlers
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
+
+        // Pandora State Management [Borrowed from cosmic]
+        public static bool Pandora_WasRestored = false;
+        private static bool PandoraGatherState = false;
+        private static bool PandoraInteractState = false;
+        private static bool PandoraCordialState = false;
+        private static bool PandoraAutoTurnin = false;
+
+        internal static void Tick()
+        {
+            if (Gather_Helper.State != IceState.Idle)
+            {
+                //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
+
+                StorePandoraStates();
+                if (TryGetAddonByName<AddonRequest>("Request", out var requestAddon))
+                {
+                    for (var i = 1; i <= requestAddon->EntryCount; i++)
+                    {
+                        if (SlotsFilled.Contains(requestAddon->EntryCount)) ConfirmOrAbort(requestAddon);
+                        if (SlotsFilled.Contains(i)) return;
+                        var val = i;
+                        TaskManager.DelayNext($"ClickTurnin{val}", 10);
+                        TaskManager.Enqueue(() => TryClickItem(requestAddon, val));
+                    }
+                }
+                else
+                {
+                    if (SlotsFilled.Count != 0)
+                        SlotsFilled.Clear();
+
+                    if (TaskManager.IsBusy)
+                        TaskManager.Abort();
+                }
+            }
+            else
+                RestorePandoraStates();
+
+        }
         private static bool? ConfirmOrAbort(AddonRequest* addon)
         {
             if (addon->HandOverButton != null && addon->HandOverButton->IsEnabled)
@@ -46,47 +85,43 @@ namespace GatherChill.Scheduler.Handlers
                 return true;
             }
         }
-
-        internal static void Tick()
+        public static void StorePandoraStates()
         {
-            if (Gather_Helper.State != IceState.Idle)
+            if (Pandora_WasRestored)
             {
-                //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
+                // This is done this way becuase pandora tends to start locking up peoples machines after a long period of time
+                PandoraGatherState = P.pandora.GetFeatureEnabled("Pandora Quick Gather") ?? false;
+                PandoraInteractState = P.pandora.GetFeatureEnabled("Auto-interact with Gathering Nodes") ?? false;
+                PandoraCordialState = P.pandora.GetFeatureEnabled("Auto-Cordial") ?? false;
+                PandoraAutoTurnin = P.pandora.GetFeatureEnabled("Auto-select Turn-ins") ?? false;
 
-                var featureEnabled = (P.pandora.GetFeatureEnabled("Auto-select Turn-ins") ?? false);
-                var configEnabled = (P.pandora.GetConfigEnabled("Auto-select Turn-ins", "AutoConfirm") ?? false);
+                if (PandoraGatherState)
+                    P.pandora.SetFeatureEnabled("Pandora Quick Gather", false);
+                if (PandoraInteractState)
+                    P.pandora.SetFeatureEnabled("Auto-interact with Gathering Nodes", false);
+                if (PandoraCordialState && C.Cordial_Auto)
+                    P.pandora.SetFeatureEnabled("Auto-Cordial", false);
+                if (PandoraAutoTurnin)
+                    P.pandora.SetFeatureEnabled("Auto-select Turn-ins", false);
 
-                var isenabled = featureEnabled && configEnabled;
-
-                if (!isenabled)
-                {
-                    if (featureEnabled && !configEnabled)
-                    {
-                        if (EzThrottler.Throttle("Enabling AutoSelect", 1000))
-                        {
-                            P.pandora.PauseFeature("Auto-select Turn-ins", 1100);
-                        }
-                    }
-
-                    if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
-                    {
-                        for (var i = 1; i <= addon3->EntryCount; i++)
-                        {
-                            if (SlotsFilled.Contains(addon3->EntryCount)) ConfirmOrAbort(addon3);
-                            if (SlotsFilled.Contains(i)) return;
-                            var val = i;
-                            TaskManager.DelayNext($"ClickTurnin{val}", 10);
-                            TaskManager.Enqueue(() => TryClickItem(addon3, val));
-                        }
-                    }
-                    else
-                    {
-                        SlotsFilled.Clear();
-                        TaskManager.Abort();
-                    }
-                }
+                Pandora_WasRestored = false;
             }
+        }
+        public static void RestorePandoraStates()
+        {
+            if (!Pandora_WasRestored)
+            {
+                if (PandoraGatherState)
+                    P.pandora.SetFeatureEnabled("Pandora Quick Gather", true);
+                if (PandoraInteractState)
+                    P.pandora.SetFeatureEnabled("Auto-interact with Gathering Nodes", true);
+                if (PandoraCordialState)
+                    P.pandora.SetFeatureEnabled("Auto-Cordial", true);
+                if (PandoraAutoTurnin)
+                    P.pandora.SetFeatureEnabled("Auto-select Turn-ins", true);
 
+                Pandora_WasRestored = true;
+            }
         }
     }
 }
