@@ -1,7 +1,7 @@
 using ECommons.EzIpcManager;
 using GatherChill.Enums;
 using GatherChill.Scheduler;
-using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.GatheringHelpers.GatherListUtils;
 
 namespace GatherChill.IPC;
 

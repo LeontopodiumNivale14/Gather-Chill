@@ -3,7 +3,7 @@ using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.IPC;
 using GatherChill.Scheduler.Handlers;
-using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.GatheringHelpers.GatherListUtils;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;

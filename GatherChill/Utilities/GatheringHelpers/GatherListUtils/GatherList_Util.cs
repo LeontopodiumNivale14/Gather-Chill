@@ -1,12 +1,12 @@
 using GatherChill.ConfigFiles;
 
-namespace GatherChill.Utilities.GatheringHelpers;
+namespace GatherChill.Utilities.GatheringHelpers.GatherListUtils;
 
 /// <summary>
 /// Gather list edits shared by the Gather Playlist tab and the IPC provider.
 /// Callers save the config afterwards.
 /// </summary>
-internal static class GatherList_Util
+internal static partial class GatherList_Util
 {
     /// <summary>
     /// Maps an aetherial reduction item (or its sublime variant) to the item that's actually gathered.

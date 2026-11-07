@@ -785,9 +785,11 @@ namespace GatherChill.Scheduler.Tasks
 
                                 if (Gather_Util.Sheet_ItemInfo.TryGetValue(itemId, out var itemInfo))
                                 {
-                                    if (itemInfo.IsHidden & !HiddenUsed)
+                                    if (EzThrottler.Throttle("Throttle: Hidden Item"))
+                                        IceLogging.Verbose("Hidden item wasn't found. .. and it exist in the sheets", tag);
+
+                                    if (itemInfo.IsHidden && !HiddenUsed && CanCheckHidden())
                                     {
-                                        CanCheckHidden();
                                         return false;
                                     }
                                     else
@@ -798,12 +800,15 @@ namespace GatherChill.Scheduler.Tasks
                                         {
                                             if (EzThrottler.Throttle($"Gathering Backup: {crystal.Gather}"))
                                                 crystal.Gather();
+
+                                            IceLogging.Verbose("We found a crystal to fallback on, gathering that", tag);
                                         }
                                         else
                                         {
                                             var otherItems = OtherItem(gather);
                                             if (otherItems != 0)
                                             {
+                                                IceLogging.Verbose($"We found a potentional other item to gather, so we're doing that instead {otherItems}", tag);
                                                 P.TaskManager.Enqueue(() => GatheringInteraction(true), "Checking secondary item");
                                                 OffItemInfo = new()
                                                 {
@@ -971,6 +976,7 @@ namespace GatherChill.Scheduler.Tasks
             var actionId = actionInfo.ClassAction[Player.Job].ActionId;
 
             var canUse = am->GetActionStatus(ActionType.Action, actionId, checkRecastActive: false, checkCastingActive: false) is 0;
+            canUse &= Utils.GetGp() >= actionInfo.RequiredGp;
 
             if (canUse)
             {

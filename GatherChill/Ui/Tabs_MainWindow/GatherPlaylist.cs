@@ -5,6 +5,7 @@ using GatherChill.Gui;
 using GatherChill.Scheduler;
 using GatherChill.Ui.Tables;
 using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.GatheringHelpers.GatherListUtils;
 using System.Collections.Generic;
 
 namespace GatherChill.Ui.Tabs_MainWindow
@@ -22,6 +23,7 @@ namespace GatherChill.Ui.Tabs_MainWindow
         // Keeping these separate. Partially because I want to still let users set a priority for timed nodes. And don't wanna fuck with timed vs not 
         private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _normalDragDrop = new("GatherItemOrder_Normal", id => id.ItemId.ToString());
         private static readonly ImGuiEx.RealtimeDragDrop<Config.ItemInfo> _timedDragDrop = new("GatherItemOrder_Timed", id => id.ItemId.ToString());
+        private static GatherList_Util.ImportResult? lastImport;
 
         public static void Draw()
         {
@@ -49,6 +51,8 @@ namespace GatherChill.Ui.Tabs_MainWindow
                     {
                         SchedulerMain.DisablePlugin();
                     }
+                    ImGui.SameLine();
+                    TeamcraftImporter();
 
                     if (ImGui.Button("Search for item"))
                         OpenItemPicker();
@@ -95,6 +99,34 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
                 RouteSelector_Popup();
             }
+        }
+        private static void TeamcraftImporter()
+        {
+            if (ImGui.Button("Import from Teamcraft (clipboard)"))
+            {
+                var result = GatherList_Util.ImportFromTeamcraft(ImGui.GetClipboardText());
+                C.Save();
+                lastImport = result;
+
+                if (lastImport.Added > 0)
+                {
+                    Notify.Success($"Gather & Chill has added: {lastImport.Added:N0} items");
+                }
+                else
+                {
+                    Notify.Error($"Gather & Chill found no items to add, did you set the clipboard properly?");
+                }
+
+                foreach (var (input, matched) in result.FuzzyMatches)
+                    Svc.Log.Information($"Teamcraft import: '{input}' matched to '{matched}'");
+                if (result.NotFound.Count != 0)
+                    Svc.Log.Warning($"Teamcraft import: couldn't find {string.Join(", ", result.NotFound)}");
+                if (result.NotGatherable.Count != 0)
+                    Svc.Log.Information($"Teamcraft import: no gather route for {string.Join(", ", result.NotGatherable)}");
+            }
+
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Copy your list from Teamcraft first. Will ");
         }
 
         // Matches the route popup: normal routes win if both exist
