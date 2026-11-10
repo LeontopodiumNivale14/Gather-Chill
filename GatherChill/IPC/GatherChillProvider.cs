@@ -165,8 +165,20 @@ public class GatherChillProvider
     public void OpenWindow() => P.mainWindow.IsOpen = true;
 
     /// <summary>
+    /// Close the main window, e.g. after adding items to the gather list. Keeps it close if it already is.
+    /// </summary>
+    [EzIPC]
+    public void CloseWindow() => P.mainWindow.IsOpen = false;
+
+    /// <summary>
     /// Opens the gathering overlay (current item, GP, what's next), e.g. while a job runs. Leaves it open if it already is.
     /// </summary>
     [EzIPC]
     public void OpenOverlay() => P.gatherOverlay.IsOpen = true;
+
+    /// <summary>
+    /// Closes the gathering overlay (current item, GP, what's next), e.g. while a job runs. Keeps it close if it already is.
+    /// </summary>
+    [EzIPC]
+    public void CloseOverlay() => P.gatherOverlay.IsOpen = false;
 }

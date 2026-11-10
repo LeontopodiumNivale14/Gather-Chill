@@ -126,7 +126,8 @@ namespace GatherChill.Ui.Tabs_MainWindow
             }
 
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Copy your list from Teamcraft first. Will ");
+                ImGui.SetTooltip("Adds items from your clipboard.\n" +
+                                 "Works with teamcraft, artisan, and workshoppa exports off the top of my head");
         }
 
         // Matches the route popup: normal routes win if both exist
