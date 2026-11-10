@@ -33,7 +33,10 @@ namespace GatherChill.Scheduler
             Gather_Helper.ClearTargeting();
 
             if (P.gatherOverlay.IsOpen && C.Overlay_CloseUponStop)
+            {
                 P.gatherOverlay.Toggle();
+                OverlayOpened = false;
+            }
         }
 
         internal static void Tick()
