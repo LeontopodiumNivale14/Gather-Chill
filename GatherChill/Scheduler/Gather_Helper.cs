@@ -1,4 +1,5 @@
-﻿using ECommons.Throttlers;
+﻿using ECommons.ExcelServices;
+using ECommons.Throttlers;
 using GatherChill.ConfigFiles;
 using GatherChill.Enums;
 using GatherChill.Utilities.GatheringHelpers;
@@ -22,20 +23,35 @@ namespace GatherChill.Scheduler
         // Set by the GatherItem IPC so only that item gets gathered. 0 = the whole list.
         public static uint OnlyItemId = 0;
 
+        // Set by the GatherJobItem / StartJobForJob IPC so routes are limited to this job. null = no restriction.
+        public static Job? OnlyJob = null;
+
         /// <summary>
         /// False if the GatherItem IPC limited this run to a different item.
         /// </summary>
         public static bool IsTargeted(uint itemId) => OnlyItemId == 0 || OnlyItemId == itemId;
 
+        /// <summary>
+        /// Clears both IPC restrictions. Call anywhere OnlyItemId used to be reset (run end, DisablePlugin, job end).
+        /// </summary>
+        public static void ClearTargeting()
+        {
+            OnlyItemId = 0;
+            OnlyJob = null;
+        }
+
         public class ProgressInfo
         {
             public uint ItemId { get; set; } = 0;
 
-            // Inventory count when the gather started (e.g. 150). Set once.
+            // Inventory count when tracking started. Locked in by SyncProgress.
             public int StartInventory { get; set; } = 0;
 
-            // Gather goal when the gather started. Set once. Unused in Keep mode.
+            // Gather goal when tracking started. Locked in by SyncProgress. Unused in Keep mode.
             public int GatherTarget { get; set; } = 0;
+
+            // The mode we locked in with, so we can detect the user flipping it mid-run.
+            public GatherMode LockedMode { get; set; } = GatherMode.Gather;
 
             private Config.ItemInfo? Info
             {
@@ -96,20 +112,138 @@ namespace GatherChill.Scheduler
         }
 
         public static List<ProgressInfo> ItemProgress = new();
+
+        /// <summary>
+        /// Call every tick while NOT idle. Keeps ItemProgress in line with the gather list:
+        /// - new items (list edits, IPC) get their baseline locked in when they show up
+        /// - removed / no-longer-targeted items get dropped
+        /// - existing items are left alone, so the baseline never resets mid-run
+        /// - if an item's mode is flipped, it is re-locked
+        /// </summary>
+        public static void SyncProgress()
+        {
+            var activeList = GatherJobs.ActiveList;
+
+            // Drop anything that left the list or is no longer targeted
+            ItemProgress.RemoveAll(p => !activeList.Any(x => x.ItemId == p.ItemId && IsTargeted(x.ItemId)));
+
+            foreach (var info in activeList)
+            {
+                if (!IsTargeted(info.ItemId))
+                    continue;
+
+                var existing = ItemProgress.FirstOrDefault(x => x.ItemId == info.ItemId);
+                if (existing == null)
+                {
+                    var progress = new ProgressInfo { ItemId = info.ItemId };
+                    LockInProgress(progress, info);
+                    ItemProgress.Add(progress);
+                    continue;
+                }
+
+                // Mode flipped mid-run, so the old baseline doesn't mean anything anymore
+                if (existing.LockedMode != info.Mode)
+                {
+                    LockInProgress(existing, info);
+                    continue;
+                }
+
+                // Amount edited mid-run (list edit, IPC add): follow the new goal, keep the baseline
+                if (info.Mode == GatherMode.Gather && existing.GatherTarget != info.GatherAmount)
+                    existing.GatherTarget = info.GatherAmount;
+            }
+        }
+
+        /// <summary>
+        /// Call while idle. Next time we leave idle, SyncProgress locks fresh baselines.
+        /// </summary>
+        public static void ResetProgress() => ItemProgress.Clear();
+
+        private static void LockInProgress(ProgressInfo progress, Config.ItemInfo info)
+        {
+            progress.StartInventory = Utils.GetItemCount(info.ItemId);
+            progress.GatherTarget = info.GatherAmount;
+            progress.LockedMode = info.Mode;
+        }
+
+        #region Route Selection
+
+        // Swap the body for whatever GatherList_Util.CanGather uses to decide a route yields the item.
+        private static bool RouteGivesItem(uint routeId, uint itemId)
+            => Gather_Util.Sheet_RouteInfo.TryGetValue(routeId, out var info) && info.ItemIds.Contains(itemId);
+
+        private static bool IsUsableRoute(uint routeId)
+        {
+            var route = P.routeEditor.GetRoute(routeId);
+            return route != null && route.AetheryteId != 0;
+        }
+
+        /// <summary>
+        /// Routes to use for an item:
+        /// - no OnlyJob: whatever the user has enabled
+        /// - OnlyJob: enabled routes for that job, otherwise the first usable route in the sheet for that job
+        /// </summary>
+        public static List<uint> GetRoutes(uint itemId)
+        {
+            var routes = new List<uint>();
+            C.ItemRoutes.TryGetValue(itemId, out var selection);
+
+            if (OnlyJob is not { } job)
+            {
+                if (selection != null)
+                    routes.AddRange(selection.EnabledRoutes);
+
+                return routes;
+            }
+
+            // Prefer what the user already enabled
+            if (selection != null)
+            {
+                foreach (var routeId in selection.EnabledRoutes)
+                {
+                    if (Gather_Util.Sheet_RouteInfo.TryGetValue(routeId, out var info) && info.Job == job)
+                        routes.Add(routeId);
+                }
+            }
+
+            if (routes.Count != 0)
+                return routes;
+
+            // Nothing enabled for this job, so take the first usable one (sorted so it's deterministic)
+            foreach (var (routeId, info) in Gather_Util.Sheet_RouteInfo.OrderBy(x => x.Key))
+            {
+                if (info.Job != job || !RouteGivesItem(routeId, itemId) || !IsUsableRoute(routeId))
+                    continue;
+
+                routes.Add(routeId);
+                return routes;
+            }
+
+            return routes;
+        }
+
+        public static bool CanGatherJob(uint itemId, Job job)
+        {
+            var previous = OnlyJob;
+            OnlyJob = job;
+            var found = GetRoutes(itemId).Count != 0;
+            OnlyJob = previous;
+            return found;
+        }
+
+        #endregion
+
         public static HashSet<uint> GatheredTimedRoutes = new();
+
         public static void RemoveTimedRoutes()
         {
             if (!EzThrottler.Throttle("Has Checked"))
                 return;
 
-            foreach (var route in GatheredTimedRoutes)
-            {
-                var routeInfo = Gather_Util.Sheet_RouteInfo[route];
-                if (!routeInfo.TimedInfo.Any(x => x.IsUp()))
-                {
-                    GatheredTimedRoutes.Remove(route);
-                }
-            }
+            // Drop routes whose window has passed (or that no longer exist)
+            GatheredTimedRoutes.RemoveWhere(route =>
+                !Gather_Util.Sheet_RouteInfo.TryGetValue(route, out var routeInfo) ||
+                !routeInfo.TimedInfo.Any(x => x.IsUp()));
         }
 
         /// <summary>
@@ -129,18 +263,14 @@ namespace GatherChill.Scheduler
             var visited = new HashSet<uint>();
             TimeSpan? soonest = null;
 
-            var itemList = GatherJobs.ActiveList.Where(x =>
-                (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
-                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
-                .Where(x => IsTargeted(x.ItemId))
+            // ItemProgress only holds targeted items, so "tracked and not complete" is the whole filter
+            var itemList = GatherJobs.ActiveList
+                .Where(x => ItemProgress.Any(p => p.ItemId == x.ItemId && !p.IsComplete))
                 .ToList();
 
             foreach (var item in itemList)
             {
-                if (!C.ItemRoutes.TryGetValue(item.ItemId, out var itemRoute))
-                    continue;
-
-                foreach (var route in itemRoute.EnabledRoutes)
+                foreach (var route in GetRoutes(item.ItemId))
                 {
                     if (GatheredTimedRoutes.Contains(route))
                         continue;
@@ -213,6 +343,65 @@ namespace GatherChill.Scheduler
 
             // Nothing up: time until the soonest opens (null if no timed routes at all)
             return nextUp;
+        }
+
+        public readonly record struct GpRequirement(float Threshold, string Reason)
+        {
+            // Mnemonic: the small end points at the smaller value.
+            // gp < Threshold means "still waiting", so met is the opposite.
+            public bool IsMet(float gp) => gp >= Threshold;
+        }
+
+        private const float HiddenItemGp = 200f;
+
+        /// <summary>
+        /// The GP we need before interacting with the current route's node, or null if nothing is being waited on.
+        /// If several conditions apply, the highest threshold wins.
+        /// </summary>
+        public static GpRequirement? GetGpRequirement()
+        {
+            var route = GatherRoute;
+            if (route.routeId == 0 || route.itemId == 0)
+                return null;
+
+            // Already at the node, spending GP is expected
+            if (Svc.Condition[ConditionFlag.Gathering])
+                return null;
+
+            if (!Gather_Util.Sheet_RouteInfo.TryGetValue(route.routeId, out var routeInfo))
+                return null;
+
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(route.itemId, out var itemInfo))
+                return null;
+
+            GpRequirement? result = null;
+
+            void Consider(float threshold, string reason)
+            {
+                if (result is not { } current || threshold > current.Threshold)
+                    result = new GpRequirement(threshold, reason);
+            }
+
+            if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
+            {
+                if (routeInfo.TimedInfo.Any(x => x.IsUp()))
+                {
+                    var timeSlot = routeInfo.TimedInfo.First(x => x.IsUp());
+
+                    // Inside the last minute there's no point waiting anymore
+                    if (timeSlot.TimeUntilEnd().TotalSeconds > 60)
+                        Consider(C.TimedNode_MinGP, "Timed node: saving GP");
+                }
+            }
+            else if (routeInfo.Kind == GatherNodeKind.Regular && itemInfo.IsCollectable && C.WaitGP_Collectable)
+            {
+                Consider(C.Collectable_WaitGP, "Collectable: waiting for GP");
+            }
+
+            if (itemInfo.IsHidden && C.WaitGP_HiddenItem)
+                Consider(HiddenItemGp, "Hidden item: waiting for GP");
+
+            return result;
         }
     }
 }

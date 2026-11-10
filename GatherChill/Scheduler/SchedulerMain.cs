@@ -19,6 +19,8 @@ namespace GatherChill.Scheduler
         /// </summary>
         internal static void Fail(string reason) => DisablePlugin(GatherJobState.Failed, reason);
 
+        private static bool OverlayOpened = false;
+
         internal static void DisablePlugin(GatherJobState outcome, string reason)
         {
             GatherJobs.End(outcome, reason);
@@ -27,15 +29,22 @@ namespace GatherChill.Scheduler
             P.navTask.Abort();
             P.navmesh.Stop();
 
-            Gather_Helper.GatherRoute = new() { itemId = 0, routeId = 0};
-            Gather_Helper.OnlyItemId = 0;
+            Gather_Helper.GatherRoute = new() { itemId = 0, routeId = 0 };
+            Gather_Helper.ClearTargeting();
 
+            if (P.gatherOverlay.IsOpen && C.Overlay_CloseUponStop)
+                P.gatherOverlay.Toggle();
         }
 
         internal static void Tick()
         {
             if (Gather_Helper.State == IceState.Idle)
+            {
+                Gather_Helper.ResetProgress();
                 return;
+            }
+
+            Gather_Helper.SyncProgress();
 
             // Timed-route checks run outside of Idle, but never interrupt an active gather
             if (!Svc.Condition[ConditionFlag.Gathering] && ShouldSoftReset())
@@ -46,6 +55,12 @@ namespace GatherChill.Scheduler
 
             if (P.TaskManager.NumQueuedTasks != 0)
                 return;
+
+            if (!OverlayOpened && C.Overlay_OpenUponRun)
+            {
+                P.gatherOverlay.IsOpen = true;
+                OverlayOpened = true;
+            }
 
             Action enqueue = Gather_Helper.State switch
             {

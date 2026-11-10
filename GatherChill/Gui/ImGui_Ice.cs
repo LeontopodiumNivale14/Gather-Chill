@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface.Colors;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
+using GatherChill.Scheduler;
 
 namespace GatherChill.Gui
 {
@@ -305,7 +306,7 @@ namespace GatherChill.Gui
             return size.Y + VerticalBarChrome(framed, padding);
         }
 
-        public static void VerticalBar(string label, float current, float max, Vector2? barSize = null, Vector4? colorOverride = null, bool framed = true, float padding = 6f, float? totalHeight = null)
+        public static void VerticalBar(string label, float current, float max, Vector2? barSize = null, Vector4? colorOverride = null, bool framed = true, float padding = 6f, float? totalHeight = null, Gather_Helper.GpRequirement? requirement = null)
         {
             var size = barSize ?? new Vector2(22f, 80f);
 
@@ -364,6 +365,41 @@ namespace GatherChill.Gui
 
             var trackColor = ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.12f));
             drawList.AddRectFilled(barMin, barMax, trackColor, rounding);
+
+            // Threshold marker: line across the bar + tooltip, only when something is being waited on
+            if (requirement is { } req && max > 0f)
+            {
+                var met = req.IsMet(current);
+                var markFraction = Math.Clamp(req.Threshold / max, 0f, 1f);
+                var markY = barMax.Y - size.Y * markFraction;
+
+                // Waiting pulses amber, met settles to a calm green
+                var pulse = met ? 0.6f : 0.65f + 0.35f * (float)Math.Sin(ImGui.GetTime() * 4.0);
+                var markColor = met
+                    ? new Vector4(0.4f, 0.85f, 0.45f, 0.6f)
+                    : new Vector4(1f, 0.7f, 0.15f, pulse);
+                var markU32 = ImGui.GetColorU32(markColor);
+
+                // Sticks out a bit past both edges so it reads as a gauge mark
+                const float overhang = 4f;
+                drawList.AddLine(new Vector2(barMin.X - overhang, markY), new Vector2(barMax.X + overhang, markY), markU32, 2f);
+
+                // Little notch on the left so it's visible even when the fill covers the line
+                drawList.AddTriangleFilled(
+                    new Vector2(barMin.X - overhang - 5f, markY - 4f),
+                    new Vector2(barMin.X - overhang - 5f, markY + 4f),
+                    new Vector2(barMin.X - overhang, markY),
+                    markU32);
+
+                var hoverMin = new Vector2(barMin.X - overhang - 5f, barMin.Y);
+                var hoverMax = new Vector2(barMax.X + overhang, barMax.Y);
+                if (ImGui.IsMouseHoveringRect(hoverMin, hoverMax))
+                {
+                    ImGui.SetTooltip(met
+                        ? $"{req.Reason}\nThreshold reached ({(int)req.Threshold:N0} GP)"
+                        : $"{req.Reason}\nWaiting for {(int)req.Threshold:N0} GP ({(int)current:N0} now)");
+                }
+            }
 
             if (fraction > 0f)
             {

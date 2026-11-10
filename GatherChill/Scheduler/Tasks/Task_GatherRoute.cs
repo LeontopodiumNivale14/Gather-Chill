@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using GatherChill.Enums;
 using GatherChill.GatheringInfo;
 using GatherChill.Scheduler.Handlers;
+using GatherChill.Utilities.ExtraAddons;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Traveling;
@@ -66,7 +67,7 @@ namespace GatherChill.Scheduler.Tasks
 
         public static void NormalItem_Enqueue()
         {
-            if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady || TryGetAddonMaster<GatheringMasterpiece>(out var masterpiece) && masterpiece.IsAddonReady)
+            if (GenericHelpers.TryGetAddonMaster<Utilities.ExtraAddons.Gathering>("Gathering", out var gather) && gather.IsAddonReady || TryGetAddonMaster<GatheringMasterpiece>(out var masterpiece) && masterpiece.IsAddonReady)
             {
                 var itemId = Gather_Helper.GatherRoute.itemId;
                 P.TaskManager.Enqueue(() => GatheringInteraction(), "Gathering Interaction");
@@ -91,100 +92,67 @@ namespace GatherChill.Scheduler.Tasks
             if (Svc.Condition[ConditionFlag.Occupied39])
                 return false;
 
-            if (Gather_Util.Sheet_ItemInfo.TryGetValue(goalItemId, out var itemInfo))
-            {
-                var currentAmount = Utils.GetItemCount(goalItemId);
-                if (LastItemInfo.ItemId != goalItemId)
-                {
-                    LastItemInfo = new()
-                    {
-                        ItemId = goalItemId,
-                        LastAmount = currentAmount,
-                    };
-                }
-
-                var config = GatherJobs.ActiveList.Where(x => x.ItemId == goalItemId).FirstOrDefault();
-                bool exitLoop = false;
-
-                if (config.Mode == GatherMode.Keep && currentAmount >= config.KeepAmount)
-                {
-                    exitLoop = true;
-                }
-                else if (config.Mode == GatherMode.Gather && LastItemInfo.LastAmount != currentAmount)
-                {
-                    IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", tag);
-                    var difference = currentAmount - LastItemInfo.LastAmount;
-
-                    if (difference > 0 && config.Mode is GatherMode.Gather)
-                    {
-                        config.GatherAmount = config.GatherAmount - difference;
-                        if (config.GatherAmount < 0)
-                            config.GatherAmount = 0;
-                        C.SaveDebounced();
-                        IceLogging.Verbose($"Updated count for: {goalItemId}. Took off: {difference}", tag);
-                    }
-                    LastItemInfo.LastAmount = currentAmount;
-
-                    if (config.Mode == GatherMode.Gather && config.GatherAmount == 0)
-                    {
-                        exitLoop = true;
-                    }
-                }
-
-                if (exitLoop)
-                {
-                    if (config.Mode == GatherMode.Keep)
-                    {
-                        IceLogging.Debug("We've hit our keep amount, so we're going to restart back to the beginning", tag);
-                    }
-                    else if (config.Mode == GatherMode.Gather)
-                    {
-                        IceLogging.Debug("Gather Amount has hit 0, we're resetting back to start", tag);
-                    }
-
-                    Gather_Helper.State = IceState.Start;
-                    P.TaskManager.Tasks.Clear();
-                    UpdateGatherBuffs();
-                    return true;
-                }
-
-                var reducableItems = itemInfo.ReducedFromItemIds;
-
-                if (reducableItems.Count > 0 && reducableItems.Any(x => Utils.HasPurifyItem(x)))
-                {
-                    var firstItem = reducableItems.Where(x => Utils.HasPurifyItem(x)).FirstOrDefault();
-
-                    if (EzThrottler.Throttle("Purifying item"))
-                    {
-                        IceLogging.Verbose($"Purifying item {firstItem}", tag);
-                        Utils.PurifyItem(firstItem);
-                    }
-
-                    return false;
-                }
-                else
-                {
-                    IceLogging.Verbose("Finishing desynth task");
-
-                    if (GenericHelpers.TryGetAddonMaster<PurifyResult>(out var purify) && purify.IsAddonReady)
-                    {
-                        if (EzThrottler.Throttle("Close purify"))
-                            Ecom_Handler.CloseWindow(purify.Base);
-
-                        IceLogging.Verbose("Closing purify window", tag);
-
-                        return false;
-                    }
-
-                    IceLogging.Debug("Finished Desynthing, continuing on");
-                    return true;
-                }
-            }
-            else
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(goalItemId, out var itemInfo))
             {
                 IceLogging.Verbose($"No info on this item can be found??? If it's a reducable, please report itemID: {goalItemId}", tag);
                 return true;
             }
+
+            var currentAmount = Utils.GetItemCount(goalItemId);
+            if (LastItemInfo.ItemId != goalItemId)
+            {
+                LastItemInfo = new()
+                {
+                    ItemId = goalItemId,
+                    LastAmount = currentAmount,
+                };
+            }
+
+            var progress = Gather_Helper.ItemProgress.FirstOrDefault(x => x.ItemId == goalItemId);
+            if (progress == null || progress.IsComplete)
+            {
+                if (progress == null)
+                    IceLogging.Debug("This item is no longer being tracked, so we're going back to the start", tag);
+                else if (progress.Mode == GatherMode.Keep)
+                    IceLogging.Debug("We've hit our keep amount, so we're going to restart back to the beginning", tag);
+                else
+                    IceLogging.Debug("We've hit our gather goal, we're resetting back to start", tag);
+
+                Gather_Helper.State = IceState.Start;
+                P.TaskManager.Tasks.Clear();
+                UpdateGatherBuffs();
+                return true;
+            }
+
+            var reducableItems = itemInfo.ReducedFromItemIds;
+
+            if (reducableItems.Count > 0 && reducableItems.Any(x => Utils.HasPurifyItem(x)))
+            {
+                var firstItem = reducableItems.Where(x => Utils.HasPurifyItem(x)).FirstOrDefault();
+
+                if (EzThrottler.Throttle("Purifying item"))
+                {
+                    IceLogging.Verbose($"Purifying item {firstItem}", tag);
+                    Utils.PurifyItem(firstItem);
+                }
+
+                return false;
+            }
+
+            IceLogging.Verbose("Finishing desynth task");
+
+            if (GenericHelpers.TryGetAddonMaster<PurifyResult>(out var purify) && purify.IsAddonReady)
+            {
+                if (EzThrottler.Throttle("Close purify"))
+                    Ecom_Handler.CloseWindow(purify.Base);
+
+                IceLogging.Verbose("Closing purify window", tag);
+
+                return false;
+            }
+
+            IceLogging.Debug("Finished Desynthing, continuing on");
+            return true;
         }
         private static bool ChangeJob()
         {
@@ -517,7 +485,7 @@ namespace GatherChill.Scheduler.Tasks
             var targetNode = Svc.Objects.Where(x => x.BaseId == nodeId)
                                         .Where(x => x.IsTargetable)
                                         .FirstOrDefault();
-            if (Svc.Condition[ConditionFlag.Gathering] && GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady || GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
+            if (Svc.Condition[ConditionFlag.Gathering] && GenericHelpers.TryGetAddonMaster<Utilities.ExtraAddons.Gathering>("Gathering", out var gather) && gather.IsAddonReady || GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
             {
                 IceLogging.Info($"Gathering window is now visible, continuing onto GatheringInteraction Task");
                 RouteIndex += 1;
@@ -530,27 +498,8 @@ namespace GatherChill.Scheduler.Tasks
                     if (UseCordial())
                         return false;
 
-                    bool allowedToInteract = true;
-
-                    var routeInfo = Gather_Util.Sheet_RouteInfo[Gather_Helper.GatherRoute.routeId];
-                    var itemInfo = Gather_Util.Sheet_ItemInfo[Gather_Helper.GatherRoute.itemId];
-
-                    if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
-                    {
-                        var timeSlot = routeInfo.TimedInfo.Where(x => x.IsUp()).FirstOrDefault();
-                        if (timeSlot.TimeUntilEnd().TotalSeconds > 60 && Utils.GetGp() < C.TimedNode_MinGP)
-                            allowedToInteract = false;
-                    }
-                    else if (routeInfo.Kind == GatherNodeKind.Regular && itemInfo.IsCollectable)
-                    {
-                        if (C.WaitGP_Collectable && Utils.GetGp() < C.Collectable_WaitGP)
-                            allowedToInteract = false;
-                    }
-
-                    if (itemInfo.IsHidden && Utils.GetGp() < 200 && C.WaitGP_HiddenItem)
-                    {
-                        allowedToInteract = false;
-                    }
+                    var requirement = Gather_Helper.GetGpRequirement();
+                    var allowedToInteract = requirement is not { } req || req.IsMet(Utils.GetGp());
 
                     if (allowedToInteract)
                     {
@@ -563,9 +512,7 @@ namespace GatherChill.Scheduler.Tasks
                     else
                     {
                         if (EzThrottler.Throttle("Waiting for gp???"))
-                        {
                             IceLogging.Debug($"Waiting for gp to refill currently. . . currently at: {Utils.GetGp()}");
-                        }
                     }
                 }
             }
@@ -607,48 +554,19 @@ namespace GatherChill.Scheduler.Tasks
                 };
             }
 
-            var config = GatherJobs.ActiveList.Where(x => x.ItemId == itemId).FirstOrDefault();
-            bool exitLoop = false;
-
-            if (config.Mode == GatherMode.Keep && currentAmount >= config.KeepAmount)
-            {
-                exitLoop = true;
-            }
-            else if (config.Mode == GatherMode.Gather && LastItemInfo.LastAmount != currentAmount)
-            {
-                IceLogging.Debug($"Reporting Amount: Last Known: {LastItemInfo.LastAmount} | Current: {currentAmount}", tag);
-                var difference = currentAmount - LastItemInfo.LastAmount;
-
-                if (difference > 0 && config.Mode is GatherMode.Gather)
-                {
-                    config.GatherAmount = config.GatherAmount - difference;
-                    if (config.GatherAmount < 0)
-                        config.GatherAmount = 0;
-                    C.SaveDebounced();
-                    IceLogging.Verbose($"Updated count for: {itemId}. Took off: {difference}", tag);
-                }
-                LastItemInfo.LastAmount = currentAmount;
-
-                if (config.Mode == GatherMode.Gather && config.GatherAmount == 0)
-                {
-                    exitLoop = true;
-                }
-            }
-            else if (Utils.GetFreeSlotCount() <= 1)
-            {
-                exitLoop = true;
-            }
+            // Progress is locked in by SyncProgress and only holds targeted items.
+            // Not tracked (removed from the list mid-run) is treated the same as done.
+            var progress = Gather_Helper.ItemProgress.FirstOrDefault(x => x.ItemId == itemId);
+            var exitLoop = progress == null || progress.IsComplete || Utils.GetFreeSlotCount() <= 1;
 
             if (exitLoop)
             {
-                if (config.Mode == GatherMode.Keep)
-                {
+                if (progress == null)
+                    IceLogging.Debug("This item is no longer being tracked, so we're going back to the start", tag);
+                else if (progress.Mode == GatherMode.Keep)
                     IceLogging.Debug("We've hit our keep amount, so we're going to restart back to the beginning", tag);
-                }
-                else if (config.Mode == GatherMode.Gather)
-                {
-                    IceLogging.Debug("Gather Amount has hit 0, we're resetting back to start", tag);
-                }
+                else
+                    IceLogging.Debug("We've hit our gather goal, we're resetting back to start", tag);
 
                 Gather_Helper.State = IceState.Start;
                 P.TaskManager.Tasks.Clear();
@@ -683,15 +601,15 @@ namespace GatherChill.Scheduler.Tasks
                         // goalInfo is the reduce result; ReducedFromItemIds holds every source that feeds it
                         return goalInfo.ReducedFromItemIds.Contains(gatheredItemId);
                     }
-                    uint OtherItem(Utilities.Gathering gather)
+                    uint OtherItem(Utilities.ExtraAddons.Gathering gather)
                     {
                         var gatherList = gather.GatheredItems.Where(x => x.ItemID != 0).ToList();
-                        var itemList = C.GatherList
-                            .Where(x => (x.Mode == GatherMode.Gather && x.GatherAmount != 0)
-                                     || (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
-                            .ToList();
 
-                        var wantedIds = itemList.Select(x => x.ItemId).ToHashSet();
+                        // Anything tracked and not finished is still wanted
+                        var wantedIds = Gather_Helper.ItemProgress
+                            .Where(p => !p.IsComplete)
+                            .Select(p => p.ItemId)
+                            .ToHashSet();
                         var match = gatherList.FirstOrDefault(x => wantedIds.Contains(x.ItemID));
 
                         if (match == null)
@@ -700,7 +618,7 @@ namespace GatherChill.Scheduler.Tasks
                             return match.ItemID;
                     }
 
-                    if (GenericHelpers.TryGetAddonMaster<Utilities.Gathering>(out var gather) && gather.IsAddonReady)
+                    if (GenericHelpers.TryGetAddonMaster<Utilities.ExtraAddons.Gathering>(out var gather) && gather.IsAddonReady)
                     {
                         if (_collectablePreset != CollectablePreset.None)
                             _collectablePreset = CollectablePreset.None;
@@ -758,7 +676,9 @@ namespace GatherChill.Scheduler.Tasks
                                             var integrity = gather.CurrentIntegrity;
                                             var gatherChance = goalItem.GatherChance;
                                             var boonChance = goalItem.BoonChance;
-                                            var amount = config.Mode is GatherMode.Gather ? config.GatherAmount : config.KeepAmount - Utils.GetItemCount(goalItem.ItemID);
+
+                                            // How many more we still need, works for both Gather and Keep
+                                            var amount = progress.Remaining;
 
                                             var autoProfile = C.User_AutoProfile;
 
@@ -790,6 +710,7 @@ namespace GatherChill.Scheduler.Tasks
 
                                     if (itemInfo.IsHidden && !HiddenUsed && CanCheckHidden())
                                     {
+                                        UseHiddenSkill();
                                         return false;
                                     }
                                     else
@@ -979,18 +900,24 @@ namespace GatherChill.Scheduler.Tasks
             canUse &= Utils.GetGp() >= actionInfo.RequiredGp;
 
             if (canUse)
-            {
-                if (EzThrottler.Throttle("Use buff", 100))
-                    ActionManager.Instance()->UseAction(ActionType.Action, actionId);
-                _toggleHidden = true;
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
-        private static bool CheckGatheringBuffs(Utilities.Gathering gathering)
+        private static unsafe void UseHiddenSkill()
+        {
+            var actionInfo = Gather_Util.GathActionDict[GatherBuffId.HiddenFinder];
+            var actionId = actionInfo.ClassAction[Player.Job].ActionId;
+
+            if (EzThrottler.Throttle("Use buff", 100))
+            {
+                IceLogging.Verbose("Using the hidden skill", "Gathering Action");
+                ActionManager.Instance()->UseAction(ActionType.Action, actionId);
+            }
+            _toggleHidden = true;
+        }
+
+        private static bool CheckGatheringBuffs(Utilities.ExtraAddons.Gathering gathering)
         {
             const string tag = "Gather: Check Buffs";
 

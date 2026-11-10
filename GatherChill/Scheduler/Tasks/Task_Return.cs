@@ -17,7 +17,7 @@ namespace GatherChill.Scheduler.Tasks
             if (configInfo.PostReturnPoint is ReturnTypes.None)
             {
                 ClearTask();
-                return false;
+                return true;
             }
 
             if (!EzThrottler.Throttle("Queue Lifestream"))

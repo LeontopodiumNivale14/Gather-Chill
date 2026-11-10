@@ -5,7 +5,7 @@ using GatherChill.Utilities.Tools;
 using System;
 using System.Text.RegularExpressions;
 
-namespace GatherChill.Utilities;
+namespace GatherChill.Utilities.ExtraAddons;
 
 public unsafe class Gathering : AddonMasterBase<AddonGathering>
 {

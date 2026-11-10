@@ -3,7 +3,6 @@ using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Gui;
-using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
@@ -31,7 +30,7 @@ namespace GatherChill.Ui.Tabs_Debug
                 ImGui.SetClipboardText(DebugSummary);
             }
 
-            if (GenericHelpers.TryGetAddonMaster<Utilities.Gathering>(out var gathering) && gathering.IsAddonReady)
+            if (GenericHelpers.TryGetAddonMaster<Utilities.ExtraAddons.Gathering>(out var gathering) && gathering.IsAddonReady)
             {
                 using (var table = ImRaii.Table("Gathering Items", 7, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
                 {

@@ -1,3 +1,4 @@
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using GatherChill.ConfigFiles;
 using GatherChill.Enums;
@@ -40,8 +41,8 @@ internal static class GatherJobs
 {
     private const int FinishedToKeep = 16;
 
-    private static Job? current;
-    private static readonly List<Job> finished = new();
+    private static JobEntry? current;
+    private static readonly List<JobEntry> finished = new();
 
     /// <summary>
     /// The list the scheduler gathers from: the running job's, otherwise the saved gather list.
@@ -53,7 +54,7 @@ internal static class GatherJobs
     /// </summary>
     public static bool HasUnsettledJob => current != null;
 
-    public static GatherJobStartResult Start(string owner, uint itemId, int amount, out Guid jobId, out string message)
+    public static GatherJobStartResult Start(string owner, uint itemId, int amount, out Guid jobId, out string message, Job? onlyJob = null)
     {
         jobId = Guid.Empty;
         if (string.IsNullOrWhiteSpace(owner) || itemId == 0 || amount <= 0)
@@ -75,18 +76,34 @@ internal static class GatherJobs
         }
 
         var targetId = GatherList_Util.ResolveGatherItemId(itemId);
-        if (!GatherList_Util.CanGather(itemId) || !GatherList_Util.EnsureEnabledRoutes(targetId))
+        if (!GatherList_Util.CanGather(itemId))
         {
             message = $"No gathering route for item {itemId}";
             return GatherJobStartResult.NoRoute;
         }
 
-        var job = new Job(Guid.NewGuid(), owner.Trim(), targetId, amount, GetItemCount(targetId));
+        if (onlyJob is { } requestedJob)
+        {
+            // GetRoutes falls back to the first usable route for that job, so no config changes are needed
+            if (!Gather_Helper.CanGatherJob(targetId, requestedJob))
+            {
+                message = $"No {requestedJob} route for item {itemId}";
+                return GatherJobStartResult.NoRoute;
+            }
+        }
+        else if (!GatherList_Util.EnsureEnabledRoutes(targetId))
+        {
+            message = $"No gathering route for item {itemId}";
+            return GatherJobStartResult.NoRoute;
+        }
+
+        var job = new JobEntry(Guid.NewGuid(), owner.Trim(), targetId, amount, GetItemCount(targetId));
         current = job;
         jobId = job.Id;
         message = job.Message;
 
         Gather_Helper.OnlyItemId = targetId;
+        Gather_Helper.OnlyJob = onlyJob;
         Gather_Helper.State = IceState.Start;
         IceLogging.Info($"{job.Owner} started job {job.Id}: {amount}x {targetId}", "IPC");
         return GatherJobStartResult.Started;
@@ -139,7 +156,7 @@ internal static class GatherJobs
         if (current is not { State: GatherJobState.Running } job)
             return;
 
-        if (job.Items[0].GatherAmount == 0)
+        if (job.Remaining == 0)
             End(GatherJobState.Succeeded, $"Gathered {job.Wanted}x {job.ItemId}");
         else
             End(GatherJobState.Failed, "Nothing left to gather on the enabled routes");
@@ -156,12 +173,14 @@ internal static class GatherJobs
 
         job.State = job.Outcome;
         current = null;
+        Gather_Helper.ClearTargeting();
+
         finished.Add(job);
         if (finished.Count > FinishedToKeep)
             finished.RemoveAt(0);
     }
 
-    private static unsafe void CloseGatheringWindow(Job job)
+    private static unsafe void CloseGatheringWindow(JobEntry job)
     {
         if (job.StoppingNodeId == null)
             return;
@@ -219,7 +238,7 @@ internal static class GatherJobs
         }
     }
 
-    private sealed class Job(Guid id, string owner, uint itemId, int wanted, int startCount)
+    private sealed class JobEntry(Guid id, string owner, uint itemId, int wanted, int startCount)
     {
         public Guid Id { get; } = id;
         public string Owner { get; } = owner;
@@ -231,5 +250,6 @@ internal static class GatherJobs
         public ulong? StoppingNodeId { get; set; }
         public string Message { get; set; } = $"Gathering {wanted}x {itemId}";
         public int Gathered => Math.Max(GetItemCount(ItemId) - startCount, 0);
+        public int Remaining => Math.Max(Wanted - Gathered, 0);
     }
 }

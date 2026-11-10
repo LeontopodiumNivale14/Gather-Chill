@@ -104,6 +104,8 @@ public static partial class SettingsUi
         // Misc
         ColorTheme,
         CompactOverlay,
+        Overlay_AutoShow,
+        Overlay_AutoClose,
         SafetyGatherDelay,
 
         // Character Specific

@@ -130,7 +130,7 @@ internal class Table_GatherPlaylist
             ImGui.SetNextItemWidth(-1);
             using var combo = ImRaii.Combo("##GatherMode", row.Mode.ToString());
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Gather: collect this many more.\nKeep: gather until your inventory holds this many.");
+                ImGui.SetTooltip("Gather: collect this many more [Counts down to 0].\nKeep: gather until your inventory holds this many.");
 
             if (!combo.Success)
                 return;

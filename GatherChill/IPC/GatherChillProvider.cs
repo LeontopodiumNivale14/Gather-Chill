@@ -1,3 +1,4 @@
+using ECommons.ExcelServices;
 using ECommons.EzIpcManager;
 using GatherChill.Enums;
 using GatherChill.Scheduler;
@@ -11,7 +12,7 @@ namespace GatherChill.IPC;
 /// </summary>
 public class GatherChillProvider
 {
-    private const int Version = 4;
+    private const int Version = 5;
 
     public GatherChillProvider() => EzIPC.Init(this, "GatherChill");
 
@@ -92,6 +93,32 @@ public class GatherChillProvider
     }
 
     /// <summary>
+    /// Same as GatherItem, but only uses routes for the given job. Uses an enabled route for that job
+    /// if there is one, otherwise the first route that works. Returns false if busy or no route fits.
+    /// </summary>
+    [EzIPC]
+    public bool GatherJobItem(uint itemId, int amount, uint jobId)
+    {
+        if (IsBusy())
+            return false;
+
+        var job = (Job)jobId;
+        var targetId = GatherList_Util.ResolveGatherItemId(itemId);
+
+        if (!GatherList_Util.CanGather(itemId) || !Gather_Helper.CanGatherJob(targetId, job))
+            return false;
+
+        if (!GatherList_Util.TryAdd(itemId, amount))
+            return false;
+
+        C.Save();
+        Gather_Helper.OnlyItemId = targetId;
+        Gather_Helper.OnlyJob = job;
+        Gather_Helper.State = IceState.Start;
+        return true;
+    }
+
+    /// <summary>
     /// Stops gathering, same as the Stop button.
     /// </summary>
     [EzIPC]
@@ -106,6 +133,16 @@ public class GatherChillProvider
     {
         var result = GatherJobs.Start(owner, itemId, amount, out var jobId, out var message);
         return ((int)result, jobId, message);
+    }
+
+    /// <summary>
+    /// Same as StartJob, but only uses routes for the given job (falls back to the first route that works).
+    /// </summary>
+    [EzIPC]
+    public (int Result, Guid JobId, string Message) StartJobForJob(string owner, uint itemId, int amount, uint jobId)
+    {
+        var result = GatherJobs.Start(owner, itemId, amount, out var newJobId, out var message, (Job)jobId);
+        return ((int)result, newJobId, message);
     }
 
     /// <summary>

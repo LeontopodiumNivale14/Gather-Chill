@@ -39,6 +39,38 @@ public static partial class SettingsUi
         }
     };
 
+    private static SettingEntry Overlay_AutoShow = new()
+    {
+        Label = "Open Overlay upon start",
+        Category = MiscOption,
+        Keywords = new[] { "Overlay", "Auto Open", "Start" },
+        Draw = () =>
+        {
+            var v = C.Overlay_OpenUponRun;
+            if (ImGui.Checkbox("Open overlay when running", ref v))
+            {
+                C.Overlay_OpenUponRun = v;
+                C.Save();
+            }
+        }
+    };
+
+    private static SettingEntry Overlay_AutoClose = new()
+    {
+        Label = "Close Overlay upon idle",
+        Category = MiscOption,
+        Keywords = new[] { "Overlay", "Auto Open", "Start" },
+        Draw = () =>
+        {
+            var v = C.Overlay_CloseUponStop;
+            if (ImGui.Checkbox("Close overlay when not running", ref v))
+            {
+                C.Overlay_CloseUponStop = v;
+                C.Save();
+            }
+        }
+    };
+
     private static SettingEntry SafetyGatherDelay = new()
     {
         Label = "Safety Delay [Gather]",

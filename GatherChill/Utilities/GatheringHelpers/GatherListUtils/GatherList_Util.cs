@@ -1,3 +1,4 @@
+using ECommons.ExcelServices;
 using GatherChill.ConfigFiles;
 
 namespace GatherChill.Utilities.GatheringHelpers.GatherListUtils;
@@ -34,6 +35,19 @@ internal static partial class GatherList_Util
         var targetId = ResolveGatherItemId(itemId);
         return Gather_Util.Sheet_ItemInfo.TryGetValue(targetId, out var itemInfo)
             && (itemInfo.NormalRoutes.Count != 0 || itemInfo.TimedRoutes.Count != 0);
+    }
+
+    public static bool CanGatherJob(uint itemId, Job job)
+    {
+        var targetId = ResolveGatherItemId(itemId);
+        var currentRoutes = C.ItemRoutes;
+        foreach (var route in currentRoutes[targetId].EnabledRoutes)
+        {
+            if (Gather_Util.Sheet_RouteInfo.TryGetValue(route, out var routeInfo) && routeInfo.Job == job)
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>

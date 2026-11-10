@@ -23,6 +23,8 @@ namespace GatherChill.Scheduler.Tasks
             }
         }
 
+        private static bool IsWanted(uint itemId) => Gather_Helper.ItemProgress.Any(p => p.ItemId == itemId && !p.IsComplete) && Utils.GetFreeSlotCount() > 1;
+
         private static unsafe bool CheckInteraction()
         {
             string tag = "Task: Start Process";
@@ -52,14 +54,7 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     foreach (var item in gathering.GatheredItems)
                     {
-                        if (!Gather_Helper.IsTargeted(item.ItemID))
-                            continue;
-
-                        var wanted = GatherJobs.ActiveList.Any(x =>
-                            (x.Mode == GatherMode.Gather && x.ItemId == item.ItemID && x.GatherAmount != 0) ||
-                            (x.Mode == GatherMode.Keep && x.ItemId == item.ItemID && Utils.GetItemCount(item.ItemID) < x.KeepAmount)
-                            && Utils.GetFreeSlotCount() > 1);
-                        if (!wanted)
+                        if (!IsWanted(item.ItemID))
                             continue;
 
                         IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}", tag);
@@ -74,23 +69,16 @@ namespace GatherChill.Scheduler.Tasks
                 }
                 else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var gatherMaster) && gatherMaster.IsAddonReady)
                 {
-                    var wanted = Gather_Helper.IsTargeted(gatherMaster.ItemID) && GatherJobs.ActiveList.Any(x =>
-                        (x.Mode == GatherMode.Gather && x.ItemId == gatherMaster.ItemID && x.GatherAmount != 0) ||
-                        (x.Mode == GatherMode.Keep && x.ItemId == gatherMaster.ItemID && Utils.GetItemCount(gatherMaster.ItemID) < x.KeepAmount)
-                        && Utils.GetFreeSlotCount() > 1);
-                    
-                    if (wanted)
+                    if (IsWanted(gatherMaster.ItemID))
                     {
                         IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {gatherMaster.ItemID}", tag);
                         Gather_Helper.GatherRoute = new() { itemId = gatherMaster.ItemID, routeId = route.Value.Key };
                         Gather_Helper.State = IceState.Gather;
                         return true;
                     }
-                    else
-                    {
-                        if (EzThrottler.Throttle("Closing window"))
-                            Ecom_Handler.CloseWindow(gatherMaster.Base);
-                    }
+
+                    if (EzThrottler.Throttle("Closing window"))
+                        Ecom_Handler.CloseWindow(gatherMaster.Base);
                 }
             }
 
@@ -103,18 +91,14 @@ namespace GatherChill.Scheduler.Tasks
 
             IceLogging.Verbose("Starting check list process", tag);
 
-            var itemList = GatherJobs.ActiveList.Where(x =>
-                (x.Mode == GatherMode.Gather && x.GatherAmount != 0) ||
-                (x.Mode == GatherMode.Keep && Utils.GetItemCount(x.ItemId) < x.KeepAmount))
-                .Where(x => Gather_Helper.IsTargeted(x.ItemId))
+            // ItemProgress is kept in sync by the tick, so "still needs gathering" is "tracked and not complete"
+            var itemList = GatherJobs.ActiveList
+                .Where(x => Gather_Helper.ItemProgress.Any(p => p.ItemId == x.ItemId && !p.IsComplete))
                 .ToList();
-            Gather_Helper.ItemProgress.Clear();
 
             if (itemList.Count != 0 && Utils.GetFreeSlotCount() > 1)
             {
-                var itemSheet = Gather_Util.Sheet_ItemInfo;
                 var routeSheet = Gather_Util.Sheet_RouteInfo;
-                var itemConfig = C.ItemRoutes;
 
                 List<Gather_Helper.SelectedRoute> LegendaryItems = new();
                 List<Gather_Helper.SelectedRoute> EphemeralItems = new();
@@ -122,36 +106,24 @@ namespace GatherChill.Scheduler.Tasks
 
                 foreach (var item in itemList)
                 {
-                    if (itemConfig.TryGetValue(item.ItemId, out var selectedRoutes))
+                    foreach (var route in Gather_Helper.GetRoutes(item.ItemId))
                     {
-                        if (!Gather_Helper.ItemProgress.Any(x => x.ItemId == item.ItemId))
+                        var routeInfo = routeSheet[route];
+                        var gatherRoute = P.routeEditor.GetRoute(route);
+                        if (gatherRoute == null || gatherRoute.AetheryteId == 0)
+                            continue;
+
+                        if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
                         {
-                            Gather_Helper.ItemProgress.Add(new()
-                            {
-                                ItemId = item.ItemId,
-                                StartInventory = Utils.GetItemCount(item.ItemId),
-                            });
+                            LegendaryItems.Add(new() { routeId = route, itemId = item.ItemId });
                         }
-
-                        foreach (var route in selectedRoutes.EnabledRoutes)
+                        else if (routeInfo.Kind is GatherNodeKind.Ephemeral)
                         {
-                            var routeInfo = routeSheet[route];
-                            var gatherRoute = P.routeEditor.GetRoute(route);
-                            if (gatherRoute == null || gatherRoute.AetheryteId == 0)
-                                continue;
-
-                            if (routeInfo.Kind is GatherNodeKind.Legendary or GatherNodeKind.Unspoiled)
-                            {
-                                LegendaryItems.Add(new() { routeId = route, itemId = item.ItemId });
-                            }
-                            else if (routeInfo.Kind is GatherNodeKind.Ephemeral)
-                            {
-                                EphemeralItems.Add(new() { routeId = route, itemId = item.ItemId });
-                            }
-                            else
-                            {
-                                NormalItems.Add(new() { routeId = route, itemId = item.ItemId });
-                            }
+                            EphemeralItems.Add(new() { routeId = route, itemId = item.ItemId });
+                        }
+                        else
+                        {
+                            NormalItems.Add(new() { routeId = route, itemId = item.ItemId });
                         }
                     }
                 }
@@ -219,7 +191,7 @@ namespace GatherChill.Scheduler.Tasks
                     return true;
                 }
 
-                if (LegendaryItems.Count != 0 || EphemeralItems.Count != 0 || EphemeralItems.Count != 0)
+                if (LegendaryItems.Count != 0 || EphemeralItems.Count != 0)
                 {
                     IceLogging.Verbose("We have a timed node of some sort that we're waiting for. (And no normal items to gather it seems)", tag);
                     IceLogging.Verbose("If we have a spot to return to, we're going to do so. Otherwise, we just gonna wait where we are", tag);
@@ -249,11 +221,11 @@ namespace GatherChill.Scheduler.Tasks
                     IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
                 GatherJobs.EndNaturally();
                 Gather_Helper.State = IceState.Idle;
-                Gather_Helper.OnlyItemId = 0;
+                Gather_Helper.ClearTargeting();
                 P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Checking for return post");
                 return true;
             }
-            
+
             return true;
         }
     }

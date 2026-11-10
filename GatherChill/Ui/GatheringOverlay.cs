@@ -224,7 +224,7 @@ internal class GatheringOverlay : Window
     private static void GPBar(float rowHeight)
     {
         using var colors = ImGui_Ice.PushChildBG();
-        ImGui_Ice.VerticalBar("GP", Utils.GetGp(), Utils.MaxGp(), framed: true, totalHeight: rowHeight);
+        ImGui_Ice.VerticalBar("GP", Utils.GetGp(), Utils.MaxGp(), framed: true, totalHeight: rowHeight, requirement: Gather_Helper.GetGpRequirement());
     }
 
     private static void ItemProgressWindow()
@@ -282,9 +282,15 @@ internal class GatheringOverlay : Window
         var waiting = new List<(uint Id, TimeSpan Timer)>();
         var normal = new List<uint>();
 
+        var running = Gather_Helper.State is not IceState.Idle;
+
         foreach (var info in GatherJobs.ActiveList)
         {
             if (info.ItemId == current)
+                continue;
+
+            // While running, only show items that still need gathering
+            if (running && !Gather_Helper.ItemProgress.Any(p => p.ItemId == info.ItemId && !p.IsComplete))
                 continue;
 
             var (hasTimed, isUp, timer) = GetTimerInfo(info.ItemId);
@@ -305,19 +311,16 @@ internal class GatheringOverlay : Window
         return result.Distinct().Take(UpcomingCount).ToList();
     }
 
-    // Timer info for one item across all of its enabled routes.
+    // Timer info for one item across the routes that will actually be used.
     // IsUp: true  -> Timer is how long it stays up
     //       false -> Timer is how long until it opens
     private static (bool HasTimed, bool IsUp, TimeSpan Timer) GetTimerInfo(uint itemId)
     {
-        if (!C.ItemRoutes.TryGetValue(itemId, out var selection))
-            return default;
-
         var hasTimed = false;
         TimeSpan? upFor = null;
         TimeSpan? startsIn = null;
 
-        foreach (var routeId in selection.EnabledRoutes)
+        foreach (var routeId in Gather_Helper.GetRoutes(itemId))
         {
             if (!Gather_Util.Sheet_RouteInfo.TryGetValue(routeId, out var route))
                 continue;
