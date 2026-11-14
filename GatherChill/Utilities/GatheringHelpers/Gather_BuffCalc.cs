@@ -1,6 +1,4 @@
-﻿using ECommons.GameHelpers;
-using GatherChill.Enums;
-using GatherChill.Utilities.Utility;
+﻿using GatherChill.Enums;
 using System.Collections.Generic;
 
 namespace GatherChill.Utilities.GatheringHelpers;
@@ -11,43 +9,21 @@ public static partial class Gather_Util
     // https://github.com/fdashx/FFXIVGathering
 
     /// <summary>
-    /// Returns a plan that is both the cheapest GP buff list, while also giving the greatest yield of items from the current state it's in <br></br>
-    /// Profile = Is the profile that a user can edit to select which buffs they do/don't want to use. <br></br>
-    /// baseYield = 1 | Default. Until I can be asked to get the amount of items that you would get from that node <br></br>
-    /// If the the amount of items needed can be gotten with no buffs, then it'll just return a clean profile. Nothing at all
-    /// If it can't be reached, it'll just use the best instance of buffs
+    /// Returns the cheapest GP buff plan that reaches itemsNeeded, or the highest-yield plan if it can't be reached. <br></br>
+    /// profile = the settings picked by the rule matcher (enabled buffs, max casts, BY II amount, Tidings threshold). <br></br>
+    /// baseYield = items per successful swing before buffs. <br></br>
+    /// If the need is met with no buffs, the returned plan is empty.
     /// </summary>
-    public static (GatherProfile Profile, double ExpectedYield, int Gp, bool MeetsNeed) PlanBuffs(
-        int level,
-        int gp,
-        int attempts,
-        int gatherChance,
-        int boonChance,
-        int itemsNeeded,
-        ProfileClass profile,
-        int baseYield = 1,
-        string name = "Planned")
+    public static (GatherProfile Profile, double ExpectedYield, int Gp, bool MeetsNeed) PlanBuffs(int level, int gp, int attempts, int maxIntegrity, int gatherChance, int boonChance, int itemsNeeded, ProfileClass profile, int baseYield = 1, string name = "Planned")
     {
-        var bountifulBonus = profile.BYII_Amount;
-        var tidingsMinBoon = profile.TidingsChance;
-        bool hasWise = Utils.HasStatusId(GathActionDict[GatherBuffId.BonusIntegrity_Chance].StatusId);
+        var node = new BuffPlanner.NodeState(level, gp, attempts, gatherChance / 100.0, boonChance / 100.0, baseYield, Math.Clamp(profile.BYII_Amount, 1, 3));
 
-        var node = new BuffPlanner.NodeState(
-            level,
-            gp,
-            attempts,
-            gatherChance / 100.0,
-            boonChance / 100.0,
-            baseYield,
-            Math.Clamp(bountifulBonus, 1, 3),
-            hasWise);
+        // boonChance >= TidingsMinBoon reads "boon is at least the minimum", which is when Tidings is worth considering
+        var tidingsAllowed = boonChance >= profile.TidingsMinBoon;
 
-        // boonChance >= tidingsMinBoon reads "boon is at least the minimum", which is when Tidings is worth considering
-        var tidingsAllowed = boonChance >= tidingsMinBoon;
+        bool Usable(GatherBuffId id) => (id != GatherBuffId.Tidings || tidingsAllowed) && profile.IsAllowed(id, maxIntegrity);
 
-        bool Usable(GatherBuffId id) => (id != GatherBuffId.Tidings || tidingsAllowed) && (profile.BuffsEnabled.GetValueOrDefault(id, true));
-
-        var plan = BuffPlanner.Plan(node, itemsNeeded, Usable);
+        var plan = BuffPlanner.Plan(node, itemsNeeded, Usable, profile.CastCap);
 
         return (BuffPlanner.ToProfile(plan, name, node.Wise, Usable), plan.ExpectedYield, plan.Gp, plan.MeetsNeed);
     }
@@ -67,11 +43,12 @@ public static partial class Gather_Util
         /// </summary>
         public sealed record GatherBuff(GatherBuffId Id, BuffKind Kind, int Level, int Gp, double Amount);
 
-        public sealed record NodeState(int Level, int Gp, int Attempts, double Chance, double Boon, int BaseYield, double BountifulBonus = 1, bool? HasWise = null)
+        public sealed record NodeState(int Level, int Gp, int Attempts, double Chance, double Boon, int BaseYield, double BountifulBonus = 1)
         {
-            public bool Wise => HasWise ?? Level >= GatherBuffs.WiseLevel;
+            // Wise appears mid-node (only after an Ageless cast), so it's a level check, not a status check
+            public bool Wise => Level >= GatherBuffs.WiseLevel;
 
-            // BY I is always +1; BY II's bonus varies with the node, so it comes from the user's setting.
+            // BY I is always +1; BY II's bonus varies with the node, so it comes from the profile.
             public double EffectiveBountifulBonus => Level >= GatherBuffs.BountifulIILevel ? BountifulBonus : GatherBuffs.Bountiful.Amount;
 
             public int GpRegenPerAttempt => Level < 80 ? 5 : 6;
@@ -146,33 +123,23 @@ public static partial class Gather_Util
             }
         }
 
-        /// <param name="isUsable">Respects the user's toggle for the Wise proc buff. Null allows it.</param>
-        public static GatherProfile ToProfile(GatherPlan plan, string name, bool wise, Func<GatherBuffId, bool>? isUsable = null)
+        /// <param name="isUsable">Respects the user's toggle for the Wise proc buff.</param>
+        public static GatherProfile ToProfile(GatherPlan plan, string name, bool wise, Func<GatherBuffId, bool> isUsable)
         {
             var profile = new GatherProfile { Name = name };
 
             foreach (var group in plan.Buffs.GroupBy(buff => buff))
             {
-                profile.GatheringBuffs[group.Key] = new BuffSettings
-                {
-                    Enabled = true,
-                    MaxUse = (uint)group.Count(),
-                };
+                profile.MaxUses[group.Key] = (uint)group.Count();
             }
 
             var priority = plan.Buffs.Distinct().ToList();
-
             var agelessIndex = priority.IndexOf(GatherBuffs.AgelessWords.Id);
 
-            if (agelessIndex < 0 || !wise)
+            // Wise is a free proc that shows up after an Ageless cast, so it goes right before Ageless in the cast order. 0 = no cap.
+            if (agelessIndex >= 0 && wise && isUsable(GatherBuffId.BonusIntegrity_Chance))
             {
-                profile.BuffPriority = priority;
-                return profile;
-            }
-
-            if (isUsable?.Invoke(GatherBuffId.BonusIntegrity_Chance) ?? true)
-            {
-                profile.GatheringBuffs[GatherBuffId.BonusIntegrity_Chance] = new BuffSettings { Enabled = true };
+                profile.MaxUses[GatherBuffId.BonusIntegrity_Chance] = 0;
                 priority.Insert(agelessIndex, GatherBuffId.BonusIntegrity_Chance);
             }
 
@@ -180,9 +147,8 @@ public static partial class Gather_Util
             return profile;
         }
 
-        public static GatherPlan Plan(NodeState node, int itemsNeeded, Func<GatherBuffId, bool>? isUsable = null)
+        public static GatherPlan Plan(NodeState node, int itemsNeeded, Func<GatherBuffId, bool> isUsable, Func<GatherBuffId, int> castCap)
         {
-            isUsable ??= _ => true;
             node = node with { Gp = Math.Max(node.Gp, 0) };
 
             var best = Evaluate(node, new Loadout(Array.Empty<GatherBuff>(), 0, 0), itemsNeeded)!;
@@ -192,14 +158,19 @@ public static partial class Gather_Util
                 return best;
             }
 
-            var maxAgeless = IsAvailable(GatherBuffs.AgelessWords, node, isUsable) ? MaxAgelessCasts : 0;
-            var canBountiful = IsAvailable(GatherBuffs.Bountiful, node, isUsable);
+            var maxAgeless = IsAvailable(GatherBuffs.AgelessWords, node, isUsable)
+                ? Math.Min(MaxAgelessCasts, castCap(GatherBuffs.AgelessWords.Id))
+                : 0;
+
+            var bountifulCap = IsAvailable(GatherBuffs.Bountiful, node, isUsable)
+                ? castCap(GatherBuffs.Bountiful.Id)
+                : 0;
 
             foreach (var oneShots in OneShotCombos(node, isUsable))
             {
                 for (var ageless = 0; ageless <= maxAgeless; ageless++)
                 {
-                    var maxBountiful = canBountiful ? node.Attempts + ageless : 0;
+                    var maxBountiful = Math.Min(node.Attempts + ageless, bountifulCap);
 
                     for (var bountiful = 0; bountiful <= maxBountiful; bountiful++)
                     {
@@ -243,31 +214,10 @@ public static partial class Gather_Util
         private static GatherPlan? Evaluate(NodeState node, Loadout loadout, int itemsNeeded)
         {
             var oneShotGp = loadout.OneShots.Sum(buff => buff.Gp);
-            var remainingGp = node.Gp - oneShotGp;
 
-            if (remainingGp < 0)
+            if (!TrySimulateGp(node, loadout, oneShotGp, out var attempts))
             {
                 return null;
-            }
-
-            var attempts = node.Attempts;
-
-            for (var i = 0; i < loadout.Ageless; i++)
-            {
-                if (!TryPay(GatherBuffs.AgelessWords, ref remainingGp, attempts, node))
-                {
-                    return null;
-                }
-
-                attempts++;
-            }
-
-            for (var i = 0; i < loadout.Bountiful; i++)
-            {
-                if (!TryPay(GatherBuffs.Bountiful, ref remainingGp, attempts, node))
-                {
-                    return null;
-                }
             }
 
             double Added(BuffKind kind) => loadout.OneShots.Where(buff => buff.Kind == kind).Sum(buff => buff.Amount);
@@ -287,17 +237,48 @@ public static partial class Gather_Util
             return new GatherPlan(BuildBuffList(loadout), expected, gp, expected + Epsilon >= itemsNeeded);
         }
 
-        private static bool TryPay(GatherBuff buff, ref int remainingGp, int attempts, NodeState node)
+        /// <summary>
+        /// Walks the node swing by swing in the same order the executor casts: one-shots at the start (no regen yet),
+        /// then Ageless (only once integrity is missing, so after the first swing), then Bountiful, then the swing, then regen.
+        /// A cast only happens when the GP on hand covers it, so the plan never spends GP it hasn't regenerated yet.
+        /// Wise procs add extra swings, but they're left out here: ignoring them is the conservative choice.
+        /// </summary>
+        private static bool TrySimulateGp(NodeState node, Loadout loadout, int oneShotGp, out int totalAttempts)
         {
-            var available = remainingGp + Math.Max(attempts - 1, 0) * node.GpRegenPerAttempt;
+            totalAttempts = node.Attempts;
 
-            if (available < buff.Gp)
+            var gp = node.Gp - oneShotGp;
+            if (gp < 0)
             {
                 return false;
             }
 
-            remainingGp -= buff.Gp;
-            return true;
+            var agelessLeft = loadout.Ageless;
+            var bountifulLeft = loadout.Bountiful;
+            var agelessCost = GatherBuffs.AgelessWords.Gp;
+            var bountifulCost = GatherBuffs.Bountiful.Gp;
+
+            // swing < totalAttempts reads "this swing is still within the attempts we have"; Ageless grows totalAttempts as we go
+            for (var swing = 0; swing < totalAttempts; swing++)
+            {
+                // gp >= cost reads "we have at least the cost on hand"
+                while (swing > 0 && agelessLeft > 0 && gp >= agelessCost)
+                {
+                    gp -= agelessCost;
+                    agelessLeft--;
+                    totalAttempts++;
+                }
+
+                if (bountifulLeft > 0 && gp >= bountifulCost)
+                {
+                    gp -= bountifulCost;
+                    bountifulLeft--;
+                }
+
+                gp += node.GpRegenPerAttempt;
+            }
+
+            return agelessLeft == 0 && bountifulLeft == 0;
         }
 
         private static bool IsBetter(GatherPlan candidate, GatherPlan best)

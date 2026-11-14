@@ -21,6 +21,29 @@ public static partial class SettingsUi
                 C.Cordial_Auto = v;
                 C.Save();
             }
+            if (v)
+            {
+                ImGui.Indent(15);
+                var n = C.Cordial_NormalNode;
+                if (ImGui.Checkbox("Allow on Normal Nodes", ref n))
+                {
+                    C.Cordial_NormalNode = n;
+                    C.Save();
+                }
+                var l = C.Cordial_LegendaryNode;
+                if (ImGui.Checkbox("Allow on Timed Nodes", ref l))
+                {
+                    C.Cordial_LegendaryNode = l;
+                    C.Save();
+                }
+                var e = C.Cordial_EphemerialNode;
+                if (ImGui.Checkbox("Allow on Ephemeral Nodes", ref e))
+                {
+                    C.Cordial_EphemerialNode = e;
+                    C.Save();
+                }
+                ImGui.Unindent(15);
+            }
         }
     };
 

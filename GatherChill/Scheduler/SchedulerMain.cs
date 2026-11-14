@@ -4,6 +4,7 @@ using GatherChill.Enums;
 using GatherChill.Scheduler.Tasks;
 using GatherChill.Utilities;
 using GatherChill.Utilities.GatheringHelpers;
+using GatherChill.Utilities.Replay;
 
 namespace GatherChill.Scheduler
 {
@@ -37,6 +38,8 @@ namespace GatherChill.Scheduler
                 P.gatherOverlay.Toggle();
                 OverlayOpened = false;
             }
+
+            ReplayRecorder.EndSession("Stopped");
         }
 
         internal static void Tick()

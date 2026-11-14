@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
+using GatherChill.Enums;
 using GatherChill.Gui;
 using GatherChill.Utilities.GatheringHelpers;
 using System;
@@ -77,13 +78,13 @@ public static partial class SettingsUi
         {
             var buff = Gather_Util.GathActionDict[Enums.GatherBuffId.GivingLand].ClassAction[Job.MIN].Name;
 
-            var v = C.CrystalBuff_HoldGP;
+            var v = C.CrystalBuff_HoldSeconds;
             using (var disabled = ImRaii.Disabled(!C.HoldGP_CrystalBuff))
             {
                 ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
                 if (ImGui.InputUInt($"Seconds Before {buff}", ref v, 1, 10))
                 {
-                    C.CrystalBuff_HoldGP = v;
+                    C.CrystalBuff_HoldSeconds = v;
                     C.SaveDebounced();
                 }
             }
@@ -172,6 +173,24 @@ public static partial class SettingsUi
             ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle,
                 "Really, only useful for the crystarium relic quest [Lv. 90 relics],\n" +
                 "but will wait till you have at minimum 200 gp to ensure the item shows up");
+        }
+    };
+
+    private static SettingEntry CollectabilityGoal = new()
+    {
+        Label = "Goal Collectability",
+        Category = GatheringOptions,
+        Keywords = new[] { "Collectablility", "Goal", "High", "Mid", "Low" },
+        Draw = () =>
+        {
+            var names = Enum.GetNames<CollectableTarget>();
+            var current = (int)C.Collectable_Target;
+            ImGui.SetNextItemWidth(200 * ImGuiHelpers.GlobalScale);
+            if (ImGui.Combo("Collectable breakpoint", ref current, names, names.Length))
+            {
+                C.Collectable_Target = (CollectableTarget)current;
+                C.Save();
+            }
         }
     };
 }

@@ -378,6 +378,8 @@ namespace GatherChill.Scheduler
 
             void Consider(float threshold, string reason)
             {
+                threshold = Math.Min(threshold, Utils.MaxGp());
+
                 if (result is not { } current || threshold > current.Threshold)
                     result = new GpRequirement(threshold, reason);
             }

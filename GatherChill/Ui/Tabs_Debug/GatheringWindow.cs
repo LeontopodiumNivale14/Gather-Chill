@@ -81,42 +81,9 @@ namespace GatherChill.Ui.Tabs_Debug
                                 var gather = item.GatherChance;
                                 var boon = item.BoonChance;
                                 var autoProfile = C.User_AutoProfile;
-
-                                var result = Gather_Util.PlanBuffs(level, gp, gathering.TotalIntegrity, item.GatherChance, item.BoonChance, GatherAmount, autoProfile, item.GatherAmount);
-                                DebugProfile = result.Profile;
-                                DebugSummary = $"in: gp={gp}, integrity={gathering.TotalIntegrity}, gather={gather:N0}, boon={boon:N0}, need={GatherAmount:N0} | out: expected={result.ExpectedYield:0.00}, gp={result.Gp}, meetsNeed={result.MeetsNeed}, buffs={DebugProfile.BuffPriority.Count}";
                             }
                         }
                     }
-                }
-
-                using (var buffTable = ImRaii.Table("Buff Info", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
-                {
-                    if (!buffTable.Success)
-                        return;
-
-                    ImGui.TableSetupColumn("Buff");
-                    ImGui.TableSetupColumn("Use Amount");
-
-                    ImGui.TableHeadersRow();
-                    foreach (var buff in DebugProfile.BuffPriority)
-                    {
-                        var profileInfo = DebugProfile.GatheringBuffs[buff];
-                        var actionInfo = Gather_Util.GathActionDict[buff];
-                        var job = actionInfo.ClassAction[Job.BTN];
-
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(0);
-                        ImGui_Ice.ImageButtonWithText(job.IconId, job.Name, job.Name);
-
-                        ImGui.TableNextColumn();
-                        ImGui.Text($"{DebugProfile.GatheringBuffs[buff].MaxUse}");
-
-                        ImGui.TableNextColumn();
-                        ImGui.Text($"ID: {ActionAvailable(job.ActionId)}");
-                        
-                    }
-
                 }
             }
             else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var collectable) && collectable.IsAddonReady)

@@ -61,4 +61,15 @@ namespace GatherChill.Enums
         Logging = 1 << 2,
         Harvesting = 1 << 3,
     }
+    [Flags]
+    public enum NotesEnum
+    {
+        None = 1 << 0,
+        Collectable = 1 << 1,
+        ReduceSource = 1 << 2,
+        ReduceInto = 1 << 3,
+        Quest = 1 << 4,
+        Tool = 1 << 5,
+        Hidden = 1 << 6,
+    }
 }

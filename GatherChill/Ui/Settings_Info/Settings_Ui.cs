@@ -94,6 +94,7 @@ public static partial class SettingsUi
         WaitForGP_Collectables,
         WaitForGP_CollectableAmount,
         WaitForGP_HiddenItem,
+        CollectabilityGoal,
 
         // Repair Settings
         SelfRepair,

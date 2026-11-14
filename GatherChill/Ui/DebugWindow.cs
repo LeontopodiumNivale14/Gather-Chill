@@ -42,6 +42,7 @@ internal class DebugWindow : Window
         ["Editor: Aethernet"] = () => AethernetEditor.Draw(),
 
         ["Ui: Test Elements"] = () => UiElements.Draw(),
+        ["Ui: Icon Compare"] = () => GameIconsCompare.Draw(),
     };
 
     private static string SelectedTab = DebugTabs.First().Key;

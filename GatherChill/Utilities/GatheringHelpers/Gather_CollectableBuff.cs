@@ -3,30 +3,12 @@ using ECommons.GameHelpers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using GatherChill.Enums;
 using GatherChill.Utilities.Utility;
+using System.Collections.Generic;
 
 namespace GatherChill.Utilities.GatheringHelpers;
 
 public static partial class Gather_Util
 {
-    public enum CollectablePreset
-    {
-        /// <summary>1000 GP rotation (TC guide): Scrutiny rounds, then 2x Solid/Ageless + Collect.</summary>
-        ThousandGp,
-
-        /// <summary>800/900 GP rotation (TC guide): Priming Touch in the build, then 1x Solid/Ageless + Collect.</summary>
-        EightHundredGp,
-
-        /// <summary>600/800 GP min stat rotation (TC guide). For when Scour is under 200 collectability.</summary>
-        SixHundredMinStat,
-
-        /// <summary>400/600 GP low stat rotation (TC guide).</summary>
-        FourHundredGpLowStat,
-
-        /// <summary>0 GP rotation (TC guide). Tops out around 400 collectability.</summary>
-        ZeroGpEphemeral,
-        None,
-    }
-
     public readonly record struct CollectableState(
         int CharacterLevel,
         int AvailableGp,
@@ -43,7 +25,9 @@ public static partial class Gather_Util
         int HighCollectability = 0,
         int MeticulousPower = 0,   // collectability each action gives right now, straight from the addon
         int ScourPower = 0,
-        int BrazenPowerMin = 0)
+        int BrazenPowerMin = 0,
+        int RemainingNeeded = 0,   // items still needed for the goal, 0 = unknown / ignore (reducible items)
+        CollectableTarget Target = CollectableTarget.High) // which breakpoint the user wants to aim for
     {
         /// <summary>True when Collect would be accepted by the game (never at 0, never under the minimum).</summary>
         public bool MeetsMinimum => Progression > 0 && Progression >= MinCollectability;
@@ -57,6 +41,38 @@ public static partial class Gather_Util
 
         /// <summary>Highest breakpoint this item has, or 0 if none.</summary>
         public int TopTier => Tiers.LastOrDefault();
+
+        /// <summary>
+        /// Index into Tiers of the breakpoint the setting asks for, or -1 if the item has none.
+        /// High = last, Low = first, Middle = the middle one (with 2 tiers that's the higher one).
+        /// An item with fewer tiers than the setting expects just uses what it has.
+        /// </summary>
+        public int TargetIndex
+        {
+            get
+            {
+                var count = Tiers.Length;
+                if (count == 0)
+                    return -1;
+
+                return Target switch
+                {
+                    CollectableTarget.Low => 0,
+                    CollectableTarget.Middle => count / 2,
+                    _ => count - 1,
+                };
+            }
+        }
+
+        /// <summary>The breakpoint value the setting asks for, or 0 if the item has none.</summary>
+        public int TargetTier
+        {
+            get
+            {
+                var index = TargetIndex;
+                return index < 0 ? 0 : Tiers[index];
+            }
+        }
 
         /// <summary>The closest breakpoint still above current collectability, or 0 if we're past all of them.</summary>
         public int NextTier
@@ -84,13 +100,22 @@ public static partial class Gather_Util
         }
     }
 
+    /// <summary>
+    /// What the solver decided: which breakpoint it is aiming for, how much GP the cheapest route needs,
+    /// and the action to press right now. TargetTier == 0 means no breakpoint is reachable (free hits only).
+    /// </summary>
+    public readonly record struct CollectablePlan(int TargetTier, int GpCost, GatherBuffId? NextAction)
+    {
+        public bool Feasible => TargetTier > 0;
+    }
+
     private const uint CollectorStandardStatusId = 2418;     // White Star, steers toward Meticulous
     private const uint CollectorHighStandardStatusId = 3911; // Orange Buff, unlocks Brazen
 
     private static bool HasStatus(GatherBuffId buff)
         => GathActionDict.TryGetValue(buff, out var entry) && Utils.HasStatusId(entry.StatusId);
 
-    public static CollectableState BuildState(AddonMaster.GatheringMasterpiece collectable)
+    public static CollectableState BuildState(AddonMaster.GatheringMasterpiece collectable, int remainingNeeded = 0, CollectableTarget target = CollectableTarget.High)
     {
         return new CollectableState(
             CharacterLevel: Player.Level,
@@ -108,51 +133,56 @@ public static partial class Gather_Util
             HighCollectability: (int)collectable.HighCollectability,
             MeticulousPower: (int)collectable.MeticulousPower,
             ScourPower: (int)collectable.ScourPower,
-            BrazenPowerMin: (int)collectable.BrazenPowerMin);
+            BrazenPowerMin: (int)collectable.BrazenPowerMin,
+            RemainingNeeded: remainingNeeded,
+            Target: target);
     }
 
     public static class CollectableSolver
     {
-        public static int RecommendedGp(CollectablePreset preset) => preset switch
+        // ---- Planner assumptions. Tune these if the real numbers differ. ----
+
+        /// <summary>Scrutiny multiplies hit power by this while it's active.</summary>
+        private const double ScrutinyMultiplier = 1.5;
+
+        /// <summary>How many hits one Scrutiny cast covers (assumed, check against the game).</summary>
+        private const int ScrutinyHits = 3;
+
+        /// <summary>Attempts are tracked in quarters so Meticulous' free-hit chance can be priced as an expected cost.</summary>
+        private const int UnitsPerAttempt = 4;
+
+        /// <summary>Expected attempt cost of one Meticulous hit: 3/4 of an attempt (25% chance it's free).</summary>
+        private const int MeticulousUnits = 3;
+
+        /// <summary>Expected attempt cost of a Meticulous hit under Priming Touch: 2/4 of an attempt (chance doubled to 50%).</summary>
+        private const int PrimedMeticulousUnits = 2;
+
+        /// <summary>Priming Touch affects the next use of Meticulous only.</summary>
+        private const int PrimingHits = 1;
+
+        /// <summary>Hard cap on planned actions, keeps the search small and stops Solid Reason loops.</summary>
+        private const int MaxPlanSteps = 12;
+
+        private readonly record struct SimState(
+            int Progression,
+            int Units,         // attempts left, in quarters (Attempts * UnitsPerAttempt)
+            int Gp,
+            int ScrutinyLeft,
+            int PrimingLeft,   // Meticulous hits that still get the doubled free-hit chance
+            bool HighStandard, // swirl proc, only good for the first hit
+            int StepsLeft);
+
+        private readonly record struct Powers(int Meticulous, int Scour, int Brazen);
+
+        private readonly record struct PlanCost(int Gp, int Steps)
         {
-            CollectablePreset.ThousandGp => 1000,
-            CollectablePreset.EightHundredGp => 800,
-            CollectablePreset.SixHundredMinStat => 600,
-            CollectablePreset.FourHundredGpLowStat => 400,
-            CollectablePreset.ZeroGpEphemeral => 0,
-            CollectablePreset.None => 0,
-            _ => throw new ArgumentOutOfRangeException(nameof(preset)),
-        };
+            public static readonly PlanCost Infeasible = new(int.MaxValue, int.MaxValue);
 
-        // The 0 GP rotation can't realistically get past this collectability.
-        private const int ZeroGpCeiling = 400;
+            public bool IsInfeasible => Gp == int.MaxValue;
 
-        // Scour below this means "min stat": use the 600/800 rotation instead of 400/600.
-        private const int NormalScourPower = 200;
-
-        /// <summary>
-        /// Picks the rotation for a node from the GP you have right now. Call it once when the node starts.
-        /// - 1000+ GP: 1000. 800+ GP: 800/900.
-        /// - 600+ GP with a weak Scour (min stat): 600/800.
-        /// - Low GP on an ephemeral node (or under 400 GP) whose minimum is 400 or less: 0 GP.
-        /// - Otherwise: 400/600.
-        /// </summary>
-        public static CollectablePreset ChoosePreset(in CollectableState s, bool isEphemeral)
-        {
-            if (s.AvailableGp >= 1000)
-                return CollectablePreset.ThousandGp;
-
-            if (s.AvailableGp >= 800)
-                return CollectablePreset.EightHundredGp;
-
-            if (s.AvailableGp >= 600 && s.ScourPower < NormalScourPower)
-                return CollectablePreset.SixHundredMinStat;
-
-            var zeroGpCanReachMin = s.MinCollectability <= ZeroGpCeiling;
-            if (zeroGpCanReachMin && (isEphemeral || s.AvailableGp < 400))
-                return CollectablePreset.ZeroGpEphemeral;
-
-            return CollectablePreset.FourHundredGpLowStat;
+            /// <summary>Cheaper GP wins, then fewer actions.</summary>
+            public bool IsBetterThan(PlanCost other)
+                => Gp < other.Gp || (Gp == other.Gp && Steps < other.Steps);
         }
 
         /// <summary>Returns the buffID of the class i'm looking for [BTN/MIN].</summary>
@@ -167,186 +197,266 @@ public static partial class Gather_Util
             return details.ActionId;
         }
 
-        /// <summary>Best next action as a GatherBuffId, or null when nothing is usable (or no preset is set up).</summary>
-        public static GatherBuffId? GetNextAction(CollectablePreset preset, in CollectableState s)
+        /// <summary>Best next action as a GatherBuffId, or null when nothing is usable.</summary>
+        public static GatherBuffId? GetNextAction(in CollectableState s)
         {
-            if (preset == CollectablePreset.None)
-                return null;
-
             // Wise to the World comes first in every rotation.
             if (CanUse(GatherBuffId.BonusIntegrity_Chance, s))
                 return GatherBuffId.BonusIntegrity_Chance;
 
-            return Rotate(preset, s);
-        }
+            var plan = GetPlan(s);
 
-        #region Rotation
+            // Nothing reachable: spend no GP. Collect if the game allows it, otherwise keep hitting for free.
+            if (!plan.Feasible)
+                return s.MeetsMinimum ? Use(s, GatherBuffId.Collect) : FreeHit(s);
 
-        /// <summary>
-        /// Every tick: finish if we're done (or on the last attempt), otherwise take the next build step of the preset.
-        /// The guide rotations are decision trees on collectability, so they work from the current state alone.
-        /// </summary>
-        private static GatherBuffId? Rotate(CollectablePreset preset, in CollectableState s)
-        {
-            var zeroGp = preset == CollectablePreset.ZeroGpEphemeral;
-            var stopAt = zeroGp ? Math.Min(s.TopTier, ZeroGpCeiling) : s.TopTier;
-            var hitsDone = s.MaxAttempts - s.Attempts;
+            if (plan.NextAction is not { } action)
+                return null;
 
-            // The 0 GP rotation is two hits, then collect. Everything else builds until the top breakpoint.
-            var finishing = s.Progression >= stopAt || s.Attempts <= 1 || (zeroGp && hitsDone >= 2);
+            if (action != GatherBuffId.Collect)
+                return CanUse(action, s) ? action : FreeHit(s);
 
-            // Collect is gated on the minimum inside CanUse, so this can't fire at 0 or under the minimum.
-            if (finishing && s.MeetsMinimum)
-                return Finish(preset, s);
-
-            // Last attempt and still under the minimum: buy another attempt, otherwise keep building.
-            if (s.Attempts <= 1 && Use(s, GatherBuffId.BonusIntegrity) is { } buyAttempt)
-                return buyAttempt;
-
-            var build = preset switch
-            {
-                CollectablePreset.ThousandGp => GuideBuild(s, priming: false),
-                CollectablePreset.EightHundredGp => GuideBuild(s, priming: true),
-                CollectablePreset.SixHundredMinStat => ScrutinyRounds(s),
-                CollectablePreset.FourHundredGpLowStat => ScrutinyRounds(s),
-                CollectablePreset.ZeroGpEphemeral => ZeroGpHit(s),
-                _ => null,
-            };
-
-            // Nothing left to build with (GP, attempts): collect what we have if the game allows it.
-            return build ?? (s.MeetsMinimum ? Finish(preset, s) : null);
+            // Target reached: Collect, buying one more attempt first when that's worth it.
+            return CollectOrTopUp(s);
         }
 
         /// <summary>
-        /// The "Solid/Ageless + Collect spam" end of the 1000 and 800/900 rotations.
-        /// The number of casts limits itself through GP (the build rounds spend most of it first).
+        /// At the selected breakpoint nothing more is wanted, so spare GP goes into one more attempt (one more item)
+        /// whenever we're down to the last attempt. Below it the GP might still be needed, so only top up once
+        /// most of the wanted breakpoints are done. Never top up when the attempts left already cover every
+        /// item we still need.
         /// </summary>
-        private static GatherBuffId? Finish(CollectablePreset preset, in CollectableState s)
+        private static GatherBuffId? CollectOrTopUp(in CollectableState s)
         {
-            var rotationTopsUp = preset is CollectablePreset.ThousandGp or CollectablePreset.EightHundredGp;
-            if (rotationTopsUp && WorthTopUp(s) && Use(s, GatherBuffId.BonusIntegrity) is { } topUp)
+            // Each Collect is one attempt and one item, so enough attempts left means an extra one is wasted GP.
+            // RemainingNeeded == 0 means unknown (reducible items), so this guard is skipped for them.
+            if (s.RemainingNeeded > 0 && s.Attempts >= s.RemainingNeeded)
+                return Use(s, GatherBuffId.Collect);
+
+            var targetTier = s.TargetTier;
+            var atTargetTier = targetTier > 0 && s.Progression >= targetTier;
+            var lastAttempt = s.Attempts <= 1;
+
+            var wantTopUp = atTargetTier ? lastAttempt : WorthTopUp(s);
+            if (wantTopUp && Use(s, GatherBuffId.BonusIntegrity) is { } topUp)
                 return topUp;
 
             return Use(s, GatherBuffId.Collect);
         }
 
         /// <summary>
-        /// Solid Reason / Ageless Words costs GP that could go into another node, so only buy the extra attempt
-        /// once at least 2/3 of the breakpoints (rounded up) are done: 1 of 1, 2 of 2, 2 of 3.
-        /// Trying to prevent the usage of it if I can... might go back and disreguard this
+        /// Looks at every breakpoint the item has, highest first, and returns the first one that is reachable
+        /// with the GP and attempts we have right now, along with the cheapest route to it.
         /// </summary>
-        private static bool WorthTopUp(in CollectableState s)
+        public static CollectablePlan GetPlan(in CollectableState s)
         {
-            var tierCount = s.Tiers.Length;
-            return tierCount > 0 && s.TiersReached >= (2 * tierCount + 2) / 3;
+            var tiers = s.Tiers;
+            if (tiers.Length == 0)
+                return new CollectablePlan(0, 0, null);
+
+            // Powers from the addon already include Scrutiny if it's up, so strip it back out to get the base.
+            var divisor = s.HasScrutiny ? ScrutinyMultiplier : 1.0;
+            var powers = new Powers(
+                (int)(s.MeticulousPower / divisor),
+                (int)(s.ScourPower / divisor),
+                (int)(s.BrazenPowerMin / divisor));
+
+            var start = new SimState(
+                s.Progression,
+                s.Attempts * UnitsPerAttempt,
+                s.AvailableGp,
+                s.HasScrutiny ? ScrutinyHits : 0,
+                s.HasPriming ? PrimingHits : 0,
+                s.HasHighStandard,
+                MaxPlanSteps);
+
+            // tiers is sorted lowest first. Start at the selected tier and walk down toward the lowest.
+            for (var i = s.TargetIndex; i >= 0; i--)
+            {
+                var memo = new Dictionary<SimState, (PlanCost Cost, GatherBuffId? First)>();
+                var (cost, first) = Solve(start, tiers[i], powers, s.CharacterLevel, s.MaxAttempts, memo);
+
+                if (cost.IsInfeasible)
+                    continue;
+
+                return new CollectablePlan(tiers[i], cost.Gp, first);
+            }
+
+            return new CollectablePlan(0, 0, null);
         }
 
-        /// <summary>1000 and 800/900 build: Scrutiny + big hit rounds, then Scour / Meticulous depending on collectability.</summary>
-        private static GatherBuffId? GuideBuild(in CollectableState s, bool priming)
-        {
-            var below800 = s.Progression < 800;
-            var below850 = s.Progression < 850;
-
-            GatherBuffId? hit;
-            if (below800) // Brazen when High Standard [Orange dude buff] procced, otherwise Meticulous
-                hit = Use(s, s.HasHighStandard ? GatherBuffId.Brazen : GatherBuffId.Meticulous, GatherBuffId.Meticulous);
-            else if (s.HasCollectorStandard || !below850) // 800 & Standard [White Star], or 850+: Meticulous (Scour as backup only below 850)
-                hit = Use(s, GatherBuffId.Meticulous) ?? (below850 ? Use(s, GatherBuffId.Scour) : null);
-            else // 800 - 849 without the star: Scour for the small, safe bump
-                hit = Use(s, GatherBuffId.Scour, GatherBuffId.Meticulous);
-
-            if (hit is null)
-                return null;
-
-            if (priming && hit == GatherBuffId.Meticulous && WantPriming(s) && Use(s, GatherBuffId.Priming) is { } prime)
-                return prime;
-
-            if (below800 && NeedsScrutiny(s) && Use(s, GatherBuffId.Scrutiny) is { } scrutiny)
-                return scrutiny;
-
-            return hit;
-        }
-
-        /// <summary>400/600 and 600/800 build: Scrutiny (only if needed), then the hit that closes the gap.</summary>
-        private static GatherBuffId? ScrutinyRounds(in CollectableState s)
-        {
-            if (NeedsScrutiny(s) && Use(s, GatherBuffId.Scrutiny) is { } scrutiny)
-                return scrutiny;
-
-            return PickHit(s);
-        }
-
-        /// <summary>0 GP: Scour, then Meticulous if the star (Collector's Standard) procced, else Scour.</summary>
-        private static GatherBuffId? ZeroGpHit(in CollectableState s)
-            => s.HasCollectorStandard
-                ? Use(s, GatherBuffId.Meticulous, GatherBuffId.Scour)
-                : Use(s, GatherBuffId.Scour, GatherBuffId.Meticulous);
+        #region Planner
 
         /// <summary>
-        /// The guide's "check your collectability" table, using the real powers: the first hit (Meticulous first,
-        /// for its 25% free-hit chance) that reaches the next breakpoint, otherwise the strongest one we can use.
+        /// Cheapest (GP, then fewest actions) way to get Progression to the target while still having a full attempt
+        /// left to Collect with. Meticulous costs 3/4 of an attempt (2/4 when primed), other hits a full one.
+        /// Scrutiny, Priming Touch and Solid Reason cost GP only: the two buffs never take durability.
         /// </summary>
-        private static GatherBuffId? PickHit(in CollectableState s)
+        private static (PlanCost Cost, GatherBuffId? First) Solve(
+            SimState st, int target, Powers p, int level, int maxAttempts,
+            Dictionary<SimState, (PlanCost Cost, GatherBuffId? First)> memo)
         {
-            var gap = s.NextTier - s.Progression;
+            // Target reached (>= means "at or above") and we still have a whole attempt to Collect with.
+            if (st.Progression >= target && st.Units >= UnitsPerAttempt)
+                return (new PlanCost(0, 0), GatherBuffId.Collect);
 
+            // Node is over (<= means "at or below zero") or out of planning budget.
+            if (st.Units <= 0 || st.StepsLeft <= 0)
+                return (PlanCost.Infeasible, null);
+
+            if (memo.TryGetValue(st, out var cached))
+                return cached;
+
+            var bestCost = PlanCost.Infeasible;
+            GatherBuffId? bestFirst = null;
+
+            void Try(GatherBuffId action, SimState next, int gpSpent)
+            {
+                var (sub, _) = Solve(next, target, p, level, maxAttempts, memo);
+                if (sub.IsInfeasible)
+                    return;
+
+                var total = new PlanCost(sub.Gp + gpSpent, sub.Steps + 1);
+                if (!total.IsBetterThan(bestCost))
+                    return;
+
+                bestCost = total;
+                bestFirst = action;
+            }
+
+            // Hits. Free ones get tried first so they win ties.
+            var scrutinyBonus = st.ScrutinyLeft > 0 ? ScrutinyMultiplier : 1.0;
+            foreach (var (hit, basePower) in new[]
+            {
+                (GatherBuffId.Meticulous, p.Meticulous),
+                (GatherBuffId.Scour, p.Scour),
+                (GatherBuffId.Brazen, p.Brazen),
+            })
+            {
+                if (basePower <= 0 || !LevelOk(hit, level))
+                    continue;
+
+                if (hit == GatherBuffId.Brazen && !st.HighStandard)
+                    continue;
+
+                var gp = Cost(hit);
+                if (st.Gp < gp)
+                    continue;
+
+                var primed = hit == GatherBuffId.Meticulous && st.PrimingLeft > 0;
+                var unitCost = hit == GatherBuffId.Meticulous
+                    ? (primed ? PrimedMeticulousUnits : MeticulousUnits)
+                    : UnitsPerAttempt;
+
+                if (st.Units < unitCost)
+                    continue;
+
+                Try(hit, st with
+                {
+                    Progression = st.Progression + (int)(basePower * scrutinyBonus),
+                    Units = st.Units - unitCost,
+                    Gp = st.Gp - gp,
+                    ScrutinyLeft = Math.Max(0, st.ScrutinyLeft - 1),
+                    PrimingLeft = primed ? st.PrimingLeft - 1 : st.PrimingLeft,
+                    HighStandard = false,
+                    StepsLeft = st.StepsLeft - 1,
+                }, gp);
+            }
+
+            // Scrutiny: a buff, costs GP only.
+            if (st.ScrutinyLeft == 0 && LevelOk(GatherBuffId.Scrutiny, level))
+            {
+                var gp = Cost(GatherBuffId.Scrutiny);
+                if (st.Gp >= gp)
+                {
+                    Try(GatherBuffId.Scrutiny, st with
+                    {
+                        Gp = st.Gp - gp,
+                        ScrutinyLeft = ScrutinyHits,
+                        StepsLeft = st.StepsLeft - 1,
+                    }, gp);
+                }
+            }
+
+            // Priming Touch: a buff, costs GP only. Doubles the free-hit chance of the next Meticulous.
+            // Pointless without Meticulous.
+            if (st.PrimingLeft == 0 && p.Meticulous > 0 && LevelOk(GatherBuffId.Priming, level))
+            {
+                var gp = Cost(GatherBuffId.Priming);
+                if (st.Gp >= gp)
+                {
+                    Try(GatherBuffId.Priming, st with
+                    {
+                        Gp = st.Gp - gp,
+                        PrimingLeft = PrimingHits,
+                        StepsLeft = st.StepsLeft - 1,
+                    }, gp);
+                }
+            }
+
+            // Solid Reason / Ageless Words: buys one attempt back (capped at the node's max).
+            if (st.Units < maxAttempts * UnitsPerAttempt && LevelOk(GatherBuffId.BonusIntegrity, level))
+            {
+                var gp = Cost(GatherBuffId.BonusIntegrity);
+                if (st.Gp >= gp)
+                {
+                    Try(GatherBuffId.BonusIntegrity, st with
+                    {
+                        Units = Math.Min(maxAttempts * UnitsPerAttempt, st.Units + UnitsPerAttempt),
+                        Gp = st.Gp - gp,
+                        StepsLeft = st.StepsLeft - 1,
+                    }, gp);
+                }
+            }
+
+            var result = (bestCost, bestFirst);
+            memo[st] = result;
+            return result;
+        }
+
+        #endregion
+
+        #region Fallback and top-up
+
+        /// <summary>The strongest hit that costs no GP, for when no breakpoint is reachable.</summary>
+        private static GatherBuffId? FreeHit(in CollectableState s)
+        {
             GatherBuffId? best = null;
-            var bestPower = -1;
+            var bestPower = 0;
 
             foreach (var (hit, power) in new[]
             {
                 (GatherBuffId.Meticulous, s.MeticulousPower),
                 (GatherBuffId.Scour, s.ScourPower),
-                (GatherBuffId.Brazen, s.BrazenPowerMin), // only the guaranteed part, and only with the swirl
+                (GatherBuffId.Brazen, s.BrazenPowerMin),
             })
             {
-                if (!CanUse(hit, s))
+                if (Cost(hit) > 0 || !CanUse(hit, s))
                     continue;
 
-                if (power >= gap)
-                    return hit;
+                if (power <= bestPower) // keep only a strictly stronger hit
+                    continue;
 
-                if (power > bestPower)
-                {
-                    best = hit;
-                    bestPower = power;
-                }
+                best = hit;
+                bestPower = power;
             }
 
-            return best;
-        }
-
-        /// <summary>Scrutiny is only worth its GP when the next breakpoint is further than a plain hit reaches.</summary>
-        private static bool NeedsScrutiny(in CollectableState s)
-        {
-            if (s.HasScrutiny)
-                return false;
-
-            var nextTier = s.NextTier;
-            if (nextTier == 0)
-                return false;
-
-            var plainPower = Math.Max(s.MeticulousPower, Math.Max(s.ScourPower, s.HasHighStandard ? s.BrazenPowerMin : 0));
-            if (plainPower <= 0) // no power data from the addon, just use it
-                return true;
-
-            return nextTier - s.Progression > plainPower;
+            // No power data from the addon: any free hit is better than doing nothing.
+            return best ?? Use(s, GatherBuffId.Scour, GatherBuffId.Meticulous);
         }
 
         /// <summary>
-        /// Priming Touch, per the 800/900 guide: only open with it at 900 GP. Later on, only if the next Scrutiny
-        /// and a Solid Reason are still affordable afterwards.
+        /// Solid Reason / Ageless Words costs GP that could go into another node, so below the top breakpoint
+        /// only buy the extra attempt once at least 2/3 of the breakpoints (rounded up) are done: 1 of 1, 2 of 2, 2 of 3.
         /// </summary>
-        private static bool WantPriming(in CollectableState s)
+        private static bool WorthTopUp(in CollectableState s)
         {
-            if (!CanUse(GatherBuffId.Priming, s))
+            var wantedCount = s.TargetIndex + 1;
+            if (wantedCount <= 0)
                 return false;
 
-            if (s.Progression == 0)
-                return s.AvailableGp >= 900;
-
-            var reserve = Cost(GatherBuffId.Scrutiny) + Cost(GatherBuffId.BonusIntegrity);
-            return s.AvailableGp >= Cost(GatherBuffId.Priming) + reserve;
+            var reached = Math.Min(s.TiersReached, wantedCount);
+            return reached >= (2 * wantedCount + 2) / 3;
         }
 
         #endregion
@@ -361,13 +471,13 @@ public static partial class Gather_Util
         private static GatherBuffId? Use(in CollectableState s, GatherBuffId a, GatherBuffId b)
             => Use(s, a) ?? Use(s, b);
 
+        private static bool LevelOk(GatherBuffId buff, int level)
+            => GathActionDict.TryGetValue(buff, out var entry) && level >= entry.RequiredLv;
+
         /// <summary>Level / buff requirements only.</summary>
         private static bool IsAvailable(GatherBuffId buff, in CollectableState s)
         {
-            if (!GathActionDict.TryGetValue(buff, out var entry))
-                return false;
-
-            if (s.CharacterLevel < entry.RequiredLv)
+            if (!LevelOk(buff, s.CharacterLevel))
                 return false;
 
             return buff != GatherBuffId.Brazen || s.HasHighStandard; // Brazen needs the swirl proc
@@ -385,7 +495,7 @@ public static partial class Gather_Util
             return buff switch
             {
                 GatherBuffId.Scrutiny => !s.HasScrutiny,
-                GatherBuffId.Priming => !s.HasPriming && s.Attempts > 0,
+                GatherBuffId.Priming => !s.HasPriming && s.Attempts > 0, // buff costs no durability, Attempts > 0 just means the node is still alive
                 GatherBuffId.BonusIntegrity => s.Attempts < s.MaxAttempts,
                 GatherBuffId.BonusIntegrity_Chance => s.Attempts < s.MaxAttempts && s.HasEureka,
                 GatherBuffId.Collect => s.Attempts > 0 && s.MeetsMinimum, // the game rejects Collect at 0 / under the minimum

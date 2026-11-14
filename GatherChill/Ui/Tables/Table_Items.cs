@@ -28,6 +28,7 @@ internal class Table_Items
         public uint Reduce_Into => ItemInfo.ReducesIntoItemId;
         public List<uint> NodeTypes => ItemInfo.NodeTypes;
         public uint RequiredItem => ItemInfo.ItemRequired;
+        public bool IsHidden => ItemInfo.IsHidden;
         public List<Gather_Util.UptimeHelper.UptimeEntry> TimeSlot => ItemInfo.TimedSlots;
     }
     public class ItemTable : Table<GatherItems>, IDisposable
@@ -599,57 +600,150 @@ internal class Table_Items
                 _filterValues &= ~value;
         }
     }
-    public sealed class Notes : ColumnString<GatherItems>
+    public sealed class Notes : ColumnFlags<NotesEnum, GatherItems>
     {
+        private NotesEnum _filterValues;
+        public override NotesEnum FilterValue => _filterValues;
+
+        public override string[] Names => Enum.GetValues<NotesEnum>()
+            .Select(GetLabel)
+            .ToArray();
+
         public Notes()
         {
             Label = "Notes";
+            AllFlags = Enum.GetValues<NotesEnum>().Aggregate((a, b) => a | b);
+            _filterValues = AllFlags;
+            Flags = ImGuiTableColumnFlags.WidthStretch;
+        }
+
+        private static string GetLabel(NotesEnum value)
+        {
+            return value switch
+            {
+                NotesEnum.None => "None",
+                NotesEnum.Collectable => "Collectable",
+                NotesEnum.ReduceSource => "Reducible From",
+                NotesEnum.ReduceInto => "Reduces Into",
+                NotesEnum.Quest => "Requires Quest",
+                NotesEnum.Tool => "Requires Tool",
+                NotesEnum.Hidden => "Hidden",
+                _ => $"??{value}??",
+            };
+        }
+
+        // Builds the set of attributes a row has. No attributes = None.
+        private static NotesEnum GetState(GatherItems row)
+        {
+            var state = (NotesEnum)0;
+
+            if (CollectableDatabase.TryGet(row.ItemId, out _))
+                state |= NotesEnum.Collectable;
+
+            if (row.Reduce_Sources.Count != 0)
+                state |= NotesEnum.ReduceSource;
+            else if (row.Reduce_Into != 0)
+                state |= NotesEnum.ReduceInto;
+
+            if (row.QuestId != 0)
+                state |= NotesEnum.Quest;
+
+            if (row.RequiredItem != 0)
+                state |= NotesEnum.Tool;
+
+            if (row.IsHidden)
+                state |= NotesEnum.Hidden;
+
+            return state == 0 ? NotesEnum.None : state;
+        }
+
+        public override bool ShouldShow(GatherItems row)
+            => (GetState(row) & _filterValues) != 0;
+
+        public override void SetValue(NotesEnum value, bool enable)
+        {
+            if (enable)
+                _filterValues |= value;
+            else
+                _filterValues &= ~value;
+        }
+
+        public override int Compare(GatherItems a, GatherItems b)
+        {
+            var stateA = GetState(a);
+            var stateB = GetState(b);
+
+            var byCount = BitOperations.PopCount((uint)stateA)
+                .CompareTo(BitOperations.PopCount((uint)stateB));
+            if (byCount != 0)
+                return byCount;
+
+            var byState = ((int)stateA).CompareTo((int)stateB);
+            if (byState != 0)
+                return byState;
+
+            var byLevel = a.Level.CompareTo(b.Level);
+            if (byLevel != 0)
+                return byLevel;
+
+            var byStars = a.Stars.CompareTo(b.Stars);
+            if (byStars != 0)
+                return byStars;
+
+            return a.ItemId.CompareTo(b.ItemId);
         }
 
         public override void DrawColumn(GatherItems row)
         {
-            bool sameLine = false;
-            if (CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
+            var state = GetState(row);
+            if (state == NotesEnum.None)
+                return;
+
+            var drawn = false;
+
+            if (state.HasFlag(NotesEnum.Collectable) && CollectableDatabase.TryGet(row.ItemId, out var collectableInfo))
             {
-                sameLine = true;
+                SameLineIfNeeded(ref drawn);
                 DrawCollectable(collectableInfo);
             }
 
-            if (row.Reduce_Sources.Count != 0)
+            if (state.HasFlag(NotesEnum.ReduceSource))
             {
-                if (sameLine)
-                    ImGui.SameLine();
-
+                SameLineIfNeeded(ref drawn);
                 DrawReduceSources(row);
-                sameLine = true;
             }
-            else if (row.Reduce_Into != 0)
-            {
-                if (sameLine)
-                    ImGui.SameLine();
 
+            if (state.HasFlag(NotesEnum.ReduceInto))
+            {
+                SameLineIfNeeded(ref drawn);
                 DrawReduceInto(row);
-                sameLine = true;
             }
 
-            if (row.QuestId != 0)
+            if (state.HasFlag(NotesEnum.Quest))
             {
-                if (sameLine)
-                    ImGui.SameLine();
-
+                SameLineIfNeeded(ref drawn);
                 DrawQuest(row);
-                sameLine = true;
             }
 
-            if (row.RequiredItem != 0)
+            if (state.HasFlag(NotesEnum.Tool))
             {
-                if (sameLine)
-                    ImGui.SameLine();
-
+                SameLineIfNeeded(ref drawn);
                 DrawTool(row);
-                sameLine = true;
-
             }
+
+            if (state.HasFlag(NotesEnum.Hidden))
+            {
+                SameLineIfNeeded(ref drawn);
+                DrawHidden(row);
+            }
+        }
+
+        private static void SameLineIfNeeded(ref bool drawn)
+        {
+            if (drawn)
+                ImGui.SameLine();
+
+            drawn = true;
         }
 
         private static void DrawCollectable(CollectableInfo collectableInfo)
@@ -689,8 +783,6 @@ internal class Table_Items
                 ImGui.TableNextColumn();
                 ImGui.Text($"{reward.Scrips}");
             }
-
-            return;
         }
 
         private static void DrawReduceSources(GatherItems row)
@@ -730,6 +822,7 @@ internal class Table_Items
                 ImGui_Ice.ImageButton(iconDict[job].IconId, "Button", sidePadding: 0.1f);
             }
         }
+
         private static void DrawReduceInto(GatherItems row)
         {
             var reducableItem = Gather_Util.Sheet_ItemInfo[row.Reduce_Into];
@@ -743,47 +836,60 @@ internal class Table_Items
 
             ImGui.Text($"{reducableItem.Name}");
         }
+
         private static void DrawQuest(GatherItems row)
         {
-            if (ExcelHelper.Sheet_Quest.TryGetRow(row.QuestId, out var questInfo))
-            {
-                ImGui_Ice.ImageButton(230607, "Quest Required", sidePadding: 2);
-                if (ImGui.IsItemHovered())
-                {
-                    using (var tooltip = ImRaii.Tooltip())
-                    {
-                        if (tooltip.Alive)
-                        {
-                            ImGui.Text($"Requires Quest: {questInfo.Name}");
-                        }
-                    }
-                }
-            }
+            if (!ExcelHelper.Sheet_Quest.TryGetRow(row.QuestId, out var questInfo))
+                return;
+
+            ImGui_Ice.ImageButton(230607, "Quest Required", sidePadding: 2);
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip.Alive)
+                return;
+
+            ImGui.Text($"Requires Quest: {questInfo.Name}");
         }
+
         private static void DrawTool(GatherItems row)
         {
             if (ExcelHelper.Sheet_Item.TryGetRow(row.RequiredItem, out var itemSheet))
             {
                 ImGui_Ice.ImageButton(itemSheet.Icon, $"{row.Name} | {row.RequiredItem}");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.Text($"Requires tool to be equipped:");
-                    ImGui.Text($"{itemSheet.Name}");
-                    ImGui.EndTooltip();
-                }
+                if (!ImGui.IsItemHovered())
+                    return;
+
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip.Alive)
+                    return;
+
+                ImGui.Text("Requires tool to be equipped:");
+                ImGui.Text($"{itemSheet.Name}");
+                return;
             }
-            else
-            {
-                ImGuiEx.Icon(FontAwesomeIcon.Tools);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.Text($"Requires tool to be equipped:");
-                    ImGui.Text($"ItemId: {row.RequiredItem}");
-                    ImGui.EndTooltip();
-                }
-            }
+
+            ImGuiEx.Icon(FontAwesomeIcon.Tools);
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var fallbackTooltip = ImRaii.Tooltip();
+            if (!fallbackTooltip.Alive)
+                return;
+
+            ImGui.Text("Requires tool to be equipped:");
+            ImGui.Text($"ItemId: {row.RequiredItem}");
+        }
+
+        private static void DrawHidden(GatherItems row)
+        {
+            var icon = Gather_Util.GathActionDict[GatherBuffId.HiddenFinder].ClassAction[ECommons.ExcelServices.Job.MIN].IconId;
+            ImGui_Ice.ImageButton(icon, "Hidden Item");
+            if (!ImGui.IsItemHovered())
+                return;
+
+            ImGui.SetTooltip("Hidden item, might show up on node");
         }
     }
 }

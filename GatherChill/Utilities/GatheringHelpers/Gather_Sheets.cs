@@ -723,40 +723,41 @@ public static partial class Gather_Util
                     if (!itemInfo.NodeTypes.Contains(routeInfo.NodeType))
                         itemInfo.NodeTypes.Add(routeInfo.NodeType);
 
+                    continue;
                 }
-                else
+
+                if (!ExcelHelper.Sheet_Item.TryGetRow(item, out var itemSheet))
+                    continue;
+
+                var icon = Svc.Texture.GetFromGameIcon((int)itemSheet.Icon);
+                var name = itemSheet.Name.ToString();
+                bool collectable = itemSheet.IsCollectable;
+                bool reducable = itemSheet.AetherialReduce != 0;
+
+                var gatheringSheet = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault();
+
+                // Maps are added to the route by item id (see Maps), not through the hidden-item rows,
+                // so they never get flagged by the sheet. They're always hidden.
+                bool isHidden = gatheringSheet.IsHidden || MapsById.ContainsKey(item);
+                var gatheringRow = gatheringSheet.RowId;
+                var requiredQuest = gatheringSheet.Unknown0; // RequiredQuest tab in the exdschems, offset is 0x00;
+                var requiredItem = route.Value.RequiredItem;
+
+                Sheet_ItemInfo[item] = new()
                 {
-                    if (ExcelHelper.Sheet_Item.TryGetRow(item, out var itemSheet))
-                    {
-                        var icon = Svc.Texture.GetFromGameIcon((int)itemSheet.Icon);
-                        var name = itemSheet.Name.ToString();
-                        bool collectable = itemSheet.IsCollectable;
-                        bool reducable = itemSheet.AetherialReduce != 0;
-
-                        var gatheringSheet = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault();
-
-                        bool isHidden = gatheringSheet.IsHidden;
-                        var gatheringRow = gatheringSheet.RowId;
-                        var requiredQuest = gatheringSheet.Unknown0; // RequiredQuest tab in the exdschems, offset is 0x00;
-                        var requiredItem = route.Value.RequiredItem;
-
-                        Sheet_ItemInfo[item] = new()
-                        {
-                            Icon = icon,
-                            Name = name,
-                            IconId = itemSheet.Icon,
-                            RouteInfo = new() { key },
-                            NodeTypes = new() { routeInfo.NodeType },
-                            IsHidden = isHidden,
-                            IsCollectable = collectable,
-                            GatheringRow = (ushort)gatheringRow,
-                            RequiredQuest = requiredQuest,
-                            ItemRequired = requiredItem,
-                            // Level = itemLevel,
-                            // Star = stars,
-                        };
-                    }
-                }
+                    Icon = icon,
+                    Name = name,
+                    IconId = itemSheet.Icon,
+                    RouteInfo = new() { key },
+                    NodeTypes = new() { routeInfo.NodeType },
+                    IsHidden = isHidden,
+                    IsCollectable = collectable,
+                    GatheringRow = (ushort)gatheringRow,
+                    RequiredQuest = requiredQuest,
+                    ItemRequired = requiredItem,
+                    // Level = itemLevel,
+                    // Star = stars,
+                };
             }
         }
     }

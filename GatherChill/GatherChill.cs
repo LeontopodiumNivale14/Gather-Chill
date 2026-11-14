@@ -7,6 +7,7 @@ using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
 using GatherChill.Ui;
+using GatherChill.Utilities.Replay;
 using GatherChill.Utilities.Tools;
 using Pictomancy;
 
@@ -26,6 +27,8 @@ public sealed class GatherChill : IDalamudPlugin
     internal DebugWindow debugWindow;
     internal RouteEditor_Window routeWindow;
     internal GatheringOverlay gatherOverlay;
+    internal CalculatorWindow calculatorWindow;
+    internal ReplayViewerWindow replayWindow;
 
     // Taskmanager from Ecommons
     internal TaskManager TaskManager;
@@ -54,6 +57,8 @@ public sealed class GatherChill : IDalamudPlugin
     {
         EzConfig.Migrate<Config>();
         config = EzConfig.Init<Config>();
+        if (C.User_AutoProfile.Migrate())
+            EzConfig.Save();
 
         //IPC's that are used
         TaskManager = new(TaskConfig);
@@ -74,6 +79,8 @@ public sealed class GatherChill : IDalamudPlugin
         debugWindow = new();
         routeWindow = new();
         gatherOverlay = new();
+        calculatorWindow = new();
+        replayWindow = new();
 
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         Svc.PluginInterface.UiBuilder.OpenMainUi += () =>
@@ -115,6 +122,7 @@ public sealed class GatherChill : IDalamudPlugin
         YesAlreadyManager.Tick();
         Gather_Helper.RemoveTimedRoutes();
         GatherJobs.Tick();
+        ReplayRecorder.Tick();
     }
 
     public void OnDraw()
@@ -130,6 +138,7 @@ public sealed class GatherChill : IDalamudPlugin
         Safe(() => Svc.Framework.Update -= Tick);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= OnDraw);
+        Safe(() => ReplayRecorder.EndSession("Plugin unloaded", sync: true));
         ECommonsMain.Dispose();
         Safe(TextAdvancedManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
@@ -176,6 +185,11 @@ public sealed class GatherChill : IDalamudPlugin
         else if (firstArg.ToLower() == "overlay")
         {
             gatherOverlay.IsOpen = true;
+            return;
+        }
+        else if (firstArg.ToLower() == "replay" || firstArg.ToLower() == "replays")
+        {
+            replayWindow.IsOpen = true;
             return;
         }
     }
