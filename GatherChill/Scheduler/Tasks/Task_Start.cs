@@ -219,10 +219,12 @@ namespace GatherChill.Scheduler.Tasks
                     IceLogging.Info("We only have one free slot remaining, and that will defitenly bite us in the ass... please clear out your inventory", tag);
                 else
                     IceLogging.Info("We've ran out of items to gather, so we're going to stop", tag);
-                GatherJobs.EndNaturally();
+                // The IPC caller carries on from here, so only the user's own list goes to the return point
+                var endedIpcJob = GatherJobs.EndNaturally();
                 Gather_Helper.State = IceState.Idle;
                 Gather_Helper.ClearTargeting();
-                P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Checking for return post");
+                if (!endedIpcJob)
+                    P.TaskManager.Enqueue(() => Task_Return.Lifestream_FinishedList(), "Checking for return post");
                 return true;
             }
 

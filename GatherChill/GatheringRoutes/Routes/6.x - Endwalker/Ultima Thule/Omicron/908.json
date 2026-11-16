@@ -1,0 +1,115 @@
+{
+  "routeId": 908,
+  "territoryId": 960,
+  "zoneName": "Ultima Thule",
+  "placeName": "???",
+  "expansionId": 4,
+  "gatheringJobId": 17,
+  "levelRequirement": 80,
+  "nodeIds": [
+    34373,
+    34374,
+    34375
+  ],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 34375,
+      "locations": [
+        {
+          "position": {
+            "x": -408.5904,
+            "y": 259.0197,
+            "z": -361.8408
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 60,
+            "fan_EndAngle": 240,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 60,
+            "fan_EndAngle": 240,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 1,
+      "nodeId": 34374,
+      "locations": [
+        {
+          "position": {
+            "x": -410.1218,
+            "y": 261.0269,
+            "z": -364.9317
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 60,
+            "fan_EndAngle": 215,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 60,
+            "fan_EndAngle": 215,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 2,
+      "nodeId": 34373,
+      "locations": [
+        {
+          "position": {
+            "x": -421.3381,
+            "y": 263.4496,
+            "z": -366.897
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 75,
+            "fan_EndAngle": 230,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 75,
+            "fan_EndAngle": 230,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    }
+  ],
+  "requiresFlying": false,
+  "groupCount": 3,
+  "author": "liza",
+  "lastUpdated": "2026-11-16",
+  "timedNode": false,
+  "aetheryteId": 180
+}

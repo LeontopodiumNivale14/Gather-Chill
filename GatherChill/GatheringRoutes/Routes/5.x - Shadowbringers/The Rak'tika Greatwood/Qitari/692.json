@@ -1,0 +1,115 @@
+{
+  "routeId": 692,
+  "territoryId": 817,
+  "zoneName": "The Rak'tika Greatwood",
+  "placeName": "???",
+  "expansionId": 3,
+  "gatheringJobId": 17,
+  "levelRequirement": 70,
+  "nodeIds": [
+    33012,
+    33013,
+    33014
+  ],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 33013,
+      "locations": [
+        {
+          "position": {
+            "x": 471.6041,
+            "y": 0.1209641,
+            "z": -476.659
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 180,
+            "fan_EndAngle": 305,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 180,
+            "fan_EndAngle": 305,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 1,
+      "nodeId": 33012,
+      "locations": [
+        {
+          "position": {
+            "x": 448.4756,
+            "y": 2.033593,
+            "z": -482.1674
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 335,
+            "fan_EndAngle": 165,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 335,
+            "fan_EndAngle": 165,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 2,
+      "nodeId": 33014,
+      "locations": [
+        {
+          "position": {
+            "x": 433.1882,
+            "y": 10.99631,
+            "z": -517.6039
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    }
+  ],
+  "requiresFlying": false,
+  "groupCount": 3,
+  "author": "liza",
+  "lastUpdated": "2026-11-16",
+  "timedNode": false,
+  "aetheryteId": 143
+}
