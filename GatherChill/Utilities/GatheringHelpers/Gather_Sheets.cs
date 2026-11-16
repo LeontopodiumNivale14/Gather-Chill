@@ -419,15 +419,16 @@ public static partial class Gather_Util
         [1205] = 1189,
     };
 
-    // Ixal quest bonus items have a GatheringItem row but no node slot, so they're tied to the route of their quest's main item.
-    public static readonly Dictionary<uint, (uint RouteId, uint MainItemId)> QuestBonusItems = new()
+    // Ixal quest bonus items have no node slot: once the main quest item is done, each visit to its nodes drops one.
+    // ItemId -> RouteId of the quest's main item.
+    private static readonly Dictionary<uint, uint> QuestBonusItems = new()
     {
-        [2001389] = (243, 2001388),
-        [2001392] = (181, 2001391),
-        [2001413] = (244, 2001412),
-        [2001416] = (206, 2001415),
-        [2001425] = (170, 2001424),
-        [2001427] = (208, 2001426),
+        [2001389] = 243,
+        [2001392] = 181,
+        [2001413] = 244,
+        [2001416] = 206,
+        [2001425] = 170,
+        [2001427] = 208,
     };
 
     private static bool TryResolveTerritory(uint routeId, List<uint> nodes, out uint territoryId, out string zoneName, out string placeName, out ExpansionIds expansion)
@@ -586,9 +587,9 @@ public static partial class Gather_Util
                 }
             }
 
-            foreach (var (bonusId, bonus) in QuestBonusItems)
+            foreach (var (bonusId, bonusRouteId) in QuestBonusItems)
             {
-                if (bonus.RouteId == routeId && !itemIds.Contains(bonusId))
+                if (bonusRouteId == routeId && !itemIds.Contains(bonusId))
                     itemIds.Add(bonusId);
             }
 
