@@ -117,6 +117,15 @@ namespace GatherChill.Scheduler.Tasks
         }
         public const uint ElysionTerritory = 1073;
 
+        private static DateTime elysionDeadline;
+        private static DateTime elysionInteractedAt;
+
+        public static void BeginElysionEntry()
+        {
+            elysionDeadline = DateTime.Now.AddMinutes(3);
+            elysionInteractedAt = DateTime.MinValue;
+        }
+
         // Elysion has no aetheryte; it's entered through an object at Base Omicron in Ultima Thule
         public static bool EnterElysion()
         {
@@ -132,7 +141,16 @@ namespace GatherChill.Scheduler.Tasks
             if (Svc.Condition[ConditionFlag.BetweenAreas] || Svc.Condition[ConditionFlag.BetweenAreas51])
                 return false;
 
-            if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
+            if (DateTime.Now > elysionDeadline)
+            {
+                IceLogging.Error("Couldn't get into Elysion in time, stopping", tag);
+                SchedulerMain.Fail("Couldn't get into Elysion");
+                return true;
+            }
+
+            // Only our own prompt: an unrelated Yes/No (party invite etc.) must not be confirmed
+            if (DateTime.Now - elysionInteractedAt < TimeSpan.FromSeconds(10)
+                && GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
             {
                 if (EzThrottler.Throttle("Confirming Elysion travel"))
                     yesNo.Yes();
@@ -159,6 +177,7 @@ namespace GatherChill.Scheduler.Tasks
                     IceLogging.Verbose("Interacting with the Elysion entry", tag);
                     Utils.TargetgameObject(entry);
                     Utils.InteractWithObject(entry);
+                    elysionInteractedAt = DateTime.Now;
                 }
                 return false;
             }

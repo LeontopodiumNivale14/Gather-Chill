@@ -55,6 +55,7 @@ namespace GatherChill.Scheduler.Tasks
                         else if (routeInfo.TerritoryId == Task_NavmeshMove.ElysionTerritory)
                         {
                             IceLogging.Debug("Route is in Elysion, going through Base Omicron", tag);
+                            Task_NavmeshMove.BeginElysionEntry();
                             P.navTask.Enqueue(() => Task_NavmeshMove.TeleportToArea(routeInfo.AetheryteId), $"Teleporting to {routeInfo.AetheryteId}");
                             P.navTask.Enqueue(() => Task_NavmeshMove.EnterElysion(), "Entering Elysion");
                         }
