@@ -149,17 +149,18 @@ internal static class GatherJobs
     }
 
     /// <summary>
-    /// Called when the scheduler runs out of things to gather.
+    /// Called when the scheduler runs out of things to gather. Returns true if it ended an IPC job.
     /// </summary>
-    public static void EndNaturally()
+    public static bool EndNaturally()
     {
         if (current is not { State: GatherJobState.Running } job)
-            return;
+            return false;
 
         if (job.Remaining == 0)
             End(GatherJobState.Succeeded, $"Gathered {job.Wanted}x {job.ItemId}");
         else
             End(GatherJobState.Failed, "Nothing left to gather on the enabled routes");
+        return true;
     }
 
     public static void Tick()

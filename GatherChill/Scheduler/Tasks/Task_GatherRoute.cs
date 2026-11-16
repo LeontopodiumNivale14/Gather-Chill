@@ -659,7 +659,8 @@ namespace GatherChill.Scheduler.Tasks
             if (gather.CurrentIntegrity == 0)
                 return false;
 
-            var goalItem = gather.GatheredItems.FirstOrDefault(x => IsGoalItem(x.ItemID, itemId));
+            var goalItem = gather.GatheredItems.FirstOrDefault(x => IsGoalItem(x.ItemID, itemId))
+                ?? QuestBonusFallback(gather, itemId);
             if (goalItem == null)
                 return HandleMissingGoalItem(gather, itemId);
 
@@ -701,6 +702,19 @@ namespace GatherChill.Scheduler.Tasks
 
             // goalInfo is the reduce result; ReducedFromItemIds holds every source that feeds it
             return goalInfo.ReducedFromItemIds.Contains(gatheredItemId);
+        }
+
+        // How the bonus item drops is unconfirmed, so gathering the quest's main item stands in until it shows up
+        private static Utilities.ExtraAddons.Gathering.GatheredItem? QuestBonusFallback(Utilities.ExtraAddons.Gathering gather, uint itemId)
+        {
+            if (!Gather_Util.QuestBonusItems.TryGetValue(itemId, out var bonus))
+                return null;
+
+            var main = gather.GatheredItems.FirstOrDefault(x => x.ItemID == bonus.MainItemId && x.IsEnabled);
+            if (main != null && EzThrottler.Throttle("Quest bonus fallback"))
+                ReplayRecorder.Decision("Goal item", $"quest bonus {itemId} missing: gathering main item {bonus.MainItemId}");
+
+            return main;
         }
 
         private static bool HandleMissingGoalItem(Utilities.ExtraAddons.Gathering gather, uint itemId)

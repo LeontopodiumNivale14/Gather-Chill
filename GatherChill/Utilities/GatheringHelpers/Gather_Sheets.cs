@@ -385,6 +385,49 @@ public static partial class Gather_Util
         [548] = 622,
         [549] = 622,
         [550] = 622,
+        [685] = 817,
+        [686] = 817,
+        [687] = 817,
+        [688] = 817,
+        [689] = 817,
+        [690] = 817,
+        [691] = 817,
+        [692] = 817,
+        [693] = 817,
+        [694] = 817,
+        [905] = 960,
+        [906] = 960,
+        [907] = 960,
+        [908] = 960,
+        [909] = 960,
+        [910] = 960,
+        [911] = 398,
+        [912] = 960,
+        [913] = 960,
+        [914] = 398,
+        [1194] = 1189,
+        [1195] = 1189,
+        [1196] = 1189,
+        [1197] = 1189,
+        [1198] = 1189,
+        [1199] = 1189,
+        [1200] = 1189,
+        [1201] = 1189,
+        [1202] = 1189,
+        [1203] = 1189,
+        [1204] = 1189,
+        [1205] = 1189,
+    };
+
+    // Ixal quest bonus items have a GatheringItem row but no node slot, so they're tied to the route of their quest's main item.
+    public static readonly Dictionary<uint, (uint RouteId, uint MainItemId)> QuestBonusItems = new()
+    {
+        [2001389] = (243, 2001388),
+        [2001392] = (181, 2001391),
+        [2001413] = (244, 2001412),
+        [2001416] = (206, 2001415),
+        [2001425] = (170, 2001424),
+        [2001427] = (208, 2001426),
     };
 
     private static bool TryResolveTerritory(uint routeId, List<uint> nodes, out uint territoryId, out string zoneName, out string placeName, out ExpansionIds expansion)
@@ -541,6 +584,12 @@ public static partial class Gather_Util
                     if (itemId != 0 && !itemIds.Contains(itemId))
                         itemIds.Add(itemId);
                 }
+            }
+
+            foreach (var (bonusId, bonus) in QuestBonusItems)
+            {
+                if (bonus.RouteId == routeId && !itemIds.Contains(bonusId))
+                    itemIds.Add(bonusId);
             }
 
             if (itemIds.Count == 0)
@@ -726,13 +775,24 @@ public static partial class Gather_Util
                     continue;
                 }
 
-                if (!ExcelHelper.Sheet_Item.TryGetRow(item, out var itemSheet))
+                uint iconId;
+                string name;
+                bool collectable = false;
+                if (ExcelHelper.Sheet_Item.TryGetRow(item, out var itemSheet))
+                {
+                    iconId = itemSheet.Icon;
+                    name = itemSheet.Name.ToString();
+                    collectable = itemSheet.IsCollectable;
+                }
+                else if (ExcelHelper.Sheet_EventItem.TryGetRow(item, out var eventItem))
+                {
+                    iconId = eventItem.Icon;
+                    name = eventItem.Name.ToString();
+                }
+                else
                     continue;
 
-                var icon = Svc.Texture.GetFromGameIcon((int)itemSheet.Icon);
-                var name = itemSheet.Name.ToString();
-                bool collectable = itemSheet.IsCollectable;
-                bool reducable = itemSheet.AetherialReduce != 0;
+                var icon = Svc.Texture.GetFromGameIcon((int)iconId);
 
                 var gatheringSheet = ExcelHelper.Sheet_GatheringItem.Where(x => x.Item.RowId == item).FirstOrDefault();
 
@@ -747,7 +807,7 @@ public static partial class Gather_Util
                 {
                     Icon = icon,
                     Name = name,
-                    IconId = itemSheet.Icon,
+                    IconId = iconId,
                     RouteInfo = new() { key },
                     NodeTypes = new() { routeInfo.NodeType },
                     IsHidden = isHidden,

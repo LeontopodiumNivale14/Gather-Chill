@@ -46,10 +46,18 @@ public static partial class Utils
             ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
         }
     }
+    private const uint EventItemStart = 2_000_000;
+
     public static unsafe bool GetItemCount(uint itemID, out int count, bool includeHq = true, bool includeNq = true)
     {
         try
         {
+            if (itemID >= EventItemStart)
+            {
+                count = InventoryManager.Instance()->GetItemCountInContainer(itemID, InventoryType.KeyItems);
+                return true;
+            }
+
             itemID = itemID >= 1_000_000 ? itemID - 1_000_000 : itemID;
             count = 0;
             if (includeHq)
@@ -70,6 +78,9 @@ public static partial class Utils
         var inventory = InventoryManager.Instance();
         if (inventory == null)
             return 0;
+
+        if (itemID >= EventItemStart)
+            return inventory->GetItemCountInContainer(itemID, InventoryType.KeyItems);
 
         itemID = itemID >= 1_000_000 ? itemID - 1_000_000 : itemID;
 

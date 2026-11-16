@@ -22,6 +22,7 @@ internal static class ExcelHelper
     internal static ExcelSheet<Town> Sheet_Town;
 
     internal static ExcelSheet<Item> Sheet_Item;
+    internal static ExcelSheet<EventItem> Sheet_EventItem;
     internal static SubrowExcelSheet<GatheringItemPoint> Sheet_GatherItemPoint;
 
     internal static ExcelSheet<Aetheryte> Sheet_Aetheryte;
@@ -49,6 +50,7 @@ internal static class ExcelHelper
         Sheet_Town = Svc.Data.GetExcelSheet<Town>();
 
         Sheet_Item = Svc.Data.GetExcelSheet<Item>();
+        Sheet_EventItem = Svc.Data.GetExcelSheet<EventItem>();
         Sheet_GatherItemPoint = Svc.Data.GetSubrowExcelSheet<GatheringItemPoint>();
 
         Sheet_Aetheryte = Svc.Data.GetExcelSheet<Aetheryte>();

@@ -2,20 +2,114 @@
   "routeId": 914,
   "territoryId": 398,
   "zoneName": "The Dravanian Forelands",
-  "placeName": "Avalonia Fallen",
+  "placeName": "???",
   "expansionId": 1,
   "gatheringJobId": 17,
-  "levelRequirement": 1,
+  "levelRequirement": 80,
   "nodeIds": [
     34391,
     34392,
     34393
   ],
-  "nodeInfo": [],
+  "nodeInfo": [
+    {
+      "groupId": 0,
+      "nodeId": 34391,
+      "locations": [
+        {
+          "position": {
+            "x": -49.75243,
+            "y": -31.70323,
+            "z": -171.6977
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 1,
+      "nodeId": 34392,
+      "locations": [
+        {
+          "position": {
+            "x": -44.89702,
+            "y": -32.39204,
+            "z": -153.4274
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    },
+    {
+      "groupId": 2,
+      "nodeId": 34393,
+      "locations": [
+        {
+          "position": {
+            "x": -36.6049,
+            "y": -31.32222,
+            "z": -134.1001
+          },
+          "requiresFlying": false,
+          "flight_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 2.5,
+            "fan_DistanceMax": 4,
+            "fan_Height": 0
+          },
+          "gathering_FanInfo": {
+            "fan_StartAngle": 0,
+            "fan_EndAngle": 359,
+            "fan_DistanceMin": 1.0,
+            "fan_DistanceMax": 3.0,
+            "fan_Height": 0
+          },
+          "useSpecificWalkingSpots": false,
+          "walkablePositions": []
+        }
+      ],
+      "blacklistNode": []
+    }
+  ],
   "requiresFlying": false,
   "groupCount": 3,
   "author": "liza",
-  "lastUpdated": "2025-12-08",
+  "lastUpdated": "2026-11-16",
   "timedNode": false,
-  "aetheryteId": 0
+  "aetheryteId": 77
 }

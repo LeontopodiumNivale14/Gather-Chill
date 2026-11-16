@@ -115,6 +115,65 @@ namespace GatherChill.Scheduler.Tasks
 
             return false;
         }
+        public const uint ElysionTerritory = 1073;
+
+        // Elysion has no aetheryte; it's entered through an object at Base Omicron in Ultima Thule
+        public static bool EnterElysion()
+        {
+            const string tag = "Navmesh: Entering Elysion";
+            const uint UltimaThule = 960;
+            const uint EntryObjectId = 2013074;
+            const float interactDistance = 4;
+            var standPos = new Vector3(304.34f, 483.48f, 143.11f);
+
+            if (Player.Territory.RowId == ElysionTerritory)
+                return true;
+
+            if (Svc.Condition[ConditionFlag.BetweenAreas] || Svc.Condition[ConditionFlag.BetweenAreas51])
+                return false;
+
+            if (GenericHelpers.TryGetAddonMaster<SelectYesno>(out var yesNo) && yesNo.IsAddonReady)
+            {
+                if (EzThrottler.Throttle("Confirming Elysion travel"))
+                    yesNo.Yes();
+                return false;
+            }
+
+            if (Player.Territory.RowId != UltimaThule || Player.IsBusy)
+                return false;
+
+            var entry = Svc.Objects.FirstOrDefault(x => x.BaseId == EntryObjectId);
+            if (entry != null && Player.DistanceTo(entry) <= interactDistance)
+            {
+                if (P.navmesh.IsRunning())
+                    P.navmesh.PathStop();
+
+                if (Player.Mounted)
+                {
+                    Utils.Dismount();
+                    return false;
+                }
+
+                if (EzThrottler.Throttle("Interacting with Elysion entry", 1000))
+                {
+                    IceLogging.Verbose("Interacting with the Elysion entry", tag);
+                    Utils.TargetgameObject(entry);
+                    Utils.InteractWithObject(entry);
+                }
+                return false;
+            }
+
+            if (!P.navmesh.IsReady() || P.navmesh.IsRunning())
+                return false;
+
+            if (EzThrottler.Throttle("Moving to Elysion entry", 1000))
+            {
+                IceLogging.Verbose("Moving to the Elysion entry", tag);
+                P.navmesh.PathfindAndMoveCloseTo(entry?.Position ?? standPos, false, interactDistance - 1);
+            }
+            return false;
+        }
+
         public static unsafe bool LeaveIdyllshire(uint aetherShard)
         {
             const string tag = "Navmesh: Using Aethernet";

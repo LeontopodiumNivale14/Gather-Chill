@@ -52,6 +52,12 @@ namespace GatherChill.Scheduler.Tasks
                             P.navTask.Enqueue(() => Task_NavmeshMove.Task_GroundToAetheryte(shardInfo.Position, shardInfo.Position, false, 11), "Moving to Idyllshire Shard");
                             P.navTask.Enqueue(() => Task_NavmeshMove.LeaveIdyllshire(IdyllshireAetheryteId), "leaving Idllshire");
                         }
+                        else if (routeInfo.TerritoryId == Task_NavmeshMove.ElysionTerritory)
+                        {
+                            IceLogging.Debug("Route is in Elysion, going through Base Omicron", tag);
+                            P.navTask.Enqueue(() => Task_NavmeshMove.TeleportToArea(routeInfo.AetheryteId), $"Teleporting to {routeInfo.AetheryteId}");
+                            P.navTask.Enqueue(() => Task_NavmeshMove.EnterElysion(), "Entering Elysion");
+                        }
                         else
                         {
                             IceLogging.Debug("Just our standard teleport task. So off we go woo!", tag);
