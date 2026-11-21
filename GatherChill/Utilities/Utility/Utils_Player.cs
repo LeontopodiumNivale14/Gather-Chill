@@ -9,6 +9,7 @@ using GatherChill.Scheduler;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
+using static GatherChill.ConfigFiles.Config;
 using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Utilities.Utility;
@@ -47,31 +48,29 @@ public static partial class Utils
         }
     }
     private const uint EventItemStart = 2_000_000;
-
-    public static unsafe bool GetItemCount(uint itemID, out int count, bool includeHq = true, bool includeNq = true)
+    internal static bool TryResolveQuality(uint itemId, ItemQuality quality, out bool hq)
     {
-        try
-        {
-            if (itemID >= EventItemStart)
-            {
-                count = InventoryManager.Instance()->GetItemCountInContainer(itemID, InventoryType.KeyItems);
-                return true;
-            }
+        hq = false;
+        var hqCount = GetItemCount(itemId, includeHq: true, includeNq: false);
+        var nqCount = GetItemCount(itemId, includeHq: false, includeNq: true);
 
-            itemID = itemID >= 1_000_000 ? itemID - 1_000_000 : itemID;
-            count = 0;
-            if (includeHq)
-                count += InventoryManager.Instance()->GetInventoryItemCount(itemID, true);
-            if (includeNq)
-                count += InventoryManager.Instance()->GetInventoryItemCount(itemID, false);
-            count += InventoryManager.Instance()->GetInventoryItemCount(itemID + 500_000);
+        if (quality == ItemQuality.HQOnly)
+        {
+            hq = true;
+            return hqCount != 0;
+        }
+
+        if (quality == ItemQuality.NQOnly)
+            return nqCount != 0;
+
+        // PreferHQ
+        if (hqCount != 0)
+        {
+            hq = true;
             return true;
         }
-        catch
-        {
-            count = 0;
-            return false;
-        }
+
+        return nqCount != 0;
     }
     public static unsafe int GetItemCount(uint itemID, bool includeHq = true, bool includeNq = true)
     {
@@ -105,6 +104,34 @@ public static partial class Utils
             .FirstOrDefault();
 
         return statusID != default;
+    }
+    internal static uint GetItemStatusId(uint itemId)
+    {
+        itemId = itemId >= 1_000_000 ? itemId - 1_000_000 : itemId;
+        if (itemId == 0)
+            return 0;
+
+        var item = ExcelHelper.Sheet_Item[itemId];
+        if (!item.ItemAction.IsValid)
+            return 0;
+
+        return item.ItemAction.Value.Data[0];
+    }
+    public static float? GetStatusRemaining(uint statusId)
+    {
+        var player = LocalPlayer;
+        if (player == null)
+            return null;
+
+        foreach (var status in player.StatusList)
+        {
+            if (status.StatusId != statusId)
+                continue;
+
+            return status.RemainingTime;
+        }
+
+        return null;
     }
     public static int GetGp()
     {

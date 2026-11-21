@@ -16,6 +16,7 @@ using GatherChill.Utilities.Utility;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
+using static GatherChill.ConfigFiles.Config;
 
 namespace GatherChill.Scheduler.Tasks
 {
@@ -43,7 +44,20 @@ namespace GatherChill.Scheduler.Tasks
 
         // Collectables don't flag ExecutingGatheringAction during the animation, so we remember what we last sent
         private static string _lastCollectableSig = "";
-        private static long _lastCollectableTick;
+        private static string _lastCrystalSig = "";   // dedupes crystal casts in the replay, same idea as the collectable one
+
+        // Bountiful Yield bonus, read from the gathering window instead of trusting the BYII_Amount setting.
+        // LearnedBYII is kept for the whole session: the first node of an item plans with the setting, later ones with what the game showed.
+        private static readonly Dictionary<uint, int> LearnedBYII = new();
+        private static int _byiiBaseAmount = 0;      // per-swing amount the window showed while BYII was NOT up
+        private static bool _byiiReported = false;   // this cast was already measured
+        private static int _plannedBYII = 0;         // bonus the current plan assumed
+        private const int BountifulIILevel = 68;             // Bountiful Yield only varies by item from this level (same value as the planner's)
+        private static bool _byiiMeasure = false;            // this plan should cast Bountiful Yield first and read its bonus before anything else
+        private static bool _planHadBYII = false;            // the plan being followed casts Bountiful Yield
+        private const long ByiiMeasureTimeoutMs = 4000;   // give up waiting for the measurement after this long, so a missing reading can never hold the gathering up
+        private static long _byiiGateStartMs = 0;            // when we started waiting to measure Bountiful Yield on this node. 0 = not waiting
+        private static int _byiiCredit = 0;          // the live Bountiful Yield already covers the next swing, so the re-plan counts it as free (used once)
 
         private static bool HiddenUsed = false;
         private static bool _hiddenCast = false;      // the hidden-item skill was sent on this node
@@ -541,6 +555,9 @@ namespace GatherChill.Scheduler.Tasks
             if (Player.IsJumping)
                 return false;
 
+            if (UseConsumables())
+                return false;
+
             if (UseCordial())
                 return false;
 
@@ -655,6 +672,7 @@ namespace GatherChill.Scheduler.Tasks
             }
 
             ReplayRecorder.SetState((int)Utils.GetGp(), (int)gather.CurrentIntegrity, (int)gather.TotalIntegrity);
+            RecordWindowItems(gather);
 
             if (gather.CurrentIntegrity == 0)
                 return false;
@@ -675,7 +693,7 @@ namespace GatherChill.Scheduler.Tasks
             {
                 var buffing = Crystals.Contains(itemId)
                     ? Crystal_BuffCheck(gather.TotalIntegrity == gather.CurrentIntegrity)
-                    : PlanAndCheckBuffs(gather, GetRouteKind(routeId), goalItem.GatherChance, goalItem.BoonChance, goalItem.GatherAmount, remaining);
+                    : PlanAndCheckBuffs(gather, GetRouteKind(routeId), goalItem.ItemID, goalItem.GatherChance, goalItem.BoonChance, goalItem.GatherAmount, remaining);
 
                 if (buffing)
                     return false;
@@ -689,6 +707,39 @@ namespace GatherChill.Scheduler.Tasks
             }
 
             return false;
+        }
+
+        /// <summary>Writes the window's item list to the replay. Only does real work when an item appears or disappears.</summary>
+        private static void RecordWindowItems(Utilities.ExtraAddons.Gathering gather)
+        {
+            // ItemID is cheap to read, so the ids decide whether anything changed. The text nodes are only read when it did.
+            var items = gather.GatheredItems.Where(x => x.ItemID != 0).ToList();
+            var signature = string.Join(",", items.Select(x => x.ItemID));
+
+            ReplayRecorder.WindowItems(signature, () => items.Select(x =>
+            {
+                try
+                {
+                    return new ReplayItemSlot
+                    {
+                        ItemId = x.ItemID,
+                        Name = x.ItemName,
+                        GatherChance = x.GatherChance,
+                        BoonChance = x.BoonChance,
+                        Amount = x.GatherAmount,
+                        Hidden = x.IsHidden,
+                        Rare = x.IsRare,
+                        Collectable = x.IsCollectable,
+                        Enabled = x.IsEnabled,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // A text node that isn't there must never break gathering
+                    IceLogging.Verbose($"Couldn't read window item {x.ItemID}: {ex.Message}", "Replay");
+                    return new ReplayItemSlot { ItemId = x.ItemID, Name = $"Item {x.ItemID}" };
+                }
+            }).ToList());
         }
 
         private static bool IsGoalItem(uint gatheredItemId, uint goalItemId)
@@ -844,7 +895,15 @@ namespace GatherChill.Scheduler.Tasks
             _hiddenCast = false;
             _hiddenReported = false;
             _lastCollectableSig = "";
+            _lastCrystalSig = "";
+            _byiiBaseAmount = 0;
+            _byiiReported = false;
+            _byiiCredit = 0;
+            _byiiGateStartMs = 0;
+            _byiiMeasure = false;
+            _planHadBYII = false;
             ResetCasts();
+            ResetConsumableAttempts();
         }
 
         private static void CountCompletedCast()
@@ -862,13 +921,62 @@ namespace GatherChill.Scheduler.Tasks
             BuffCounter = GatherBuffId.Unknown;
         }
 
-        private static bool PlanAndCheckBuffs(Utilities.ExtraAddons.Gathering gather, GatherNodeKind kind, int gatherChance, int boonChance, int gatherAmount, int remaining)
+        private static bool PlanAndCheckBuffs(Utilities.ExtraAddons.Gathering gather, GatherNodeKind kind, uint windowItemId, int gatherChance, int boonChance, int gatherAmount, int remaining)
         {
-            SelectedProfile ??= PlanProfile(gather, kind, gatherChance, boonChance, gatherAmount, remaining);
-            return CheckGatheringBuffs(gather);
+            SelectedProfile ??= PlanProfile(gather, kind, windowItemId, gatherChance, boonChance, gatherAmount, remaining);
+
+            // Runs before the buff check, so the amount remembered is the one from before this tick's cast.
+            // When the game's bonus differs from what the plan assumed, plan again right now (same tick, so no swing happens on the old plan).
+            if (LearnBYII(windowItemId, gatherAmount))
+                SelectedProfile = PlanProfile(gather, kind, windowItemId, gatherChance, boonChance, gatherAmount, remaining);
+
+            return CheckGatheringBuffs(gather, windowItemId);
         }
 
-        private static GatherProfile PlanProfile(Utilities.ExtraAddons.Gathering gather, GatherNodeKind kind, int gatherChance, int boonChance, int gatherAmount, int remaining)
+        /// <summary>
+        /// Bountiful Yield raises the per-swing amount the window shows. So: remember the amount while BYII is down,
+        /// and once the status is up the difference is the real bonus for this node.
+        /// Returns true when that bonus is different from what the plan assumed, meaning the plan should be redone.
+        /// </summary>
+        private static bool LearnBYII(uint windowItemId, int shownAmount)
+        {
+            var byii = Gather_Util.GathActionDict[GatherBuffId.BYII];
+            var statusUp = Utils.HasStatusId(byii.StatusId)
+                        || (byii.StatusId2 != 0 && Utils.HasStatusId(byii.StatusId2));
+
+            // Not buffed: this is the plain amount, and the next cast can be measured again
+            if (!statusUp)
+            {
+                _byiiBaseAmount = shownAmount;
+                _byiiReported = false;
+                return false;
+            }
+
+            // Already measured this cast, or we never saw a plain amount to compare against
+            if (_byiiReported || _byiiBaseAmount <= 0)
+                return false;
+
+            // bonus <= 0 means the shown amount has NOT gone up yet (the window hasn't refreshed), so check again next tick
+            var bonus = shownAmount - _byiiBaseAmount;
+            if (bonus <= 0)
+                return false;
+
+            _byiiReported = true;
+            LearnedBYII[windowItemId] = bonus;
+
+            IceLogging.Debug($"Bountiful Yield gave +{bonus} (plan assumed +{_plannedBYII}) | shown {_byiiBaseAmount} -> {shownAmount}", "Gather: BYII");
+            ReplayRecorder.BYIIObserved(_plannedBYII, bonus);
+
+            // Same as assumed AND the plan already casts it = the plan is right, nothing to redo
+            if (bonus == _plannedBYII && _planHadBYII)
+                return false;
+
+            // The buff that's up right now already covers the next swing, so that bonus counts as free in the new plan
+            _byiiCredit = bonus;
+            return true;
+        }
+
+        private static GatherProfile PlanProfile(Utilities.ExtraAddons.Gathering gather, GatherNodeKind kind, uint windowItemId, int gatherChance, int boonChance, int gatherAmount, int remaining)
         {
             const string tag = "Gather: Plan";
 
@@ -893,6 +1001,31 @@ namespace GatherChill.Scheduler.Tasks
             var profileName = matched?.Name ?? "Default";
             IceLogging.Debug($"Using profile '{profileName}' | Kind: {kind} | Max integrity: {maxIntegrity}", tag);
 
+            // A bonus the game showed on an earlier node of this item beats the BYII_Amount setting.
+            // The profile is copied first, so the user's saved profile is never changed.
+            if (LearnedBYII.TryGetValue(windowItemId, out var learned) && learned != settings.BYII_Amount)
+            {
+                var copy = JsonConvert.DeserializeObject<Gather_Util.ProfileClass>(JsonConvert.SerializeObject(settings));
+                if (copy != null)
+                {
+                    copy.BYII_Amount = learned;
+                    settings = copy;
+                    IceLogging.Debug($"Using the learned Bountiful Yield bonus +{learned} for this item", tag);
+                }
+            }
+
+            _plannedBYII = settings.BYII_Amount;
+
+            // After a mid-node re-plan the live Bountiful Yield will pay out on the next swing without a new cast,
+            // so the planner only has to find the rest. Max(...,0) keeps the need from going below zero.
+            var credit = _byiiCredit;
+            _byiiCredit = 0;
+            var planNeed = Math.Max(remaining - credit, 0);
+
+            // The window's amount already includes the live Bountiful Yield bonus. That bonus is counted once, as the credit above,
+            // so the per-swing yield the planner sees has to be the plain amount, or every swing would be overestimated by it.
+            var baseYield = Math.Max(gatherAmount - credit, 1);
+
             var result = Gather_Util.PlanBuffs(
                 Player.Level,
                 gp,
@@ -900,10 +1033,52 @@ namespace GatherChill.Scheduler.Tasks
                 maxIntegrity,
                 gatherChance,
                 boonChance,
-                remaining,
+                planNeed,
                 settings,
-                gatherAmount,
+                baseYield,
                 profileName);
+
+            // The planner only saw the need minus the free bonus, so add it back to show the true total for this node
+            var expectedTotal = result.ExpectedYield + credit;
+
+            _planHadBYII = result.Profile.BuffPriority.Contains(GatherBuffId.BYII);
+            _byiiMeasure = false;
+
+            // Only worth casting Bountiful Yield early just to read it when ALL of these are true:
+            //  - this item's bonus isn't known yet (and this isn't already the re-plan after measuring)
+            //  - the profile allows Bountiful Yield on this node
+            //  - the level has a variable bonus
+            //  - at least one possible bonus (+1, +2 or +3) would lead to a plan that actually casts it
+            if (credit == 0
+                && !LearnedBYII.ContainsKey(windowItemId)
+                && Player.Level >= BountifulIILevel
+                && settings.IsAllowed(GatherBuffId.BYII, maxIntegrity))
+            {
+                for (var possibleBonus = 1; possibleBonus <= 3 && !_byiiMeasure; possibleBonus++)
+                {
+                    // The plan above already covers the bonus the setting assumed
+                    if (possibleBonus == settings.BYII_Amount)
+                    {
+                        _byiiMeasure = _planHadBYII;
+                        continue;
+                    }
+
+                    var variant = JsonConvert.DeserializeObject<Gather_Util.ProfileClass>(JsonConvert.SerializeObject(settings));
+                    if (variant == null)
+                        continue;
+
+                    variant.BYII_Amount = possibleBonus;
+
+                    var variantResult = Gather_Util.PlanBuffs(
+                        Player.Level, gp, integrity, maxIntegrity, gatherChance, boonChance, planNeed, variant, baseYield, profileName);
+
+                    _byiiMeasure = variantResult.Profile.BuffPriority.Contains(GatherBuffId.BYII);
+                }
+
+                IceLogging.Debug(_byiiMeasure
+                    ? "Some possible Bountiful Yield bonus would use it, so it's cast first to read the real bonus"
+                    : "No possible Bountiful Yield bonus would use it on this node, so it isn't measured", tag);
+            }
 
             var buffs = result.Profile.BuffPriority
                 .Select(buff =>
@@ -914,7 +1089,7 @@ namespace GatherChill.Scheduler.Tasks
                 .ToList();
 
             IceLogging.Debug(
-                $"Plan: [{string.Join(", ", buffs)}] | Expected: {result.ExpectedYield:F1} / need {remaining} | GP: {result.Gp} | Meets need: {result.MeetsNeed}",
+                $"Plan: [{string.Join(", ", buffs)}] | Expected: {expectedTotal:F1} / need {remaining} | GP: {result.Gp} | Meets need: {result.MeetsNeed}" + (credit > 0 ? $" | re-planned after Bountiful Yield gave +{credit}" : ""),
                 tag);
 
             var active = Gather_Util.GathActionDict
@@ -930,17 +1105,17 @@ namespace GatherChill.Scheduler.Tasks
                 MaxIntegrity = maxIntegrity,
                 GatherChance = gatherChance,
                 BoonChance = boonChance,
-                BaseYield = gatherAmount,
+                BaseYield = baseYield,
                 Need = remaining,
                 ProfileName = profileName,
                 RuleReasons = ruleReasons,
                 ProfileJson = JsonConvert.SerializeObject(settings),
                 Buffs = buffs,
-                ExpectedYield = result.ExpectedYield,
+                ExpectedYield = expectedTotal,
                 PlannedGp = result.Gp,
                 MeetsNeed = result.MeetsNeed,
                 ActiveBuffs = active,
-            }, $"Expected {result.ExpectedYield:F1} / need {remaining}, GP {result.Gp}");
+            }, $"Expected {expectedTotal:F1} / need {remaining}, GP {result.Gp}" + (credit > 0 ? $" (re-planned: Bountiful Yield gave +{credit})" : ""));
 
             return result.Profile;
         }
@@ -1008,7 +1183,28 @@ namespace GatherChill.Scheduler.Tasks
             _toggleHidden = true;
         }
 
-        private static bool CheckGatheringBuffs(Utilities.ExtraAddons.Gathering gathering)
+        /// <summary>
+        /// True while we're waiting to see how much Bountiful Yield gives on this item. The plan uses a guess for that bonus,
+        /// so nothing else is cast until the real number is in and the rest of the plan has been redone with it.
+        /// Only applies when the plan uses Bountiful Yield and this item's bonus isn't known yet.
+        /// </summary>
+        private static bool IsMeasuringBYII(GatherProfile profile, uint windowItemId)
+        {
+            if (!_byiiMeasure || _byiiReported || LearnedBYII.ContainsKey(windowItemId))
+            {
+                _byiiGateStartMs = 0;
+                return false;
+            }
+
+            var now = Environment.TickCount64;
+            if (_byiiGateStartMs == 0)
+                _byiiGateStartMs = now;
+
+            // Waited this long and still no reading: stop holding things up and carry on with the plan as it is
+            return now - _byiiGateStartMs < ByiiMeasureTimeoutMs;
+        }
+
+        private static bool CheckGatheringBuffs(Utilities.ExtraAddons.Gathering gathering, uint windowItemId)
         {
             const string tag = "Gather: Check Buffs";
 
@@ -1019,6 +1215,41 @@ namespace GatherChill.Scheduler.Tasks
             var job = Player.Job;
             var currentGp = Utils.GetGp();
             var missingDur = gathering.CurrentIntegrity != gathering.TotalIntegrity;
+
+            // Measuring comes first: Bountiful Yield is cast and its bonus read before anything else is spent or any swing is made.
+            // Once the bonus is in, the plan is redone and this stops applying.
+            if (IsMeasuringBYII(profile, windowItemId))
+            {
+                var byiiInfo = Gather_Util.GathActionDict[GatherBuffId.BYII];
+                var byiiUp = Utils.HasStatusId(byiiInfo.StatusId) || (byiiInfo.StatusId2 != 0 && Utils.HasStatusId(byiiInfo.StatusId2));
+
+                // Already cast (or sent): just wait for the window to show the new amount
+                if (byiiUp || BuffCounter == GatherBuffId.BYII || CurrentUse[GatherBuffId.BYII] > 0)
+                {
+                    ReplayRecorder.Decision("Gather", "waiting: reading the Bountiful Yield bonus first");
+                    return true;
+                }
+
+                // Can't cast it right now (not enough GP or level), so there's nothing to measure
+                if (currentGp < byiiInfo.RequiredGp || Player.Level < byiiInfo.RequiredLv)
+                {
+                    _byiiMeasure = false;
+                    ReplayRecorder.Decision("BYII", "skipped: can't measure, not enough GP or level");
+                }
+                else
+                {
+                    if (!UseGatheringAction(byiiInfo.ClassAction[job].ActionId))
+                    {
+                        ReplayRecorder.Decision("BYII", "waiting: previous cast still on cooldown");
+                        return true;
+                    }
+
+                    IceLogging.Verbose("Casting Bountiful Yield first to read its bonus", tag);
+                    ReplayRecorder.BuffCast(GatherBuffId.BYII.ToString(), $"GP {currentGp}, integrity {gathering.CurrentIntegrity}/{gathering.TotalIntegrity} (measuring bonus)");
+                    BuffCounter = GatherBuffId.BYII;
+                    return true;
+                }
+            }
 
             foreach (var buff in profile.BuffPriority)
             {
@@ -1143,10 +1374,23 @@ namespace GatherChill.Scheduler.Tasks
 
             bool CanCast(Gather_Util.GatheringActions action) => gp >= action.RequiredGp && level >= action.RequiredLv;
 
-            void Cast(Gather_Util.GatheringActions action)
+            string CostDetail(Gather_Util.GatheringActions action) => $"have {gp} GP at level {level}, need {action.RequiredGp} GP at level {action.RequiredLv}";
+
+            void Cast(GatherBuffId id, Gather_Util.GatheringActions action)
             {
-                if (EzThrottler.Throttle("Using Action", 100))
-                    ActionManager.Instance()->UseAction(ActionType.Action, action.ClassAction[job].ActionId);
+                if (!EzThrottler.Throttle("Using Action", 100))
+                    return;
+
+                var actionId = action.ClassAction[job].ActionId;
+                ActionManager.Instance()->UseAction(ActionType.Action, actionId);
+
+                // The same cast can be resent before the game registers it. GP drops once it lands, so action + GP is one real cast.
+                var sig = $"{actionId}|{gp}";
+                if (sig == _lastCrystalSig)
+                    return;
+
+                _lastCrystalSig = sig;
+                ReplayRecorder.BuffCast(id.ToString(), $"GP {gp}");
             }
 
             if (maxDurability)
@@ -1156,18 +1400,42 @@ namespace GatherChill.Scheduler.Tasks
                 // Hold window: Giving Land is about to come off cooldown, so don't burn Twelve's Bounty yet
                 if (cooldown < C.CrystalBuff_HoldSeconds)
                 {
-                    // Only fire when it's actually ready, otherwise keep going without a buff
-                    if (cooldown != 0 || Utils.HasStatusId(givingLand.StatusId) || !CanCast(givingLand))
+                    if (Utils.HasStatusId(givingLand.StatusId))
+                    {
+                        ReplayRecorder.Decision(nameof(GatherBuffId.GivingLand), "skipped: status is already up");
                         return false;
+                    }
 
-                    Cast(givingLand);
+                    // Not ready yet (cooldown != 0), so keep going without a buff
+                    if (cooldown != 0)
+                    {
+                        ReplayRecorder.Decision(nameof(GatherBuffId.GivingLand), "waiting: coming off cooldown soon, holding Twelve's Bounty", $"{cooldown:F1}s left, hold window {C.CrystalBuff_HoldSeconds}s");
+                        return false;
+                    }
+
+                    if (!CanCast(givingLand))
+                    {
+                        ReplayRecorder.Decision(nameof(GatherBuffId.GivingLand), "skipped: not enough GP or level", CostDetail(givingLand));
+                        return false;
+                    }
+
+                    Cast(GatherBuffId.GivingLand, givingLand);
                     return true;
                 }
 
-                if (Utils.HasStatusId(twelveBounty.StatusId) || !CanCast(twelveBounty))
+                if (Utils.HasStatusId(twelveBounty.StatusId))
+                {
+                    ReplayRecorder.Decision(nameof(GatherBuffId.TwelveBounty), "skipped: status is already up");
                     return false;
+                }
 
-                Cast(twelveBounty);
+                if (!CanCast(twelveBounty))
+                {
+                    ReplayRecorder.Decision(nameof(GatherBuffId.TwelveBounty), "skipped: not enough GP or level", CostDetail(twelveBounty));
+                    return false;
+                }
+
+                Cast(GatherBuffId.TwelveBounty, twelveBounty);
                 return true;
             }
 
@@ -1177,18 +1445,25 @@ namespace GatherChill.Scheduler.Tasks
             // Wise is a free proc, so use it whenever the status is up
             if (Utils.HasStatusId(wise.StatusId))
             {
-                Cast(wise);
+                Cast(GatherBuffId.BonusIntegrity_Chance, wise);
                 return true;
             }
 
             // Ageless only while Giving Land is running
-            if (Utils.HasStatusId(givingLand.StatusId) && CanCast(ageless))
+            if (!Utils.HasStatusId(givingLand.StatusId))
             {
-                Cast(ageless);
-                return true;
+                ReplayRecorder.Decision(nameof(GatherBuffId.BonusIntegrity), "skipped: Giving Land is not running");
+                return false;
             }
 
-            return false;
+            if (!CanCast(ageless))
+            {
+                ReplayRecorder.Decision(nameof(GatherBuffId.BonusIntegrity), "skipped: not enough GP or level", CostDetail(ageless));
+                return false;
+            }
+
+            Cast(GatherBuffId.BonusIntegrity, ageless);
+            return true;
         }
 
         private static unsafe float BuffCooldown(uint actionId)
@@ -1207,17 +1482,13 @@ namespace GatherChill.Scheduler.Tasks
         {
             const string tag = "Gather: Cordial Check";
 
-            if (!C.Cordial_Auto)
+            if (!C.CordialConfig.Enable)
                 return false;
 
             var currentRoute = Gather_Helper.GatherRoute;
             var routeInfo = Gather_Util.Sheet_RouteInfo[currentRoute.routeId];
 
-            if (!C.Cordial_NormalNode && routeInfo.Kind == GatherNodeKind.Regular)
-                return false;
-            if (!C.Cordial_LegendaryNode && (routeInfo.Kind is GatherNodeKind.Unspoiled or GatherNodeKind.Legendary))
-                return false;
-            if (!C.Cordial_EphemerialNode && routeInfo.Kind is GatherNodeKind.Ephemeral)
+            if (!C.CordialConfig.AllowedNodes.HasFlag(routeInfo.Kind))
                 return false;
 
             var currentGp = Utils.GetGp();
@@ -1286,6 +1557,159 @@ namespace GatherChill.Scheduler.Tasks
                         ReplayRecorder.Note($"Used {name}");
                     }
 
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region Food/Potion/Manual Usage
+
+        private enum ConsumableKind
+        {
+            Food,
+            Potion,
+            Manual,
+        }
+
+        private const int MaxConsumableAttempts = 3;   // uses sent without the status showing up before we give up for now
+        private const int ConsumableRetryMs = 2500;    // how long we wait for a use to register before trying again
+
+        private static readonly Dictionary<ConsumableKind, int> ConsumableAttempts = new()
+        {
+            [ConsumableKind.Food] = 0,
+            [ConsumableKind.Potion] = 0,
+            [ConsumableKind.Manual] = 0,
+        };
+
+        private static void ResetConsumableAttempts()
+        {
+            foreach (var key in ConsumableAttempts.Keys.ToList())
+                ConsumableAttempts[key] = 0;
+        }
+
+        // True while we're using or waiting on a consumable, so the caller holds off on interacting
+        private static bool UseConsumables()
+        {
+            var nodeKind = Gather_Util.Sheet_RouteInfo[Gather_Helper.GatherRoute.routeId].Kind;
+
+            return UseConsumable(ConsumableKind.Food, C.FoodConfig, nodeKind)
+                || UseConsumable(ConsumableKind.Potion, C.PotionConfig, nodeKind)
+                || UseConsumable(ConsumableKind.Manual, C.ManualConfig, nodeKind);
+        }
+
+        private static bool UseConsumable(ConsumableKind consumable, ConsumableConfig c, GatherNodeKind nodeKind)
+        {
+            var tag = $"Gather: {consumable} Check";
+
+            if (!c.Enable || c.ItemId == 0)
+                return false;
+
+            if (!c.AllowedNodes.HasFlag(nodeKind))
+                return false;
+
+            var statusId = Utils.GetItemStatusId(c.ItemId);
+            if (statusId == 0)
+                return false;
+
+            // Not up at all -> refresh. Up -> refresh once the time left is LESS than the setting.
+            // remaining < SecondsRemaining: the small number is the time left, so "less than" = running low.
+            // A setting of 0 means "only when it has fallen off".
+            var remaining = Utils.GetStatusRemaining(statusId);
+            var needsRefresh = remaining == null || remaining < c.SecondsRemaining;
+
+            if (!needsRefresh)
+            {
+                ConsumableAttempts[consumable] = 0;
+                return false;
+            }
+
+            if (ConsumableAttempts[consumable] >= MaxConsumableAttempts)
+            {
+                if (EzThrottler.Throttle($"Consumable gave up: {consumable}", 30000))
+                    IceLogging.Warning($"{consumable}: used {MaxConsumableAttempts} times without the status showing up, giving up until the next node finishes", tag);
+
+                return false;
+            }
+
+            var name = ExcelHelper.Sheet_Item[c.ItemId].Name.ToString();
+
+            // Manuals have no HQ version; everything else follows the quality setting
+            var hq = false;
+            if (consumable == ConsumableKind.Manual)
+            {
+                if (Utils.GetItemCount(c.ItemId) == 0)
+                {
+                    if (EzThrottler.Throttle($"Consumable missing: {consumable}", 10000))
+                        IceLogging.Verbose($"{name} needs refreshing but none are in the inventory", tag);
+
+                    return false;
+                }
+            }
+            else if (!Utils.TryResolveQuality(c.ItemId, c.Quality, out hq))
+            {
+                if (EzThrottler.Throttle($"Consumable missing: {consumable}", 10000))
+                    IceLogging.Verbose($"{name} needs refreshing but nothing usable for quality mode {c.Quality}", tag);
+
+                return false;
+            }
+
+            var itemId = hq ? c.ItemId + 1_000_000 : c.ItemId;
+
+            // Not in the main bags (armory/etc.), so there's nothing we can use right now
+            if (!TryFindInventoryItem(itemId, out var containerType, out var slot))
+                return false;
+
+            // A use takes a moment to register. Returning true while throttled makes the caller wait instead of using another.
+            if (!EzThrottler.Throttle($"Consumable: {consumable}", ConsumableRetryMs))
+                return true;
+
+            IceLogging.Verbose($"Using {name}{(hq ? " (HQ)" : "")} | Time left: {remaining?.ToString("F0") ?? "none"}s | Refresh under: {c.SecondsRemaining}s", tag);
+
+            unsafe
+            {
+                AgentInventoryContext.Instance()->UseItem(itemId, containerType, slot, 0);
+            }
+
+            ConsumableAttempts[consumable] += 1;
+            ReplayRecorder.Note($"Used {name}{(hq ? " (HQ)" : "")}");
+            return true;
+        }
+
+        // Finds an exact-quality match: an NQ lookup skips HQ stacks and an HQ lookup skips NQ ones
+        private static unsafe bool TryFindInventoryItem(uint itemId, out InventoryType containerType, out uint slot)
+        {
+            containerType = default;
+            slot = 0;
+
+            var hq = itemId >= 1_000_000;
+            var baseId = hq ? itemId - 1_000_000 : itemId;
+
+            var inventory = InventoryManager.Instance();
+            if (inventory == null)
+                return false;
+
+            foreach (var type in CordialContainers)
+            {
+                var container = inventory->GetInventoryContainer(type);
+                if (container == null)
+                    continue;
+
+                for (var i = 0; i < container->Size; i++)
+                {
+                    var item = container->GetInventorySlot(i);
+                    if (item == null || item->ItemId != baseId)
+                        continue;
+
+                    var isHq = item->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality);
+                    if (hq != isHq)
+                        continue;
+
+                    containerType = type;
+                    slot = (uint)i;
                     return true;
                 }
             }

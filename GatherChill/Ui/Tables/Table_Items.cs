@@ -7,6 +7,7 @@ using GatherChill.Gui.ImGuiTable;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using GatherChill.Utilities.Utility;
+using SharpDX.Direct3D11;
 using System.Collections.Generic;
 
 namespace GatherChill.Ui.Tables;
@@ -74,23 +75,49 @@ internal class Table_Items
                 return row.Name;
         }
 
+        private int Amount = 1;
+
+        private void AddItemPopup(GatherItems row)
+        {
+            using (var popup = ImRaii.Popup("Add Item to gather list?"))
+            {
+                if (!popup.Success)
+                    return;
+
+                ImGui.Text($"{row.Name}");
+                ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
+                ImGui.InputInt("Amount", ref Amount, 1, 10);
+
+                using (var disabled = ImRaii.Disabled(Amount < 1))
+                {
+                    if (ImGui.Button("Add"))
+                    {
+                        P.ipcProvider.AddToGatherList([(row.ItemId, Amount)]);
+                        ImGui.CloseCurrentPopup();
+                    }
+                }
+            }
+        }
+
         public override void DrawColumn(GatherItems row)
         {
             var nameText = row.IsCollectable ? $"{row.Name} {SeIconChar.Collectible.ToIconString()}" : row.Name;
 
-            ImGui_Ice.ImageButtonWithText(row.Icon, nameText, $"{row.ItemId}_{row.Name}");
+            if (ImGui_Ice.ImageButtonWithText(row.Icon, nameText, $"{row.ItemId}_{row.Name}"))
+            {
+                Amount = 1;
+                ImGui.OpenPopup("Add Item to gather list?");
+            }
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
 
                 ImGui.Text($"Item ID: {row.ItemId}");
-                if (Utils.GetItemCount(row.ItemId, out var count))
-                {
-                    ImGui.Text($"Have: {count:N0}");
-                }
+                ImGui_Ice.Table_VertCenterText($"{Utils.GetItemCount(row.ItemId)}");
 
                 ImGui.EndTooltip();
             }
+            AddItemPopup(row);
         }
     }
     public sealed class Level : ColumnFlags<LevelEnum, GatherItems>

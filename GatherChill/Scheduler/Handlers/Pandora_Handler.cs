@@ -99,7 +99,7 @@ namespace GatherChill.Scheduler.Handlers
                     P.pandora.SetFeatureEnabled("Pandora Quick Gather", false);
                 if (PandoraInteractState)
                     P.pandora.SetFeatureEnabled("Auto-interact with Gathering Nodes", false);
-                if (PandoraCordialState && C.Cordial_Auto)
+                if (PandoraCordialState && C.CordialConfig.Enable)
                     P.pandora.SetFeatureEnabled("Auto-Cordial", false);
                 if (PandoraAutoTurnin)
                     P.pandora.SetFeatureEnabled("Auto-select Turn-ins", false);

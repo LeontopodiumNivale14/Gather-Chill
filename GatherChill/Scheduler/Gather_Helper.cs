@@ -20,23 +20,23 @@ namespace GatherChill.Scheduler
         public static IceState State = IceState.Idle;
         public static GatherType gatherMode = GatherType.Normal;
 
-        // Set by the GatherItem IPC so only that item gets gathered. 0 = the whole list.
-        public static uint OnlyItemId = 0;
+        // Set by the GatherItem / GatherItems IPC so only these items get gathered. Empty = the whole list.
+        public static HashSet<uint> OnlyItemIds = new();
 
         // Set by the GatherJobItem / StartJobForJob IPC so routes are limited to this job. null = no restriction.
         public static Job? OnlyJob = null;
 
         /// <summary>
-        /// False if the GatherItem IPC limited this run to a different item.
+        /// False if an IPC call limited this run to a different set of items.
         /// </summary>
-        public static bool IsTargeted(uint itemId) => OnlyItemId == 0 || OnlyItemId == itemId;
+        public static bool IsTargeted(uint itemId) => OnlyItemIds.Count == 0 || OnlyItemIds.Contains(itemId);
 
         /// <summary>
-        /// Clears both IPC restrictions. Call anywhere OnlyItemId used to be reset (run end, DisablePlugin, job end).
+        /// Clears both IPC restrictions. Call anywhere OnlyItemIds used to be reset (run end, DisablePlugin, job end).
         /// </summary>
         public static void ClearTargeting()
         {
-            OnlyItemId = 0;
+            OnlyItemIds.Clear();
             OnlyJob = null;
         }
 

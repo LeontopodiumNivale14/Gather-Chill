@@ -3,6 +3,7 @@ using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
 using GatherChill.ConfigFiles;
 using GatherChill.Gui;
+using GatherChill.Utilities.Utility;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -79,11 +80,28 @@ public static partial class SettingsUi
         MountSelection,
         FanSelection,
 
-        // Cordial settings (BLEH)
+        // Consumables: Cordials
         Cordial_Use,
         Cordial_MinGp,
         Cordial_Inverse,
         Cordial_Overcap,
+
+        // Consumables: Food
+        Food_Usage,
+        Food_Kind,
+        Food_Quality,
+        Food_Refresh,
+
+        // Consumables: Spiritbond Potions
+        Potion_Usage,
+        Potion_Kind,
+        Potion_Quality,
+        Potion_Refresh,
+
+        // Consumables: Manuals
+        Manual_Usage,
+        Manual_Kind,
+        Manual_Refresh,
 
         // Gather Buff Holding
         HoldGP_TimedNodes,
@@ -203,5 +221,19 @@ public static partial class SettingsUi
             ImGui.Unindent();
             ImGui.Spacing();
         }
+    }
+
+    private static void DrawItemEffectTooltip(uint itemId)
+    {
+        if (!ImGui.IsItemHovered())
+            return;
+
+        var text = Utils.GetItemEffectText(itemId);
+        if (text.Length == 0)
+            return;
+
+        ImGui.BeginTooltip();
+        ImGui.TextUnformatted(text);
+        ImGui.EndTooltip();
     }
 }

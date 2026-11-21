@@ -42,6 +42,23 @@ public class ReplayEvent
 
     /// <summary>Index into the node's Plans for the plan that was active.</summary>
     public int? PlanIndex { get; set; }
+
+    /// <summary>Note events only: what the gathering window was offering at that moment.</summary>
+    public List<ReplayItemSlot>? Items { get; set; }
+}
+
+/// <summary>One item row of the gathering window, as it looked when the list changed.</summary>
+public class ReplayItemSlot
+{
+    public uint ItemId { get; set; }
+    public string Name { get; set; } = "";
+    public int GatherChance { get; set; }
+    public int BoonChance { get; set; }
+    public int Amount { get; set; }          // per-swing yield the window shows
+    public bool Hidden { get; set; }
+    public bool Rare { get; set; }
+    public bool Collectable { get; set; }
+    public bool Enabled { get; set; }
 }
 
 public class ReplayPlan
@@ -64,6 +81,10 @@ public class ReplayPlan
     public int PlannedGp { get; set; }
     public bool MeetsNeed { get; set; }
     public List<string> ActiveBuffs { get; set; } = new();
+
+    // Bountiful Yield bonus the plan assumed vs what the game's window showed after the cast. 0 = not measured.
+    public int BYIIPlanned { get; set; }
+    public int BYIIObserved { get; set; }
 }
 
 public class ReplayNode

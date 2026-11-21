@@ -353,10 +353,7 @@ namespace GatherChill.Ui.RouteWindowTabs
                             }
 
                             ImGui.TableNextColumn();
-                            if (Utils.GetItemCount(item, out var count))
-                            {
-                                ImGui_Ice.Table_VertCenterText($"{count}");
-                            }
+                            ImGui_Ice.Table_VertCenterText($"{Utils.GetItemCount(item)}");
 
                             ImGui.TableNextColumn();
                             if (ImGui.Button($"{itemInfo.Name}"))

@@ -59,6 +59,7 @@ public sealed class GatherChill : IDalamudPlugin
         config = EzConfig.Init<Config>();
         if (C.User_AutoProfile.Migrate())
             EzConfig.Save();
+        C.MigrateCordials();
 
         //IPC's that are used
         TaskManager = new(TaskConfig);

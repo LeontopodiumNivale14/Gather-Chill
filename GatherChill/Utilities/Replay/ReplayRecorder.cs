@@ -40,6 +40,10 @@ internal static class ReplayRecorder
     private static long _buffEdgeUntilMs;
     private static int _openSwingBaseline;
 
+    // Gathering window item list, only written when the set of items changes
+    private static string _lastWindowSignature = "";
+    private static List<ReplayItemSlot> _lastWindowSlots = new();
+
     private static bool Enabled => C.Replay_Enabled;
 
     #region Session / node lifecycle
@@ -92,6 +96,8 @@ internal static class ReplayRecorder
         _wasExecuting = false;
         _gatherPending = false;
         _openSwing = null;
+        _lastWindowSignature = "";
+        _lastWindowSlots = new();
         _lastActivityUtc = DateTime.UtcNow;
     }
 
@@ -100,11 +106,33 @@ internal static class ReplayRecorder
         if (_node is not { } node || _session is not { } session)
             return;
 
-        // Last chance to catch the final swing's items
+        // Last chance to catch the items of the swing that was still settling
         if (_openSwing != null)
         {
-            _openSwing.ItemDelta = Utils.GetItemCount(_gatherItemId) - _baselineCount;
+            var settledCount = Utils.GetItemCount(_gatherItemId);
+            _openSwing.ItemDelta = settledCount - _openSwingBaseline;
+            _openSwing.InventoryCount = settledCount;
             _openSwing = null;
+        }
+
+        // The final swing often closes the window before its end is seen, so it never got an event. Write it from the inventory.
+        if (_gatherPending)
+        {
+            var finalCount = Utils.GetItemCount(_gatherItemId);
+            var finalDelta = finalCount - _baselineCount;
+
+            // finalDelta != 0 means items arrived; _wasExecuting means the action was still playing when the window closed.
+            // Neither = the click never turned into a swing, so there is nothing to record.
+            if (finalDelta != 0 || _wasExecuting)
+            {
+                Add(ReplayEventKind.Swing, "Gather", "Window closed on this swing", e =>
+                {
+                    e.ItemDelta = finalDelta;
+                    e.InventoryCount = finalCount;
+                });
+            }
+
+            _gatherPending = false;
         }
 
         node.DurationMs = NodeClock.ElapsedMilliseconds;
@@ -179,6 +207,71 @@ internal static class ReplayRecorder
         _node.Plans.Add(plan);
         LastDecision.Clear();
         Add(ReplayEventKind.Plan, plan.ProfileName, summary);
+    }
+
+    /// <summary>
+    /// Bountiful Yield: what the plan assumed vs what the window showed after the cast.
+    /// Stored on the active plan (for the viewer) and written as a note on the timeline.
+    /// </summary>
+    public static void BYIIObserved(int planned, int observed)
+    {
+        if (_node == null)
+            return;
+
+        if (_node.Plans.Count > 0)
+        {
+            var plan = _node.Plans[^1];
+            plan.BYIIPlanned = planned;
+            plan.BYIIObserved = observed;
+        }
+
+        var detail = planned == observed
+            ? $"Game gave +{observed} (matches the plan)"
+            : $"Game gave +{observed}, the plan assumed +{planned}";
+
+        Add(ReplayEventKind.Note, "BYII amount", detail);
+    }
+
+    /// <summary>
+    /// The gathering window's item list. The signature is just the item ids, so this only builds and writes a snapshot
+    /// when something appears or disappears (a hidden item being revealed, for example).
+    /// </summary>
+    public static void WindowItems(string signature, Func<List<ReplayItemSlot>> build)
+    {
+        if (_node == null || signature == _lastWindowSignature)
+            return;
+
+        var first = _lastWindowSignature == "";
+        _lastWindowSignature = signature;
+
+        var slots = build();
+
+        var previousIds = _lastWindowSlots.Select(x => x.ItemId).ToHashSet();
+        var currentIds = slots.Select(x => x.ItemId).ToHashSet();
+
+        string Describe(ReplayItemSlot slot) => slot.Hidden ? $"{slot.Name} (hidden)" : slot.Name;
+
+        string detail;
+        if (first)
+        {
+            detail = string.Join(", ", slots.Select(Describe));
+        }
+        else
+        {
+            var added = slots.Where(x => !previousIds.Contains(x.ItemId)).Select(Describe).ToList();
+            var removed = _lastWindowSlots.Where(x => !currentIds.Contains(x.ItemId)).Select(x => x.Name).ToList();
+
+            var parts = new List<string>();
+            if (added.Count > 0)
+                parts.Add($"appeared: {string.Join(", ", added)}");
+            if (removed.Count > 0)
+                parts.Add($"gone: {string.Join(", ", removed)}");
+
+            detail = parts.Count > 0 ? string.Join(" | ", parts) : "list changed";
+        }
+
+        _lastWindowSlots = slots;
+        Add(ReplayEventKind.Note, first ? "Window items" : "Window items changed", detail, e => e.Items = slots);
     }
 
     /// <summary>Records why a buff isn't being cast. Skipped when the reason is the same as last time, or this would flood the log every tick.</summary>

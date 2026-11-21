@@ -55,11 +55,20 @@ internal static class GatherJobs
     public static bool HasUnsettledJob => current != null;
 
     public static GatherJobStartResult Start(string owner, uint itemId, int amount, out Guid jobId, out string message, Job? onlyJob = null)
+        => Start(owner, [(itemId, amount)], out jobId, out message, onlyJob);
+
+    public static GatherJobStartResult Start(string owner, (uint ItemId, int Amount)[] items, out Guid jobId, out string message, Job? onlyJob = null)
     {
         jobId = Guid.Empty;
-        if (string.IsNullOrWhiteSpace(owner) || itemId == 0 || amount <= 0)
+        if (string.IsNullOrWhiteSpace(owner) || items == null || items.Length == 0)
         {
-            message = "An owner, an item and an amount above zero are required";
+            message = "An owner and at least one item are required";
+            return GatherJobStartResult.Invalid;
+        }
+
+        if (items.Any(x => x.ItemId == 0 || x.Amount <= 0))
+        {
+            message = "Every item needs an id and an amount above zero";
             return GatherJobStartResult.Invalid;
         }
 
@@ -75,37 +84,54 @@ internal static class GatherJobs
             return GatherJobStartResult.Busy;
         }
 
-        var targetId = GatherList_Util.ResolveGatherItemId(itemId);
-        if (!GatherList_Util.CanGather(itemId))
+        // Resolve ids and merge duplicates, keeping the caller's order (it decides priority)
+        var targets = new List<(uint ItemId, int Amount)>();
+        foreach (var (itemId, amount) in items)
         {
-            message = $"No gathering route for item {itemId}";
-            return GatherJobStartResult.NoRoute;
+            if (!GatherList_Util.CanGather(itemId))
+            {
+                message = $"No gathering route for item {itemId}";
+                return GatherJobStartResult.NoRoute;
+            }
+
+            var targetId = GatherList_Util.ResolveGatherItemId(itemId);
+            var index = targets.FindIndex(x => x.ItemId == targetId);
+            if (index != -1)
+                targets[index] = (targetId, targets[index].Amount + amount);
+            else
+                targets.Add((targetId, amount));
         }
 
-        if (onlyJob is { } requestedJob)
+        foreach (var (targetId, _) in targets)
         {
-            // GetRoutes falls back to the first usable route for that job, so no config changes are needed
-            if (!Gather_Helper.CanGatherJob(targetId, requestedJob))
+            if (onlyJob is { } requestedJob)
             {
-                message = $"No {requestedJob} route for item {itemId}";
+                // GetRoutes falls back to the first usable route for that job, so no config changes are needed
+                if (!Gather_Helper.CanGatherJob(targetId, requestedJob))
+                {
+                    message = $"No {requestedJob} route for item {targetId}";
+                    return GatherJobStartResult.NoRoute;
+                }
+            }
+            else if (!GatherList_Util.EnsureEnabledRoutes(targetId))
+            {
+                message = $"No gathering route for item {targetId}";
                 return GatherJobStartResult.NoRoute;
             }
         }
-        else if (!GatherList_Util.EnsureEnabledRoutes(targetId))
-        {
-            message = $"No gathering route for item {itemId}";
-            return GatherJobStartResult.NoRoute;
-        }
 
-        var job = new JobEntry(Guid.NewGuid(), owner.Trim(), targetId, amount, GetItemCount(targetId));
+        var job = new JobEntry(Guid.NewGuid(), owner.Trim(), targets);
         current = job;
         jobId = job.Id;
         message = job.Message;
 
-        Gather_Helper.OnlyItemId = targetId;
+        Gather_Helper.OnlyItemIds.Clear();
+        foreach (var (targetId, _) in targets)
+            Gather_Helper.OnlyItemIds.Add(targetId);
+
         Gather_Helper.OnlyJob = onlyJob;
         Gather_Helper.State = IceState.Start;
-        IceLogging.Info($"{job.Owner} started job {job.Id}: {amount}x {targetId}", "IPC");
+        IceLogging.Info($"{job.Owner} started job {job.Id}: {job.Summary}", "IPC");
         return GatherJobStartResult.Started;
     }
 
@@ -142,7 +168,7 @@ internal static class GatherJobs
         job.Outcome = outcome;
         job.Message = message;
         // DisablePlugin clears the route and queues; retain only the node owned at the time of stopping.
-        if (Svc.Condition[ConditionFlag.Gathering] && Gather_Helper.GatherRoute.itemId == job.ItemId)
+        if (Svc.Condition[ConditionFlag.Gathering] && job.Contains(Gather_Helper.GatherRoute.itemId))
             job.StoppingNodeId = Svc.Targets.Target?.GameObjectId;
         job.State = GatherJobState.Stopping;
         IceLogging.Info($"Job {job.Id} for {job.Owner} is ending: {outcome}, {message}", "IPC");
@@ -157,7 +183,7 @@ internal static class GatherJobs
             return false;
 
         if (job.Remaining == 0)
-            End(GatherJobState.Succeeded, $"Gathered {job.Wanted}x {job.ItemId}");
+            End(GatherJobState.Succeeded, $"Gathered {job.Summary}");
         else
             End(GatherJobState.Failed, "Nothing left to gather on the enabled routes");
         return true;
@@ -200,11 +226,11 @@ internal static class GatherJobs
         // Close the collectable first if both addons exist. CloseWindow already throttles callbacks.
         if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var collectable))
         {
-            if (collectable.IsAddonReady && collectable.ItemID == job.ItemId)
+            if (collectable.IsAddonReady && job.Contains(collectable.ItemID))
                 Ecom_Handler.CloseWindow(collectable.Base);
         }
         else if (GenericHelpers.TryGetAddonMaster<Gathering>(out var gathering) && gathering.IsAddonReady &&
-            gathering.GatheredItems.Any(x => x.ItemID == job.ItemId))
+            gathering.GatheredItems.Any(x => job.Contains(x.ItemID)))
         {
             Ecom_Handler.CloseWindow(gathering.Base);
         }
@@ -239,18 +265,44 @@ internal static class GatherJobs
         }
     }
 
-    private sealed class JobEntry(Guid id, string owner, uint itemId, int wanted, int startCount)
+    private sealed class JobEntry
     {
-        public Guid Id { get; } = id;
-        public string Owner { get; } = owner;
-        public uint ItemId { get; } = itemId;
-        public int Wanted { get; } = wanted;
-        public List<Config.ItemInfo> Items { get; } = [new Config.ItemInfo { ItemId = itemId, GatherAmount = wanted }];
+        private readonly record struct Target(uint ItemId, int Wanted, int StartCount);
+
+        private readonly List<Target> targets = new();
+
+        public JobEntry(Guid id, string owner, IReadOnlyList<(uint ItemId, int Amount)> wanted)
+        {
+            Id = id;
+            Owner = owner;
+
+            foreach (var (itemId, amount) in wanted)
+            {
+                targets.Add(new Target(itemId, amount, GetItemCount(itemId)));
+                Items.Add(new Config.ItemInfo { ItemId = itemId, GatherAmount = amount });
+            }
+
+            Message = $"Gathering {Summary}";
+        }
+
+        public Guid Id { get; }
+        public string Owner { get; }
+        public List<Config.ItemInfo> Items { get; } = new();
         public GatherJobState State { get; set; } = GatherJobState.Running;
         public GatherJobState Outcome { get; set; }
         public ulong? StoppingNodeId { get; set; }
-        public string Message { get; set; } = $"Gathering {wanted}x {itemId}";
-        public int Gathered => Math.Max(GetItemCount(ItemId) - startCount, 0);
-        public int Remaining => Math.Max(Wanted - Gathered, 0);
+        public string Message { get; set; }
+
+        public int Wanted => targets.Sum(x => x.Wanted);
+        public int Gathered => targets.Sum(x => Math.Min(GatheredOf(x), x.Wanted));
+        public int Remaining => targets.Sum(x => Math.Max(x.Wanted - GatheredOf(x), 0));
+
+        public bool Contains(uint itemId) => targets.Any(x => x.ItemId == itemId);
+
+        public string Summary => targets.Count == 1
+            ? $"{targets[0].Wanted}x {targets[0].ItemId}"
+            : $"{targets.Count} items";
+
+        private static int GatheredOf(Target target) => Math.Max(GetItemCount(target.ItemId) - target.StartCount, 0);
     }
 }

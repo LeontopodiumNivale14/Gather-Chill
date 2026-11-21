@@ -15,6 +15,22 @@ public partial class Config
         public GatherMode Mode { get; set; } = GatherMode.Gather;
     }
 
+    public enum ItemQuality
+    {
+        PreferHQ,
+        HQOnly,
+        NQOnly,
+    }
+
+    public class ConsumableConfig
+    {
+        public bool Enable { get; set; } = false;
+        public GatherNodeKind AllowedNodes { get; set; } = GatherNodeKind.Regular | GatherNodeKind.Unspoiled | GatherNodeKind.Legendary | GatherNodeKind.Ephemeral;
+        public uint ItemId { get; set; } = 0;
+        public uint SecondsRemaining { get; set; } = 0;
+        public ItemQuality Quality { get; set; } = ItemQuality.PreferHQ;
+    }
+
     public class RouteSelection
     {
         public HashSet<uint> EnabledRoutes { get; set; } = new();
@@ -23,11 +39,12 @@ public partial class Config
     public List<ItemInfo> GatherList { get; set; } = new();
     public Dictionary<uint, RouteSelection> ItemRoutes { get; set; } = new();
 
+    public ConsumableConfig CordialConfig { get; set; } = new();
+    public ConsumableConfig FoodConfig { get; set; } = new();
+    public ConsumableConfig PotionConfig { get; set; } = new();
+    public ConsumableConfig ManualConfig { get; set; } = new();
+
     // Cordial Specific
-    public bool Cordial_Auto { get; set; } = false;
-    public bool Cordial_NormalNode { get; set; } = true;
-    public bool Cordial_LegendaryNode { get; set; } = true;
-    public bool Cordial_EphemerialNode { get; set; } = true;
     public int Cordial_Amount { get; set; } = 300;
     public bool Cordial_Inverse { get; set; } = false;
     public bool Cordial_PreventOvercap { get; set; } = true;
@@ -43,4 +60,31 @@ public partial class Config
     public bool WaitGP_HiddenItem { get; set; } = false;
     public uint TimedNode_MinGP { get; set; } = 0;
     public CollectableTarget Collectable_Target { get; set; } = CollectableTarget.High;
+
+    // Depreciated / Old Configs, probably remove these come EC [MAKE SURE TO MIGRATE THESE]
+    public bool Cordial_Auto { get; set; } = false;
+    public bool Cordial_NormalNode { get; set; } = true;
+    public bool Cordial_LegendaryNode { get; set; } = true;
+    public bool Cordial_EphemerialNode { get; set; } = true;
+
+    public void MigrateCordials()
+    {
+        if (CordialConfig.ItemId != 0)
+            return; // already migrated or set up
+
+        if (!Cordial_Auto)
+            return;
+
+        var kinds = GatherNodeKind.None;
+        if (Cordial_NormalNode)
+            kinds |= GatherNodeKind.Regular;
+        if (Cordial_LegendaryNode)
+            kinds |= GatherNodeKind.Legendary | GatherNodeKind.Unspoiled;
+        if (Cordial_EphemerialNode)
+            kinds |= GatherNodeKind.Ephemeral;
+
+        CordialConfig.Enable = true;
+        CordialConfig.AllowedNodes = kinds;
+        CordialConfig.ItemId = 1;
+    }
 }

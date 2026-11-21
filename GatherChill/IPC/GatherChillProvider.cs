@@ -3,18 +3,22 @@ using ECommons.EzIpcManager;
 using GatherChill.Enums;
 using GatherChill.Scheduler;
 using GatherChill.Utilities.GatheringHelpers.GatherListUtils;
+using System.Collections.Generic;
 
 namespace GatherChill.IPC;
 
 /// <summary>
-/// IPC that other plugins can call, registered as "GatherChill.&lt;Method&gt;".
-/// Bump <see cref="Version"/> when a signature changes.
+/// IPC that other plugins can call".
+/// Bump <see cref="Version"/> whenever I update/add a new one for version protection
+/// If anyone bothers with it.
 /// </summary>
 public class GatherChillProvider
 {
-    private const int Version = 5;
+    private const int Version = 6;
 
     public GatherChillProvider() => EzIPC.Init(this, "GatherChill");
+
+    #region Info
 
     [EzIPC]
     public int ApiVersion() => Version;
@@ -30,6 +34,10 @@ public class GatherChillProvider
     /// </summary>
     [EzIPC]
     public bool CanGather(uint itemId) => GatherList_Util.CanGather(itemId);
+
+    #endregion
+
+    #region Gather list
 
     /// <summary>
     /// Adds items to the gather list. Items already in the list keep the larger amount.
@@ -52,7 +60,7 @@ public class GatherChillProvider
     }
 
     /// <summary>
-    /// Clears the current gathering list, and will replace the list with it's own. 
+    /// Clears the current gathering list, and will replace the list with its own.
     /// Items without a route are skipped. Returns how many items were added.
     /// </summary>
     [EzIPC]
@@ -72,6 +80,10 @@ public class GatherChillProvider
         return count;
     }
 
+    #endregion
+
+    #region Direct gathering
+
     /// <summary>
     /// Starts gathering one item right away, ignoring the rest of the gather list. Stops once it's done.
     /// The item is added to the list (an existing entry keeps the larger amount).
@@ -87,9 +99,40 @@ public class GatherChillProvider
             return false;
 
         C.Save();
-        Gather_Helper.OnlyItemId = GatherList_Util.ResolveGatherItemId(itemId);
+        Gather_Helper.OnlyItemIds.Clear();
+        Gather_Helper.OnlyItemIds.Add(GatherList_Util.ResolveGatherItemId(itemId));
         Gather_Helper.State = IceState.Start;
         return true;
+    }
+
+    /// <summary>
+    /// Starts gathering several items right away, ignoring the rest of the gather list. Stops once they're done.
+    /// Items are added to the list (an existing entry keeps the larger amount). Items without a route are skipped.
+    /// Returns how many items will be gathered. 0 means nothing started (busy, or no item had a route).
+    /// </summary>
+    [EzIPC]
+    public int GatherItems((uint ItemId, int Amount)[] items)
+    {
+        if (IsBusy())
+            return 0;
+
+        var targets = new HashSet<uint>();
+        foreach (var (itemId, amount) in items)
+        {
+            if (!GatherList_Util.CanGather(itemId) || !GatherList_Util.TryAdd(itemId, amount))
+                continue;
+
+            targets.Add(GatherList_Util.ResolveGatherItemId(itemId));
+        }
+
+        if (targets.Count == 0)
+            return 0;
+
+        C.Save();
+        Gather_Helper.OnlyItemIds.Clear();
+        Gather_Helper.OnlyItemIds.UnionWith(targets);
+        Gather_Helper.State = IceState.Start;
+        return targets.Count;
     }
 
     /// <summary>
@@ -112,7 +155,8 @@ public class GatherChillProvider
             return false;
 
         C.Save();
-        Gather_Helper.OnlyItemId = targetId;
+        Gather_Helper.OnlyItemIds.Clear();
+        Gather_Helper.OnlyItemIds.Add(targetId);
         Gather_Helper.OnlyJob = job;
         Gather_Helper.State = IceState.Start;
         return true;
@@ -123,6 +167,10 @@ public class GatherChillProvider
     /// </summary>
     [EzIPC]
     public void Stop() => SchedulerMain.DisablePlugin();
+
+    #endregion
+
+    #region Jobs
 
     /// <summary>
     /// Starts a job that gathers <paramref name="amount"/> more of one item, without touching the saved gather list.
@@ -146,6 +194,28 @@ public class GatherChillProvider
     }
 
     /// <summary>
+    /// Starts one job that gathers every item in the list, in the order given, without touching the saved gather list.
+    /// Duplicate items are merged. If any item has no route, nothing starts and the message names it.
+    /// Result is a <see cref="GatherJobStartResult"/>; JobId is empty unless it started.
+    /// </summary>
+    [EzIPC]
+    public (int Result, Guid JobId, string Message) StartListJob(string owner, (uint ItemId, int Amount)[] items)
+    {
+        var result = GatherJobs.Start(owner, items, out var jobId, out var message);
+        return ((int)result, jobId, message);
+    }
+
+    /// <summary>
+    /// Same as StartListJob, but only uses routes for the given job (falls back to the first route that works).
+    /// </summary>
+    [EzIPC]
+    public (int Result, Guid JobId, string Message) StartListJobForJob(string owner, (uint ItemId, int Amount)[] items, uint jobId)
+    {
+        var result = GatherJobs.Start(owner, items, out var newJobId, out var message, (Job)jobId);
+        return ((int)result, newJobId, message);
+    }
+
+    /// <summary>
     /// State is a <see cref="GatherJobState"/>. A job stays Stopping until travel and the gathering window
     /// have settled, then reports Succeeded, Failed or Cancelled. Unknown means the id isn't known (anymore).
     /// </summary>
@@ -158,6 +228,10 @@ public class GatherChillProvider
     [EzIPC]
     public bool CancelJob(string owner, Guid jobId) => GatherJobs.Cancel(owner, jobId);
 
+    #endregion
+
+    #region UI
+
     /// <summary>
     /// Opens the main window, e.g. after adding items to the gather list. Leaves it open if it already is.
     /// </summary>
@@ -165,7 +239,7 @@ public class GatherChillProvider
     public void OpenWindow() => P.mainWindow.IsOpen = true;
 
     /// <summary>
-    /// Close the main window, e.g. after adding items to the gather list. Keeps it close if it already is.
+    /// Closes the main window. Keeps it closed if it already is.
     /// </summary>
     [EzIPC]
     public void CloseWindow() => P.mainWindow.IsOpen = false;
@@ -177,8 +251,10 @@ public class GatherChillProvider
     public void OpenOverlay() => P.gatherOverlay.IsOpen = true;
 
     /// <summary>
-    /// Closes the gathering overlay (current item, GP, what's next), e.g. while a job runs. Keeps it close if it already is.
+    /// Closes the gathering overlay. Keeps it closed if it already is.
     /// </summary>
     [EzIPC]
     public void CloseOverlay() => P.gatherOverlay.IsOpen = false;
+
+    #endregion
 }

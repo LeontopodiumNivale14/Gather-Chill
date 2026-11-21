@@ -20,7 +20,11 @@ namespace GatherChill.Scheduler
         /// </summary>
         internal static void Fail(string reason) => DisablePlugin(GatherJobState.Failed, reason);
 
-        private static bool OverlayOpened = false;
+        /// <summary>
+        /// True from the first non-idle tick until we return to idle.
+        /// Gates the overlay open/close so each only runs once per run.
+        /// </summary>
+        private static bool runStarted = false;
 
         internal static void DisablePlugin(GatherJobState outcome, string reason)
         {
@@ -33,12 +37,6 @@ namespace GatherChill.Scheduler
             Gather_Helper.GatherRoute = new() { itemId = 0, routeId = 0 };
             Gather_Helper.ClearTargeting();
 
-            if (P.gatherOverlay.IsOpen && C.Overlay_CloseUponStop)
-            {
-                P.gatherOverlay.Toggle();
-                OverlayOpened = false;
-            }
-
             ReplayRecorder.EndSession("Stopped");
         }
 
@@ -47,8 +45,11 @@ namespace GatherChill.Scheduler
             if (Gather_Helper.State == IceState.Idle)
             {
                 Gather_Helper.ResetProgress();
+                OnRunStopped();
                 return;
             }
+
+            OnRunStarted();
 
             Gather_Helper.SyncProgress();
 
@@ -62,12 +63,6 @@ namespace GatherChill.Scheduler
             if (P.TaskManager.NumQueuedTasks != 0)
                 return;
 
-            if (!OverlayOpened && C.Overlay_OpenUponRun)
-            {
-                P.gatherOverlay.IsOpen = true;
-                OverlayOpened = true;
-            }
-
             Action enqueue = Gather_Helper.State switch
             {
                 IceState.Start => Task_Start.Enqueue,
@@ -76,6 +71,35 @@ namespace GatherChill.Scheduler
                 _ => DisablePlugin
             };
             enqueue();
+        }
+
+        /// <summary>
+        /// First non-idle tick of a run: open the overlay if configured.
+        /// </summary>
+        private static void OnRunStarted()
+        {
+            if (runStarted)
+                return;
+
+            runStarted = true;
+
+            if (C.Overlay_OpenUponRun)
+                P.gatherOverlay.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Back to idle after a run: close the overlay if configured.
+        /// Does nothing if a run never started.
+        /// </summary>
+        private static void OnRunStopped()
+        {
+            if (!runStarted)
+                return;
+
+            runStarted = false;
+
+            if (C.Overlay_CloseUponStop)
+                P.gatherOverlay.IsOpen = false;
         }
 
         private static bool ShouldSoftReset()

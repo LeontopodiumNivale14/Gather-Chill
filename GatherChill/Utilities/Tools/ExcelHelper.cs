@@ -1,4 +1,5 @@
-﻿using Lumina.Excel;
+﻿using GatherChill.Utilities.Utility;
+using Lumina.Excel;
 using Lumina.Excel.Sheets;
 
 namespace GatherChill.Utilities.Tools;
@@ -59,6 +60,9 @@ internal static class ExcelHelper
 
         Sheet_Action = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>();
         Sheet_Quest = Svc.Data.GetExcelSheet<Quest>();
+
+        // Doing this for the consumables so I don't have to constantly look it up
+        Utils.Init();
     }
 
     public static string GetTerritoryName(uint territoryid)

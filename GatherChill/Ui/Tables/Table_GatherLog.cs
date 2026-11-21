@@ -166,10 +166,7 @@ internal class Table_GatherLog
                 ImGui.BeginTooltip();
 
                 ImGui.Text($"Item ID: {row.ItemId}");
-                if (Utils.GetItemCount(row.ItemId, out var count))
-                {
-                    ImGui.Text($"Have: {count:N0}");
-                }
+                ImGui_Ice.Table_VertCenterText($"{Utils.GetItemCount(row.ItemId)}");
 
                 ImGui.EndTooltip();
             }
