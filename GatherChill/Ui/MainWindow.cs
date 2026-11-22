@@ -84,6 +84,12 @@ namespace GatherChill.Ui
                 Label = "Gather Playlist",
                 Draw = () => GatherPlaylist.Draw()
             },
+            [WindowSelection.GrandCompany] = new()
+            {
+                Icon = FontAwesomeIcon.Flag,
+                Label = "Grand Company",
+                Draw = () => GcProvisioningTab.Draw()
+            },
             [WindowSelection.SavedList] = new()
             {
                 Icon = FontAwesomeIcon.Save,

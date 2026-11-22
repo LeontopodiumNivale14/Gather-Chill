@@ -6,6 +6,7 @@ public enum WindowSelection
     GatherList = 1,
     SavedList = 2,
     Reducables = 3,
+    GrandCompany = 4,
 
 
     Settings = 25,
