@@ -88,20 +88,6 @@ namespace GatherChill.Scheduler.Tasks
             [GatherBuffId.Meticulous] = 0,
         };
 
-        private static readonly HashSet<uint> Crystals = new()
-        {
-            // shards
-            2, 3, 4, 5, 6, 7,
-
-            // crystals
-            8, 9, 10, 11, 12, 13,
-
-            // clusters
-            14, 15, 16, 17, 18, 19,
-
-            10099 // Unaspected crystal
-        };
-
         // Only these are cast at the start of the node. Ageless, Wise and Bountiful are allowed after integrity drops.
         private static readonly HashSet<GatherBuffId> FullIntegrityOnly = new()
         {
@@ -691,7 +677,7 @@ namespace GatherChill.Scheduler.Tasks
             // Buff -> gather. Collectables have their own system, and timed nodes may be holding GP.
             if (!Gather_Helper.ShouldHoldGpForTimedNode() && !goalItem.IsCollectable)
             {
-                var buffing = Crystals.Contains(itemId)
+                var buffing = Utils.IsCrystal(itemId)
                     ? Crystal_BuffCheck(gather.TotalIntegrity == gather.CurrentIntegrity)
                     : PlanAndCheckBuffs(gather, GetRouteKind(routeId), goalItem.ItemID, goalItem.GatherChance, goalItem.BoonChance, goalItem.GatherAmount, remaining);
 
@@ -785,7 +771,8 @@ namespace GatherChill.Scheduler.Tasks
             }
 
             // For some reason or another, we need to just gather the crystals (probably not available)
-            var crystal = gather.GatheredItems.FirstOrDefault(x => Crystals.Contains(x.ItemID));
+            // Skip any we're capped on as its a hard cap and can gather
+            var crystal = gather.GatheredItems.FirstOrDefault(x => Utils.IsCrystal(x.ItemID) && x.IsEnabled && !Utils.IsCrystalCapped(x.ItemID));
             if (crystal != null)
             {
                 ReplayRecorder.Decision("Goal item", "missing: gathering a crystal instead");
@@ -793,7 +780,7 @@ namespace GatherChill.Scheduler.Tasks
                 if (EzThrottler.Throttle($"Gathering Backup: {crystal.ItemID}"))
                     crystal.Gather();
 
-                IceLogging.Verbose("We found a crystal to fallback on, gathering that", tag);
+                IceLogging.Verbose($"We found a crystal to fallback on, gathering that ({crystal.ItemID})", tag);
                 return false;
             }
 
