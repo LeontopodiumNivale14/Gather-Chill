@@ -673,7 +673,9 @@ namespace GatherChill.Scheduler.Tasks
                 return false;
 
             var goalItem = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId && x.IsEnabled)
-                           ?? gather.GatheredItems.FirstOrDefault(x => x.IsEnabled && IsGoalItem(x.ItemID, itemId));
+                           ?? gather.GatheredItems.FirstOrDefault(x => x.IsEnabled && IsGoalItem(x.ItemID, itemId))
+                           // fallback to anything else on list that could be gathered.
+                           ?? gather.GatheredItems.FirstOrDefault(x => x.IsEnabled && ItemInQueueList(x.ItemID));
             if (goalItem == null)
                 return HandleMissingGoalItem(gather, itemId);
 
@@ -749,6 +751,12 @@ namespace GatherChill.Scheduler.Tasks
             // goalInfo is the reduce result; ReducedFromItemIds holds every source that feeds it
             return goalInfo.ReducedFromItemIds.Contains(gatheredItemId);
         }
+
+        /// <summary>
+        /// fallback to another item on the list if original item not there
+        /// </summary>
+        private static bool ItemInQueueList(uint gatheredItemId) =>
+            Gather_Helper.ItemProgress.Any(p => !p.IsComplete && IsGoalItem(gatheredItemId, p.ItemId));
 
         private static bool HandleMissingGoalItem(Utilities.ExtraAddons.Gathering gather, uint itemId)
         {
