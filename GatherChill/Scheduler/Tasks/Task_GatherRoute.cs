@@ -196,9 +196,18 @@ namespace GatherChill.Scheduler.Tasks
 
             var reducableItems = itemInfo.ReducedFromItemIds;
 
-            if (reducableItems.Count > 0 && reducableItems.Any(x => Utils.HasPurifyItem(x)))
+            var firstItem = reducableItems.FirstOrDefault(x => Utils.HasPurifyItem(x));
+            if (firstItem != 0)
             {
-                var firstItem = reducableItems.First(x => Utils.HasPurifyItem(x));
+                if (Player.Mounted)
+                {
+                    if (EzThrottler.Throttle("Dismount to reduce", 1000))
+                    {
+                        IceLogging.Verbose("Dismounting so we can reduce", tag);
+                        Utils.Dismount();
+                    }
+                    return false;
+                }
 
                 if (EzThrottler.Throttle("Purifying item"))
                 {
@@ -663,7 +672,8 @@ namespace GatherChill.Scheduler.Tasks
             if (gather.CurrentIntegrity == 0)
                 return false;
 
-            var goalItem = gather.GatheredItems.FirstOrDefault(x => IsGoalItem(x.ItemID, itemId));
+            var goalItem = gather.GatheredItems.FirstOrDefault(x => x.ItemID == itemId && x.IsEnabled)
+                           ?? gather.GatheredItems.FirstOrDefault(x => x.IsEnabled && IsGoalItem(x.ItemID, itemId));
             if (goalItem == null)
                 return HandleMissingGoalItem(gather, itemId);
 
