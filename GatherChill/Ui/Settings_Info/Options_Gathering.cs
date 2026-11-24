@@ -176,6 +176,27 @@ public static partial class SettingsUi
         }
     };
 
+    private static SettingEntry Reduce_IncludeCrystals = new()
+    {
+        Label = "Crystals/Clusters From Reduction",
+        Category = GatheringOptions,
+        Keywords = new[] { "Reduce", "Reduction", "Aetherial", "Crystals", "Clusters", "Collectable", "Timed" },
+        Draw = () =>
+        {
+            var v = C.Reduce_IncludeCrystals;
+            if (ImGui.Checkbox("Gather crystals/clusters by reducing collectables", ref v))
+            {
+                C.Reduce_IncludeCrystals = v;
+                C.Save();
+                // Sheet info cached so force a reload.
+                Gather_Util.RebuildSheetInfo();
+            }
+            ImGui.SameLine();
+            ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle,
+                "Allow crystals and clusters to be gathered by reduction, this option will give you unwanted items");
+        }
+    };
+
     private static SettingEntry CollectabilityGoal = new()
     {
         Label = "Goal Collectability",

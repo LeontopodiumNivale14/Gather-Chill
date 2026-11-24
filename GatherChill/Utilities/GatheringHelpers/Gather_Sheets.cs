@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Textures;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using ECommons.ExcelServices;
 using GatherChill.Enums;
@@ -259,6 +259,18 @@ public static partial class Gather_Util
 
         // Config Update
         Update_NodeConfig();
+    }
+
+    /// <summary>
+    /// Force a rebuild of sheet info, when absolutely necessary. 
+    /// </summary>
+    public static void RebuildSheetInfo()
+    {
+        Sheet_RouteInfo.Clear();
+        Sheet_ItemInfo.Clear();
+        Icons_AssignmentType.Clear();
+
+        UpdateSheetInfo();
     }
 
     // TO WHOEVER MIGHT BE READING THIS (including future you)
