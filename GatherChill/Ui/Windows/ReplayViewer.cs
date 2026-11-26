@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Windows
 {
     /// <summary>
     /// The replay browser itself. Drawn by the standalone window and by the Replays tab in the logs window,

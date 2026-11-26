@@ -7,6 +7,7 @@ using GatherChill.Gui.ImGuiTable;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
+using static GatherChill.Ui.Tables.Table_Items;
 
 namespace GatherChill.Ui.RouteWindowTabs;
 
@@ -307,8 +308,8 @@ internal class RouteInfo
             var names = new List<string>(itemIds.Count);
             foreach (var itemId in itemIds)
             {
-                if (ExcelHelper.Sheet_Item.TryGetRow(itemId, out var itemInfo))
-                    names.Add(itemInfo.Name.ToString());
+                if (Sheet_ItemInfo.TryGetValue(itemId, out var itemInfo))
+                    names.Add(itemInfo.Name);
             }
 
             return string.Join(", ", names);
@@ -336,20 +337,20 @@ internal class RouteInfo
                     break;
                 }
 
-                if (!ExcelHelper.Sheet_Item.TryGetRow(itemIds[i], out var itemInfo))
+                if (!Sheet_ItemInfo.TryGetValue(itemIds[i], out var itemInfo))
                     continue;
 
                 if (drawn > 0)
                     ImGui.SameLine();
                 drawn++;
 
-                var icon = Svc.Texture.GetFromGameIcon((int)itemInfo.Icon).GetWrapOrEmpty();
+                var icon = Svc.Texture.GetFromGameIcon(itemInfo.IconId).GetWrapOrEmpty();
 
                 ImGui.ImageButton(icon.Handle, new Vector2(buttonSize, buttonSize), 1);
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip(itemInfo.Name.ToString());
+                    ImGui.SetTooltip(itemInfo.Name);
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                    ImGui.SetClipboardText(itemInfo.Name.ToString());
+                    ImGui.SetClipboardText(itemInfo.Name);
             }
 
             DrawOverflow(itemIds, hiddenStart);
@@ -372,7 +373,7 @@ internal class RouteInfo
 
             for (var i = hiddenStart; i < itemIds.Count; i++)
             {
-                if (ExcelHelper.Sheet_Item.TryGetRow(itemIds[i], out var itemInfo))
+                if (Sheet_ItemInfo.TryGetValue(itemIds[i], out var itemInfo))
                     ImGui.Text(itemInfo.Name.ToString());
             }
         }

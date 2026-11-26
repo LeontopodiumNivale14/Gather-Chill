@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Windows
 {
     internal class CalculatorWindow : Window
     {

@@ -1,5 +1,7 @@
 using ECommons.ExcelServices;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.ConfigFiles;
+using System.Collections.Generic;
 
 namespace GatherChill.Utilities.GatheringHelpers.GatherListUtils;
 
@@ -21,9 +23,43 @@ internal static partial class GatherList_Util
         return reduceInfo?.ResultItems[0].ItemId ?? itemId;
     }
 
-    public static bool IsInList(uint itemId)
+    /// <summary>
+    /// Other items tied to this one through aetherial reduction (reducible, sublime, result),
+    /// limited to ones we can actually gather. Used so the UI can tell the user a second source exists.
+    /// </summary>
+    public static List<uint> GetReductionLinks(uint itemId)
     {
-        var targetId = ResolveGatherItemId(itemId);
+        var links = new List<uint>();
+
+        foreach (var info in Gather_Util.ReducableItems)
+        {
+            if (info.ResultItems.Count == 0)
+                continue;
+
+            var resultId = info.ResultItems[0].ItemId;
+            if (info.ItemId != itemId && info.SublimeItemId != itemId && resultId != itemId)
+                continue;
+
+            foreach (var id in new uint[] { info.ItemId, info.SublimeItemId, resultId })
+            {
+                if (id == 0 || id == itemId || links.Contains(id))
+                    continue;
+
+                if (Gather_Util.Sheet_ItemInfo.ContainsKey(id))
+                    links.Add(id);
+            }
+        }
+
+        return links;
+    }
+
+    /// <param name="resolve">
+    /// true  = reducibles count as their result item (IPC / imports, old behaviour).
+    /// false = exact item id only (the picker, so both sources can live in the list).
+    /// </param>
+    public static bool IsInList(uint itemId, bool resolve = true)
+    {
+        var targetId = resolve ? ResolveGatherItemId(itemId) : itemId;
         return C.GatherList.Any(x => x.ItemId == targetId);
     }
 
@@ -54,11 +90,12 @@ internal static partial class GatherList_Util
     /// Adds an item to the gather list, or raises its amount if it's already there.
     /// Returns false if the item isn't a known gatherable.
     /// </summary>
-    public static bool TryAdd(uint itemId, int amount)
+    /// <param name="resolve">See <see cref="IsInList"/>.</param>
+    public static bool TryAdd(uint itemId, int amount, bool resolve = true)
     {
-        var targetId = ResolveGatherItemId(itemId);
+        var targetId = resolve ? ResolveGatherItemId(itemId) : itemId;
 
-        if (!Gather_Util.Sheet_ItemInfo.TryGetValue(targetId, out var itemInfo))
+        if (!Gather_Util.Sheet_ItemInfo.TryGetValue(targetId, out _))
             return false;
 
         var existing = C.GatherList.FirstOrDefault(x => x.ItemId == targetId);

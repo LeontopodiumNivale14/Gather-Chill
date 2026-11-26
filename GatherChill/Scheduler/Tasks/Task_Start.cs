@@ -23,7 +23,41 @@ namespace GatherChill.Scheduler.Tasks
             }
         }
 
-        private static bool IsWanted(uint itemId) => Gather_Helper.ItemProgress.Any(p => p.ItemId == itemId && !p.IsComplete) && Utils.GetFreeSlotCount() > 1;
+        /// <summary>
+        /// Which still-needed list entry does this item serve? Exact match first, then through reduction.
+        /// entryId is the ENTRY's id (what GatherRoute.itemId must hold), not the id of the item in the window.
+        /// Same matching as Task_GatherRoute.IsGoalItem.
+        /// </summary>
+        private static bool TryGetWantedEntry(uint gatheredItemId, out uint entryId)
+        {
+            entryId = 0;
+
+            if (Utils.GetFreeSlotCount() <= 1)
+                return false;
+
+            var open = Gather_Helper.ItemProgress.Where(p => !p.IsComplete).ToList();
+
+            var exact = open.FirstOrDefault(p => p.ItemId == gatheredItemId);
+            if (exact != null)
+            {
+                entryId = exact.ItemId;
+                return true;
+            }
+
+            foreach (var progress in open)
+            {
+                if (!Gather_Util.Sheet_ItemInfo.TryGetValue(progress.ItemId, out var info))
+                    continue;
+
+                if (!info.ReducedFromItemIds.Contains(gatheredItemId))
+                    continue;
+
+                entryId = progress.ItemId;
+                return true;
+            }
+
+            return false;
+        }
 
         private static unsafe bool CheckInteraction()
         {
@@ -54,11 +88,11 @@ namespace GatherChill.Scheduler.Tasks
                 {
                     foreach (var item in gathering.GatheredItems)
                     {
-                        if (!IsWanted(item.ItemID))
+                        if (!TryGetWantedEntry(item.ItemID, out var entryId))
                             continue;
 
-                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {item.ItemID}", tag);
-                        Gather_Helper.GatherRoute = new() { itemId = item.ItemID, routeId = route.Value.Key };
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. Window item: {item.ItemID} | Entry: {entryId}", tag);
+                        Gather_Helper.GatherRoute = new() { itemId = entryId, routeId = route.Value.Key };
                         Gather_Helper.State = IceState.Gather;
                         return true;
                     }
@@ -69,10 +103,10 @@ namespace GatherChill.Scheduler.Tasks
                 }
                 else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>(out var gatherMaster) && gatherMaster.IsAddonReady)
                 {
-                    if (IsWanted(gatherMaster.ItemID))
+                    if (TryGetWantedEntry(gatherMaster.ItemID, out var entryId))
                     {
-                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. ItemId: {gatherMaster.ItemID}", tag);
-                        Gather_Helper.GatherRoute = new() { itemId = gatherMaster.ItemID, routeId = route.Value.Key };
+                        IceLogging.Verbose($"We found an item that is contained in the route we're in! Time to just gather it. Window item: {gatherMaster.ItemID} | Entry: {entryId}", tag);
+                        Gather_Helper.GatherRoute = new() { itemId = entryId, routeId = route.Value.Key };
                         Gather_Helper.State = IceState.Gather;
                         return true;
                     }
@@ -85,11 +119,35 @@ namespace GatherChill.Scheduler.Tasks
             return false;
         }
 
+        private static bool TryGetEntryWithReducibles(out uint entryId)
+        {
+            entryId = 0;
+
+            foreach (var progress in Gather_Helper.ItemProgress.Where(p => !p.IsComplete))
+            {
+                if (!Task_GatherRoute.TryFindReducible(progress.ItemId, out _))
+                    continue;
+
+                entryId = progress.ItemId;
+                return true;
+            }
+
+            return false;
+        }
+
         private static unsafe bool CheckList()
         {
             string tag = "Task Start: Check List";
 
             IceLogging.Verbose("Starting check list process", tag);
+
+            // Reduce first: no node is needed for it, and a timed route that isn't up would otherwise leave these sitting in the bags
+            if (Utils.GetFreeSlotCount() > 0 && TryGetEntryWithReducibles(out var reduceEntryId))
+            {
+                IceLogging.Debug($"We have reducibles in the bags for entry {reduceEntryId}, reducing those first", tag);
+                P.TaskManager.Enqueue(() => Task_GatherRoute.ReduceForEntry(reduceEntryId, "Task Start: Reduce Pocket"), "Reducing items in bags");
+                return true;
+            }
 
             // ItemProgress is kept in sync by the tick, so "still needs gathering" is "tracked and not complete"
             var itemList = GatherJobs.ActiveList

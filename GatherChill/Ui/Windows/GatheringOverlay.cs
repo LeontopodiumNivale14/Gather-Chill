@@ -9,7 +9,7 @@ using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.Utility;
 using System.Collections.Generic;
 
-namespace GatherChill.Ui;
+namespace GatherChill.Ui.Windows;
 
 internal class GatheringOverlay : Window
 {

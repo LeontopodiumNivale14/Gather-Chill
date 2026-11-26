@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GatherChill.Ui;
+namespace GatherChill.Ui.Windows;
 
 // This isn't currently wired up to anything. Can actually use this to place all the general settings for all the windows...
 internal class SettingsWindow : Window

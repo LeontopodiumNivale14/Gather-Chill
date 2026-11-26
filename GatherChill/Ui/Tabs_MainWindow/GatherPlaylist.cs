@@ -447,7 +447,8 @@ namespace GatherChill.Ui.Tabs_MainWindow
 
             foreach (var (itemId, item) in pageItems)
             {
-                var added = GatherList_Util.IsInList(itemId);
+                // Exact match: picking a reducible and picking its result are separate entries now
+                var added = GatherList_Util.IsInList(itemId, resolve: false);
                 var rowStart = ImGui.GetCursorScreenPos();
 
                 // Full-width selectable owns hover + click, icon and name are drawn on top
@@ -466,14 +467,70 @@ namespace GatherChill.Ui.Tabs_MainWindow
                 else
                     ImGui.TextUnformatted(item.Name);
 
+                DrawReductionHint(itemId);
+
                 if (!clicked || added)
                     continue;
 
-                if (GatherList_Util.TryAdd(itemId, 1))
+                if (GatherList_Util.TryAdd(itemId, 1, resolve: false))
                     C.SaveDebounced();
                 ImGui.CloseCurrentPopup();
                 return;
             }
+        }
+
+        private const uint ReductionHintIconId = 121;
+        private const int ReductionHintMaxItems = 8;
+
+        // Source item -> shows what it reduces into. Result item -> shows what it can be reduced from.
+        private static void DrawReductionHint(uint itemId)
+        {
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(itemId, out var info))
+                return;
+
+            var hasInto = info.ReducesIntoItemId != 0 && Gather_Util.Sheet_ItemInfo.ContainsKey(info.ReducesIntoItemId);
+            var hasFrom = info.ReducedFromItemIds.Count != 0;
+            if (!hasInto && !hasFrom)
+                return;
+
+            ImGui.SameLine();
+            var size = ImGui.GetFrameHeight();
+            if (GameIcons.TryGetScaledIcon(ReductionHintIconId, (int)MathF.Round(size), out var texture))
+                ImGui.Image(texture.Handle, new Vector2(size));
+            else
+                ImGui.Dummy(new Vector2(size));
+
+            if (!ImGui.IsItemHovered())
+                return;
+
+            using var tooltip = ImRaii.Tooltip();
+
+            if (hasInto)
+            {
+                ImGui.Text("Can be reduced into:");
+                DrawHintItem(info.ReducesIntoItemId);
+            }
+
+            if (!hasFrom)
+                return;
+
+            ImGui.Text("Obtainable by reducing:");
+            foreach (var fromId in info.ReducedFromItemIds.Take(ReductionHintMaxItems))
+                DrawHintItem(fromId);
+
+            var hidden = info.ReducedFromItemIds.Count - ReductionHintMaxItems;
+            if (hidden > 0)
+                ImGui.TextDisabled($"+{hidden} more");
+        }
+
+        private static void DrawHintItem(uint itemId)
+        {
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(itemId, out var info))
+                return;
+
+            // Exact match, same as the picker: the other source is its own entry
+            var inList = GatherList_Util.IsInList(itemId, resolve: false);
+            ImGui.BulletText(inList ? $"{info.Name} (added)" : info.Name);
         }
 
         private static void DrawPickerPageControls()

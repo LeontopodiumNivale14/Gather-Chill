@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using static GatherChill.Utilities.Tools.IceLogging;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Tabs_MainWindow
 {
     internal class Ui_LogViewer
     {

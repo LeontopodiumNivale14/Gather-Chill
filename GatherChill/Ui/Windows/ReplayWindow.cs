@@ -1,6 +1,6 @@
 ﻿using Dalamud.Interface.Windowing;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Windows
 {
     internal class ReplayViewerWindow : Window
     {

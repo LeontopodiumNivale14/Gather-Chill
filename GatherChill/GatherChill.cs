@@ -7,7 +7,7 @@ using GatherChill.GrandCompany;
 using GatherChill.IPC;
 using GatherChill.Scheduler;
 using GatherChill.Scheduler.Handlers;
-using GatherChill.Ui;
+using GatherChill.Ui.Windows;
 using GatherChill.Utilities.Replay;
 using GatherChill.Utilities.Tools;
 using Pictomancy;
@@ -43,8 +43,6 @@ public sealed class GatherChill : IDalamudPlugin
     // IPC that other plugins call into (RelicTracker, ...)
     internal GatherChillProvider ipcProvider;
 
-    internal GcProvisioning Gc;
-
     // putting this here to initialize all the routes, instead of having to go a roundbout way of accessing it...
     internal GatheringRouteLoader routeEditor;
 
@@ -70,7 +68,6 @@ public sealed class GatherChill : IDalamudPlugin
         lifestream = new();
         navmesh = new();
         pandora = new();
-        Gc = new();
 
         routeEditor = new();
         routeEditor.LoadAllRoutes();
@@ -118,7 +115,6 @@ public sealed class GatherChill : IDalamudPlugin
 
     private void Tick(object _)
     {
-        Gc.Update();
         if (Player.Available)
         {
             SchedulerMain.Tick();
@@ -144,7 +140,6 @@ public sealed class GatherChill : IDalamudPlugin
         Safe(() => Svc.Framework.Update -= Tick);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
         Safe(() => Svc.PluginInterface.UiBuilder.Draw -= OnDraw);
-        Safe(() => Gc?.Dispose());
         Safe(() => ReplayRecorder.EndSession("Plugin unloaded", sync: true));
         ECommonsMain.Dispose();
         Safe(TextAdvancedManager.UnlockTA);

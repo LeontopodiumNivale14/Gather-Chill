@@ -2,6 +2,7 @@
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using GatherChill.Enums;
+using GatherChill.GrandCompany;
 using GatherChill.Gui;
 using GatherChill.Ui.Settings_Info;
 using GatherChill.Ui.Tabs_MainWindow;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Action = System.Action;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Windows
 {
     internal class MainWindow : Window
     {
@@ -88,19 +89,13 @@ namespace GatherChill.Ui
             {
                 Icon = FontAwesomeIcon.Flag,
                 Label = "Grand Company",
-                Draw = () => GcProvisioningTab.Draw()
+                Draw = () => GC_Window.Draw()
             },
             [WindowSelection.SavedList] = new()
             {
                 Icon = FontAwesomeIcon.Save,
                 Label = "Saved List",
                 Draw = () => SavedList.Draw(),
-            },
-            [WindowSelection.Settings] = new()
-            {
-                Icon = FontAwesomeIcon.Cog,
-                Label = "Settings",
-                Draw = () => SettingsUi.Draw()
             },
             [WindowSelection.Gatherbuffs] = new()
             {
@@ -134,9 +129,13 @@ namespace GatherChill.Ui
             }
         };
 
-        /// <summary>
-        /// Primary draw method. Responsible for drawing the entire UI of the main window.
-        /// </summary>
+        private static readonly WindowInfo SettingsTab = new()
+        {
+            Icon = FontAwesomeIcon.Cog,
+            Label = "Settings",
+            Draw = () => SettingsUi.Draw()
+        };
+
         public override void Draw()
         {
             using var colors = ImGui_Ice.PushChildBG();
@@ -168,73 +167,218 @@ namespace GatherChill.Ui
         private void SelectableSidebar()
         {
             var scale = ImGuiHelpers.GlobalScale;
-            int baseSize = 200;
-            var scaledWidth = baseSize * scale;
-            var height = ImGui.GetContentRegionAvail().Y;
+            bool compact = C.Compact_Icons;
 
-            // TODO: I want to make this adjustable based on the size of the window...
-            // var compact = ImGui.GetContentRegionAvail().X < (500 * scale); 
-            var compact = false;
+            float scaledWidth = (compact ? (C.Compact_Ui ? 52 : 62) : 200) * scale;
+            var height = ImGui.GetContentRegionAvail().Y;
 
             using var colors = ImGui_Ice.PushChildBG();
 
-            using (var sidebarSelection = ImRaii.Child("CL_SidebarSelection", new(scaledWidth, height), true))
+            using var sidebarSelection = ImRaii.Child("CL_SidebarSelection", new(scaledWidth, height), true);
+            if (!sidebarSelection.Success)
+                return;
+
+            PluginIcon(compact);
+
+            // Everything left over after the footer goes to the scrollable tab list
+            float footerHeight = GetFooterHeight(compact);
+            float listHeight = MathF.Max(0f, ImGui.GetContentRegionAvail().Y - footerHeight);
+
+            DrawTabList(compact, listHeight);
+            DrawSidebarFooter(compact);
+        }
+
+        private void DrawTabList(bool compact, float height)
+        {
+            using var list = ImRaii.Child("CL_TabList", new Vector2(0, height), false);
+            if (!list.Success)
+                return;
+
+            if (compact)
             {
-                if (!sidebarSelection.Success)
-                    return;
-
-                PluginIcon();
-                float avail = ImGui.GetContentRegionAvail().X;
-
-                using var table = ImRaii.Table("##tabList", 3, ImGuiTableFlags.None);
-                if (table)
+                foreach (var item in TabItems)
                 {
-                    ImGui.TableSetupColumn("accent", ImGuiTableColumnFlags.WidthFixed, 4 * scale);
-                    ImGui.TableSetupColumn("icon", ImGuiTableColumnFlags.WidthFixed, 24 * scale);
-                    ImGui.TableSetupColumn("label", compact ? ImGuiTableColumnFlags.WidthFixed : ImGuiTableColumnFlags.WidthStretch, compact ? 0f : 0f);
-
-                    foreach (var item in TabItems)
-                    {
-                        if (C.Compact_Ui)
-                            DrawSelectable_Icon_Small(item.Value.Icon, item.Value.Label, item.Key, compact);
-                        else
-                            DrawSelectable_Icon(item.Value.Icon, item.Value.Label, item.Key, compact);
-                    }
+                    if (IconTabButton(item.Value.Icon, item.Value.Label, item.Key == C.SelectedTab))
+                        SelectTab(item.Key);
                 }
+
+                return;
+            }
+
+            using var table = ImRaii.Table("##tabList", 3, ImGuiTableFlags.None);
+            if (!table)
+                return;
+
+            var scale = ImGuiHelpers.GlobalScale;
+            ImGui.TableSetupColumn("accent", ImGuiTableColumnFlags.WidthFixed, 0.5f * scale);
+            ImGui.TableSetupColumn("icon", ImGuiTableColumnFlags.WidthFixed, 24 * scale);
+            ImGui.TableSetupColumn("label", ImGuiTableColumnFlags.WidthStretch);
+
+            foreach (var item in TabItems)
+            {
+                if (C.Compact_Ui)
+                    DrawSelectable_Icon_Small(item.Value.Icon, item.Value.Label, item.Key, false);
+                else
+                    DrawSelectable_Icon(item.Value.Icon, item.Value.Label, item.Key, false);
             }
         }
+
+        private static void SelectTab(WindowSelection tab)
+        {
+            C.SelectedTab = tab;
+            C.SaveDebounced();
+        }
+
+        private static void ToggleCompact()
+        {
+            C.Compact_Icons = !C.Compact_Icons;
+            C.SaveDebounced();
+        }
+
+        private static float GetIconButtonSide(FontAwesomeIcon icon)
+        {
+            float scale = ImGuiHelpers.GlobalScale;
+
+            ImGui.PushFont(UiBuilder.IconFont);
+            var iconSize = ImGui.CalcTextSize(icon.ToIconString());
+            ImGui.PopFont();
+
+            // Same formula as IconTabButton so the footer matches the tab buttons
+            float padding = (C.Compact_Ui ? 4f : 9f) * scale;
+            return MathF.Max(iconSize.X, iconSize.Y) + padding * 2f;
+        }
+
+        private static float GetFooterHeight(bool compact)
+        {
+            float scale = ImGuiHelpers.GlobalScale;
+            var style = ImGui.GetStyle();
+
+            float side = GetIconButtonSide(FontAwesomeIcon.AngleDoubleLeft);
+            float gap = (C.Compact_Ui ? 2f : 4f) * scale;
+            float separator = style.ItemSpacing.Y * 2f + 1f;
+            float slack = 6f * scale;
+
+            // Compact: toggle stacked above settings. Expanded: one shared row.
+            float buttons = compact ? side * 2f + gap : side;
+
+            return separator + buttons + style.ItemSpacing.Y + slack;
+        }
+
+        private static void DrawSidebarFooter(bool compact)
+        {
+            ImGui.Separator();
+
+            bool settingsSelected = C.SelectedTab == WindowSelection.Settings;
+
+            if (compact)
+            {
+                if (IconTabButton(FontAwesomeIcon.AngleDoubleRight, "Expand sidebar", false))
+                    ToggleCompact();
+
+                if (IconTabButton(SettingsTab.Icon, SettingsTab.Label, settingsSelected))
+                    SelectTab(WindowSelection.Settings);
+
+                return;
+            }
+
+            float side = GetIconButtonSide(FontAwesomeIcon.AngleDoubleLeft);
+            float rowWidth = ImGui.GetContentRegionAvail().X - side - ImGui.GetStyle().ItemSpacing.X;
+
+            if (SettingsRow(rowWidth, side, settingsSelected))
+                SelectTab(WindowSelection.Settings);
+
+            ImGui.SameLine();
+
+            if (IconTabButton(FontAwesomeIcon.AngleDoubleLeft, "Collapse sidebar", false))
+                ToggleCompact();
+        }
+
+        private static bool SettingsRow(float width, float height, bool isSelected)
+        {
+            float scale = ImGuiHelpers.GlobalScale;
+
+            var pos = ImGui.GetCursorScreenPos();
+            bool clicked = ImGui.InvisibleButton("##tab_Settings", new Vector2(width, height));
+
+            bool hovered = ImGui.IsItemHovered();
+            var drawList = ImGui.GetWindowDrawList();
+            var rounding = ImGui.GetStyle().FrameRounding;
+
+            // --- Background (same colors the table rows use) ---
+            if (isSelected)
+                drawList.AddRectFilled(pos, pos + new Vector2(width, height), ImGui.GetColorU32(ImGuiCol.HeaderActive), rounding);
+            else if (hovered)
+                drawList.AddRectFilled(pos, pos + new Vector2(width, height), ImGui.GetColorU32(ImGuiCol.HeaderHovered), rounding);
+
+            // --- Accent bar (selected only) ---
+            float accentWidth = 4f * scale;
+            if (isSelected)
+            {
+                var accent = C.UseIceTheme ? Theme_Colors.SidebarAccent : ImGuiColors.ParsedGold;
+                drawList.AddRectFilled(pos, pos + new Vector2(accentWidth, height), ImGui.GetColorU32(accent));
+            }
+
+            // --- Icon, centered in a 24px slot after the accent bar ---
+            float iconSlot = 24f * scale;
+
+            ImGui.PushFont(UiBuilder.IconFont);
+            var iconSize = ImGui.CalcTextSize(SettingsTab.Icon.ToIconString());
+            var iconPos = new Vector2(
+                pos.X + accentWidth + (iconSlot - iconSize.X) * 0.5f,
+                pos.Y + (height - iconSize.Y) * 0.5f);
+            drawList.AddText(iconPos, ImGui.GetColorU32(ImGuiCol.Text), SettingsTab.Icon.ToIconString());
+            ImGui.PopFont();
+
+            // --- Label ---
+            var labelPos = new Vector2(
+                pos.X + accentWidth + iconSlot + 4f * scale,
+                pos.Y + (height - ImGui.GetTextLineHeight()) * 0.5f);
+            drawList.AddText(labelPos, ImGui.GetColorU32(ImGuiCol.Text), SettingsTab.Label);
+
+            return clicked;
+        }
+
         private void DetailsInfo()
         {
             var selectedTab = C.SelectedTab;
-            if (TabItems.TryGetValue(selectedTab, out var tabInfo))
+
+            if (selectedTab == WindowSelection.Settings)
             {
                 ImGui.SameLine();
-                tabInfo.Draw();
+                SettingsTab.Draw();
+                return;
             }
-            else
+
+            if (!TabItems.TryGetValue(selectedTab, out var tabInfo))
             {
                 ImGui.Text($"Can't find the tab: {selectedTab}");
+                return;
             }
+
+            ImGui.SameLine();
+            tabInfo.Draw();
         }
-        private static void PluginIcon()
+        private static void PluginIcon(bool compact)
         {
             const string iconPath = "GatherChill.Resources.Icon.png";
 
             var pluginIcon = Svc.Texture.GetFromManifestResource(Assembly.GetExecutingAssembly(), iconPath).GetWrapOrEmpty();
             if (pluginIcon == null) return;
 
-            // Getting the image size via the texture wrap (using the * after to manipulate the size cause, she big)
-            var imageSize = new Vector2(pluginIcon.Width, pluginIcon.Height) * 0.75f;
-
-            // Calculate the offset/centering here
             var sidebarWidth = ImGui.GetContentRegionAvail().X;
-            var offsetX = (sidebarWidth - imageSize.X) / 2.0f;
 
-            // Center and drawing the image now
+            // Compact: shrink the icon to fit the narrow sidebar (with a little padding).
+            // Normal: keep the existing 0.75x size.
+            float imageScale = 0.75f;
+            if (compact)
+                imageScale = MathF.Min(0.75f, (sidebarWidth - 8 * ImGuiHelpers.GlobalScale) / pluginIcon.Width);
+
+            var imageSize = new Vector2(pluginIcon.Width, pluginIcon.Height) * imageScale;
+
+            var offsetX = (sidebarWidth - imageSize.X) / 2.0f;
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offsetX);
             ImGui.Image(pluginIcon.Handle, imageSize);
 
-            // Add spacing after image
             ImGui.Dummy(new Vector2(0, 5));
             ImGui.Separator();
             ImGui.Dummy(new Vector2(0, 5));
@@ -366,6 +510,77 @@ namespace GatherChill.Ui
 
             if (compact && ImGui.IsItemHovered())
                 ImGui.SetTooltip(label);
+        }
+        private static bool IconTabButton(FontAwesomeIcon icon, string label, bool isSelected)
+        {
+            float scale = ImGuiHelpers.GlobalScale;
+            float availX = ImGui.GetContentRegionAvail().X;
+            bool ice = C.UseIceTheme;
+            bool small = C.Compact_Ui;
+
+            string iconStr = icon.ToIconString();
+
+            // Measure the icon first so the button size follows the font size
+            ImGui.PushFont(UiBuilder.IconFont);
+            var iconSize = ImGui.CalcTextSize(iconStr);
+            ImGui.PopFont();
+
+            // Compact_Ui = tighter padding around the icon + tighter spacing between buttons
+            float padding = (small ? 4f : 9f) * scale;
+
+            // Size must NOT depend on availX, otherwise the scrollbar appearing shrinks the buttons,
+            // which removes the scrollbar, which grows them again (flicker loop).
+            float side = MathF.Max(iconSize.X, iconSize.Y) + padding * 2f;
+            var buttonSize = new Vector2(side, side);
+
+            using var spacing = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing,
+                new Vector2(ImGui.GetStyle().ItemSpacing.X, (small ? 2f : 4f) * scale));
+
+            // Center the button horizontally in the sidebar (never go left of the content edge)
+            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + MathF.Max(0f, (availX - side) * 0.5f));
+
+            var pos = ImGui.GetCursorScreenPos();
+            bool clicked = ImGui.InvisibleButton($"##tab_{label}", buttonSize);
+
+            bool hovered = ImGui.IsItemHovered();
+            bool active = ImGui.IsItemActive();
+
+            var drawList = ImGui.GetWindowDrawList();
+            var rounding = ImGui.GetStyle().FrameRounding;
+
+            // --- Colors per theme ---
+            Vector4 selectedFill = ice ? Theme_Colors.DeepIceBlue : ImGui.GetStyle().Colors[(int)ImGuiCol.Button];
+            Vector4 hoverFill = ice ? Theme_Colors.HeaderBg : ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered];
+            Vector4 activeFill = ice ? Theme_Colors.ButtonActive : ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive];
+            Vector4 accent = ice ? Theme_Colors.IceBlue : ImGuiColors.ParsedGold;
+            Vector4 hoverIcon = ice ? Theme_Colors.FrostWhite : ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
+
+            // --- Background ---
+            if (active)
+                drawList.AddRectFilled(pos, pos + buttonSize, ImGui.GetColorU32(activeFill), rounding);
+            else if (hovered)
+                drawList.AddRectFilled(pos, pos + buttonSize, ImGui.GetColorU32(hoverFill), rounding);
+            else if (isSelected)
+                drawList.AddRectFilled(pos, pos + buttonSize, ImGui.GetColorU32(selectedFill), rounding);
+
+            // --- Border (selected only) ---
+            if (isSelected)
+                drawList.AddRect(pos, pos + buttonSize, ImGui.GetColorU32(accent), rounding, ImDrawFlags.None, 1.5f);
+
+            // --- Icon ---
+            var iconColor = isSelected ? accent
+                          : hovered ? hoverIcon
+                          : ImGuiColors.DalamudGrey;
+
+            ImGui.PushFont(UiBuilder.IconFont);
+            var iconPos = pos + (buttonSize - iconSize) * 0.5f;
+            drawList.AddText(iconPos, ImGui.GetColorU32(iconColor), iconStr);
+            ImGui.PopFont();
+
+            if (hovered)
+                ImGui.SetTooltip(label);
+
+            return clicked;
         }
     }
 }

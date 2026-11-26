@@ -39,6 +39,22 @@ public static partial class SettingsUi
         }
     };
 
+    private static SettingEntry CompactSidebar = new()
+    {
+        Label = "Icon-Only Sidebar",
+        Category = MiscOption,
+        Keywords = new[] { "Main Window", "Main", "Window", "Compact", "Sidebar", "Icons" },
+        Draw = () =>
+        {
+            var v = C.Compact_Icons;
+            if (ImGui.Checkbox("Icon-only sidebar (names shown on hover)", ref v))
+            {
+                C.Compact_Icons = v;
+                C.Save();
+            }
+        }
+    };
+
     private static SettingEntry Overlay_AutoShow = new()
     {
         Label = "Open Overlay upon start",

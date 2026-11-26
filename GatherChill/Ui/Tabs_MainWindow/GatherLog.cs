@@ -3,7 +3,6 @@ using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using GatherChill.Gui;
-using GatherChill.IPC;
 using GatherChill.Ui.Tables;
 using GatherChill.Utilities.GatheringHelpers;
 using GatherChill.Utilities.GatheringHelpers.GatherListUtils;

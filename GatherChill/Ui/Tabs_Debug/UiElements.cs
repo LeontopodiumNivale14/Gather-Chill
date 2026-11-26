@@ -1,4 +1,5 @@
 ﻿using GatherChill.Gui;
+using GatherChill.Ui.Windows;
 
 namespace GatherChill.Ui.Tabs_Debug
 {
