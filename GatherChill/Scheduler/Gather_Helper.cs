@@ -92,8 +92,15 @@ namespace GatherChill.Scheduler
             // What the overlay shows on the left of "x / Target".
             public int Progress => Mode == GatherMode.Keep ? Current : Gathered;
 
-            // How many more are needed.
-            public int Remaining => Math.Max(Target - Progress, 0);
+            // How many more are needed. Crystals have a hard cap of 9999
+            public int Remaining
+            {
+                get
+                {
+                    var remaining = Math.Max(Target - Progress, 0);
+                    return Utils.CrystalCap(ItemId) is { } cap ? Math.Min(remaining, Math.Max(cap - Current, 0)) : remaining;
+                }
+            }
 
             // 0..1 for progress bars.
             public float Fraction

@@ -113,6 +113,7 @@ public static partial class SettingsUi
         WaitForGP_CollectableAmount,
         WaitForGP_HiddenItem,
         CollectabilityGoal,
+        Reduce_IncludeCrystals,
 
         // Repair Settings
         SelfRepair,

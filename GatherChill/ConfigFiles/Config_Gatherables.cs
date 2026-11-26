@@ -60,6 +60,7 @@ public partial class Config
     public bool WaitGP_HiddenItem { get; set; } = false;
     public uint TimedNode_MinGP { get; set; } = 0;
     public CollectableTarget Collectable_Target { get; set; } = CollectableTarget.High;
+    public bool Reduce_IncludeCrystals { get; set; } = false;
 
     // Depreciated / Old Configs, probably remove these come EC [MAKE SURE TO MIGRATE THESE]
     public bool Cordial_Auto { get; set; } = false;

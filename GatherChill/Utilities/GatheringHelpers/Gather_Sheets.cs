@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Textures;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using ECommons.ExcelServices;
 using GatherChill.Enums;
@@ -271,6 +271,18 @@ public static partial class Gather_Util
 
         // Config Update
         Update_NodeConfig();
+    }
+
+    /// <summary>
+    /// Force a rebuild of sheet info, when absolutely necessary. 
+    /// </summary>
+    public static void RebuildSheetInfo()
+    {
+        Sheet_RouteInfo.Clear();
+        Sheet_ItemInfo.Clear();
+        Icons_AssignmentType.Clear();
+
+        UpdateSheetInfo();
     }
 
     // TO WHOEVER MIGHT BE READING THIS (including future you)
@@ -1064,7 +1076,7 @@ public static partial class Gather_Util
             if (reduce.ResultItems.Count == 0)
                 continue;
 
-            var resultId = reduce.ResultItems[0].ItemId;
+            var primaryResultId = reduce.ResultItems[0].ItemId;
 
             // Only sources that actually made it into the dictionary
             // (i.e. they have a non-ignored route)
@@ -1074,7 +1086,7 @@ public static partial class Gather_Util
                 if (!Sheet_ItemInfo.TryGetValue(sourceId, out var sourceInfo))
                     continue;
 
-                sourceInfo.ReducesIntoItemId = resultId;
+                sourceInfo.ReducesIntoItemId = primaryResultId;
                 sources.Add(sourceInfo);
             }
 
@@ -1082,10 +1094,23 @@ public static partial class Gather_Util
             if (sources.Count == 0)
                 continue;
 
+            // include side results crystal and clusters when the user has opted in. 
+            var resultIds = reduce.ResultItems
+                .Select(x => x.ItemId)
+                .Where(id => id == primaryResultId || (C.Reduce_IncludeCrystals && Utils.IsCrystal(id)))
+                .Distinct();
+
+            foreach (var resultId in resultIds)
+                LinkReduceResult(reduce, resultId, sources, resultId == primaryResultId);
+        }
+        return;
+
+        void LinkReduceResult(ReduceInfo reduce, uint resultId, List<ItemClass> sources, bool isPrimaryResult)
+        {
             if (!Sheet_ItemInfo.TryGetValue(resultId, out var resultInfo))
             {
                 if (!TryCreateItemInfo(resultId, out resultInfo))
-                    continue;
+                    return;
 
                 Sheet_ItemInfo[resultId] = resultInfo;
             }
@@ -1093,17 +1118,19 @@ public static partial class Gather_Util
             if (resultInfo.Expansion == ExpansionIds.Unk)
                 resultInfo.Expansion = reduce.Expansion;
 
-            // Level/Star from the first source found.
-            // Level <= 1 means "still at the default", so a later entry won't overwrite it.
-            var firstSource = sources[0];
-            if (resultInfo.Level <= 1)
-                resultInfo.Level = firstSource.Level;
+            // cluster and crystal side results may be gathered on their own so don't flag here.
+            if (isPrimaryResult)
+            {
+                var firstSource = sources[0];
+                if (resultInfo.Level <= 1)
+                    resultInfo.Level = firstSource.Level;
 
-            if (resultInfo.Star == 0)
-                resultInfo.Star = firstSource.Star;
+                if (resultInfo.Star == 0)
+                    resultInfo.Star = firstSource.Star;
 
-            if (resultInfo.ItemRequired == 0)
-                resultInfo.ItemRequired = firstSource.ItemRequired;
+                if (resultInfo.ItemRequired == 0)
+                    resultInfo.ItemRequired = firstSource.ItemRequired;
+            }
 
             foreach (var sourceId in reduce.AllItemIds())
             {
@@ -1115,6 +1142,10 @@ public static partial class Gather_Util
             {
                 foreach (var routeId in source.RouteInfo)
                 {
+                    // only when can be reduced
+                    if (!isPrimaryResult && (!Sheet_RouteInfo.TryGetValue(routeId, out var srcRoute) || srcRoute.Kind == GatherNodeKind.Regular))
+                        continue;
+
                     if (!resultInfo.RouteInfo.Contains(routeId))
                         resultInfo.RouteInfo.Add(routeId);
                 }
@@ -1154,6 +1185,9 @@ public static partial class Gather_Util
                 config = new RouteSelection();
                 C.ItemRoutes.Add(item.Key, config);
             }
+
+            // removed routes where they are no longer valid
+            config.EnabledRoutes.RemoveWhere(r => !item.Value.NormalRoutes.Contains(r) && !item.Value.TimedRoutes.Contains(r));
 
             if (item.Value.NormalRoutes.Count != 0)
             {
