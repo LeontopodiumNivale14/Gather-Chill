@@ -3,6 +3,7 @@ using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
 using GatherChill.Enums;
 using GatherChill.Gui;
+using GatherChill.Ui.Windows;
 using GatherChill.Utilities.GatheringHelpers;
 using Newtonsoft.Json;
 using System.Collections.Generic;

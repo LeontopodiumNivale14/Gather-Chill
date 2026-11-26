@@ -100,6 +100,7 @@ public static partial class Gather_Util
     {
         public string Name { get; set; } = "";
         public uint IconId { get; set; } = 0;
+        public uint SecondardaryId { get; set; } = 0;
         public IDalamudTextureWrap? Icon => Svc.Texture.GetFromGameIcon(IconId).GetWrapOrEmpty();
     }
     public class ItemClass
@@ -173,9 +174,20 @@ public static partial class Gather_Util
 
     public static Dictionary<Job, IconInfo> Job_IconIds = new()
     {
-        [Job.MIN] = new() { IconId = 62510, Name = "MIN" },
-        [Job.BTN] = new() { IconId = 62511, Name = "BTN" },
-        [Job.FSH] = new() { IconId = 62512, Name = "FSH" },
+        // Crafters (Mainly for GC Stuff)
+        [Job.CRP] = new() { SecondardaryId = 62008, Name = "CRP"},
+        [Job.BSM] = new() { SecondardaryId = 62009, Name = "BSM" },
+        [Job.ARM] = new() { SecondardaryId = 62010, Name = "ARM" },
+        [Job.GSM] = new() { SecondardaryId = 62011, Name = "GSM" },
+        [Job.LTW] = new() { SecondardaryId = 62012, Name = "LTW" },
+        [Job.WVR] = new() { SecondardaryId = 62013, Name = "WVR" },
+        [Job.ALC] = new() { SecondardaryId = 62014, Name = "ALC" },
+        [Job.CUL] = new() { SecondardaryId = 62015, Name = "CUL" },
+
+        // Gathering
+        [Job.MIN] = new() { IconId = 62510, SecondardaryId = 62016, Name = "MIN" },
+        [Job.BTN] = new() { IconId = 62511, SecondardaryId = 62017, Name = "BTN" },
+        [Job.FSH] = new() { IconId = 62512, SecondardaryId = 62018, Name = "FSH" },
     };
 
     public static Dictionary<uint, IconInfo> Icons_AssignmentType = new();

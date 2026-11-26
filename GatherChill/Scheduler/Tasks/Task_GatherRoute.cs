@@ -184,7 +184,7 @@ namespace GatherChill.Scheduler.Tasks
             if (Svc.Condition[ConditionFlag.Occupied39])
                 return false;
 
-            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(goalItemId, out var itemInfo))
+            if (!Gather_Util.Sheet_ItemInfo.TryGetValue(goalItemId, out _))
             {
                 IceLogging.Verbose($"No info on this item can be found??? If it's a reducable, please report itemID: {goalItemId}", tag);
                 return true;
@@ -194,10 +194,61 @@ namespace GatherChill.Scheduler.Tasks
             if (progress == null || progress.IsComplete)
                 return FinishItem(progress?.Mode, tag);
 
-            var reducableItems = itemInfo.ReducedFromItemIds;
+            return ReduceForEntry(goalItemId, tag);
+        }
 
-            var firstItem = reducableItems.FirstOrDefault(x => Utils.HasPurifyItem(x));
-            if (firstItem != 0)
+        /// <summary>
+        /// A reducible in the bags that feeds this entry.
+        /// First what the entry says feeds it, then the reduction table (covers sublime variants and non-first result slots).
+        /// </summary>
+        internal static unsafe bool TryFindReducible(uint entryId, out uint reducibleId)
+        {
+            reducibleId = 0;
+
+            if (Gather_Util.Sheet_ItemInfo.TryGetValue(entryId, out var itemInfo))
+            {
+                foreach (var id in itemInfo.ReducedFromItemIds)
+                {
+                    if (!Utils.HasPurifyItem(id))
+                        continue;
+
+                    reducibleId = id;
+                    return true;
+                }
+            }
+
+            foreach (var reduce in Gather_Util.ReducableItems)
+            {
+                if (!reduce.ResultItems.Any(x => x.ItemId == entryId))
+                    continue;
+
+                if (Utils.HasPurifyItem(reduce.ItemId))
+                {
+                    reducibleId = reduce.ItemId;
+                    return true;
+                }
+
+                if (reduce.SublimeItemId != 0 && Utils.HasPurifyItem(reduce.SublimeItemId))
+                {
+                    reducibleId = reduce.SublimeItemId;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Reduces whatever is in the bags that feeds this entry.
+        /// false = still working, true = nothing left to reduce (and the result window is closed).
+        /// Shared by the gather flow and Task_Start, so both go through the same code and the replay.
+        /// </summary>
+        internal static unsafe bool ReduceForEntry(uint entryId, string tag)
+        {
+            if (Svc.Condition[ConditionFlag.Occupied39])
+                return false;
+
+            if (TryFindReducible(entryId, out var reducibleId))
             {
                 if (Player.Mounted)
                 {
@@ -211,15 +262,15 @@ namespace GatherChill.Scheduler.Tasks
 
                 if (EzThrottler.Throttle("Purifying item"))
                 {
-                    IceLogging.Verbose($"Purifying item {firstItem}", tag);
-                    ReplayRecorder.Desynth(firstItem);
-                    Utils.PurifyItem(firstItem);
+                    IceLogging.Verbose($"Purifying item {reducibleId}", tag);
+                    ReplayRecorder.Desynth(reducibleId);
+                    Utils.PurifyItem(reducibleId);
                 }
 
                 return false;
             }
 
-            IceLogging.Verbose("Finishing desynth task");
+            IceLogging.Verbose("Finishing desynth task", tag);
 
             if (GenericHelpers.TryGetAddonMaster<PurifyResult>(out var purify) && purify.IsAddonReady)
             {
@@ -230,7 +281,7 @@ namespace GatherChill.Scheduler.Tasks
                 return false;
             }
 
-            IceLogging.Debug("Finished Desynthing, continuing on");
+            IceLogging.Debug("Finished Desynthing, continuing on", tag);
             return true;
         }
 

@@ -73,9 +73,7 @@ namespace GatherChill.Scheduler
             enqueue();
         }
 
-        /// <summary>
-        /// First non-idle tick of a run: open the overlay if configured.
-        /// </summary>
+        // Whenever a run is started, on the first tick checks to see if we need to auto-open
         private static void OnRunStarted()
         {
             if (runStarted)
@@ -87,10 +85,7 @@ namespace GatherChill.Scheduler
                 P.gatherOverlay.IsOpen = true;
         }
 
-        /// <summary>
-        /// Back to idle after a run: close the overlay if configured.
-        /// Does nothing if a run never started.
-        /// </summary>
+        // Once a run is finished, it'll close the overlay if we have it configured
         private static void OnRunStopped()
         {
             if (!runStarted)

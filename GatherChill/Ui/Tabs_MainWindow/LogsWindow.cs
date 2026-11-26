@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using GatherChill.Gui;
 using GatherChill.Ui.Tabs_Debug;
+using GatherChill.Ui.Windows;
 using System;
 using System.Collections.Generic;
 using System.Text;

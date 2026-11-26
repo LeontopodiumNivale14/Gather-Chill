@@ -3,7 +3,7 @@ using GatherChill.Ui.RouteWindowTabs;
 using GatherChill.Utilities.Tools;
 using System.Collections.Generic;
 
-namespace GatherChill.Ui
+namespace GatherChill.Ui.Windows
 {
     internal class RouteEditor_Window : Window
     {

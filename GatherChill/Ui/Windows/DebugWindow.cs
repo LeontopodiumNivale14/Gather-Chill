@@ -4,7 +4,7 @@ using GatherChill.Gui;
 using GatherChill.Ui.Tabs_Debug;
 using System.Collections.Generic;
 
-namespace GatherChill.Ui;
+namespace GatherChill.Ui.Windows;
 
 internal class DebugWindow : Window
 {
@@ -26,6 +26,7 @@ internal class DebugWindow : Window
     {
         ["Game: Gathering Window"] = () => GatheringWindow.Draw(),
         ["Game: Map Info"] = () => MiniMapDebugView.Draw(),
+        ["Game: Contents Info"] = () => ContentsInfoWindow.Draw(),
         ["Game: GC Delivery"] = () => GcSupply.Draw(),
 
         ["Table: Gather Points"] = () => GatherPointTable.Draw(),
