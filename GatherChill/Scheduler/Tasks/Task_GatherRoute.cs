@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
@@ -194,7 +194,13 @@ namespace GatherChill.Scheduler.Tasks
             if (progress == null || progress.IsComplete)
                 return FinishItem(progress?.Mode, tag);
 
-            return ReduceForEntry(goalItemId, tag);
+            // If we have gathered an alt item try to reduce all thats in our bags
+            var reduceEntryId = GatherJobs.ActiveList
+                .Select(x => x.ItemId)
+                .Where(id => Gather_Helper.ItemProgress.Any(p => p.ItemId == id && !p.IsComplete) && TryFindReducible(id, out _))
+                .FirstOrDefault(goalItemId);
+
+            return ReduceForEntry(reduceEntryId, tag);
         }
 
         /// <summary>
