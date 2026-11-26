@@ -1,4 +1,5 @@
 ﻿using ECommons.ExcelServices;
+using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using GatherChill.GrandCompany.Addons;
 using GatherChill.Scheduler.Handlers;
@@ -41,5 +42,30 @@ public static class GCInfo
     {
         if (GenericHelpers.TryGetAddonMaster<ContentsInfoDetail>(out var contentInfoDetails) && contentInfoDetails.IsAddonReady)
             Ecom_Handler.CloseWindow(contentInfoDetails.Base);
+    }
+
+    public static bool ReadRequests(ContentsInfoDetail detail, out string problem)
+    {
+        var slots = detail.Provisioning(out problem);
+        if (slots == null)
+            return false;
+
+        var read = new Dictionary<Job, RequestInfo>();
+        foreach (var slot in slots)
+        {
+            var job = (Job)(byte)((byte)Job.MIN + slot.Slot);
+            if (job is not (Job.MIN or Job.BTN))
+                continue;
+
+            read[job] = new RequestInfo
+            {
+                ItemId = slot.ItemId,
+                Bonus = slot.Bonus,
+                Amount = slot.Amount,
+            };
+        }
+
+        RequestedItems = read;
+        return true;
     }
 }

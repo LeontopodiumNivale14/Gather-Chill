@@ -27,6 +27,7 @@ internal class DebugWindow : Window
         ["Game: Gathering Window"] = () => GatheringWindow.Draw(),
         ["Game: Map Info"] = () => MiniMapDebugView.Draw(),
         ["Game: Contents Info"] = () => ContentsInfoWindow.Draw(),
+        ["Game: GC ContentWindow"] = () => GcAgentWindow.Draw(),
         ["Game: GC Delivery"] = () => GcSupply.Draw(),
 
         ["Table: Gather Points"] = () => GatherPointTable.Draw(),

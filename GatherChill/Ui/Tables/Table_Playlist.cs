@@ -85,6 +85,8 @@ internal class Table_GatherPlaylist
 
     public sealed class ItemColumn : Column<Config.ItemInfo>
     {
+        private static readonly uint LockedRowColor = ImGui.GetColorU32(new Vector4(0.9f, 0.1f, 0.1f, 0.7f));
+
         public ItemColumn()
         {
             Label = "Item";
@@ -100,9 +102,36 @@ internal class Table_GatherPlaylist
                 return;
             }
 
-            var nameText = sheetInfo.IsCollectable ? $"{sheetInfo.Name} {SeIconChar.Collectible.ToIconString()}" : sheetInfo.Name;
+            var nameText = sheetInfo.IsCollectable
+                ? $"{sheetInfo.Name} {SeIconChar.Collectible.ToIconString()}"
+                : sheetInfo.Name;
 
             ImGui_Ice.ImageButtonWithText(sheetInfo.IconId, nameText, sheetInfo.Name);
+
+            foreach (var route in sheetInfo.RouteInfo)
+            {
+                var folklore = Gather_Util.Sheet_RouteInfo[route].Folklore;
+                if (folklore.ItemId == 0)
+                    continue;
+
+                var unlocked = Svc.UnlockState.IsItemUnlocked(folklore.SheetInfo);
+
+                ImGui.SameLine();
+                ImGui_Ice.ImageButton(folklore.IconId, folklore.Name, unlocked);
+
+                if (unlocked)
+                    continue;
+
+                
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, LockedRowColor);
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, LockedRowColor);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip($"We don't have the following folklore unlocked: {folklore.Name}\n" +
+                                     $"This item will not be able to be gathered");
+                }
+            }
         }
     }
 

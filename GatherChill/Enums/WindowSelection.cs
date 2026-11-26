@@ -7,7 +7,8 @@ public enum WindowSelection
     SavedList = 2,
     Reducables = 3,
     GrandCompany = 4,
-
+    Scripts = 5,
+    Diadem = 6,
 
     Settings = 25,
     Gatherbuffs = 26,

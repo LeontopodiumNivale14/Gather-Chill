@@ -1,11 +1,9 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using GatherChill.GrandCompany;
 using GatherChill.GrandCompany.Addons;
+using GatherChill.GrandCompany.Tasks;
 using GatherChill.Utilities.Tools;
-using Lumina.Excel.Sheets;
-using System.Collections.Generic;
 
 namespace GatherChill.Ui.Tabs_Debug
 {
@@ -15,10 +13,6 @@ namespace GatherChill.Ui.Tabs_Debug
 
         private static readonly Vector4 Changed = new(1f, 0.4f, 0.4f, 1f);
 
-        private static int CustomStart = 0;
-        private static int CustomCount = 0;
-        private static Dictionary<int, (AtkValueType Type, int Value)> Snapshot = new();
-
         public static unsafe void Draw()
         {
             var hasInfo = GenericHelpers.TryGetAddonMaster<ContentsInfo>(out var info) && info.IsAddonReady;
@@ -27,7 +21,14 @@ namespace GatherChill.Ui.Tabs_Debug
             ImGui.Text($"ContentsInfo: {(hasInfo ? "ready" : "closed")}   ContentsInfoDetail: {(hasDetail ? "ready" : "closed")}");
 
             if (ImGui.Button("Open Timers"))
-                GrandCompany.Tasks.Task_RefreshItems.Enqueue();
+                GCInfo.OpenTimers();
+
+            ImGui.SameLine();
+            using (ImRaii.Disabled(P.TaskManager.IsBusy))
+            {
+                if (ImGui.Button("Refresh Items"))
+                    Task_RefreshItems.Enqueue();
+            }
 
             ImGui.SameLine();
             using (ImRaii.Disabled(!hasInfo))
@@ -41,6 +42,8 @@ namespace GatherChill.Ui.Tabs_Debug
             }
 
             ImGui.Separator();
+            DrawRequested();
+            ImGui.Separator();
 
             if (!hasDetail)
             {
@@ -48,11 +51,55 @@ namespace GatherChill.Ui.Tabs_Debug
                 return;
             }
 
-            ImGui.Text($"AtkValuesCount: {detail.Addon->AtkValuesCount} Crafter count: {detail.CrafterSupplyCount} Provision count: {detail.ProvisionMissionCount}");
+            ImGui.Text($"AtkValuesCount: {detail.Addon->AtkValuesCount}   Crafter count: {detail.CrafterSupplyCount}   Provision count: {detail.ProvisionMissionCount}");
 
             DrawCrafters(detail);
             ImGui.Separator();
             DrawProvisioning(detail);
+        }
+
+        private static void DrawRequested()
+        {
+            ImGui.Text("GCInfo.RequestedItems");
+
+            if (GCInfo.RequestedItems.Count == 0)
+            {
+                ImGui.TextDisabled("Empty. Press Refresh Items.");
+                return;
+            }
+
+            using var table = ImRaii.Table("Requested Items", 5, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg);
+            if (!table.Success)
+                return;
+
+            ImGui.TableSetupColumn("Job");
+            ImGui.TableSetupColumn("Item Id");
+            ImGui.TableSetupColumn("Name");
+            ImGui.TableSetupColumn("Amount");
+            ImGui.TableSetupColumn("Bonus");
+            ImGui.TableHeadersRow();
+
+            var items = ExcelHelper.Sheet_Item;
+            foreach (var (job, request) in GCInfo.RequestedItems)
+            {
+                var name = items.TryGetRow(request.ItemId, out var item) ? item.Name.ExtractText() : "Unknown item";
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text($"{job}");
+
+                ImGui.TableNextColumn();
+                ImGui.Text($"{request.ItemId}");
+
+                ImGui.TableNextColumn();
+                ImGui.Text(name);
+
+                ImGui.TableNextColumn();
+                ImGui.Text($"{request.Amount:N0}");
+
+                ImGui.TableNextColumn();
+                ImGui.Text($"{request.Bonus}");
+            }
         }
 
         private static void DrawCrafters(ContentsInfoDetail detail)
@@ -79,7 +126,7 @@ namespace GatherChill.Ui.Tabs_Debug
             ImGui.TableSetupColumn("Bonus");
             ImGui.TableHeadersRow();
 
-            var items = Svc.Data.GetExcelSheet<Item>();
+            var items = ExcelHelper.Sheet_Item;
             foreach (var slot in slots)
             {
                 var name = slot.ItemId <= 0 ? "-" : items.TryGetRow((uint)slot.ItemId, out var item) ? item.Name.ExtractText() : "Unknown item";
@@ -142,7 +189,7 @@ namespace GatherChill.Ui.Tabs_Debug
                 ImGui.Text($"{slot.Slot}");
 
                 ImGui.TableNextColumn();
-                ImGui.Text($"{slot.IconId}");
+                ImGui.Text($"{(Job)(byte)((byte)Job.MIN + slot.Slot)}");
 
                 ImGui.TableNextColumn();
                 ImGui.Text($"{slot.ItemId}");

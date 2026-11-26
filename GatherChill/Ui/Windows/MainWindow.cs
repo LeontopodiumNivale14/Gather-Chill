@@ -85,6 +85,38 @@ namespace GatherChill.Ui.Windows
                 Label = "Gather Playlist",
                 Draw = () => GatherPlaylist.Draw()
             },
+            [WindowSelection.Scripts] = new()
+            {
+                Icon = FontAwesomeIcon.TicketAlt,
+                Label = "Gather Scripts",
+                Draw = () =>
+                {
+                    using (var child = ImRaii.Child($"Script Window"))
+                    {
+                        if (!child.Success)
+                            return;
+
+                        ImGui.Text($"Work in progress");
+                        ImGui.Text($"Come back later");
+                    }
+                }
+            },
+            [WindowSelection.Diadem] = new()
+            {
+                Icon = FontAwesomeIcon.MountainSun,
+                Label = "Diadem",
+                Draw = () =>
+                {
+                    using (var child = ImRaii.Child($"Diadem Window"))
+                    {
+                        if (!child.Success)
+                            return;
+
+                        ImGui.Text("Not implimented yet");
+                        ImGui.Text("But if I put this here, it'll constnatly remind me to do it");
+                    }
+                }
+            },
             [WindowSelection.GrandCompany] = new()
             {
                 Icon = FontAwesomeIcon.Flag,
